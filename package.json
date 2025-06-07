@@ -22,6 +22,7 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@replit/codemirror-vim": "^6.3.0",
     "@shikijs/markdown-it": "^3.6.0",
+    "@vueuse/nuxt": "13.3.0",
     "codemirror": "^5",
     "codemirror-editor-vue3": "^2.8.0",
     "eslint": "^9.0.0",
