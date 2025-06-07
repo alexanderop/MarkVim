@@ -44,13 +44,18 @@ export default defineConfig({
       getCSS({ theme }) {
         return `
           /* Default font family for the entire app */
+          :root {
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'avenir next', avenir, 'segoe ui', 'helvetica neue', helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+            --font-mono: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+          }
+          
           * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'avenir next', avenir, 'segoe ui', 'helvetica neue', helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+            font-family: var(--font-sans);
           }
           
           /* Ensure code elements use monospace */
           code, pre, kbd, samp {
-            font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+            font-family: var(--font-mono);
           }
 
           /* Enhanced prose code block styling for Shiki integration */

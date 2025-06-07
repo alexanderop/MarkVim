@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/icon',
+    'reka-ui/nuxt',
     '@unocss/nuxt',
     '@nuxtjs/google-fonts',
     '@vueuse/nuxt'

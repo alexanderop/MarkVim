@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
+import type { EditorSettings } from '~/composables/useEditorSettings'
 
 const modelValue = defineModel<string>()
+
+const { settings } = defineProps<{
+  settings: EditorSettings
+}>()
 </script>
 
 <template>
@@ -27,10 +32,18 @@ const modelValue = defineModel<string>()
       <MyCodeMirror
         v-model="modelValue"
         :extensions="[markdownLang()]"
-        theme="dark"
+        :theme="settings.theme === 'auto' ? 'dark' : settings.theme"
         placeholder="# Start writing your story..."
         class="h-full bg-editor-bg"
-        vim-mode
+        :vim-mode="settings.vimMode"
+        :line-numbers="settings.lineNumbers"
+        :line-number-mode="settings.lineNumberMode"
+        :line-wrapping="settings.lineWrapping"
+        :font-size="settings.fontSize"
+        :style="{ 
+          fontSize: `${settings.fontSize}px`,
+          fontFamily: settings.fontFamily === 'mono' ? 'var(--font-mono)' : 'var(--font-sans)'
+        }"
       />
     </div>
   </div>

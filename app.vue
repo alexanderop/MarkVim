@@ -68,6 +68,7 @@ Visit [Linear](https://linear.app) for inspiration.`
 
 const { markdown, renderedMarkdown, shikiCSS } = useMarkdown(initialMarkdown)
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
+const { settings } = useEditorSettings()
 
 useHead({
   style: [
@@ -80,9 +81,15 @@ useHead({
 
 <template>
   <div ref="containerRef" class="h-screen flex bg-editor-bg text-gray-100 font-sans relative">
+    <!-- Settings Modal - positioned absolutely in top-right -->
+    <div class="absolute top-4 right-4 z-50">
+      <SettingsModal />
+    </div>
+    
     <MarkdownEditor 
       v-model="markdown" 
       :style="{ width: `${leftPaneWidth}%` }"
+      :settings="settings"
     />
     
     <ResizableSplitter 
