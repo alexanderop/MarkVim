@@ -19,8 +19,20 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     document.body.style.userSelect = ''
   }
 
-  useEventListener('mouseup', stopDrag)
-  useEventListener('mouseleave', stopDrag)
+  const cleanup = () => {
+    stopDrag()
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
+  }
+
+  const mouseUpListener = useEventListener('mouseup', stopDrag)
+  const mouseLeaveListener = useEventListener('mouseleave', stopDrag)
+
+  onUnmounted(() => {
+    cleanup()
+    mouseUpListener()
+    mouseLeaveListener()
+  })
 
   watch(mouseX, (newX) => {
     if (!isDragging.value || !containerRef.value) return
