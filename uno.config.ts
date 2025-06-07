@@ -1,9 +1,11 @@
 import presetWind4 from '@unocss/preset-wind4'
+import { presetTypography } from '@unocss/preset-typography'
 import { defineConfig } from 'unocss'
 
 export default defineConfig({
   presets: [
     presetWind4(),
+    presetTypography()
   ],
   theme: {
     fontFamily: {
