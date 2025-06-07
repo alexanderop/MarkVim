@@ -14,9 +14,9 @@ const emit = defineEmits<Emits>()
 </script>
 
 <template>
-  <div class="w-1/2 border-r border-[#1d1f23] bg-[#0c0d11]">
+  <div class="w-1/2 border-r border-[#1d1f23] bg-[#0c0d11] flex flex-col h-screen">
     <!-- Linear-style header -->
-    <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6">
+    <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6 flex-shrink-0">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5">
           <div class="w-3 h-3 rounded-full bg-[#ff5f57] shadow-sm"/>
@@ -32,15 +32,17 @@ const emit = defineEmits<Emits>()
     </div>
     
     <!-- Editor container -->
-    <MyCodeMirror
-      :model-value="props.modelValue"
-      @update:model-value="emit('update:modelValue', $event)"
-      :extensions="[markdownLang()]"
-      theme="dark"
-      placeholder="# Start writing your story..."
-      class="h-[calc(100vh-3.5rem)] bg-[#0c0d11]"
-      vim-mode
-    />
+    <div class="flex-1 min-h-0">
+      <MyCodeMirror
+        :model-value="props.modelValue"
+        @update:model-value="emit('update:modelValue', $event)"
+        :extensions="[markdownLang()]"
+        theme="dark"
+        placeholder="# Start writing your story..."
+        class="h-full bg-[#0c0d11]"
+        vim-mode
+      />
+    </div>
   </div>
 </template>
 

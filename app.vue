@@ -44,11 +44,6 @@ const renderedMarkdown = computed(() => {
 </template>
 
 <style>
-/* Global font and base styles */
-* {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
 /* Linear-style scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -73,7 +68,6 @@ const renderedMarkdown = computed(() => {
   background-color: #0c0d11 !important;
   color: #b4bcd0 !important;
   border: none !important;
-  font-family: 'Inter', monospace !important;
 }
 
 .cm-focused {
@@ -82,9 +76,8 @@ const renderedMarkdown = computed(() => {
 
 .cm-content {
   padding: 32px !important;
-  font-size: 15px !important;
+  font-size: 17px !important;
   line-height: 1.6 !important;
-  font-family: 'Inter', monospace !important;
 }
 
 .cm-placeholder {
@@ -156,7 +149,6 @@ const renderedMarkdown = computed(() => {
   color: #ff7b72 !important;
   padding: 0.125rem 0.25rem !important;
   border-radius: 0.25rem !important;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace !important;
 }
 
 .cm-link {
@@ -184,11 +176,6 @@ const renderedMarkdown = computed(() => {
 /* Code blocks */
 .cm-meta {
   color: #8b949e !important;
-}
-
-/* Make the editor feel more spacious like Linear */
-.cm-scroller {
-  font-family: 'Inter', monospace !important;
 }
 
 /* Active line highlighting */

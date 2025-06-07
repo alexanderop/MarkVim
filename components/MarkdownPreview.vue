@@ -7,9 +7,9 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-  <div class="w-1/2 flex flex-col bg-[#0c0d11]">
+  <div class="w-1/2 flex flex-col bg-[#0c0d11] h-screen">
     <!-- Linear-style header -->
-    <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6">
+    <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6 flex-shrink-0">
       <div class="flex items-center space-x-4">
         <span class="text-sm font-medium text-[#9ca3af] tracking-tight">Preview</span>
         <div class="w-px h-4 bg-[#1d1f23]"></div>
@@ -18,7 +18,7 @@ const props = defineProps<Props>()
     </div>
     
     <!-- Preview content -->
-    <div class="flex-1 overflow-auto bg-[#0c0d11]">
+    <div class="flex-1 overflow-auto bg-[#0c0d11] min-h-0">
       <div class="max-w-none mx-auto px-12 py-12">
         <article class="prose prose-lg prose-invert prose-linear max-w-none" v-html="props.renderedHtml"/>
       </div>
@@ -31,8 +31,7 @@ const props = defineProps<Props>()
 .prose-linear {
   color: #c9d1d9;
   line-height: 1.75;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   max-width: 65ch;
 }
 
@@ -107,7 +106,7 @@ const props = defineProps<Props>()
 
 /* Lead paragraph styling */
 .prose-linear > p:first-of-type {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: #e5e7eb;
   font-weight: 400;
   line-height: 1.7;
