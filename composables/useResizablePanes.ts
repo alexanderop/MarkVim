@@ -1,5 +1,5 @@
 export function useResizablePanes(initialLeftWidth: number = 50) {
-  const leftPaneWidth = ref(initialLeftWidth)
+  const leftPaneWidth = useLocalStorage('markvim-pane-width', initialLeftWidth)
   const rightPaneWidth = computed(() => 100 - leftPaneWidth.value)
   
   const isDragging = ref(false)

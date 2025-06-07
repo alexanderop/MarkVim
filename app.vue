@@ -134,7 +134,7 @@ const commandPalettePosition = ref({ x: 0, y: 0 })
 const { registerShortcuts, formatKeys } = useShortcuts()
 
 // Global keyboard event handler for command palette
-function handleGlobalKeydown(event: KeyboardEvent): void {
+function handleGlobalKeydown(event: KeyboardEvent) {
   // Handle Meta+K (Cmd+K) shortcut for command palette
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
     event.preventDefault()
