@@ -2,29 +2,29 @@
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import type { EditorState } from '@codemirror/state'
 import { EditorState as CMEditorState, StateEffect, type Extension } from '@codemirror/state'
-import { EditorView, keymap, placeholder, type ViewUpdate, drawSelection } from '@codemirror/view'
+import { EditorView, keymap, placeholder as cmPlaceholder, type ViewUpdate, drawSelection } from '@codemirror/view'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { defaultKeymap, history, indentWithTab } from '@codemirror/commands'
+import { defaultKeymap, history, indentWithTab as cmIndentWithTab } from '@codemirror/commands'
 import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { vim } from '@replit/codemirror-vim'
 
 // Define Component Props & Model
 // =============================================
-const props = withDefaults(defineProps<{
+const {
+  extensions = [],
+  theme = 'light',
+  editable = true,
+  placeholder = '',
+  indentWithTab = true,
+  vimMode = false
+} = defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
   editable?: boolean
   placeholder?: string
   indentWithTab?: boolean
   vimMode?: boolean
-}>(), {
-  extensions: () => [],
-  theme: 'light',
-  editable: true,
-  placeholder: '',
-  indentWithTab: true,
-  vimMode: false,
-})
+}>()
 
 const modelValue = defineModel<string>({ default: '' })
 
@@ -41,7 +41,7 @@ const state = ref<EditorState>() // The CodeMirror EditorState instance
 // Extension Management
 // =============================================
 const getExtensions = () => {
-  const extensions: Extension[] = [
+  const extensionsList: Extension[] = [
     // Basic functionality
     history(),
     drawSelection(),
@@ -54,31 +54,31 @@ const getExtensions = () => {
   ]
 
   // Add vim keybindings first if enabled (must come before other keymaps)
-  if (props.vimMode) {
-    extensions.unshift(vim())
+  if (vimMode) {
+    extensionsList.unshift(vim())
   }
 
-  if (props.indentWithTab) {
-    extensions.push(keymap.of([indentWithTab]))
+  if (indentWithTab) {
+    extensionsList.push(keymap.of([cmIndentWithTab]))
   }
 
-  if (props.placeholder) {
-    extensions.push(placeholder(props.placeholder))
+  if (placeholder) {
+    extensionsList.push(cmPlaceholder(placeholder))
   }
 
-  if (props.theme === 'dark') {
-    extensions.push(oneDark)
+  if (theme === 'dark') {
+    extensionsList.push(oneDark)
   }
 
-  if (!props.editable) {
-    extensions.push(EditorView.editable.of(false))
+  if (!editable) {
+    extensionsList.push(EditorView.editable.of(false))
   }
   
   // Add user-provided extensions
-  extensions.push(...props.extensions)
+  extensionsList.push(...extensions)
 
   // Add the update listener
-  extensions.push(EditorView.updateListener.of((viewUpdate) => {
+  extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
     // Propagate the update event
     emit('update', viewUpdate)
     
@@ -91,7 +91,7 @@ const getExtensions = () => {
     }
   }))
 
-  return extensions
+  return extensionsList
 }
 
 // Initialization
@@ -125,7 +125,7 @@ watch(modelValue, (newValue) => {
 })
 
 // Watch for extension changes to reconfigure the editor
-watch(() => [props.extensions, props.theme, props.editable, props.indentWithTab, props.placeholder, props.vimMode], () => {
+watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode], () => {
   if (view.value) {
     view.value.dispatch({
       effects: StateEffect.reconfigure.of(getExtensions()),

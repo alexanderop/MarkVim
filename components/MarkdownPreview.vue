@@ -1,14 +1,11 @@
 <script setup lang="ts">
-interface Props {
+const { renderedHtml } = defineProps<{
   renderedHtml: string
-}
-
-const props = defineProps<Props>()
+}>()
 </script>
 
 <template>
   <div class="w-1/2 flex flex-col bg-[#0c0d11] h-screen">
-    <!-- Linear-style header -->
     <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6 flex-shrink-0">
       <div class="flex items-center space-x-4">
         <span class="text-sm font-medium text-[#9ca3af] tracking-tight">Preview</span>
@@ -17,18 +14,16 @@ const props = defineProps<Props>()
       </div>
     </div>
     
-    <!-- Preview content -->
     <div class="flex-1 overflow-auto bg-[#0c0d11] min-h-0">
       <div class="max-w-none mx-auto px-12 py-12">
-        <article class="prose prose-lg prose-invert prose-linear max-w-none" v-html="props.renderedHtml"/>
+        <article class="prose prose-lg prose-invert max-w-none" v-html="renderedHtml"/>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-/* Linear-inspired Prose Styling */
-.prose-linear {
+<style>
+.prose {
   color: #c9d1d9;
   line-height: 1.75;
   font-size: 18px;
@@ -36,7 +31,7 @@ const props = defineProps<Props>()
 }
 
 /* Enhanced typography hierarchy */
-.prose-linear h1 {
+.prose h1 {
   color: #ffffff;
   font-size: 2.5rem;
   font-weight: 800;
@@ -49,7 +44,7 @@ const props = defineProps<Props>()
   background-clip: text;
 }
 
-.prose-linear h2 {
+.prose h2 {
   color: #f9fafb;
   font-size: 1.875rem;
   font-weight: 700;
@@ -58,7 +53,7 @@ const props = defineProps<Props>()
   margin: 3rem 0 1.5rem 0;
 }
 
-.prose-linear h3 {
+.prose h3 {
   color: #f3f4f6;
   font-size: 1.5rem;
   font-weight: 600;
@@ -67,7 +62,7 @@ const props = defineProps<Props>()
   margin: 2.5rem 0 1.25rem 0;
 }
 
-.prose-linear h4 {
+.prose h4 {
   color: #e5e7eb;
   font-size: 1.25rem;
   font-weight: 600;
@@ -75,7 +70,7 @@ const props = defineProps<Props>()
   margin: 2rem 0 1rem 0;
 }
 
-.prose-linear h5 {
+.prose h5 {
   color: #d1d5db;
   font-size: 1.125rem;
   font-weight: 600;
@@ -83,7 +78,7 @@ const props = defineProps<Props>()
   margin: 1.75rem 0 0.875rem 0;
 }
 
-.prose-linear h6 {
+.prose h6 {
   color: #9ca3af;
   font-size: 1rem;
   font-weight: 600;
@@ -94,18 +89,18 @@ const props = defineProps<Props>()
 }
 
 /* Paragraphs with better flow */
-.prose-linear p {
+.prose p {
   margin: 0 0 1.75rem 0;
   color: #c9d1d9;
   line-height: 1.75;
 }
 
-.prose-linear p:last-child {
+.prose p:last-child {
   margin-bottom: 0;
 }
 
 /* Lead paragraph styling */
-.prose-linear > p:first-of-type {
+.prose > p:first-of-type {
   font-size: 1.25rem;
   color: #e5e7eb;
   font-weight: 400;
@@ -113,7 +108,7 @@ const props = defineProps<Props>()
 }
 
 /* Inline code with better contrast */
-.prose-linear code {
+.prose code {
   color: #fbbf24;
   background: rgba(251, 191, 36, 0.1);
   padding: 0.125rem 0.375rem;
@@ -124,8 +119,8 @@ const props = defineProps<Props>()
   font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 }
 
-/* Code blocks with Linear styling */
-.prose-linear pre {
+/* Code blocks with styling */
+.prose pre {
   background: #161b22;
   border: 1px solid #30363d;
   color: #e6edf3;
@@ -136,7 +131,7 @@ const props = defineProps<Props>()
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.prose-linear pre code {
+.prose pre code {
   background: transparent;
   color: inherit;
   padding: 0;
@@ -146,8 +141,8 @@ const props = defineProps<Props>()
   font-weight: 400;
 }
 
-/* Blockquotes with Linear accent */
-.prose-linear blockquote {
+/* Blockquotes with accent */
+.prose blockquote {
   border-left: 4px solid #5e6ad2;
   background: linear-gradient(135deg, rgba(94, 106, 210, 0.1) 0%, rgba(94, 106, 210, 0.02) 100%);
   padding: 1.5rem 2rem;
@@ -158,13 +153,13 @@ const props = defineProps<Props>()
   font-size: 1.05em;
 }
 
-.prose-linear blockquote p {
+.prose blockquote p {
   color: #e5e7eb;
   margin: 0;
   line-height: 1.7;
 }
 
-.prose-linear blockquote::before {
+.prose blockquote::before {
   content: '"';
   font-size: 4rem;
   color: #5e6ad2;
@@ -176,43 +171,43 @@ const props = defineProps<Props>()
 }
 
 /* Lists with improved spacing */
-.prose-linear ul,
-.prose-linear ol {
+.prose ul,
+.prose ol {
   margin: 1.75rem 0;
   padding-left: 1.75rem;
 }
 
-.prose-linear li {
+.prose li {
   margin: 0.75rem 0;
   color: #c9d1d9;
   line-height: 1.7;
 }
 
-.prose-linear li p {
+.prose li p {
   margin: 0.5rem 0;
 }
 
-.prose-linear li > ul,
-.prose-linear li > ol {
+.prose li > ul,
+.prose li > ol {
   margin: 0.75rem 0;
 }
 
 /* Task lists */
-.prose-linear li input[type="checkbox"] {
+.prose li input[type="checkbox"] {
   margin-right: 0.875rem;
   margin-top: 0.125rem;
   accent-color: #5e6ad2;
   transform: scale(1.15);
 }
 
-.prose-linear li:has(input[type="checkbox"]) {
+.prose li:has(input[type="checkbox"]) {
   list-style: none;
   margin-left: -1.75rem;
   padding-left: 1.75rem;
 }
 
 /* Links with smooth transitions */
-.prose-linear a {
+.prose a {
   color: #60a5fa;
   text-decoration: none;
   font-weight: 500;
@@ -220,7 +215,7 @@ const props = defineProps<Props>()
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.prose-linear a:hover {
+.prose a:hover {
   color: #93c5fd;
   border-bottom-color: #60a5fa;
   background: rgba(96, 165, 250, 0.05);
@@ -230,18 +225,18 @@ const props = defineProps<Props>()
 }
 
 /* Strong and emphasis */
-.prose-linear strong {
+.prose strong {
   color: #ffffff;
   font-weight: 700;
 }
 
-.prose-linear em {
+.prose em {
   color: #f3f4f6;
   font-style: italic;
 }
 
-/* Tables with Linear styling */
-.prose-linear table {
+/* Tables with styling */
+.prose table {
   width: 100%;
   border-collapse: collapse;
   margin: 2.5rem 0;
@@ -251,11 +246,11 @@ const props = defineProps<Props>()
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.prose-linear thead {
+.prose thead {
   background: #21262d;
 }
 
-.prose-linear th {
+.prose th {
   padding: 1rem 1.25rem;
   text-align: left;
   font-weight: 600;
@@ -265,22 +260,22 @@ const props = defineProps<Props>()
   border-bottom: 1px solid #30363d;
 }
 
-.prose-linear td {
+.prose td {
   padding: 0.875rem 1.25rem;
   color: #c9d1d9;
   border-bottom: 1px solid #21262d;
 }
 
-.prose-linear tbody tr:last-child td {
+.prose tbody tr:last-child td {
   border-bottom: none;
 }
 
-.prose-linear tbody tr:hover {
+.prose tbody tr:hover {
   background: rgba(110, 118, 129, 0.05);
 }
 
 /* Horizontal rules */
-.prose-linear hr {
+.prose hr {
   border: none;
   height: 1px;
   background: linear-gradient(90deg, transparent, #30363d, transparent);
@@ -288,20 +283,20 @@ const props = defineProps<Props>()
 }
 
 /* Image styling */
-.prose-linear img {
+.prose img {
   border-radius: 0.75rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   margin: 2rem 0;
 }
 
 /* Better spacing for nested elements */
-.prose-linear > * + * {
+.prose > * + * {
   margin-top: 1.75rem;
 }
 
-.prose-linear > h1 + *,
-.prose-linear > h2 + *,
-.prose-linear > h3 + * {
+.prose > h1 + *,
+.prose > h2 + *,
+.prose > h3 + * {
   margin-top: 1rem;
 }
 </style> 
