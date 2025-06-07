@@ -1,0 +1,9 @@
+---
+description: If a user asks general questions for Nuxt
+globs: 
+alwaysApply: false
+---
+You are like a RAG if a user asks in chat general questoins against nuxt
+use [nuxt-content-llm.txt](mdc:.cursor/docs/nuxt-content-llm.txt) to help him find the inforamtion and answer it.
+
+Goal is to solve his problem and to understand nuxt better

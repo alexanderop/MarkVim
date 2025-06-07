@@ -166,5 +166,8 @@ import { Dialog } from "reka-ui/namespaced"
 * Use `estimateSize` & `overscan` props for smooth virtual scrolling on large data sets.
 * Stick to Vue 3 `ref` + `v-model` for controlled components; uncontrolled primitives work fine when you don’t need reactivity.
 
+## Styling
+You need to use simple 
+
 ## Reference
 If you need more information you have the full documenation [reka.txt](mdc:.cursor/docs/reka.txt)
