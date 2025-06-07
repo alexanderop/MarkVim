@@ -1,25 +1,60 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import MarkdownIt from 'markdown-it'
-
-const md = new MarkdownIt()
-
-const markdown = ref(`# Welcome to MarkVim
+const initialMarkdown = `# Welcome to MarkVim
 
 Start writing your **markdown** here.
 
 ## Features
 
 - Real-time preview
-- Syntax highlighting
+- Syntax highlighting with Shiki
 - Linear-inspired dark theme
 - Clean, modern interface
 
-### Code Example
+### Code Examples
 
 \`\`\`javascript
 function greet(name) {
   return \`Hello, \${name}!\`;
+}
+
+// Array methods are highlighted properly
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(n => n * 2);
+console.log(doubled);
+\`\`\`
+
+\`\`\`typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+class UserService {
+  private users: User[] = [];
+
+  addUser(user: User): void {
+    this.users.push(user);
+  }
+
+  getUserById(id: number): User | undefined {
+    return this.users.find(user => user.id === id);
+  }
+}
+\`\`\`
+
+\`\`\`css
+.button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 12px 24px;
+  transition: transform 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
 }
 \`\`\`
 
@@ -29,10 +64,16 @@ function greet(name) {
 - [x] Completed item
 - [ ] Another todo
 
-Visit [Linear](https://linear.app) for inspiration.`)
+Visit [Linear](https://linear.app) for inspiration.`
 
-const renderedMarkdown = computed(() => {
-  return md.render(markdown.value)
+const { markdown, renderedMarkdown, shikiCSS } = useMarkdown(initialMarkdown)
+
+useHead({
+  style: [
+    {
+      innerHTML: shikiCSS
+    }
+  ]
 })
 </script>
 
