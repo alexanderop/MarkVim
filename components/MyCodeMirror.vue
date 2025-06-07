@@ -9,18 +9,7 @@ import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighti
 import { tags } from '@lezer/highlight'
 import { vim, Vim } from '@replit/codemirror-vim'
 
-const {
-  extensions = [],
-  theme = 'dark',
-  editable = true,
-  placeholder = '',
-  indentWithTab = true,
-  vimMode = false,
-  lineNumbers = true,
-  lineNumberMode = 'absolute',
-  lineWrapping = true,
-  fontSize = 14
-} = defineProps<{
+const props = withDefaults(defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
   editable?: boolean
@@ -31,7 +20,31 @@ const {
   lineNumberMode?: 'absolute' | 'relative' | 'both'
   lineWrapping?: boolean
   fontSize?: number
-}>()
+}>(), {
+  extensions: () => [],
+  theme: 'dark',
+  editable: true,
+  placeholder: '',
+  indentWithTab: true,
+  vimMode: false,
+  lineNumbers: true,
+  lineNumberMode: 'absolute',
+  lineWrapping: true,
+  fontSize: 14
+})
+
+const {
+  extensions,
+  theme,
+  editable,
+  placeholder,
+  indentWithTab,
+  vimMode,
+  lineNumbers,
+  lineNumberMode,
+  lineWrapping,
+  fontSize
+} = toRefs(props)
 
 const modelValue = defineModel<string>({ default: '' })
 
@@ -95,9 +108,9 @@ function useLineNumbers() {
   const lineNumberCompartment = new Compartment()
 
   function getLineNumberExtension() {
-    if (!lineNumbers) return []
+    if (!lineNumbers.value) return []
     
-    if (lineNumberMode === 'relative' || lineNumberMode === 'both') {
+    if (lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') {
       return cmLineNumbers({
         formatNumber: (lineNo, state) => {
           if (lineNo > state.doc.lines) {
@@ -106,7 +119,7 @@ function useLineNumbers() {
           
           const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
           
-          if (lineNumberMode === 'relative') {
+          if (lineNumberMode.value === 'relative') {
             return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
           }
           
@@ -119,7 +132,7 @@ function useLineNumbers() {
   }
 
   function handleLineNumberUpdate(viewUpdate: ViewUpdate) {
-    if ((lineNumberMode === 'relative' || lineNumberMode === 'both') && viewUpdate.selectionSet) {
+    if ((lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') && viewUpdate.selectionSet) {
       viewUpdate.view.dispatch({
         effects: lineNumberCompartment.reconfigure(getLineNumberExtension())
       })
@@ -135,7 +148,7 @@ function useLineNumbers() {
 
 function useVimMode() {
   function setupCustomVimKeybindings() {
-    if (!vimMode) return
+    if (!vimMode.value) return
 
     Vim.map('jj', '<Esc>', 'insert')
     Vim.map('kk', '<Esc>', 'insert')
@@ -163,33 +176,33 @@ function useEditorExtensions() {
       keymap.of([...defaultKeymap]),
     ]
 
-    if (vimMode) {
+    if (vimMode.value) {
       extensionsList.unshift(vim())
     }
 
-    if (indentWithTab) {
+    if (indentWithTab.value) {
       extensionsList.push(keymap.of([cmIndentWithTab]))
     }
 
-    if (placeholder) {
-      extensionsList.push(cmPlaceholder(placeholder))
+    if (placeholder.value) {
+      extensionsList.push(cmPlaceholder(placeholder.value))
     }
 
     extensionsList.push(lineNumberCompartment.of(getLineNumberExtension()))
 
-    if (lineWrapping) {
+    if (lineWrapping.value) {
       extensionsList.push(EditorView.lineWrapping)
     }
 
-    if (theme === 'dark') {
+    if (theme.value === 'dark') {
       extensionsList.push(oneDark)
     }
 
-    if (!editable) {
+    if (!editable.value) {
       extensionsList.push(EditorView.editable.of(false))
     }
     
-    extensionsList.push(...extensions)
+    extensionsList.push(...extensions.value)
 
     extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
       handleLineNumberUpdate(viewUpdate)
@@ -230,7 +243,7 @@ function useEditorLifecycle() {
       parent: editor.value,
     })
 
-    if (vimMode) {
+    if (vimMode.value) {
       setupCustomVimKeybindings()
     }
   }
@@ -262,7 +275,7 @@ function useModelSync() {
         effects: StateEffect.reconfigure.of(getExtensions()),
       })
       
-      if (vimMode) {
+      if (vimMode.value) {
         setupCustomVimKeybindings()
       }
     }

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 const { settings, toggleVimMode, updateTheme, updateFontSize, resetToDefaults } = useEditorSettings()
+const { showSettings, closeSettings } = useShortcuts()
 </script>
 
 <template>
-  <DialogRoot>
+  <DialogRoot :open="showSettings" @update:open="(open) => !open && closeSettings()">
     <DialogTrigger as-child>
       <button
         class="p-2 rounded-lg border border-editor-border bg-surface-secondary hover:bg-editor-hover transition-colors"
-        title="Settings"
+        title="Settings (g s)"
       >
         <Icon name="heroicons:cog-6-tooth" class="w-5 h-5 text-text-primary" />
       </button>
