@@ -442,26 +442,23 @@ useHead({
   position: relative;
 }
 
-/* Headings with Linear-style colors */
+/* Headings with Linear-style colors - uniform height */
 .cm-header {
   font-weight: 600 !important;
 }
 
 .cm-header.cm-header-1 {
   color: #ffffff !important;
-  font-size: 1.875rem !important;
   font-weight: 700 !important;
 }
 
 .cm-header.cm-header-2 {
   color: #e6edf3 !important;
-  font-size: 1.5rem !important;
   font-weight: 600 !important;
 }
 
 .cm-header.cm-header-3 {
   color: #d2d9e0 !important;
-  font-size: 1.25rem !important;
   font-weight: 600 !important;
 }
 

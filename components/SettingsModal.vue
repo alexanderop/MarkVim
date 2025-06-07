@@ -1,38 +1,52 @@
 <script setup lang="ts">
 const { settings, toggleVimMode, updateTheme, updateFontSize, resetToDefaults } = useEditorSettings()
-const { showSettings, closeSettings } = useShortcuts()
+const { showSettings, closeSettings, openSettings } = useShortcuts()
 </script>
 
 <template>
   <DialogRoot :open="showSettings" @update:open="(open) => !open && closeSettings()">
     <DialogTrigger as-child>
       <button
-        class="p-2 rounded-lg border border-editor-border bg-surface-secondary hover:bg-editor-hover transition-colors"
+        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4"
         title="Settings (g s)"
+        @click="openSettings"
       >
-        <Icon name="heroicons:cog-6-tooth" class="w-5 h-5 text-text-primary" />
+        <Icon name="lucide:settings" class="w-4 h-4 mr-2" />
+        Settings
       </button>
     </DialogTrigger>
 
     <DialogPortal>
-      <DialogOverlay class="fixed inset-0 bg-black/50 backdrop-blur-sm" />
-      <DialogContent class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-surface-primary border border-editor-border rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-6">
-            <DialogTitle class="text-xl font-semibold text-text-primary">
-              Editor Settings
-            </DialogTitle>
-            <DialogClose as-child>
-              <button class="p-1 rounded-lg hover:bg-editor-hover transition-colors">
-                <Icon name="heroicons:x-mark" class="w-5 h-5 text-text-secondary" />
-              </button>
-            </DialogClose>
+      <DialogOverlay class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
+      
+      <DialogContent class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-h-[90vh] overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+          <div>
+            <DialogTitle class="text-lg font-semibold">Settings</DialogTitle>
+            <DialogDescription class="text-sm text-muted-foreground mt-1">
+              Configure your MarkVim editor preferences
+            </DialogDescription>
           </div>
+          
+          <DialogClose as-child>
+            <button
+              class="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+              @click="closeSettings"
+            >
+              <Icon name="lucide:x" class="h-4 w-4" />
+              <span class="sr-only">Close</span>
+            </button>
+          </DialogClose>
+        </div>
+
+        <!-- Content -->
+        <div class="overflow-y-auto flex-1 pr-2">
 
           <div class="space-y-6">
             <!-- Vim Mode Section -->
             <div>
-              <h3 class="text-lg font-medium text-text-primary mb-3">Editor Behavior</h3>
+              <h3 class="font-medium text-sm text-gray-400 uppercase tracking-wider">Editor Behavior</h3>
               <div class="space-y-4">
                 <div class="flex items-center justify-between p-4 bg-surface-secondary rounded-lg border border-editor-border">
                   <div class="flex flex-col">
@@ -63,7 +77,7 @@ const { showSettings, closeSettings } = useShortcuts()
 
             <!-- Appearance Section -->
             <div>
-              <h3 class="text-lg font-medium text-text-primary mb-3">Appearance</h3>
+              <h3 class="font-medium text-sm text-gray-400 uppercase tracking-wider">Appearance</h3>
               <div class="space-y-4">
                 <!-- Theme Selection -->
                 <div class="p-4 bg-surface-secondary rounded-lg border border-editor-border">
@@ -109,7 +123,7 @@ const { showSettings, closeSettings } = useShortcuts()
 
             <!-- Advanced Settings -->
             <div>
-              <h3 class="text-lg font-medium text-text-primary mb-3">Advanced</h3>
+              <h3 class="font-medium text-sm text-gray-400 uppercase tracking-wider">Advanced</h3>
               <div class="space-y-4">
                 <!-- Line Numbers Configuration -->
                 <div class="p-4 bg-surface-secondary rounded-lg border border-editor-border">
@@ -191,18 +205,43 @@ const { showSettings, closeSettings } = useShortcuts()
               </div>
             </div>
 
-            <!-- Reset Button -->
-            <div class="flex justify-end pt-4 border-t border-editor-border">
-              <button
-                class="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary border border-editor-border rounded-lg hover:bg-editor-hover transition-colors"
-                @click="resetToDefaults"
-              >
-                Reset to Defaults
-              </button>
-            </div>
           </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between pt-4 border-t border-gray-800">
+          <div class="text-xs text-gray-500">
+            Press <kbd class="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1 text-xs font-mono bg-gray-700 text-gray-200 border border-gray-600 rounded">⎋</kbd> to close
+          </div>
+          
+          <button
+            class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-gray-200 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+            @click="resetToDefaults"
+          >
+            Reset to Defaults
+          </button>
         </div>
       </DialogContent>
     </DialogPortal>
   </DialogRoot>
-</template> 
+</template>
+
+<style scoped>
+/* Custom scrollbar for the settings content */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+</style> 

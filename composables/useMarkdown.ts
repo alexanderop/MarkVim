@@ -4,7 +4,7 @@ import type MarkdownIt from 'markdown-it'
 export const useMarkdown = (initialContent = '') => {
   let md: MarkdownIt | null = null
 
-  const markdown = ref(initialContent)
+  const markdown = useLocalStorage('markvim-markdown-content', initialContent)
   const renderedMarkdown = ref('')
   const shikiCSS = ref('')
 
