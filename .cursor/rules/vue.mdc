@@ -1,0 +1,9 @@
+---
+description: 
+globs: *.vue
+alwaysApply: false
+---
+## Structre is always
+
+<script setup lang='ts'></script>
+<template></template>
