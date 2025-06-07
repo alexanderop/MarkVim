@@ -2,7 +2,6 @@ export interface EditorSettings {
   // Vim configuration
   vimMode: boolean
   vimKeymap: 'vim' | 'emacs' | 'sublime' | 'vscode'
-  customVimKeybindings: boolean
   
   // Editor appearance
   theme: 'dark' | 'light' | 'auto'
@@ -38,7 +37,6 @@ export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   // Vim configuration
   vimMode: true,
   vimKeymap: 'vim',
-  customVimKeybindings: true,
   
   // Editor appearance
   theme: 'dark',

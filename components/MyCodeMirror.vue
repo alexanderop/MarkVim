@@ -19,8 +19,7 @@ const {
   lineNumbers = true,
   lineNumberMode = 'absolute',
   lineWrapping = true,
-  fontSize = 14,
-  customVimKeybindings = true
+  fontSize = 14
 } = defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
@@ -32,7 +31,6 @@ const {
   lineNumberMode?: 'absolute' | 'relative' | 'both'
   lineWrapping?: boolean
   fontSize?: number
-  customVimKeybindings?: boolean
 }>()
 
 const modelValue = defineModel<string>({ default: '' })
@@ -137,7 +135,7 @@ function useLineNumbers() {
 
 function useVimMode() {
   function setupCustomVimKeybindings() {
-    if (!vimMode || !customVimKeybindings) return
+    if (!vimMode) return
 
     Vim.map('jj', '<Esc>', 'insert')
     Vim.map('kk', '<Esc>', 'insert')
@@ -232,7 +230,7 @@ function useEditorLifecycle() {
       parent: editor.value,
     })
 
-    if (vimMode && customVimKeybindings) {
+    if (vimMode) {
       setupCustomVimKeybindings()
     }
   }
@@ -264,7 +262,7 @@ function useModelSync() {
         effects: StateEffect.reconfigure.of(getExtensions()),
       })
       
-      if (vimMode && customVimKeybindings) {
+      if (vimMode) {
         setupCustomVimKeybindings()
       }
     }
@@ -288,11 +286,7 @@ watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode, l
   reconfigureExtensions()
 })
 
-watch(() => customVimKeybindings, (newValue) => {
-  if (vimMode && newValue) {
-    setupCustomVimKeybindings()
-  }
-})
+
 
 onBeforeUnmount(() => {
   destroyEditor()

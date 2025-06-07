@@ -36,7 +36,6 @@ const { settings } = defineProps<{
         placeholder="# Start writing your story..."
         class="h-full bg-editor-bg"
         :vim-mode="settings.vimMode"
-        :custom-vim-keybindings="settings.customVimKeybindings"
         :line-numbers="settings.lineNumbers"
         :line-number-mode="settings.lineNumberMode"
         :line-wrapping="settings.lineWrapping"

@@ -56,28 +56,7 @@ const { settings, toggleVimMode, updateTheme, updateFontSize, resetToDefaults } 
                   </button>
                 </div>
                 
-                <div v-if="settings.vimMode" class="flex items-center justify-between p-4 bg-surface-secondary rounded-lg border border-editor-border">
-                  <div class="flex flex-col">
-                    <h4 class="text-text-primary font-medium">Custom Vim Keybindings</h4>
-                    <p class="text-text-secondary text-sm">Enable custom shortcuts like 'jj' → Escape</p>
-                  </div>
-                  <button
-                    :class="[
-                      'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-editor-active focus:ring-offset-2 focus:ring-offset-surface-primary',
-                      settings.customVimKeybindings ? 'bg-editor-active' : 'bg-gray-600'
-                    ]"
-                    role="switch"
-                    :aria-checked="settings.customVimKeybindings"
-                    @click="settings.customVimKeybindings = !settings.customVimKeybindings"
-                  >
-                    <span
-                      :class="[
-                        'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                        settings.customVimKeybindings ? 'translate-x-6' : 'translate-x-1'
-                      ]"
-                    />
-                  </button>
-                </div>
+
               </div>
             </div>
 
