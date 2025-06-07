@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import type { EditorState } from '@codemirror/state'
-import { EditorState as CMEditorState, StateEffect, type Extension } from '@codemirror/state'
-import { EditorView, keymap, placeholder as cmPlaceholder, type ViewUpdate, drawSelection } from '@codemirror/view'
+import { EditorState as CMEditorState, StateEffect, Compartment, type Extension } from '@codemirror/state'
+import { EditorView, keymap, placeholder as cmPlaceholder, type ViewUpdate, drawSelection, lineNumbers as cmLineNumbers } from '@codemirror/view'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap, history, indentWithTab as cmIndentWithTab } from '@codemirror/commands'
 import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
@@ -16,7 +16,11 @@ const {
   editable = true,
   placeholder = '',
   indentWithTab = true,
-  vimMode = false
+  vimMode = false,
+  lineNumbers = true,
+  lineNumberMode = 'absolute',
+  lineWrapping = true,
+  fontSize = 14
 } = defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
@@ -24,6 +28,10 @@ const {
   placeholder?: string
   indentWithTab?: boolean
   vimMode?: boolean
+  lineNumbers?: boolean
+  lineNumberMode?: 'absolute' | 'relative' | 'both'
+  lineWrapping?: boolean
+  fontSize?: number
 }>()
 
 const modelValue = defineModel<string>({ default: '' })
@@ -38,8 +46,36 @@ const editor = ref<HTMLDivElement | null>(null) // The <div> element
 const view = ref<EditorView>() // The CodeMirror EditorView instance
 const state = ref<EditorState>() // The CodeMirror EditorState instance
 
+// Create a compartment for line numbers so we can reconfigure them
+const lineNumberCompartment = new Compartment()
+
 // Extension Management
 // =============================================
+const getLineNumberExtension = () => {
+  if (!lineNumbers) return []
+  
+  if (lineNumberMode === 'relative' || lineNumberMode === 'both') {
+    return cmLineNumbers({
+      formatNumber: (lineNo, state) => {
+        if (lineNo > state.doc.lines) {
+          return '0'
+        }
+        
+        const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
+        
+        if (lineNumberMode === 'relative') {
+          // Show actual line number on current line, relative distances on others
+          return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
+        } else { // both mode
+          return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
+        }
+      }
+    })
+  } else {
+    return cmLineNumbers()
+  }
+}
+
 const getExtensions = () => {
   const extensionsList: Extension[] = [
     // Basic functionality
@@ -66,6 +102,13 @@ const getExtensions = () => {
     extensionsList.push(cmPlaceholder(placeholder))
   }
 
+  // Add line numbers using the compartment
+  extensionsList.push(lineNumberCompartment.of(getLineNumberExtension()))
+
+  if (lineWrapping) {
+    extensionsList.push(EditorView.lineWrapping)
+  }
+
   if (theme === 'dark') {
     extensionsList.push(oneDark)
   }
@@ -79,6 +122,13 @@ const getExtensions = () => {
 
   // Add the update listener
   extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
+    // Handle relative line number updates on selection change
+    if ((lineNumberMode === 'relative' || lineNumberMode === 'both') && viewUpdate.selectionSet) {
+      viewUpdate.view.dispatch({
+        effects: lineNumberCompartment.reconfigure(getLineNumberExtension())
+      })
+    }
+    
     // Propagate the update event
     emit('update', viewUpdate)
     
@@ -125,7 +175,7 @@ watch(modelValue, (newValue) => {
 })
 
 // Watch for extension changes to reconfigure the editor
-watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode], () => {
+watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode, lineNumbers, lineNumberMode, lineWrapping], () => {
   if (view.value) {
     view.value.dispatch({
       effects: StateEffect.reconfigure.of(getExtensions()),
@@ -141,7 +191,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="editor" class="cm-theme"></div>
+  <div ref="editor" class="cm-theme" :style="{ fontSize: fontSize + 'px' }"></div>
 </template>
 
 <style>

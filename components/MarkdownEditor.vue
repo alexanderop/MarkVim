@@ -1,46 +1,49 @@
 <script setup lang="ts">
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
+import type { EditorSettings } from '~/composables/useEditorSettings'
 
-interface Props {
-  modelValue: string
-}
+const modelValue = defineModel<string>()
 
-interface Emits {
-  (e: 'update:modelValue', value: string): void
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const { settings } = defineProps<{
+  settings: EditorSettings
+}>()
 </script>
 
 <template>
-  <div class="bg-[#0c0d11] flex flex-col h-screen w-full">
-    <!-- Linear-style header -->
-    <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6 flex-shrink-0">
+  <div class="bg-editor-bg flex flex-col h-screen w-full">
+    <!-- Header-->
+    <div class="h-14 bg-editor-bg border-b border-editor-border flex items-center justify-between px-6 flex-shrink-0">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5">
-          <div class="w-3 h-3 rounded-full bg-[#ff5f57] shadow-sm"/>
-          <div class="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm"/>
-          <div class="w-3 h-3 rounded-full bg-[#28ca42] shadow-sm"/>
+          <div class="w-3 h-3 rounded-full bg-window-close shadow-sm"/>
+          <div class="w-3 h-3 rounded-full bg-window-minimize shadow-sm"/>
+          <div class="w-3 h-3 rounded-full bg-window-maximize shadow-sm"/>
         </div>
-        <div class="w-px h-4 bg-[#1d1f23]"></div>
-        <span class="text-sm font-medium text-[#9ca3af] tracking-tight">Editor</span>
+        <div class="w-px h-4 bg-editor-divider"></div>
+        <span class="text-sm font-medium text-text-primary tracking-tight">Editor</span>
       </div>
       <div class="flex items-center space-x-3">
-        <div class="text-xs text-[#6c7383] font-mono">Markdown</div>
+        <div class="text-xs text-text-secondary font-mono">Markdown</div>
       </div>
     </div>
     
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
       <MyCodeMirror
-        :model-value="props.modelValue"
-        @update:model-value="emit('update:modelValue', $event)"
+        v-model="modelValue"
         :extensions="[markdownLang()]"
-        theme="dark"
+        :theme="settings.theme === 'auto' ? 'dark' : settings.theme"
         placeholder="# Start writing your story..."
-        class="h-full bg-[#0c0d11]"
-        vim-mode
+        class="h-full bg-editor-bg"
+        :vim-mode="settings.vimMode"
+        :line-numbers="settings.lineNumbers"
+        :line-number-mode="settings.lineNumberMode"
+        :line-wrapping="settings.lineWrapping"
+        :font-size="settings.fontSize"
+        :style="{ 
+          fontSize: `${settings.fontSize}px`,
+          fontFamily: settings.fontFamily === 'mono' ? 'var(--font-mono)' : 'var(--font-sans)'
+        }"
       />
     </div>
   </div>
