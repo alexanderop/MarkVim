@@ -5,7 +5,11 @@ alwaysApply: true
 ---
 # MarkVim Project - Technology Stack & Capabilities
 
-## Project Overview
+ONLY USE COMMENTS WHEN REALLY NEEED I HATE COMMENTS
+
+never use else use early returns or ternary
+
+## Project OverviewO
 This is a **Nuxt 3** application called MarkVim, built with modern web technologies and focused on markdown editing capabilities.
 
 ## Available Technologies & Dependencies

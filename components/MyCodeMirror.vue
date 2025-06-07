@@ -1,27 +1,15 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
-import type { EditorState } from '@codemirror/state'
-import { EditorState as CMEditorState, StateEffect, Compartment, type Extension } from '@codemirror/state'
-import { EditorView, keymap, placeholder as cmPlaceholder, type ViewUpdate, drawSelection, lineNumbers as cmLineNumbers } from '@codemirror/view'
+import { EditorState as CMEditorState, StateEffect, Compartment } from '@codemirror/state'
+import type { Extension } from '@codemirror/state'
+import { EditorView, keymap, placeholder as cmPlaceholder, drawSelection, lineNumbers as cmLineNumbers } from '@codemirror/view'
+import type { ViewUpdate } from '@codemirror/view'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap, history, indentWithTab as cmIndentWithTab } from '@codemirror/commands'
-import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
-import { vim } from '@replit/codemirror-vim'
+import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
+import { tags } from '@lezer/highlight'
+import { vim, Vim } from '@replit/codemirror-vim'
 
-// Define Component Props & Model
-// =============================================
-const {
-  extensions = [],
-  theme = 'light',
-  editable = true,
-  placeholder = '',
-  indentWithTab = true,
-  vimMode = false,
-  lineNumbers = true,
-  lineNumberMode = 'absolute',
-  lineWrapping = true,
-  fontSize = 14
-} = defineProps<{
+const props = withDefaults(defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
   editable?: boolean
@@ -32,7 +20,31 @@ const {
   lineNumberMode?: 'absolute' | 'relative' | 'both'
   lineWrapping?: boolean
   fontSize?: number
-}>()
+}>(), {
+  extensions: () => [],
+  theme: 'dark',
+  editable: true,
+  placeholder: '',
+  indentWithTab: true,
+  vimMode: false,
+  lineNumbers: true,
+  lineNumberMode: 'absolute',
+  lineWrapping: true,
+  fontSize: 14
+})
+
+const {
+  extensions,
+  theme,
+  editable,
+  placeholder,
+  indentWithTab,
+  vimMode,
+  lineNumbers,
+  lineNumberMode,
+  lineWrapping,
+  fontSize
+} = toRefs(props)
 
 const modelValue = defineModel<string>({ default: '' })
 
@@ -40,153 +52,257 @@ const emit = defineEmits<{
   (event: 'update', viewUpdate: ViewUpdate): void
 }>()
 
-// Refs and State Management
-// =============================================
-const editor = ref<HTMLDivElement | null>(null) // The <div> element
-const view = ref<EditorView>() // The CodeMirror EditorView instance
-const state = ref<EditorState>() // The CodeMirror EditorState instance
-
-// Create a compartment for line numbers so we can reconfigure them
-const lineNumberCompartment = new Compartment()
-
-// Extension Management
-// =============================================
-const getLineNumberExtension = () => {
-  if (!lineNumbers) return []
+// Clean monochromatic theme using hardcoded CSS colors
+const customHighlightStyle = HighlightStyle.define([
+  // Headers - Pure white for maximum contrast and prominence
+  { tag: tags.heading1, color: "#ffffff", fontWeight: "bold", fontSize: "1.2em" },
+  { tag: tags.heading2, color: "#ffffff", fontWeight: "bold", fontSize: "1.1em" },
+  { tag: tags.heading3, color: "#ffffff", fontWeight: "bold" },
+  { tag: tags.heading4, color: "#ffffff", fontWeight: "bold" },
+  { tag: tags.heading5, color: "#ffffff", fontWeight: "bold" },
+  { tag: tags.heading6, color: "#ffffff", fontWeight: "bold" },
   
-  if (lineNumberMode === 'relative' || lineNumberMode === 'both') {
-    return cmLineNumbers({
-      formatNumber: (lineNo, state) => {
-        if (lineNo > state.doc.lines) {
-          return '0'
-        }
-        
-        const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
-        
-        if (lineNumberMode === 'relative') {
-          // Show actual line number on current line, relative distances on others
+  // Main text - Light gray for comfortable reading
+  { tag: tags.content, color: "#d1d5db" },
+  
+  // Code elements - Different shades of gray for hierarchy
+  { tag: tags.keyword, color: "#f3f4f6", fontWeight: "bold" },
+  { tag: tags.string, color: "#e5e7eb" },
+  { tag: tags.comment, color: "#9ca3af", fontStyle: "italic" },
+  { tag: tags.variableName, color: "#d1d5db" },
+  { tag: tags.function(tags.variableName), color: "#f9fafb" },
+  
+  // Numbers and constants
+  { tag: tags.number, color: "#e5e7eb" },
+  { tag: tags.bool, color: "#f3f4f6" },
+  { tag: tags.null, color: "#f3f4f6" },
+  
+  // Punctuation and operators
+  { tag: tags.operator, color: "#d1d5db" },
+  { tag: tags.punctuation, color: "#d1d5db" },
+  { tag: tags.bracket, color: "#f3f4f6" },
+  
+  // Special markdown elements
+  { tag: tags.link, color: "#ffffff", textDecoration: "underline" },
+  { tag: tags.emphasis, color: "#d1d5db", fontStyle: "italic" },
+  { tag: tags.strong, color: "#ffffff", fontWeight: "bold" },
+  { tag: tags.strikethrough, color: "#9ca3af", textDecoration: "line-through" },
+  
+  // Markdown specific elements
+  { tag: tags.quote, color: "#9ca3af", fontStyle: "italic" },
+  { tag: tags.list, color: "#e5e7eb" },
+  { tag: tags.monospace, color: "#f3f4f6", backgroundColor: "#374151", padding: "2px 4px", borderRadius: "3px" },
+  
+  // Vim keys and commands - pure white for prominence
+  { tag: tags.labelName, color: "#ffffff" },
+  { tag: tags.special(tags.string), color: "#ffffff" }
+])
+
+const { lineNumberCompartment, getLineNumberExtension, handleLineNumberUpdate } = useLineNumbers()
+const { setupCustomVimKeybindings } = useVimMode()
+const { getExtensions } = useEditorExtensions()
+const { editor, view, initializeEditor, destroyEditor } = useEditorLifecycle()
+const { syncModelValue, reconfigureExtensions } = useModelSync()
+
+function useLineNumbers() {
+  const lineNumberCompartment = new Compartment()
+
+  function getLineNumberExtension() {
+    if (!lineNumbers.value) return []
+    
+    if (lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') {
+      return cmLineNumbers({
+        formatNumber: (lineNo, state) => {
+          if (lineNo > state.doc.lines) {
+            return '0'
+          }
+          
+          const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
+          
+          if (lineNumberMode.value === 'relative') {
+            return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
+          }
+          
           return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
-        } else { // both mode
-          return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
         }
-      }
-    })
-  } else {
+      })
+    }
+    
     return cmLineNumbers()
   }
-}
 
-const getExtensions = () => {
-  const extensionsList: Extension[] = [
-    // Basic functionality
-    history(),
-    drawSelection(),
-    indentOnInput(),
-    bracketMatching(),
-    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-    keymap.of([
-      ...defaultKeymap,
-    ]),
-  ]
-
-  // Add vim keybindings first if enabled (must come before other keymaps)
-  if (vimMode) {
-    extensionsList.unshift(vim())
-  }
-
-  if (indentWithTab) {
-    extensionsList.push(keymap.of([cmIndentWithTab]))
-  }
-
-  if (placeholder) {
-    extensionsList.push(cmPlaceholder(placeholder))
-  }
-
-  // Add line numbers using the compartment
-  extensionsList.push(lineNumberCompartment.of(getLineNumberExtension()))
-
-  if (lineWrapping) {
-    extensionsList.push(EditorView.lineWrapping)
-  }
-
-  if (theme === 'dark') {
-    extensionsList.push(oneDark)
-  }
-
-  if (!editable) {
-    extensionsList.push(EditorView.editable.of(false))
-  }
-  
-  // Add user-provided extensions
-  extensionsList.push(...extensions)
-
-  // Add the update listener
-  extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
-    // Handle relative line number updates on selection change
-    if ((lineNumberMode === 'relative' || lineNumberMode === 'both') && viewUpdate.selectionSet) {
+  function handleLineNumberUpdate(viewUpdate: ViewUpdate) {
+    if ((lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') && viewUpdate.selectionSet) {
       viewUpdate.view.dispatch({
         effects: lineNumberCompartment.reconfigure(getLineNumberExtension())
       })
     }
-    
-    // Propagate the update event
-    emit('update', viewUpdate)
-    
-    // Handle v-model updates
-    if (viewUpdate.docChanged) {
-      const newCode = viewUpdate.state.doc.toString()
-      if (newCode !== modelValue.value) {
-        modelValue.value = newCode
-      }
-    }
-  }))
+  }
 
-  return extensionsList
+  return {
+    lineNumberCompartment,
+    getLineNumberExtension,
+    handleLineNumberUpdate
+  }
 }
 
-// Initialization
-// =============================================
+function useVimMode() {
+  function setupCustomVimKeybindings() {
+    if (!vimMode.value) return
+
+    Vim.map('jj', '<Esc>', 'insert')
+    Vim.map('kk', '<Esc>', 'insert')
+    Vim.map('Y', 'y$', 'normal')
+    
+    Vim.defineEx('write', 'w', () => {
+      console.log('Save command triggered!')
+    })
+  }
+
+  return {
+    setupCustomVimKeybindings
+  }
+}
+
+function useEditorExtensions() {
+  function getExtensions() {
+    const extensionsList: Extension[] = [
+      history(),
+      drawSelection(),
+      indentOnInput(),
+      bracketMatching(),
+      syntaxHighlighting(customHighlightStyle),
+      syntaxHighlighting(defaultHighlightStyle),
+      keymap.of([...defaultKeymap]),
+    ]
+
+    if (vimMode.value) {
+      extensionsList.unshift(vim())
+    }
+
+    if (indentWithTab.value) {
+      extensionsList.push(keymap.of([cmIndentWithTab]))
+    }
+
+    if (placeholder.value) {
+      extensionsList.push(cmPlaceholder(placeholder.value))
+    }
+
+    extensionsList.push(lineNumberCompartment.of(getLineNumberExtension()))
+
+    if (lineWrapping.value) {
+      extensionsList.push(EditorView.lineWrapping)
+    }
+
+    if (theme.value === 'dark') {
+      extensionsList.push(oneDark)
+    }
+
+    if (!editable.value) {
+      extensionsList.push(EditorView.editable.of(false))
+    }
+    
+    extensionsList.push(...extensions.value)
+
+    extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
+      handleLineNumberUpdate(viewUpdate)
+      emit('update', viewUpdate)
+      
+      if (viewUpdate.docChanged) {
+        const newCode = viewUpdate.state.doc.toString()
+        if (newCode !== modelValue.value) {
+          modelValue.value = newCode
+        }
+      }
+    }))
+
+    return extensionsList
+  }
+
+  return {
+    getExtensions
+  }
+}
+
+function useEditorLifecycle() {
+  const editor = ref<HTMLDivElement | null>(null)
+  const view = ref<EditorView>()
+
+  function initializeEditor() {
+    if (!editor.value) {
+      throw new Error('Editor container element not found.')
+    }
+
+    const state = CMEditorState.create({
+      doc: modelValue.value,
+      extensions: getExtensions(),
+    })
+
+    view.value = new EditorView({
+      state: state,
+      parent: editor.value,
+    })
+
+    if (vimMode.value) {
+      setupCustomVimKeybindings()
+    }
+  }
+
+  function destroyEditor() {
+    view.value?.destroy()
+  }
+
+  return {
+    editor,
+    view,
+    initializeEditor,
+    destroyEditor
+  }
+}
+
+function useModelSync() {
+  function syncModelValue(newValue: string) {
+    if (view.value && newValue !== view.value.state.doc.toString()) {
+      view.value.dispatch({
+        changes: { from: 0, to: view.value.state.doc.length, insert: newValue },
+      })
+    }
+  }
+
+  function reconfigureExtensions() {
+    if (view.value) {
+      view.value.dispatch({
+        effects: StateEffect.reconfigure.of(getExtensions()),
+      })
+      
+      if (vimMode.value) {
+        setupCustomVimKeybindings()
+      }
+    }
+  }
+
+  return {
+    syncModelValue,
+    reconfigureExtensions
+  }
+}
+
 onMounted(() => {
-  if (!editor.value) {
-    throw new Error('Editor container element not found.')
-  }
-
-  state.value = CMEditorState.create({
-    doc: modelValue.value,
-    extensions: getExtensions(),
-  })
-
-  view.value = new EditorView({
-    state: state.value,
-    parent: editor.value,
-  })
+  initializeEditor()
 })
 
-// Prop and v-model watchers
-// =============================================
-
-// Watch for external changes to v-model
 watch(modelValue, (newValue) => {
-  if (view.value && newValue !== view.value.state.doc.toString()) {
-    view.value.dispatch({
-      changes: { from: 0, to: view.value.state.doc.length, insert: newValue },
-    })
-  }
+  syncModelValue(newValue)
 })
 
-// Watch for extension changes to reconfigure the editor
 watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode, lineNumbers, lineNumberMode, lineWrapping], () => {
-  if (view.value) {
-    view.value.dispatch({
-      effects: StateEffect.reconfigure.of(getExtensions()),
-    })
-  }
+  reconfigureExtensions()
 })
 
-// Cleanup
-// =============================================
+
+
 onBeforeUnmount(() => {
-  view.value?.destroy()
+  destroyEditor()
 })
 </script>
 
@@ -195,7 +311,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
-/* Remove default styling to match Linear's clean design */
 .cm-editor {
   height: 100%;
   border: none !important;
@@ -208,18 +323,15 @@ onBeforeUnmount(() => {
   background: transparent;
 }
 
-/* Better focus handling */
 .cm-editor.cm-focused {
   outline: none;
 }
 
-/* Improved gutter styling */
 .cm-gutters {
   background: transparent !important;
   border: none !important;
 }
 
-/* Line number improvements */
 .cm-lineNumbers {
   min-width: 3rem;
 }

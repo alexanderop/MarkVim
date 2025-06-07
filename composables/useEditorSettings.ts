@@ -75,6 +75,10 @@ export const useEditorSettings = () => {
     settings.value.vimMode = !settings.value.vimMode
   }
   
+  const toggleLineNumbers = () => {
+    settings.value.lineNumbers = !settings.value.lineNumbers
+  }
+  
   const updateTheme = (theme: EditorSettings['theme']) => {
     settings.value.theme = theme
   }
@@ -104,6 +108,7 @@ export const useEditorSettings = () => {
   return {
     settings: readonly(settings),
     toggleVimMode,
+    toggleLineNumbers,
     updateTheme,
     updateFontSize,
     resetToDefaults,
