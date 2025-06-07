@@ -42,9 +42,6 @@ const state = ref<EditorState>() // The CodeMirror EditorState instance
 // =============================================
 const getExtensions = () => {
   const extensions: Extension[] = [
-    // Add vim keybindings first if enabled (must come before other keymaps)
-    ...(props.vimMode ? [vim()] : []),
-    
     // Basic functionality
     history(),
     drawSelection(),
@@ -55,6 +52,11 @@ const getExtensions = () => {
       ...defaultKeymap,
     ]),
   ]
+
+  // Add vim keybindings first if enabled (must come before other keymaps)
+  if (props.vimMode) {
+    extensions.unshift(vim())
+  }
 
   if (props.indentWithTab) {
     extensions.push(keymap.of([indentWithTab]))
