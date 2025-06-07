@@ -146,15 +146,18 @@ export function useShortcuts() {
 
   // Utility to format key combination for display
   function formatKeys(keys: string): string {
+    // Check if we're on client-side and navigator is available
+    const isMac = process.client && navigator?.platform?.includes('Mac')
+    
     return keys
       .split('+')
       .map(key => {
         const keyMap: Record<string, string> = {
-          meta: navigator.platform.includes('Mac') ? '⌘' : 'Ctrl',
+          meta: isMac ? '⌘' : 'Ctrl',
           cmd: '⌘',
-          ctrl: navigator.platform.includes('Mac') ? '⌃' : 'Ctrl',
-          alt: navigator.platform.includes('Mac') ? '⌥' : 'Alt',
-          shift: navigator.platform.includes('Mac') ? '⇧' : 'Shift',
+          ctrl: isMac ? '⌃' : 'Ctrl',
+          alt: isMac ? '⌥' : 'Alt',
+          shift: isMac ? '⇧' : 'Shift',
           enter: '↵',
           space: '␣',
           tab: '⇥',
@@ -170,7 +173,7 @@ export function useShortcuts() {
         const normalized = key.trim().toLowerCase()
         return keyMap[normalized] || key.trim().toUpperCase()
       })
-      .join(navigator.platform.includes('Mac') ? '' : '+')
+      .join(isMac ? '' : '+')
   }
 
   // Check if a shortcut is currently active

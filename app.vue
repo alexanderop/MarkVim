@@ -82,14 +82,80 @@ const viewMode = ref<'split' | 'editor' | 'preview'>('split')
 
 const { markdown, renderedMarkdown, shikiCSS } = useMarkdown(initialMarkdown)
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
-const { settings } = useEditorSettings()
+const { settings, toggleVimMode, toggleLineNumbers } = useEditorSettings()
 const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'preview')
 const isSplitView = computed(() => viewMode.value === 'split')
 const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
 
+// Command palette state
+const commandPaletteOpen = ref(false)
+const commandPalettePosition = ref({ x: 0, y: 0 })
+
 const { registerShortcuts, formatKeys } = useShortcuts()
 
+// Global keyboard event handler for command palette
+function handleGlobalKeydown(event: KeyboardEvent) {
+  // Handle Meta+K (Cmd+K) shortcut for command palette
+  if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
+    event.preventDefault()
+    openCommandPalette(event)
+    return
+  }
+  
+  // Close command palette with Escape
+  if (event.key === 'Escape' && commandPaletteOpen.value) {
+    commandPaletteOpen.value = false
+  }
+}
+
+function openCommandPalette(event?: KeyboardEvent) {
+  // Position the command palette near the center of the screen
+  const centerX = window.innerWidth / 2 - 200 // 200 is half width of palette
+  const centerY = window.innerHeight / 3
+  
+  commandPalettePosition.value = { x: centerX, y: centerY }
+  commandPaletteOpen.value = true
+}
+
+function closeCommandPalette() {
+  commandPaletteOpen.value = false
+}
+
+function handleSaveDocument() {
+  // Create a blob and download the file
+  const blob = new Blob([markdown.value], { type: 'text/markdown' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `markvim-document-${new Date().toISOString().split('T')[0]}.md`
+  a.click()
+  URL.revokeObjectURL(url)
+  
+  console.log('Document saved!')
+}
+
+function handleInsertText(text: string) {
+  // For now, we'll append to the markdown - this could be improved with cursor position
+  markdown.value += text
+}
+
+function handleToggleVimMode() {
+  toggleVimMode()
+}
+
+function handleToggleLineNumbers() {
+  toggleLineNumbers()
+}
+
+function handleToggleSettings() {
+  // This would open the settings modal - for now, just log
+  console.log('Settings toggled')
+}
+
 onMounted(() => {
+  // Add global event listener
+  document.addEventListener('keydown', handleGlobalKeydown)
+  
   registerShortcuts([
     {
       keys: '1',
@@ -115,8 +181,7 @@ onMounted(() => {
       keys: 'meta+k',
       description: 'Open command palette',
       action: () => {
-        // TODO: Implement command palette
-        console.log('Command palette opened')
+        openCommandPalette()
       },
       category: 'Navigation'
     },
@@ -130,6 +195,10 @@ onMounted(() => {
       category: 'File'
     },
   ])
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', handleGlobalKeydown)
 })
 
 useHead({
@@ -255,10 +324,26 @@ useHead({
           <span>{{ formatKeys('1') }} Editor</span>
           <span>{{ formatKeys('2') }} Split</span>
           <span>{{ formatKeys('3') }} Preview</span>
+          <span>{{ formatKeys('meta+k') }} Commands</span>
           <span>{{ formatKeys('shift+/') }} Help</span>
         </div>
       </div>
     </div>
+
+    <!-- Global command palette -->
+    <CommandPalette 
+      v-model:open="commandPaletteOpen"
+      :position="commandPalettePosition"
+      :view-mode="viewMode"
+      :markdown="markdown"
+      @command-selected="closeCommandPalette"
+      @change-view-mode="viewMode = $event"
+      @save-document="handleSaveDocument"
+      @insert-text="handleInsertText"
+      @toggle-vim-mode="handleToggleVimMode"
+      @toggle-line-numbers="handleToggleLineNumbers"
+      @toggle-settings="handleToggleSettings"
+    />
   </div>
 </template>
 
