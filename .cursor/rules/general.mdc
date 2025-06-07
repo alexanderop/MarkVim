@@ -67,10 +67,5 @@ You have access to comprehensive Nuxt documentation including:
 - Use server-side rendering capabilities when appropriate
 - Implement proper SEO meta tags with Nuxt's built-in head management
 
-## Styling
-
-this project is not using tailwind use BEM
-
-and put all styling under [main.css](mdc:assets/css/main.css)
 
 When working on this project, you can reference Nuxt documentation for any framework-specific questions, and utilize the available UI components from Reka UI for consistent design patterns.
