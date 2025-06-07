@@ -2,6 +2,7 @@ import MarkdownIt from 'markdown-it'
 import { fromHighlighter } from '@shikijs/markdown-it/core'
 import { createHighlighter } from 'shiki'
 import type { Highlighter } from 'shiki'
+import markdownItMermaid from '@markslides/markdown-it-mermaid'
 
 let markdownInstance: MarkdownIt | null = null
 let shikiHighlighter: Highlighter | null = null
@@ -74,12 +75,20 @@ export async function createMarkdownRenderer() {
         theme: 'dracula-soft'
       })
     )
+    
+    // Add Mermaid support
+    markdownInstance.use(markdownItMermaid)
 
     // Override the default fence renderer to strip inline styles and add language data attribute
     const originalFence = markdownInstance.renderer.rules.fence || function() { return '' }
     markdownInstance.renderer.rules.fence = function(tokens, idx, options, env, slf) {
       const token = tokens[idx]
       const langName = token.info.trim().split(/\s+/g)[0] || 'plaintext'
+      
+      // Skip Shiki processing for Mermaid blocks to avoid double processing
+      if (langName === 'mermaid') {
+        return `<div class="mermaid">\n${token.content}\n</div>`
+      }
       
       const result = originalFence.call(this, tokens, idx, options, env, slf)
       const stripped = stripInlineStyles(result)

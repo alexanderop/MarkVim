@@ -74,6 +74,46 @@ function testVimMapping() {
 
 Happy writing with Vim! ✨
 
+## 🎨 Mermaid Diagrams
+
+MarkVim now supports beautiful Mermaid diagrams! Here are some examples:
+
+### Flowchart Example
+\`\`\`mermaid
+flowchart TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> B
+    C --> E[End]
+\`\`\`
+
+### Sequence Diagram
+\`\`\`mermaid
+sequenceDiagram
+    participant E as Editor
+    participant P as Preview
+    participant M as Mermaid
+    
+    E->>P: Save markdown
+    P->>M: Process diagram
+    M-->>P: Render SVG
+    P->>P: Display result
+\`\`\`
+
+### Git Flow
+\`\`\`mermaid
+gitgraph
+    commit
+    branch feature
+    checkout feature
+    commit
+    commit
+    checkout main
+    merge feature
+    commit
+\`\`\`
+
 ---
 
 *Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`
@@ -94,7 +134,7 @@ const commandPalettePosition = ref({ x: 0, y: 0 })
 const { registerShortcuts, formatKeys } = useShortcuts()
 
 // Global keyboard event handler for command palette
-function handleGlobalKeydown(event: KeyboardEvent) {
+function handleGlobalKeydown(event: KeyboardEvent): void {
   // Handle Meta+K (Cmd+K) shortcut for command palette
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
     event.preventDefault()

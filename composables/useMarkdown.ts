@@ -1,5 +1,5 @@
 import { createMarkdownRenderer, generateShikiCSS } from '~/utils/markdown'
-import type { MarkdownIt } from 'markdown-it'
+import type MarkdownIt from 'markdown-it'
 
 export const useMarkdown = (initialContent = '') => {
   let md: MarkdownIt | null = null
