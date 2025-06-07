@@ -67,6 +67,7 @@ class UserService {
 Visit [Linear](https://linear.app) for inspiration.`
 
 const { markdown, renderedMarkdown, shikiCSS } = useMarkdown(initialMarkdown)
+const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 
 useHead({
   style: [
@@ -78,9 +79,27 @@ useHead({
 </script>
 
 <template>
-  <div class="h-screen flex bg-[#0c0d11] text-gray-100 font-sans">
-    <MarkdownEditor v-model="markdown" />
-    <MarkdownPreview :rendered-html="renderedMarkdown" />
+  <div ref="containerRef" class="h-screen flex bg-[#0c0d11] text-gray-100 font-sans relative">
+    <MarkdownEditor 
+      v-model="markdown" 
+      :style="{ width: `${leftPaneWidth}%` }"
+    />
+    
+    <!-- Resizable splitter -->
+    <div 
+      class="w-1 bg-[#1d1f23] hover:bg-[#2a2d3a] cursor-col-resize flex-shrink-0 relative group transition-colors duration-200"
+      :class="{ 'bg-[#5e6ad2]': isDragging }"
+      @mousedown="startDrag"
+    >
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-0.5 h-8 bg-[#6c7383] group-hover:bg-[#9ca3af] transition-colors duration-200 opacity-60"/>
+      </div>
+    </div>
+    
+    <MarkdownPreview 
+      :rendered-html="renderedMarkdown"
+      :style="{ width: `${rightPaneWidth}%` }"
+    />
   </div>
 </template>
 

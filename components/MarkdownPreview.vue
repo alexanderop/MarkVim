@@ -5,7 +5,7 @@ const { renderedHtml } = defineProps<{
 </script>
 
 <template>
-  <div class="w-1/2 flex flex-col bg-[#0c0d11] h-screen">
+  <div class="flex flex-col bg-[#0c0d11] h-screen w-full">
     <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6 flex-shrink-0">
       <div class="flex items-center space-x-4">
         <span class="text-sm font-medium text-[#9ca3af] tracking-tight">Preview</span>

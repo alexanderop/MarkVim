@@ -14,7 +14,7 @@ const emit = defineEmits<Emits>()
 </script>
 
 <template>
-  <div class="w-1/2 border-r border-[#1d1f23] bg-[#0c0d11] flex flex-col h-screen">
+  <div class="bg-[#0c0d11] flex flex-col h-screen w-full">
     <!-- Linear-style header -->
     <div class="h-14 bg-[#0c0d11] border-b border-[#1d1f23] flex items-center justify-between px-6 flex-shrink-0">
       <div class="flex items-center space-x-4">
