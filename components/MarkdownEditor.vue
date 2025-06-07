@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
 
-interface Props {
-  modelValue: string
-}
-
-interface Emits {
-  (e: 'update:modelValue', value: string): void
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const modelValue = defineModel<string>()
 </script>
 
 <template>
@@ -34,8 +25,7 @@ const emit = defineEmits<Emits>()
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
       <MyCodeMirror
-        :model-value="props.modelValue"
-        @update:model-value="emit('update:modelValue', $event)"
+        v-model="modelValue"
         :extensions="[markdownLang()]"
         theme="dark"
         placeholder="# Start writing your story..."
