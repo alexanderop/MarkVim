@@ -8,6 +8,13 @@ export default defineNuxtConfig({
     '@nuxt/image',
     'nuxt-codemirror',
     'reka-ui/nuxt',
-    '@unocss/nuxt'
+    '@unocss/nuxt',
+    '@nuxtjs/google-fonts'
   ],
+  googleFonts: {
+    families: {
+      Inter: [300, 400, 500, 600, 700]
+    },
+    display: 'swap'
+  }
 })

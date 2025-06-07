@@ -37,37 +37,43 @@ const renderedMarkdown = computed(() => {
 </script>
 
 <template>
-  <div class="h-screen flex bg-[#0d1117] text-gray-100">
+  <div class="h-screen flex bg-[#0c0d11] text-gray-100 font-sans">
     <MarkdownEditor v-model="markdown" />
     <MarkdownPreview :rendered-html="renderedMarkdown" />
   </div>
 </template>
 
 <style>
+/* Global font and base styles */
+* {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 /* Linear-style scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d1117;
+  background: #0c0d11;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
-  border-radius: 4px;
+  background: #2a2d3a;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
+  background: #3a3f52;
 }
 
-/* CodeMirror dark theme adjustments */
+/* Custom CodeMirror theme for Linear-style markdown highlighting */
 .cm-editor {
-  background-color: #0d1117 !important;
-  color: #e6edf3 !important;
+  background-color: #0c0d11 !important;
+  color: #b4bcd0 !important;
   border: none !important;
+  font-family: 'Inter', monospace !important;
 }
 
 .cm-focused {
@@ -75,22 +81,135 @@ const renderedMarkdown = computed(() => {
 }
 
 .cm-content {
-  padding: 2rem !important;
-  font-size: 14px !important;
+  padding: 32px !important;
+  font-size: 15px !important;
   line-height: 1.6 !important;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+  font-family: 'Inter', monospace !important;
 }
 
 .cm-placeholder {
-  color: #7d8590 !important;
+  color: #6c7383 !important;
 }
 
 .cm-cursor {
-  border-left-color: #f0f6fc !important;
+  border-left-color: #5e6ad2 !important;
+  border-left-width: 2px !important;
 }
 
 .cm-selectionBackground {
-  background-color: #264f78 !important;
+  background-color: #5e6ad220 !important;
+}
+
+/* Markdown-specific syntax highlighting */
+.cm-line {
+  position: relative;
+}
+
+/* Headings with Linear-style colors */
+.cm-header {
+  font-weight: 600 !important;
+}
+
+.cm-header.cm-header-1 {
+  color: #ffffff !important;
+  font-size: 1.875rem !important;
+  font-weight: 700 !important;
+}
+
+.cm-header.cm-header-2 {
+  color: #e6edf3 !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+}
+
+.cm-header.cm-header-3 {
+  color: #d2d9e0 !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
+.cm-header.cm-header-4,
+.cm-header.cm-header-5,
+.cm-header.cm-header-6 {
+  color: #c9d1d9 !important;
+  font-weight: 600 !important;
+}
+
+/* Markdown tokens */
+.cm-strong {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.cm-emphasis {
+  color: #e6edf3 !important;
+  font-style: italic !important;
+}
+
+.cm-strikethrough {
+  color: #8b949e !important;
+  text-decoration: line-through !important;
+}
+
+.cm-code {
+  background: rgba(110, 118, 129, 0.15) !important;
+  color: #ff7b72 !important;
+  padding: 0.125rem 0.25rem !important;
+  border-radius: 0.25rem !important;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace !important;
+}
+
+.cm-link {
+  color: #58a6ff !important;
+  text-decoration: none !important;
+}
+
+.cm-url {
+  color: #58a6ff !important;
+}
+
+.cm-quote {
+  color: #8b949e !important;
+  font-style: italic !important;
+}
+
+.cm-list {
+  color: #58a6ff !important;
+}
+
+.cm-hr {
+  color: #30363d !important;
+}
+
+/* Code blocks */
+.cm-meta {
+  color: #8b949e !important;
+}
+
+/* Make the editor feel more spacious like Linear */
+.cm-scroller {
+  font-family: 'Inter', monospace !important;
+}
+
+/* Active line highlighting */
+.cm-activeLine {
+  background-color: rgba(110, 118, 129, 0.05) !important;
+}
+
+.cm-activeLineGutter {
+  background-color: rgba(110, 118, 129, 0.05) !important;
+}
+
+/* Line numbers if enabled */
+.cm-gutters {
+  background-color: #0c0d11 !important;
+  border-right: 1px solid #21262d !important;
+  color: #6c7383 !important;
+}
+
+.cm-lineNumbers .cm-gutterElement {
+  color: #6c7383 !important;
+  font-size: 13px !important;
 }
 </style>
 

@@ -145,13 +145,37 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
-/* Set a default height for the editor */
+/* Remove default styling to match Linear's clean design */
 .cm-editor {
   height: 100%;
+  border: none !important;
 }
+
 .cm-theme {
-  height: 400px; /* Or whatever default you prefer */
+  height: 400px;
   width: 100%;
-  border: 1px solid #ccc;
+  border: none;
+  background: transparent;
+}
+
+/* Better focus handling */
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+/* Improved gutter styling */
+.cm-gutters {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Line number improvements */
+.cm-lineNumbers {
+  min-width: 3rem;
+}
+
+.cm-lineNumbers .cm-gutterElement {
+  text-align: right;
+  padding-right: 1rem;
 }
 </style> 
