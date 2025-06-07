@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue'
 import type { EditorState } from '@codemirror/state'
 import { EditorState as CMEditorState, StateEffect, Compartment, type Extension } from '@codemirror/state'
 import { EditorView, keymap, placeholder as cmPlaceholder, type ViewUpdate, drawSelection, lineNumbers as cmLineNumbers } from '@codemirror/view'
@@ -7,6 +7,7 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap, history, indentWithTab as cmIndentWithTab } from '@codemirror/commands'
 import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { vim } from '@replit/codemirror-vim'
+import { Vim, getCM } from '@replit/codemirror-vim'
 
 // Define Component Props & Model
 // =============================================
@@ -20,7 +21,8 @@ const {
   lineNumbers = true,
   lineNumberMode = 'absolute',
   lineWrapping = true,
-  fontSize = 14
+  fontSize = 14,
+  customVimKeybindings = true
 } = defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
@@ -32,6 +34,7 @@ const {
   lineNumberMode?: 'absolute' | 'relative' | 'both'
   lineWrapping?: boolean
   fontSize?: number
+  customVimKeybindings?: boolean
 }>()
 
 const modelValue = defineModel<string>({ default: '' })
@@ -74,6 +77,54 @@ const getLineNumberExtension = () => {
   } else {
     return cmLineNumbers()
   }
+}
+
+// Setup custom Vim keybindings
+// =============================================
+let vimKeybindingsSetup = false
+
+const setupCustomVimKeybindings = () => {
+  if (!vimMode || !customVimKeybindings || !view.value) return
+
+  console.log('Setting up custom vim keybindings...')
+  
+  // Call mapping after vim extension is fully initialized
+  nextTick(() => {
+    setTimeout(() => {
+      try {
+        // Get the CM5-compatible interface for this specific editor instance
+        const cm = getCM(view.value)
+        
+        // Clear any existing mappings to prevent duplicates
+        if (vimKeybindingsSetup) {
+          try {
+            Vim.unmap('jj', 'insert')
+            Vim.unmap('kk', 'insert')
+          } catch (e) {
+            // Ignore errors if mappings don't exist
+          }
+        }
+        
+        // The classic jj → Esc mapping
+        Vim.map('jj', '<Esc>', 'insert')
+        Vim.map('kk', '<Esc>', 'insert')
+        
+        // Normal mode enhancements
+        Vim.map('Y', 'y$') // Yank to end of line (consistent with D and C)
+        
+        // Add custom ex commands
+        Vim.defineEx('write', 'w', () => {
+          console.log('Save command triggered!')
+        })
+        
+        vimKeybindingsSetup = true
+        console.log('✅ Custom vim keybindings setup complete!')
+        
+      } catch (error) {
+        console.error('Error setting up vim keybindings:', error)
+      }
+    }, 100) // Small delay to ensure vim is ready
+  })
 }
 
 const getExtensions = () => {
@@ -160,6 +211,14 @@ onMounted(() => {
     state: state.value,
     parent: editor.value,
   })
+
+  // Setup custom vim keybindings after vim extension is fully loaded
+  if (vimMode) {
+    // Use nextTick to ensure vim extension is fully initialized
+    nextTick(() => {
+      setupCustomVimKeybindings()
+    })
+  }
 })
 
 // Prop and v-model watchers
@@ -179,6 +238,22 @@ watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode, l
   if (view.value) {
     view.value.dispatch({
       effects: StateEffect.reconfigure.of(getExtensions()),
+    })
+    
+    // Setup custom vim keybindings when vim mode is enabled
+    if (vimMode && customVimKeybindings) {
+      nextTick(() => {
+        setupCustomVimKeybindings()
+      })
+    }
+  }
+})
+
+// Watch for custom vim keybindings changes
+watch(() => customVimKeybindings, (newValue) => {
+  if (vimMode && newValue) {
+    nextTick(() => {
+      setupCustomVimKeybindings()
     })
   }
 })

@@ -1,70 +1,82 @@
 <script setup lang="ts">
 const initialMarkdown = `# Welcome to MarkVim
 
-Start writing your **markdown** here.
+MarkVim is a markdown editor with full Vim modal editing support and custom keybindings.
 
-## Features
+## 🚀 Custom Vim Keybindings
 
-- Real-time preview
-- Syntax highlighting with Shiki
-- Linear-inspired dark theme
-- Clean, modern interface
+When **Custom Vim Keybindings** is enabled in settings, you get these additional shortcuts:
 
-### Code Examples
+### Insert Mode Shortcuts
+- \`jj\` → **Escape** (quickly return to normal mode)
+- \`kk\` → **Escape** (alternative escape shortcut)
+
+### Normal Mode Enhancements  
+- \`Y\` → **y$** (yank to end of line, consistent with D and C)
+
+### Ex Commands
+- \`:w\` or \`:write\` → **Save** (shows console message)
+
+## How to Use
+
+1. **Open Settings** (⚙️ button in top-right)
+2. **Enable Vim Mode** if not already enabled  
+3. **Enable "Custom Vim Keybindings"**
+4. **Click in this editor** to focus it
+5. **Press \`i\`** to enter insert mode
+6. **Type some text** then quickly press \`jj\`
+7. **You should return to normal mode** instantly!
+
+## Standard Vim Features
+
+All standard Vim motions and operators work:
+
+### Navigation
+- \`h j k l\` → Move cursor
+- \`w b e\` → Word motions  
+- \`0 $\` → Line start/end
+- \`gg G\` → File start/end
+
+### Editing
+- \`i a o O\` → Insert modes
+- \`d y c\` → Delete, yank, change
+- \`u Ctrl-r\` → Undo/redo
+- \`.\` → Repeat last command
+
+### Visual Mode
+- \`v V Ctrl-v\` → Character/line/block selection
+
+## 📝 **Test Area**
+
+Click here and test your \`jj\` mapping:
 
 \`\`\`javascript
-function greet(name) {
-  return \`Hello, \${name}!\`;
-}
+// Test your jj mapping here!
+// 1. Press 'i' to enter insert mode
+// 2. Type some code like this comment
+// 3. Press 'jj' quickly to escape to normal mode
+console.log("Testing jj -> Escape mapping");
 
-// Array methods are highlighted properly
-const numbers = [1, 2, 3, 4, 5];
-const doubled = numbers.map(n => n * 2);
-console.log(doubled);
-\`\`\`
-
-\`\`\`typescript
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-class UserService {
-  private users: User[] = [];
-
-  addUser(user: User): void {
-    this.users.push(user);
-  }
-
-  getUserById(id: number): User | undefined {
-    return this.users.find(user => user.id === id);
-  }
+function testVimMapping() {
+  // Try editing this function and using jj to escape
+  return "jj should work perfectly!";
 }
 \`\`\`
 
-\`\`\`css
-.button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  padding: 12px 24px;
-  transition: transform 0.2s ease;
-}
+**Perfect test sequence:**
+1. **i** → enter insert mode
+2. **Hello World** → type some text
+3. **jj** → should escape to normal mode instantly
+4. **$** → move to end of line (confirms you're in normal mode)
+5. **a** → enter insert mode at end
+6. **!** → add exclamation
+7. **jj** → escape again
 
-.button:hover {
-  transform: translateY(-2px);
-}
-\`\`\`
+Happy writing with Vim! ✨
 
-> This is a blockquote with some **important** information.
+---
 
-- [ ] Todo item
-- [x] Completed item
-- [ ] Another todo
-
-Visit [Linear](https://linear.app) for inspiration.`
+*Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`
 
 const { markdown, renderedMarkdown, shikiCSS } = useMarkdown(initialMarkdown)
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
