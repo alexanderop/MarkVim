@@ -79,7 +79,7 @@ useHead({
 </script>
 
 <template>
-  <div ref="containerRef" class="h-screen flex bg-[#0c0d11] text-gray-100 font-sans relative">
+  <div ref="containerRef" class="h-screen flex bg-editor-bg text-gray-100 font-sans relative">
     <MarkdownEditor 
       v-model="markdown" 
       :style="{ width: `${leftPaneWidth}%` }"
@@ -105,11 +105,11 @@ useHead({
 }
 
 ::-webkit-scrollbar-track {
-  background: #0c0d11;
+  background: theme('colors.editor.bg');
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2d3a;
+  background: theme('colors.editor.hover');
   border-radius: 3px;
 }
 
@@ -119,7 +119,7 @@ useHead({
 
 /* Custom CodeMirror theme for Linear-style markdown highlighting */
 .cm-editor {
-  background-color: #0c0d11 !important;
+  background-color: theme('colors.editor.bg') !important;
   color: #b4bcd0 !important;
   border: none !important;
 }
@@ -135,16 +135,16 @@ useHead({
 }
 
 .cm-placeholder {
-  color: #6c7383 !important;
+  color: theme('colors.text.secondary') !important;
 }
 
 .cm-cursor {
-  border-left-color: #5e6ad2 !important;
+  border-left-color: theme('colors.editor.active') !important;
   border-left-width: 2px !important;
 }
 
 .cm-selectionBackground {
-  background-color: #5e6ad220 !important;
+  background-color: rgba(theme('colors.editor.active'), 0.125) !important;
 }
 
 /* Markdown-specific syntax highlighting */
@@ -243,13 +243,13 @@ useHead({
 
 /* Line numbers if enabled */
 .cm-gutters {
-  background-color: #0c0d11 !important;
-  border-right: 1px solid #21262d !important;
-  color: #6c7383 !important;
+  background-color: theme('colors.editor.bg') !important;
+  border-right: 1px solid theme('colors.editor.border') !important;
+  color: theme('colors.text.secondary') !important;
 }
 
 .cm-lineNumbers .cm-gutterElement {
-  color: #6c7383 !important;
+  color: theme('colors.text.secondary') !important;
   font-size: 13px !important;
 }
 </style>
