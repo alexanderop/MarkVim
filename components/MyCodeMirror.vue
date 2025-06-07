@@ -6,6 +6,7 @@ import { EditorView, keymap, placeholder, type ViewUpdate, drawSelection } from 
 import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap, history, indentWithTab } from '@codemirror/commands'
 import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
+import { vim } from '@replit/codemirror-vim'
 
 // Define Component Props & Model
 // =============================================
@@ -15,12 +16,14 @@ const props = withDefaults(defineProps<{
   editable?: boolean
   placeholder?: string
   indentWithTab?: boolean
+  vimMode?: boolean
 }>(), {
   extensions: () => [],
   theme: 'light',
   editable: true,
   placeholder: '',
   indentWithTab: true,
+  vimMode: false,
 })
 
 const modelValue = defineModel<string>({ default: '' })
@@ -39,6 +42,9 @@ const state = ref<EditorState>() // The CodeMirror EditorState instance
 // =============================================
 const getExtensions = () => {
   const extensions: Extension[] = [
+    // Add vim keybindings first if enabled (must come before other keymaps)
+    ...(props.vimMode ? [vim()] : []),
+    
     // Basic functionality
     history(),
     drawSelection(),
@@ -117,7 +123,7 @@ watch(modelValue, (newValue) => {
 })
 
 // Watch for extension changes to reconfigure the editor
-watch(() => [props.extensions, props.theme, props.editable, props.indentWithTab, props.placeholder], () => {
+watch(() => [props.extensions, props.theme, props.editable, props.indentWithTab, props.placeholder, props.vimMode], () => {
   if (view.value) {
     view.value.dispatch({
       effects: StateEffect.reconfigure.of(getExtensions()),

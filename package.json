@@ -20,6 +20,7 @@
     "@nuxt/eslint": "1.4.1",
     "@nuxt/icon": "1.13.0",
     "@nuxt/image": "1.10.0",
+    "@replit/codemirror-vim": "^6.3.0",
     "codemirror": "^5",
     "codemirror-editor-vue3": "^2.8.0",
     "eslint": "^9.0.0",

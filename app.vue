@@ -18,6 +18,7 @@
         theme="dark"
         placeholder="# Start writing markdown..."
         class="h-[calc(100vh-3rem)] bg-[#0d1117]"
+        vim-mode
       />
     </div>
 
