@@ -138,11 +138,11 @@ onKeyUp('Escape', () => {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: var(--shortcuts-scrollbar-thumb);
   border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: var(--shortcuts-scrollbar-thumb-hover);
 }
 </style> 

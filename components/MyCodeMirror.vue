@@ -52,50 +52,50 @@ const emit = defineEmits<{
   (event: 'update', viewUpdate: ViewUpdate): void
 }>()
 
-// Clean monochromatic theme using hardcoded CSS colors
+// Clean monochromatic theme using CSS variables for easy customization
 const customHighlightStyle = HighlightStyle.define([
-  // Headers - Pure white for maximum contrast and prominence
-  { tag: tags.heading1, color: "#ffffff", fontWeight: "bold", fontSize: "1.2em" },
-  { tag: tags.heading2, color: "#ffffff", fontWeight: "bold", fontSize: "1.1em" },
-  { tag: tags.heading3, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.heading4, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.heading5, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.heading6, color: "#ffffff", fontWeight: "bold" },
+  // Headers
+  { tag: tags.heading1, color: 'var(--cm-heading-1)', fontWeight: 'bold', fontSize: '1.2em' },
+  { tag: tags.heading2, color: 'var(--cm-heading-2)', fontWeight: 'bold', fontSize: '1.1em' },
+  { tag: tags.heading3, color: 'var(--cm-heading-3)', fontWeight: 'bold' },
+  { tag: tags.heading4, color: 'var(--cm-heading-other)', fontWeight: 'bold' },
+  { tag: tags.heading5, color: 'var(--cm-heading-other)', fontWeight: 'bold' },
+  { tag: tags.heading6, color: 'var(--cm-heading-other)', fontWeight: 'bold' },
   
-  // Main text - Light gray for comfortable reading
-  { tag: tags.content, color: "#d1d5db" },
+  // Main text
+  { tag: tags.content, color: 'var(--color-text-primary)' },
   
-  // Code elements - Different shades of gray for hierarchy
-  { tag: tags.keyword, color: "#f3f4f6", fontWeight: "bold" },
-  { tag: tags.string, color: "#e5e7eb" },
-  { tag: tags.comment, color: "#9ca3af", fontStyle: "italic" },
-  { tag: tags.variableName, color: "#d1d5db" },
-  { tag: tags.function(tags.variableName), color: "#f9fafb" },
+  // Code elements
+  { tag: tags.keyword, color: 'var(--cm-code)', fontWeight: 'bold' },
+  { tag: tags.string, color: 'var(--cm-code)' },
+  { tag: tags.comment, color: 'var(--cm-strikethrough)', fontStyle: 'italic' },
+  { tag: tags.variableName, color: 'var(--color-text-primary)' },
+  { tag: tags.function(tags.variableName), color: 'var(--color-text-primary)' },
   
   // Numbers and constants
-  { tag: tags.number, color: "#e5e7eb" },
-  { tag: tags.bool, color: "#f3f4f6" },
-  { tag: tags.null, color: "#f3f4f6" },
+  { tag: tags.number, color: 'var(--cm-code)' },
+  { tag: tags.bool, color: 'var(--cm-code)' },
+  { tag: tags.null, color: 'var(--cm-code)' },
   
   // Punctuation and operators
-  { tag: tags.operator, color: "#d1d5db" },
-  { tag: tags.punctuation, color: "#d1d5db" },
-  { tag: tags.bracket, color: "#f3f4f6" },
+  { tag: tags.operator, color: 'var(--color-text-primary)' },
+  { tag: tags.punctuation, color: 'var(--color-text-primary)' },
+  { tag: tags.bracket, color: 'var(--color-text-primary)' },
   
   // Special markdown elements
-  { tag: tags.link, color: "#ffffff", textDecoration: "underline" },
-  { tag: tags.emphasis, color: "#d1d5db", fontStyle: "italic" },
-  { tag: tags.strong, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.strikethrough, color: "#9ca3af", textDecoration: "line-through" },
+  { tag: tags.link, color: 'var(--cm-link)', textDecoration: 'underline' },
+  { tag: tags.emphasis, color: 'var(--cm-emphasis)', fontStyle: 'italic' },
+  { tag: tags.strong, color: 'var(--cm-strong)', fontWeight: 'bold' },
+  { tag: tags.strikethrough, color: 'var(--cm-strikethrough)', textDecoration: 'line-through' },
   
   // Markdown specific elements
-  { tag: tags.quote, color: "#9ca3af", fontStyle: "italic" },
-  { tag: tags.list, color: "#e5e7eb" },
-  { tag: tags.monospace, color: "#f3f4f6", backgroundColor: "#374151", padding: "2px 4px", borderRadius: "3px" },
+  { tag: tags.quote, color: 'var(--cm-quote)', fontStyle: 'italic' },
+  { tag: tags.list, color: 'var(--cm-link)' },
+  { tag: tags.monospace, color: 'var(--cm-code)', backgroundColor: 'var(--cm-monospace-bg)', padding: '2px 4px', borderRadius: '3px' },
   
   // Vim keys and commands - pure white for prominence
-  { tag: tags.labelName, color: "#ffffff" },
-  { tag: tags.special(tags.string), color: "#ffffff" }
+  { tag: tags.labelName, color: 'var(--cm-strong)' },
+  { tag: tags.special(tags.string), color: 'var(--cm-strong)' }
 ])
 
 const { lineNumberCompartment, getLineNumberExtension, handleLineNumberUpdate } = useLineNumbers()

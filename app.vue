@@ -359,18 +359,18 @@ useHead({
 }
 
 ::-webkit-scrollbar-thumb {
-  background: theme('colors.editor.hover');
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3f52;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Custom CodeMirror theme for Linear-style markdown highlighting */
 .cm-editor {
   background-color: theme('colors.editor.bg') !important;
-  color: #b4bcd0 !important;
+  color: var(--color-text-primary) !important;
   border: none !important;
 }
 
@@ -408,19 +408,19 @@ useHead({
 }
 
 .cm-header.cm-header-1 {
-  color: #ffffff !important;
+  color: var(--cm-heading-1) !important;
   font-size: 1.875rem !important;
   font-weight: 700 !important;
 }
 
 .cm-header.cm-header-2 {
-  color: #e6edf3 !important;
+  color: var(--cm-heading-2) !important;
   font-size: 1.5rem !important;
   font-weight: 600 !important;
 }
 
 .cm-header.cm-header-3 {
-  color: #d2d9e0 !important;
+  color: var(--cm-heading-3) !important;
   font-size: 1.25rem !important;
   font-weight: 600 !important;
 }
@@ -428,67 +428,67 @@ useHead({
 .cm-header.cm-header-4,
 .cm-header.cm-header-5,
 .cm-header.cm-header-6 {
-  color: #c9d1d9 !important;
+  color: var(--cm-heading-other) !important;
   font-weight: 600 !important;
 }
 
 /* Markdown tokens */
 .cm-strong {
-  color: #ffffff !important;
+  color: var(--cm-strong) !important;
   font-weight: 600 !important;
 }
 
 .cm-emphasis {
-  color: #e6edf3 !important;
+  color: var(--cm-emphasis) !important;
   font-style: italic !important;
 }
 
 .cm-strikethrough {
-  color: #8b949e !important;
+  color: var(--cm-strikethrough) !important;
   text-decoration: line-through !important;
 }
 
 .cm-code {
   background: rgba(110, 118, 129, 0.15) !important;
-  color: #ff7b72 !important;
+  color: var(--cm-code) !important;
   padding: 0.125rem 0.25rem !important;
   border-radius: 0.25rem !important;
 }
 
 .cm-link {
-  color: #58a6ff !important;
+  color: var(--cm-link) !important;
   text-decoration: none !important;
 }
 
 .cm-url {
-  color: #58a6ff !important;
+  color: var(--cm-link) !important;
 }
 
 .cm-quote {
-  color: #8b949e !important;
+  color: var(--cm-quote) !important;
   font-style: italic !important;
 }
 
 .cm-list {
-  color: #58a6ff !important;
+  color: var(--cm-link) !important;
 }
 
 .cm-hr {
-  color: #30363d !important;
+  color: var(--cm-hr) !important;
 }
 
 /* Code blocks */
 .cm-meta {
-  color: #8b949e !important;
+  color: var(--cm-meta) !important;
 }
 
 /* Active line highlighting */
 .cm-activeLine {
-  background-color: rgba(110, 118, 129, 0.05) !important;
+  background-color: var(--cm-active-line-bg) !important;
 }
 
 .cm-activeLineGutter {
-  background-color: rgba(110, 118, 129, 0.05) !important;
+  background-color: var(--cm-active-line-bg) !important;
 }
 
 /* Line numbers if enabled */

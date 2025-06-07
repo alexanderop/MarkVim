@@ -47,6 +47,39 @@ export default defineConfig({
           :root {
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'avenir next', avenir, 'segoe ui', 'helvetica neue', helvetica, Ubuntu, roboto, noto, arial, sans-serif;
             --font-mono: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+            /* Theme colors */
+            --color-editor-bg: ${theme.colors.editor.bg};
+            --color-editor-border: ${theme.colors.editor.border};
+            --color-editor-divider: ${theme.colors.editor.divider};
+            --color-editor-hover: ${theme.colors.editor.hover};
+            --color-editor-active: ${theme.colors.editor.active};
+            --color-text-primary: ${theme.colors.text.primary};
+            --color-text-secondary: ${theme.colors.text.secondary};
+            --color-window-close: ${theme.colors.window.close};
+            --color-window-minimize: ${theme.colors.window.minimize};
+            --color-window-maximize: ${theme.colors.window.maximize};
+            --color-surface-primary: ${theme.colors.surface.primary};
+            --color-surface-secondary: ${theme.colors.surface.secondary};
+            /* Scrollbar colors */
+            --scrollbar-thumb: #3a3f52;
+            --scrollbar-thumb-hover: #4a5068;
+            --shortcuts-scrollbar-thumb: #4b5563;
+            --shortcuts-scrollbar-thumb-hover: #6b7280;
+            /* CodeMirror highlight colors */
+            --cm-heading-1: #ffffff;
+            --cm-heading-2: #e6edf3;
+            --cm-heading-3: #d2d9e0;
+            --cm-heading-other: #c9d1d9;
+            --cm-strong: #ffffff;
+            --cm-emphasis: #e6edf3;
+            --cm-strikethrough: #8b949e;
+            --cm-code: #ff7b72;
+            --cm-link: #58a6ff;
+            --cm-quote: #8b949e;
+            --cm-hr: #30363d;
+            --cm-meta: #8b949e;
+            --cm-active-line-bg: rgba(110, 118, 129, 0.05);
+            --cm-monospace-bg: #374151;
           }
           
           * {
@@ -117,12 +150,12 @@ export default defineConfig({
           }
 
           .prose pre::-webkit-scrollbar-thumb {
-            background: #3a3f52;
+            background: var(--scrollbar-thumb);
             border-radius: 3px;
           }
 
           .prose pre::-webkit-scrollbar-thumb:hover {
-            background: #4a5068;
+            background: var(--scrollbar-thumb-hover);
           }
         `
       }
