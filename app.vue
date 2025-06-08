@@ -64,6 +64,13 @@ function handleGlobalKeydown(event: KeyboardEvent) {
     return
   }
 
+  // Handle Meta+T (Cmd+T) shortcut for sidebar toggle - override default new tab behavior
+  if ((event.metaKey || event.ctrlKey) && event.key === 't') {
+    event.preventDefault()
+    handleToggleSidebar()
+    return
+  }
+
   // Close command palette with Escape
   if (event.key === 'Escape' && commandPaletteOpen.value) {
     commandPaletteOpen.value = false
@@ -203,7 +210,7 @@ onMounted(() => {
       category: 'File',
     },
     {
-      keys: 'meta+shift+backslash',
+      keys: 'meta+t',
       description: 'Toggle sidebar',
       action: () => {
         handleToggleSidebar()
@@ -277,7 +284,7 @@ onMounted(() => {
     },
     {
       id: 'toggle-sidebar',
-      keys: 'meta+shift+backslash',
+      keys: 'meta+t',
       description: 'Toggle Sidebar',
       category: 'View',
       icon: '📋',
