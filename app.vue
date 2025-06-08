@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const initialMarkdown = `# Welcome to MarkVim
 
 MarkVim is a markdown editor with full Vim modal editing support and custom keybindings.
@@ -249,117 +248,36 @@ useHead({
 
 <template>
   <div ref="containerRef" class="text-gray-100 font-sans bg-editor-bg flex flex-col h-screen">
-    <div class="px-3 py-2 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between backdrop-blur md:px-6 md:py-3">
-      <div class="flex items-center space-x-2 md:space-x-4">
-        <h1 class="text-base text-white font-semibold md:text-lg">
-          MarkVim
-        </h1>
+    <HeaderToolbar
+      :view-mode="viewMode"
+      :is-mobile="isMobile"
+      @update:view-mode="viewMode = $event"
+    />
 
-        <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
-          <button
-            class="text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 md:text-sm md:px-3 md:py-1.5" :class="[
-              viewMode === 'editor'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
-            ]"
-            title="Editor only (⌘1)"
-            @click="viewMode = 'editor'"
-          >
-            <Icon name="lucide:edit-3" class="h-3 w-3 md:h-4 md:w-4" :class="isMobile ? '' : 'mr-1.5'" />
-            <span v-if="!isMobile">Editor</span>
-          </button>
+    <MainContent
+      :layout="{
+        isEditorVisible,
+        isPreviewVisible,
+        isSplitView,
+        isMobile,
+        leftPaneWidth,
+        rightPaneWidth,
+        isDragging,
+      }"
+      :content="{
+        markdown,
+        settings,
+        renderedMarkdown,
+      }"
+      @update:markdown="markdown = $event"
+      @start-drag="startDrag"
+    />
 
-          <button
-            class="text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 md:text-sm md:px-3 md:py-1.5" :class="[
-              viewMode === 'split'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
-            ]"
-            title="Split view (⌘2)"
-            @click="viewMode = 'split'"
-          >
-            <Icon name="lucide:columns-2" class="h-3 w-3 md:h-4 md:w-4" :class="isMobile ? '' : 'mr-1.5'" />
-            <span v-if="!isMobile">Split</span>
-          </button>
-
-          <button
-            class="text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 md:text-sm md:px-3 md:py-1.5" :class="[
-              viewMode === 'preview'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
-            ]"
-            title="Preview only (⌘3)"
-            @click="viewMode = 'preview'"
-          >
-            <Icon name="lucide:eye" class="h-3 w-3 md:h-4 md:w-4" :class="isMobile ? '' : 'mr-1.5'" />
-            <span v-if="!isMobile">Preview</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <div class="hidden md:block">
-          <ShortcutsModal />
-        </div>
-        <SettingsModal />
-      </div>
-    </div>
-
-    <div class="flex flex-1 flex-col relative overflow-hidden md:flex-row">
-      <div
-        v-if="isEditorVisible"
-        class="w-full transition-all duration-300 ease-in-out" :class="[
-          isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
-          isSplitView ? 'h-1/2 md:h-full' : 'h-full',
-        ]"
-        :style="{
-          transform: isEditorVisible ? 'translateX(0)' : 'translateX(-100%)',
-          width: isSplitView && !isMobile ? `${leftPaneWidth}%` : '100%',
-        }"
-      >
-        <MarkdownEditor
-          v-model="markdown"
-          :settings="settings"
-          class="h-full"
-        />
-      </div>
-
-      <ResizableSplitter
-        v-if="isSplitView"
-        :is-dragging="isDragging"
-        class="hidden md:block"
-        @start-drag="startDrag"
-      />
-
-      <div
-        v-if="isPreviewVisible"
-        class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
-          isSplitView ? 'h-1/2 md:h-full' : 'h-full',
-        ]"
-        :style="{
-          transform: isPreviewVisible ? 'translateX(0)' : 'translateX(100%)',
-          width: isSplitView && !isMobile ? `${rightPaneWidth}%` : '100%',
-        }"
-      >
-        <MarkdownPreview
-          :rendered-html="renderedMarkdown"
-          class="h-full"
-        />
-      </div>
-    </div>
-
-    <div class="px-3 py-2 border-t border-gray-800 bg-gray-900/30 backdrop-blur md:px-6">
-      <div class="text-xs text-gray-500 flex items-center justify-between">
-        <span class="truncate">{{ markdown.split('\n').length }} lines<span class="hidden sm:inline"> • {{ markdown.length }} characters</span></span>
-        <div class="hidden items-center space-x-4 md:flex">
-          <span>{{ formatKeys('1') }} Editor</span>
-          <span>{{ formatKeys('2') }} Split</span>
-          <span>{{ formatKeys('3') }} Preview</span>
-          <span>{{ formatKeys('meta+k') }} Commands</span>
-          <span>{{ formatKeys('shift+/') }} Help</span>
-        </div>
-      </div>
-    </div>
+    <StatusBar
+      :line-count="markdown.split('\n').length"
+      :character-count="markdown.length"
+      :format-keys="formatKeys"
+    />
 
     <CommandPalette
       v-model:open="commandPaletteOpen"
