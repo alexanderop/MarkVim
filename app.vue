@@ -141,18 +141,18 @@ function handleGlobalKeydown(event: KeyboardEvent) {
     openCommandPalette(event)
     return
   }
-  
+
   // Close command palette with Escape
   if (event.key === 'Escape' && commandPaletteOpen.value) {
     commandPaletteOpen.value = false
   }
 }
 
-function openCommandPalette(event?: KeyboardEvent) {
+function openCommandPalette(_event?: KeyboardEvent) {
   // Position the command palette near the center of the screen
   const centerX = window.innerWidth / 2 - 200 // 200 is half width of palette
   const centerY = window.innerHeight / 3
-  
+
   commandPalettePosition.value = { x: centerX, y: centerY }
   commandPaletteOpen.value = true
 }
@@ -170,8 +170,6 @@ function handleSaveDocument() {
   a.download = `markvim-document-${new Date().toISOString().split('T')[0]}.md`
   a.click()
   URL.revokeObjectURL(url)
-  
-  console.log('Document saved!')
 }
 
 function handleInsertText(text: string) {
@@ -189,33 +187,32 @@ function handleToggleLineNumbers() {
 
 function handleToggleSettings() {
   // This would open the settings modal - for now, just log
-  console.log('Settings toggled')
 }
 
 onMounted(() => {
   // Add global event listener
   document.addEventListener('keydown', handleGlobalKeydown)
-  
+
   registerShortcuts([
     {
       keys: '1',
       description: 'Switch to Editor only',
       action: () => { viewMode.value = 'editor' },
-      category: 'View'
+      category: 'View',
     },
     {
-      keys: '2', 
+      keys: '2',
       description: 'Switch to Split view',
       action: () => { viewMode.value = 'split' },
-      category: 'View'
+      category: 'View',
     },
     {
       keys: '3',
-      description: 'Switch to Preview only', 
+      description: 'Switch to Preview only',
       action: () => { viewMode.value = 'preview' },
-      category: 'View'
+      category: 'View',
     },
-    
+
     // Editor shortcuts (Linear-inspired)
     {
       keys: 'meta+k',
@@ -223,16 +220,15 @@ onMounted(() => {
       action: () => {
         openCommandPalette()
       },
-      category: 'Navigation'
+      category: 'Navigation',
     },
     {
       keys: 'meta+s',
       description: 'Save document',
       action: () => {
         // TODO: Implement save functionality
-        console.log('Document saved')
       },
-      category: 'File'
+      category: 'File',
     },
   ])
 })
@@ -244,121 +240,117 @@ onBeforeUnmount(() => {
 useHead({
   style: [
     {
-      innerHTML: shikiCSS
-    }
-  ]
+      innerHTML: shikiCSS,
+    },
+  ],
 })
 </script>
 
 <template>
-  <div ref="containerRef" class="h-screen flex flex-col bg-editor-bg text-gray-100 font-sans">
+  <div ref="containerRef" class="text-gray-100 font-sans bg-editor-bg flex flex-col h-screen">
     <!-- Linear-inspired toolbar -->
-    <div class="flex items-center justify-between px-6 py-3 border-b border-gray-800 bg-gray-900/50 backdrop-blur">
+    <div class="px-6 py-3 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between backdrop-blur">
       <div class="flex items-center space-x-4">
-        <h1 class="text-lg font-semibold text-white">MarkVim</h1>
-        
+        <h1 class="text-lg text-white font-semibold">
+          MarkVim
+        </h1>
+
         <!-- Linear-style view mode toggle -->
-        <div class="flex items-center bg-gray-800 rounded-lg p-1">
+        <div class="p-1 rounded-lg bg-gray-800 flex items-center">
           <button
-            :class="[
-              'px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200',
-              viewMode === 'editor' 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700'
+            class="text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200" :class="[
+              viewMode === 'editor'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
             ]"
             title="Editor only (⌘1)"
             @click="viewMode = 'editor'"
           >
-            <Icon name="lucide:edit-3" class="w-4 h-4 mr-1.5" />
+            <Icon name="lucide:edit-3" class="mr-1.5 h-4 w-4" />
             Editor
           </button>
-          
+
           <button
-            :class="[
-              'px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200',
-              viewMode === 'split' 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700'
+            class="text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200" :class="[
+              viewMode === 'split'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
             ]"
             title="Split view (⌘2)"
             @click="viewMode = 'split'"
           >
-            <Icon name="lucide:columns-2" class="w-4 h-4 mr-1.5" />
+            <Icon name="lucide:columns-2" class="mr-1.5 h-4 w-4" />
             Split
           </button>
-          
+
           <button
-            :class="[
-              'px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200',
-              viewMode === 'preview' 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700'
+            class="text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200" :class="[
+              viewMode === 'preview'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
             ]"
             title="Preview only (⌘3)"
             @click="viewMode = 'preview'"
           >
-            <Icon name="lucide:eye" class="w-4 h-4 mr-1.5" />
+            <Icon name="lucide:eye" class="mr-1.5 h-4 w-4" />
             Preview
           </button>
         </div>
       </div>
-      
+
       <!-- Action buttons -->
       <div class="flex items-center space-x-2">
         <ShortcutsModal />
         <SettingsModal />
       </div>
     </div>
-    
+
     <!-- Main content area with responsive layout -->
-    <div class="flex-1 flex relative overflow-hidden">
+    <div class="flex flex-1 relative overflow-hidden">
       <!-- Editor pane -->
-      <div 
+      <div
         v-if="isEditorVisible"
-        :class="[
-          'transition-all duration-300 ease-in-out',
-          isSplitView ? 'border-r border-gray-800' : ''
+        class="transition-all duration-300 ease-in-out" :class="[
+          isSplitView ? 'border-r border-gray-800' : '',
         ]"
-        :style="{ 
+        :style="{
           width: isSplitView ? `${leftPaneWidth}%` : '100%',
-          transform: isEditorVisible ? 'translateX(0)' : 'translateX(-100%)'
+          transform: isEditorVisible ? 'translateX(0)' : 'translateX(-100%)',
         }"
       >
-        <MarkdownEditor 
-          v-model="markdown" 
+        <MarkdownEditor
+          v-model="markdown"
           :settings="settings"
           class="h-full"
         />
       </div>
-      
+
       <!-- Resizable splitter - only show in split mode -->
-      <ResizableSplitter 
+      <ResizableSplitter
         v-if="isSplitView"
         :is-dragging="isDragging"
         @start-drag="startDrag"
       />
-      
+
       <!-- Preview pane -->
-      <div 
+      <div
         v-if="isPreviewVisible"
-        :class="[
-          'transition-all duration-300 ease-in-out overflow-hidden'
-        ]"
-        :style="{ 
+        class="transition-all duration-300 ease-in-out overflow-hidden"
+        :style="{
           width: isSplitView ? `${rightPaneWidth}%` : '100%',
-          transform: isPreviewVisible ? 'translateX(0)' : 'translateX(100%)'
+          transform: isPreviewVisible ? 'translateX(0)' : 'translateX(100%)',
         }"
       >
-        <MarkdownPreview 
+        <MarkdownPreview
           :rendered-html="renderedMarkdown"
           class="h-full"
         />
       </div>
     </div>
-    
+
     <!-- Linear-style status bar with keyboard shortcuts hint -->
     <div class="px-6 py-2 border-t border-gray-800 bg-gray-900/30 backdrop-blur">
-      <div class="flex items-center justify-between text-xs text-gray-500">
+      <div class="text-xs text-gray-500 flex items-center justify-between">
         <span>{{ markdown.split('\n').length }} lines • {{ markdown.length }} characters</span>
         <div class="flex items-center space-x-4">
           <span>{{ formatKeys('1') }} Editor</span>
@@ -371,7 +363,7 @@ useHead({
     </div>
 
     <!-- Global command palette -->
-    <CommandPalette 
+    <CommandPalette
       v-model:open="commandPaletteOpen"
       :position="commandPalettePosition"
       :view-mode="viewMode"
@@ -540,4 +532,3 @@ useHead({
   font-size: 13px !important;
 }
 </style>
-

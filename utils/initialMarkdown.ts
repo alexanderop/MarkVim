@@ -63,4 +63,4 @@ class UserService {
 - [x] Completed item
 - [ ] Another todo
 
-Visit [Linear](https://linear.app) for inspiration.` 
+Visit [Linear](https://linear.app) for inspiration.`

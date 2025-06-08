@@ -8,8 +8,8 @@ const root = ref<HTMLElement>()
 // Initialize Mermaid only on client side
 if (process.client) {
   const mermaid = await import('mermaid')
-  mermaid.default.initialize({ 
-    startOnLoad: false, 
+  mermaid.default.initialize({
+    startOnLoad: false,
     theme: 'dark',
     darkMode: true,
     // Dark theme configuration that matches your editor
@@ -22,8 +22,8 @@ if (process.client) {
       altSectionBkgColor: '#0d1117',
       gridColor: '#30363d',
       secondaryColor: '#21262d',
-      tertiaryColor: '#8b949e'
-    }
+      tertiaryColor: '#8b949e',
+    },
   })
 
   const run = () => {
@@ -39,18 +39,20 @@ if (process.client) {
 </script>
 
 <template>
-  <div ref="root" class="flex flex-col bg-editor-bg h-screen w-full">
-    <div class="h-14 bg-editor-bg border-b border-editor-border flex items-center justify-between px-6 flex-shrink-0">
+  <div ref="root" class="bg-editor-bg flex flex-col h-screen w-full">
+    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-14 items-center justify-between">
       <div class="flex items-center space-x-4">
-        <span class="text-sm font-medium text-text-primary tracking-tight">Preview</span>
-        <div class="w-px h-4 bg-editor-divider"></div>
-        <div class="text-xs text-text-secondary font-mono">Rendered</div>
+        <span class="text-sm text-text-primary tracking-tight font-medium">Preview</span>
+        <div class="bg-editor-divider h-4 w-px" />
+        <div class="text-xs text-text-secondary font-mono">
+          Rendered
+        </div>
       </div>
     </div>
-    
-    <div class="flex-1 overflow-auto bg-editor-bg min-h-0">
-      <div class="max-w-none mx-auto px-12 py-12">
-        <article class="prose prose-lg prose-invert prose-gray max-w-none" v-html="renderedHtml"/>
+
+    <div class="bg-editor-bg flex-1 min-h-0 overflow-auto">
+      <div class="mx-auto px-12 py-12 max-w-none">
+        <article class="prose-lg max-w-none prose prose-gray prose-invert" v-html="renderedHtml" />
       </div>
     </div>
   </div>

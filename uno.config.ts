@@ -1,11 +1,11 @@
-import presetWind4 from '@unocss/preset-wind4'
 import { presetTypography } from '@unocss/preset-typography'
+import presetWind4 from '@unocss/preset-wind4'
 import { defineConfig } from 'unocss'
 
 export default defineConfig({
   presets: [
     presetWind4(),
-    presetTypography()
+    presetTypography(),
   ],
   theme: {
     fontFamily: {
@@ -15,30 +15,30 @@ export default defineConfig({
     colors: {
       // Editor theme colors
       editor: {
-        bg: '#0c0d11',        // Main background
-        border: '#1d1f23',    // Border color
-        divider: '#1d1f23',   // Divider lines
-        hover: '#2a2d3a',     // Hover states
-        active: '#5e6ad2',    // Active/selected states
+        bg: '#0c0d11', // Main background
+        border: '#1d1f23', // Border color
+        divider: '#1d1f23', // Divider lines
+        hover: '#2a2d3a', // Hover states
+        active: '#5e6ad2', // Active/selected states
       },
       // Text colors
       text: {
-        primary: '#9ca3af',   // Primary text color
+        primary: '#9ca3af', // Primary text color
         secondary: '#6c7383', // Secondary text color
       },
       // macOS window controls (traffic lights)
       window: {
-        close: '#ff5f57',     // Red dot
-        minimize: '#ffbd2e',  // Yellow dot  
-        maximize: '#28ca42',  // Green dot
+        close: '#ff5f57', // Red dot
+        minimize: '#ffbd2e', // Yellow dot
+        maximize: '#28ca42', // Green dot
       },
       // Surface colors for different backgrounds
       surface: {
-        primary: '#0c0d11',   // Main surface
+        primary: '#0c0d11', // Main surface
         secondary: '#1d1f23', // Secondary surface
-      }
-    }
-  } as any,
+      },
+    },
+  },
   preflights: [
     {
       getCSS({ theme }) {
@@ -125,7 +125,7 @@ export default defineConfig({
             background: #4a5068;
           }
         `
-      }
-    }
-  ]
+      },
+    },
+  ],
 })

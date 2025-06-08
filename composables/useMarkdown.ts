@@ -1,7 +1,7 @@
-import { createMarkdownRenderer, generateShikiCSS } from '~/utils/markdown'
 import type MarkdownIt from 'markdown-it'
+import { createMarkdownRenderer, generateShikiCSS } from '~/utils/markdown'
 
-export const useMarkdown = (initialContent = '') => {
+export function useMarkdown(initialContent = '') {
   let md: MarkdownIt | null = null
 
   const markdown = useLocalStorage('markvim-markdown-content', initialContent)
@@ -15,7 +15,8 @@ export const useMarkdown = (initialContent = '') => {
       }
       renderedMarkdown.value = md.render(markdown.value)
       shikiCSS.value = generateShikiCSS()
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to render markdown:', error)
       const MarkdownIt = (await import('markdown-it')).default
       const basicMd = new MarkdownIt()
@@ -33,6 +34,6 @@ export const useMarkdown = (initialContent = '') => {
     markdown,
     renderedMarkdown,
     shikiCSS,
-    updateMarkdown
+    updateMarkdown,
   }
-} 
+}

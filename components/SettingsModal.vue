@@ -1,13 +1,17 @@
 <script setup lang="ts">
-const { settings, toggleVimMode, updateTheme, updateFontSize, resetToDefaults } = useEditorSettings()
+import type { EditorSettings } from '#imports'
+import { useEditorSettings, useShortcuts } from '#imports'
+
+const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
+const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
 </script>
 
 <template>
   <DialogRoot :open="showSettings" @update:open="(open) => !open && closeSettings()">
     <DialogTrigger as-child>
       <button
-        class="focus-visible:ring-ring ring-offset-background border-input bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium px-4 py-2 border rounded-md inline-flex h-10 transition-colors items-center justify-center focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        class="bg-background border-input ring-offset-background focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground text-sm font-medium px-4 py-2 border rounded-md inline-flex h-10 transition-colors items-center justify-center focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-offset-2"
         title="Settings (g s)"
         @click="openSettings"
       >
@@ -91,14 +95,14 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
                   </h4>
                   <div class="flex gap-2">
                     <button
-                      v-for="theme in ['dark', 'light', 'auto']"
+                      v-for="theme in themes"
                       :key="theme"
                       class="text-sm font-medium px-3 py-2 rounded-md capitalize transition-colors" :class="[
                         settings.theme === theme
                           ? 'bg-editor-active text-white'
                           : 'bg-editor-border text-text-secondary hover:bg-editor-hover',
                       ]"
-                      @click="updateTheme(theme as any)"
+                      @click="updateTheme(theme)"
                     >
                       {{ theme }}
                     </button>

@@ -1,32 +1,34 @@
 <script setup lang="ts">
-import { markdown as markdownLang } from '@codemirror/lang-markdown'
 import type { EditorSettings } from '~/composables/useEditorSettings'
-
-const modelValue = defineModel<string>()
+import { markdown as markdownLang } from '@codemirror/lang-markdown'
 
 const { settings } = defineProps<{
   settings: EditorSettings
 }>()
+
+const modelValue = defineModel<string>()
 </script>
 
 <template>
   <div class="bg-editor-bg flex flex-col h-screen w-full">
-    <!-- Header-->
-    <div class="h-14 bg-editor-bg border-b border-editor-border flex items-center justify-between px-6 flex-shrink-0">
+    <!-- Header -->
+    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-14 items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5">
-          <div class="w-3 h-3 rounded-full bg-window-close shadow-sm"/>
-          <div class="w-3 h-3 rounded-full bg-window-minimize shadow-sm"/>
-          <div class="w-3 h-3 rounded-full bg-window-maximize shadow-sm"/>
+          <div class="rounded-full bg-window-close h-3 w-3 shadow-sm" />
+          <div class="rounded-full bg-window-minimize h-3 w-3 shadow-sm" />
+          <div class="rounded-full bg-window-maximize h-3 w-3 shadow-sm" />
         </div>
-        <div class="w-px h-4 bg-editor-divider"></div>
-        <span class="text-sm font-medium text-text-primary tracking-tight">Editor</span>
+        <div class="bg-editor-divider h-4 w-px" />
+        <span class="text-sm text-text-primary tracking-tight font-medium">Editor</span>
       </div>
       <div class="flex items-center space-x-3">
-        <div class="text-xs text-text-secondary font-mono">Markdown</div>
+        <div class="text-xs text-text-secondary font-mono">
+          Markdown
+        </div>
       </div>
     </div>
-    
+
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
       <MyCodeMirror
@@ -34,15 +36,15 @@ const { settings } = defineProps<{
         :extensions="[markdownLang()]"
         :theme="settings.theme === 'auto' ? 'dark' : settings.theme"
         placeholder="# Start writing your story..."
-        class="h-full bg-editor-bg"
+        class="bg-editor-bg h-full"
         :vim-mode="settings.vimMode"
         :line-numbers="settings.lineNumbers"
         :line-number-mode="settings.lineNumberMode"
         :line-wrapping="settings.lineWrapping"
         :font-size="settings.fontSize"
-        :style="{ 
+        :style="{
           fontSize: `${settings.fontSize}px`,
-          fontFamily: settings.fontFamily === 'mono' ? 'var(--font-mono)' : 'var(--font-sans)'
+          fontFamily: settings.fontFamily === 'mono' ? 'var(--font-mono)' : 'var(--font-sans)',
         }"
       />
     </div>
@@ -69,4 +71,4 @@ const { settings } = defineProps<{
 :deep(.cm-focused) {
   outline: none;
 }
-</style> 
+</style>

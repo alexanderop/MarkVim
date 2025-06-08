@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { EditorState as CMEditorState, StateEffect, Compartment } from '@codemirror/state'
 import type { Extension } from '@codemirror/state'
-import { EditorView, keymap, placeholder as cmPlaceholder, drawSelection, lineNumbers as cmLineNumbers } from '@codemirror/view'
 import type { ViewUpdate } from '@codemirror/view'
+import { indentWithTab as cmIndentWithTab, defaultKeymap, history } from '@codemirror/commands'
+import { bracketMatching, defaultHighlightStyle, HighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
+import { EditorState as CMEditorState, Compartment, StateEffect } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { defaultKeymap, history, indentWithTab as cmIndentWithTab } from '@codemirror/commands'
-import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
+import { lineNumbers as cmLineNumbers, placeholder as cmPlaceholder, drawSelection, EditorView, keymap } from '@codemirror/view'
 import { tags } from '@lezer/highlight'
 import { vim, Vim } from '@replit/codemirror-vim'
 
@@ -30,8 +30,12 @@ const props = withDefaults(defineProps<{
   lineNumbers: true,
   lineNumberMode: 'absolute',
   lineWrapping: true,
-  fontSize: 14
+  fontSize: 14,
 })
+
+const emit = defineEmits<{
+  (event: 'update', viewUpdate: ViewUpdate): void
+}>()
 
 const {
   extensions,
@@ -43,59 +47,55 @@ const {
   lineNumbers,
   lineNumberMode,
   lineWrapping,
-  fontSize
+  fontSize,
 } = toRefs(props)
 
 const modelValue = defineModel<string>({ default: '' })
 
-const emit = defineEmits<{
-  (event: 'update', viewUpdate: ViewUpdate): void
-}>()
-
 // Clean monochromatic theme using hardcoded CSS colors
 const customHighlightStyle = HighlightStyle.define([
   // Headers - Pure white for maximum contrast and prominence
-  { tag: tags.heading1, color: "#ffffff", fontWeight: "bold", fontSize: "1.2em" },
-  { tag: tags.heading2, color: "#ffffff", fontWeight: "bold", fontSize: "1.1em" },
-  { tag: tags.heading3, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.heading4, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.heading5, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.heading6, color: "#ffffff", fontWeight: "bold" },
-  
+  { tag: tags.heading1, color: '#ffffff', fontWeight: 'bold', fontSize: '1.2em' },
+  { tag: tags.heading2, color: '#ffffff', fontWeight: 'bold', fontSize: '1.1em' },
+  { tag: tags.heading3, color: '#ffffff', fontWeight: 'bold' },
+  { tag: tags.heading4, color: '#ffffff', fontWeight: 'bold' },
+  { tag: tags.heading5, color: '#ffffff', fontWeight: 'bold' },
+  { tag: tags.heading6, color: '#ffffff', fontWeight: 'bold' },
+
   // Main text - Light gray for comfortable reading
-  { tag: tags.content, color: "#d1d5db" },
-  
+  { tag: tags.content, color: '#d1d5db' },
+
   // Code elements - Different shades of gray for hierarchy
-  { tag: tags.keyword, color: "#f3f4f6", fontWeight: "bold" },
-  { tag: tags.string, color: "#e5e7eb" },
-  { tag: tags.comment, color: "#9ca3af", fontStyle: "italic" },
-  { tag: tags.variableName, color: "#d1d5db" },
-  { tag: tags.function(tags.variableName), color: "#f9fafb" },
-  
+  { tag: tags.keyword, color: '#f3f4f6', fontWeight: 'bold' },
+  { tag: tags.string, color: '#e5e7eb' },
+  { tag: tags.comment, color: '#9ca3af', fontStyle: 'italic' },
+  { tag: tags.variableName, color: '#d1d5db' },
+  { tag: tags.function(tags.variableName), color: '#f9fafb' },
+
   // Numbers and constants
-  { tag: tags.number, color: "#e5e7eb" },
-  { tag: tags.bool, color: "#f3f4f6" },
-  { tag: tags.null, color: "#f3f4f6" },
-  
+  { tag: tags.number, color: '#e5e7eb' },
+  { tag: tags.bool, color: '#f3f4f6' },
+  { tag: tags.null, color: '#f3f4f6' },
+
   // Punctuation and operators
-  { tag: tags.operator, color: "#d1d5db" },
-  { tag: tags.punctuation, color: "#d1d5db" },
-  { tag: tags.bracket, color: "#f3f4f6" },
-  
+  { tag: tags.operator, color: '#d1d5db' },
+  { tag: tags.punctuation, color: '#d1d5db' },
+  { tag: tags.bracket, color: '#f3f4f6' },
+
   // Special markdown elements
-  { tag: tags.link, color: "#ffffff", textDecoration: "underline" },
-  { tag: tags.emphasis, color: "#d1d5db", fontStyle: "italic" },
-  { tag: tags.strong, color: "#ffffff", fontWeight: "bold" },
-  { tag: tags.strikethrough, color: "#9ca3af", textDecoration: "line-through" },
-  
+  { tag: tags.link, color: '#ffffff', textDecoration: 'underline' },
+  { tag: tags.emphasis, color: '#d1d5db', fontStyle: 'italic' },
+  { tag: tags.strong, color: '#ffffff', fontWeight: 'bold' },
+  { tag: tags.strikethrough, color: '#9ca3af', textDecoration: 'line-through' },
+
   // Markdown specific elements
-  { tag: tags.quote, color: "#9ca3af", fontStyle: "italic" },
-  { tag: tags.list, color: "#e5e7eb" },
-  { tag: tags.monospace, color: "#f3f4f6", backgroundColor: "#374151", padding: "2px 4px", borderRadius: "3px" },
-  
+  { tag: tags.quote, color: '#9ca3af', fontStyle: 'italic' },
+  { tag: tags.list, color: '#e5e7eb' },
+  { tag: tags.monospace, color: '#f3f4f6', backgroundColor: '#374151', padding: '2px 4px', borderRadius: '3px' },
+
   // Vim keys and commands - pure white for prominence
-  { tag: tags.labelName, color: "#ffffff" },
-  { tag: tags.special(tags.string), color: "#ffffff" }
+  { tag: tags.labelName, color: '#ffffff' },
+  { tag: tags.special(tags.string), color: '#ffffff' },
 ])
 
 const { lineNumberCompartment, getLineNumberExtension, handleLineNumberUpdate } = useLineNumbers()
@@ -108,33 +108,34 @@ function useLineNumbers() {
   const lineNumberCompartment = new Compartment()
 
   function getLineNumberExtension() {
-    if (!lineNumbers.value) return []
-    
+    if (!lineNumbers.value)
+      return []
+
     if (lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') {
       return cmLineNumbers({
         formatNumber: (lineNo, state) => {
           if (lineNo > state.doc.lines) {
             return '0'
           }
-          
+
           const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
-          
+
           if (lineNumberMode.value === 'relative') {
             return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
           }
-          
+
           return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
-        }
+        },
       })
     }
-    
+
     return cmLineNumbers()
   }
 
   function handleLineNumberUpdate(viewUpdate: ViewUpdate) {
     if ((lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') && viewUpdate.selectionSet) {
       viewUpdate.view.dispatch({
-        effects: lineNumberCompartment.reconfigure(getLineNumberExtension())
+        effects: lineNumberCompartment.reconfigure(getLineNumberExtension()),
       })
     }
   }
@@ -142,25 +143,25 @@ function useLineNumbers() {
   return {
     lineNumberCompartment,
     getLineNumberExtension,
-    handleLineNumberUpdate
+    handleLineNumberUpdate,
   }
 }
 
 function useVimMode() {
   function setupCustomVimKeybindings() {
-    if (!vimMode.value) return
+    if (!vimMode.value)
+      return
 
     Vim.map('jj', '<Esc>', 'insert')
     Vim.map('kk', '<Esc>', 'insert')
     Vim.map('Y', 'y$', 'normal')
-    
+
     Vim.defineEx('write', 'w', () => {
-      console.log('Save command triggered!')
     })
   }
 
   return {
-    setupCustomVimKeybindings
+    setupCustomVimKeybindings,
   }
 }
 
@@ -201,13 +202,13 @@ function useEditorExtensions() {
     if (!editable.value) {
       extensionsList.push(EditorView.editable.of(false))
     }
-    
+
     extensionsList.push(...extensions.value)
 
     extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
       handleLineNumberUpdate(viewUpdate)
       emit('update', viewUpdate)
-      
+
       if (viewUpdate.docChanged) {
         const newCode = viewUpdate.state.doc.toString()
         if (newCode !== modelValue.value) {
@@ -220,7 +221,7 @@ function useEditorExtensions() {
   }
 
   return {
-    getExtensions
+    getExtensions,
   }
 }
 
@@ -239,7 +240,7 @@ function useEditorLifecycle() {
     })
 
     view.value = new EditorView({
-      state: state,
+      state,
       parent: editor.value,
     })
 
@@ -256,7 +257,7 @@ function useEditorLifecycle() {
     editor,
     view,
     initializeEditor,
-    destroyEditor
+    destroyEditor,
   }
 }
 
@@ -274,7 +275,7 @@ function useModelSync() {
       view.value.dispatch({
         effects: StateEffect.reconfigure.of(getExtensions()),
       })
-      
+
       if (vimMode.value) {
         setupCustomVimKeybindings()
       }
@@ -283,7 +284,7 @@ function useModelSync() {
 
   return {
     syncModelValue,
-    reconfigureExtensions
+    reconfigureExtensions,
   }
 }
 
@@ -299,15 +300,13 @@ watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode, l
   reconfigureExtensions()
 })
 
-
-
 onBeforeUnmount(() => {
   destroyEditor()
 })
 </script>
 
 <template>
-  <div ref="editor" class="cm-theme" :style="{ fontSize: fontSize + 'px' }"></div>
+  <div ref="editor" class="cm-theme" :style="{ fontSize: `${fontSize}px` }" />
 </template>
 
 <style>
@@ -340,4 +339,4 @@ onBeforeUnmount(() => {
   text-align: right;
   padding-right: 1rem;
 }
-</style> 
+</style>

@@ -1,7 +1,7 @@
 export function useResizablePanes(initialLeftWidth: number = 50) {
   const leftPaneWidth = useLocalStorage('markvim-pane-width', initialLeftWidth)
   const rightPaneWidth = computed(() => 100 - leftPaneWidth.value)
-  
+
   const isDragging = ref(false)
   const { x: mouseX } = useMouse()
   const containerRef = ref<HTMLElement>()
@@ -35,12 +35,13 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
   })
 
   watch(mouseX, (newX) => {
-    if (!isDragging.value || !containerRef.value) return
-    
+    if (!isDragging.value || !containerRef.value)
+      return
+
     const containerRect = containerRef.value.getBoundingClientRect()
     const relativeX = newX - containerRect.left
     const percentage = Math.max(20, Math.min(80, (relativeX / containerRect.width) * 100))
-    
+
     leftPaneWidth.value = percentage
   })
 
@@ -49,6 +50,6 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     rightPaneWidth: readonly(rightPaneWidth),
     isDragging: readonly(isDragging),
     containerRef,
-    startDrag
+    startDrag,
   }
-} 
+}

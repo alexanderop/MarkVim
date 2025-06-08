@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { useShortcuts } from '#imports'
 import { onKeyUp } from '@vueuse/core'
+import { onMounted, provide, ref } from 'vue'
 
 const { shortcutsByCategory, formatKeys, registerShortcut } = useShortcuts()
 
 const isOpen = ref(false)
 
 // Expose the open function globally for other shortcuts
-function openModal() { isOpen.value = true }
+function openModal() {
+  isOpen.value = true
+}
 
 // Register keyboard shortcuts to open this modal
 onMounted(() => {
