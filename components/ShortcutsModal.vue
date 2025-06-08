@@ -42,13 +42,12 @@ onKeyUp('Escape', () => {
 <template>
   <DialogRoot v-model:open="isOpen">
     <DialogTrigger as-child>
-      <button
-        class="bg-background border-input ring-offset-background focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground text-sm font-medium px-4 py-2 border rounded-md inline-flex h-10 transition-colors items-center justify-center focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-offset-2"
+      <ToolbarButton
+        variant="toggle"
+        icon="lucide:keyboard"
+        text="Shortcuts"
         title="Keyboard shortcuts (Shift + ?)"
-      >
-        <Icon name="lucide:keyboard" class="mr-2 h-4 w-4" />
-        Shortcuts
-      </button>
+      />
     </DialogTrigger>
 
     <DialogPortal>
