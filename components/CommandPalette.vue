@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Command } from '~/composables/useShortcuts'
 import type { Document } from '~/composables/useDocuments'
+import type { Command } from '~/composables/useShortcuts'
 
 const props = withDefaults(defineProps<{
   open?: boolean
@@ -70,7 +70,7 @@ const filteredCommands = computed(() => {
     || (command.group && command.group.toLowerCase().includes(term))
     || (command.shortcut && command.shortcut.toLowerCase().includes(term)),
   )
-  
+
   // Also sort filtered results by history for better UX
   return sortCommandsByHistory(filtered)
 })
@@ -79,28 +79,29 @@ const filteredCommands = computed(() => {
 const groupedCommands = computed(() => {
   const commands = filteredCommands.value
   const { commandHistory } = useCommandHistory()
-  
+
   // If no search term and we have history, create a "Recently Used" section
   if (!searchTerm.value && commandHistory.value.length > 0) {
     const recentCommands: Command[] = []
     const otherCommands: Command[] = []
     const recentIds = new Set(commandHistory.value.slice(0, 8)) // Show top 8 recent
-    
-    commands.forEach(command => {
+
+    commands.forEach((command) => {
       if (recentIds.has(command.id)) {
         recentCommands.push(command)
-      } else {
+      }
+      else {
         otherCommands.push(command)
       }
     })
-    
+
     const groups: { name: string, commands: Command[] }[] = []
-    
+
     // Add recently used section if we have recent commands
     if (recentCommands.length > 0) {
       groups.push({ name: 'Recently Used', commands: recentCommands })
     }
-    
+
     // Group other commands normally
     const otherGroups = otherCommands.reduce((acc, command) => {
       const group = command.group || 'Other'
@@ -110,21 +111,21 @@ const groupedCommands = computed(() => {
       acc[group].push(command)
       return acc
     }, {} as Record<string, Command[]>)
-    
+
     const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
-    
+
     groupOrder
       .filter(groupName => otherGroups[groupName]?.length > 0)
-      .forEach(groupName => {
+      .forEach((groupName) => {
         groups.push({
           name: groupName,
           commands: otherGroups[groupName],
         })
       })
-    
+
     return groups
   }
-  
+
   // Regular grouping for search results or when no history
   const groups = commands.reduce((acc, command) => {
     const group = command.group || 'Other'
@@ -150,7 +151,7 @@ const groupedCommands = computed(() => {
 function selectCommand(command: Command) {
   // Track command usage for history
   trackCommandUsage(command.id)
-  
+
   emit('commandSelected', command)
   emit('update:open', false)
   command.action()
