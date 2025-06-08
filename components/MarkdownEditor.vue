@@ -16,7 +16,7 @@ const modelValue = defineModel<string>()
 <template>
   <div class="bg-editor-bg flex flex-col h-screen w-full">
     <!-- Header -->
-    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-10 items-center justify-between">
+    <div class="px-6 border-b border-border bg-background flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5">
           <div class="rounded-full bg-window-close h-3 w-3 shadow-sm" />
