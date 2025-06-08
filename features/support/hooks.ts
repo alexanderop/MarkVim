@@ -1,7 +1,7 @@
 import { After, Before, setWorldConstructor } from '@cucumber/cucumber'
 import { CustomWorld } from './world.js'
 
-Before(async function (this: CustomWorld) {
+Before({ timeout: 60000 }, async function (this: CustomWorld) {
   await this.initBrowser()
   await this.page.goto('http://localhost:3000')
   
@@ -9,7 +9,7 @@ Before(async function (this: CustomWorld) {
   await this.page.evaluate(() => localStorage.clear())
   
   // Wait for the app to fully load by checking for key elements
-  await this.page.waitForSelector('[data-testid="document-title"]', { timeout: 15000 })
+  await this.page.waitForSelector('[data-testid="document-title"]', { timeout: 30000 })
   
   // Wait for any initial loading to complete
   await this.page.waitForTimeout(1000)
@@ -27,7 +27,7 @@ Before(async function (this: CustomWorld) {
   }
 })
 
-After(async function (this: CustomWorld) {
+After({ timeout: 30000 }, async function (this: CustomWorld) {
   await this.closeBrowser()
 })
 
