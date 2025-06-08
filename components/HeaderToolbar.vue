@@ -17,7 +17,7 @@ defineEmits<Emits>()
 </script>
 
 <template>
-  <header class="px-4 border-b border-gray-200/10 bg-gray-950/80 flex h-14 items-center justify-between backdrop-blur-xl">
+  <header class="px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
     <!-- Left section -->
     <div class="flex gap-3 items-center">
       <button
@@ -27,7 +27,7 @@ defineEmits<Emits>()
       >
         <Icon
           :name="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
-          class="text-gray-400 h-4 w-4 transition-colors duration-200 group-hover:text-gray-300"
+          class="text-text-secondary h-4 w-4 transition-colors duration-200 group-hover:text-text-primary"
         />
       </button>
 
@@ -40,7 +40,7 @@ defineEmits<Emits>()
     </div>
 
     <!-- Center section - View mode toggle -->
-    <div class="p-1 border border-gray-800/50 rounded-lg bg-gray-900/60 flex items-center">
+    <div class="p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
       <button
         v-for="mode in [
           { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
@@ -51,8 +51,8 @@ defineEmits<Emits>()
         class="group text-xs font-medium px-3 py-1.5 rounded-md flex gap-1.5 transition-all duration-200 items-center relative"
         :class="[
           viewMode === mode.key
-            ? 'bg-white/10 text-white shadow-sm'
-            : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/40',
+            ? 'text-text-bright'
+            : 'text-text-secondary hover:text-text-primary',
         ]"
         :title="`${mode.label} (${mode.shortcut})`"
         @click="$emit('update:viewMode', mode.key)"
@@ -66,7 +66,7 @@ defineEmits<Emits>()
         <!-- Active indicator -->
         <div
           v-if="viewMode === mode.key"
-          class="rounded-md ring-1 ring-white/20 inset-0 absolute"
+          class="rounded-md ring-1 ring-white/10 inset-0 absolute bg-white/5"
         />
       </button>
     </div>

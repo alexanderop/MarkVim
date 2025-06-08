@@ -1,63 +1,101 @@
 import presetWebFonts from '@unocss/preset-web-fonts'
-import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local'
 import presetWind4 from '@unocss/preset-wind4'
 import { defineConfig, presetTypography } from 'unocss'
 
 export default defineConfig({
-  // ①  Wind4 first → base utilities & reset
   presets: [
-    presetWind4({
-      preflights: {
-        reset: true, // use the built-in Tailwind-4 reset
-        theme: 'on-demand', // only emit CSS vars you actually use (default)
-      },
-    }),
+    presetWind4(),
     presetTypography(),
     presetWebFonts({
+      provider: 'google', // default provider
       fonts: {
-        sans: 'DM Sans',
-        serif: 'DM Serif Display',
-        mono: 'DM Mono',
+        sans: 'Inter:400,500,600,700',
+        mono: 'JetBrains Mono:400,500',
       },
-      processors: createLocalFontProcessor(),
     }),
   ],
-
-  // ③  Wind4 theme keys
   theme: {
-    // your colours stay unchanged
     colors: {
-      editor: { bg: '#0c0d11', border: '#1d1f23', divider: '#1d1f23', hover: '#2a2d3a', active: '#5e6ad2' },
-      text: { primary: '#9ca3af', secondary: '#6c7383' },
-      window: { close: '#ff5f57', minimize: '#ffbd2e', maximize: '#28ca42' },
-      surface: { primary: '#0c0d11', secondary: '#1d1f23' },
+      // Base colors
+      background: 'hsl(224 71.4% 4.1%)', // #020817
+      foreground: 'hsl(210 20% 98%)', // #fafafa
+      
+      // Surfaces
+      surface: {
+        primary: 'hsl(220 26% 8%)', // #111317
+        secondary: 'hsl(220 26% 12%)', // #181a20
+        hover: 'hsl(220 26% 16%)', // #21242b
+      },
+
+      // Borders
+      border: 'hsl(215 18% 20%)', // #2c303a
+      subtle: 'hsl(215 18% 15%)', // #21252e
+
+      // Accent colors
+      accent: 'hsl(250 84% 60%)', // #5D37F0
+      'accent-hover': 'hsl(250 84% 65%)',
+      'accent-brighter': 'hsl(250 84% 70%)',
+
+      // Text colors
+      text: {
+        primary: 'hsl(215 15% 75%)', // #b8bcc4
+        secondary: 'hsl(215 12% 55%)', // #838996
+        tertiary: 'hsl(215 10% 40%)', // #606572
+        bright: 'hsl(210 20% 98%)', // #fafafa
+      },
+      
+      // Window decoration (for fake window UI)
+      window: {
+        close: '#ff5f57',
+        minimize: '#ffbd2e',
+        maximize: '#28ca42',
+      },
+    },
+    extend: {
+      // Add HSL variables for opacity modifiers
+      vars: {
+        'accent-hsl': '250 84% 60%',
+        'surface-primary-hsl': '220 26% 8%',
+      },
     },
   },
-
-  // ④  keep your custom prose / codeblock overrides
   preflights: [
     {
-      getCSS() {
+      getCSS: ({ theme }) => {
+        // Extracting HSL variables for use in CSS
+        const accentHsl = (theme.vars as any)?.['accent-hsl'] || '250 84% 60%'
+
         return `
-          /* Default font family for the entire app */
           :root {
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'avenir next', avenir, 'segoe ui', 'helvetica neue', helvetica, Ubuntu, roboto, noto, arial, sans-serif;
-            --font-mono: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
-          }
-          
-          * {
-            font-family: var(--font-sans);
-          }
-          
-          /* Ensure code elements use monospace */
-          code, pre, kbd, samp {
-            font-family: var(--font-mono);
+            --color-background: ${theme.colors.background};
+            --color-foreground: ${theme.colors.foreground};
+            --color-surface-primary: ${theme.colors.surface.primary};
+            --color-surface-secondary: ${theme.colors.surface.secondary};
+            --color-surface-hover: ${theme.colors.surface.hover};
+            --color-border: ${theme.colors.border};
+            --color-accent: ${theme.colors.accent};
+            --color-text-primary: ${theme.colors.text.primary};
+            --color-text-secondary: ${theme.colors.text.secondary};
+            --color-text-bright: ${theme.colors.text.bright};
+            --accent-hsl: ${accentHsl};
           }
 
-          /* Enhanced prose code block styling for Shiki integration */
+          body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+          
+          code, pre, kbd, samp {
+            font-family: 'JetBrains Mono', monospace;
+          }
+
+          /* Enhanced prose code block styling */
           .prose pre {
-            background-color: #1e1f22 !important;
-            border: 1px solid var(--color-editor-border);
+            background-color: ${theme.colors.surface.primary} !important;
+            border: 1px solid ${theme.colors.border};
             border-radius: 8px;
             padding: 1.5rem;
             margin: 1.5rem 0;
@@ -71,57 +109,25 @@ export default defineConfig({
             top: 0.5rem;
             right: 0.75rem;
             font-size: 0.75rem;
-            color: #8b949e;
+            color: ${theme.colors.text.secondary};
             text-transform: uppercase;
             font-weight: 500;
-            letter-spacing: 0.05em;
-            opacity: 0.7;
-            z-index: 1;
-          }
-
-          .prose pre code {
-            background: transparent !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            font-size: 0.875rem;
-            line-height: 1.6;
-            color: inherit;
           }
 
           .prose :not(pre) > code {
-            background: rgba(110, 118, 129, 0.15) !important;
-            color: #ff7b72 !important;
+            background: hsl(${accentHsl} / 0.15) !important;
+            color: hsl(${accentHsl} / 0.9) !important;
             padding: 0.125rem 0.375rem !important;
             border-radius: 0.25rem !important;
             font-size: 0.875em;
-            font-weight: 400;
-          }
-
-          /* Syntax highlighting layer */
-          @layer syntax {
-            /* This layer will be populated by Shiki */
-          }
-
-          /* Enhanced scrollbars for code blocks */
-          .prose pre::-webkit-scrollbar {
-            height: 6px;
-          }
-
-          .prose pre::-webkit-scrollbar-track {
-            background: var(--color-editor-bg);
-            border-radius: 3px;
-          }
-
-          .prose pre::-webkit-scrollbar-thumb {
-            background: #3a3f52;
-            border-radius: 3px;
-          }
-
-          .prose pre::-webkit-scrollbar-thumb:hover {
-            background: #4a5068;
           }
         `
       },
     },
   ],
+  shortcuts: {
+    // Example shortcut
+    'btn': 'px-4 py-2 rounded-lg font-semibold text-white transition-colors duration-200',
+    'btn-accent': 'bg-accent hover:bg-accent-hover',
+  },
 })

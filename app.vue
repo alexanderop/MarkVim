@@ -415,10 +415,10 @@ useHead({
 </template>
 
 <style>
-/* Global scrollbar styling for Linear-like feel */
+/* Global scrollbar styling for a more subtle, Linear-like feel */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -426,19 +426,20 @@ useHead({
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.3);
-  border-radius: 3px;
-  transition: background-color 0.2s ease;
+  background: hsl(220 10% 25% / 0.5);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.5);
+  background: hsl(220 10% 30% / 0.7);
 }
 
-/* CodeMirror styling improvements */
+/* Base editor theming using CSS variables from UnoCSS */
 .cm-editor {
-  background-color: theme('colors.gray.900') !important;
-  color: #e5e7eb !important;
+  background-color: var(--color-surface-primary) !important;
+  color: var(--color-text-primary) !important;
   border: none !important;
   border-radius: 0 !important;
 }
@@ -451,139 +452,87 @@ useHead({
   padding: 32px !important;
   font-size: 15px !important;
   line-height: 1.7 !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  font-family: var(--font-sans) !important;
 }
 
 .cm-placeholder {
-  color: theme('colors.gray.500') !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .cm-cursor {
-  border-left-color: theme('colors.blue.500') !important;
+  border-left-color: var(--color-accent) !important;
   border-left-width: 2px !important;
 }
 
 .cm-selectionBackground {
-  background-color: rgba(59, 130, 246, 0.15) !important;
+  background-color: hsl(var(--accent-hsl) / 0.15) !important;
 }
 
-/* Markdown syntax highlighting improvements */
-.cm-line {
-  position: relative;
-}
-
-.cm-header {
-  font-weight: 600 !important;
-}
-
-.cm-header.cm-header-1 {
-  color: #f9fafb !important;
-  font-weight: 700 !important;
-  font-size: 1.25em !important;
-}
-
-.cm-header.cm-header-2 {
-  color: #f3f4f6 !important;
-  font-weight: 600 !important;
-  font-size: 1.15em !important;
-}
-
-.cm-header.cm-header-3 {
-  color: #e5e7eb !important;
-  font-weight: 600 !important;
-  font-size: 1.1em !important;
-}
-
-.cm-header.cm-header-4,
-.cm-header.cm-header-5,
-.cm-header.cm-header-6 {
-  color: #d1d5db !important;
-  font-weight: 600 !important;
-}
-
-.cm-strong {
-  color: #f9fafb !important;
-  font-weight: 600 !important;
-}
-
-.cm-emphasis {
-  color: #e5e7eb !important;
-  font-style: italic !important;
-}
-
-.cm-strikethrough {
-  color: #9ca3af !important;
-  text-decoration: line-through !important;
-}
+/* Cleaned-up markdown syntax highlighting */
+.cm-header { font-weight: 600 !important; }
+.cm-header-1 { font-size: 1.25em !important; color: var(--color-text-bright) !important; }
+.cm-header-2 { font-size: 1.15em !important; color: var(--color-text-bright) !important; }
+.cm-header-3 { font-size: 1.1em !important; }
+.cm-strong { font-weight: 600 !important; color: var(--color-text-bright) !important; }
+.cm-emphasis { font-style: italic !important; }
+.cm-strikethrough { color: var(--color-text-secondary) !important; text-decoration: line-through !important; }
 
 .cm-code {
-  background: rgba(59, 130, 246, 0.1) !important;
-  color: #60a5fa !important;
+  background: hsl(var(--accent-hsl) / 0.1) !important;
+  color: hsl(var(--accent-hsl) / 0.8) !important;
   padding: 0.125rem 0.25rem !important;
   border-radius: 0.25rem !important;
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono) !important;
 }
 
-.cm-link {
-  color: #60a5fa !important;
-  text-decoration: none !important;
-}
-
-.cm-url {
-  color: #60a5fa !important;
-}
+.cm-link, .cm-url { color: var(--color-accent) !important; text-decoration: none !important; }
 
 .cm-quote {
-  color: #9ca3af !important;
+  color: var(--color-text-secondary) !important;
   font-style: italic !important;
-  border-left: 3px solid rgba(59, 130, 246, 0.3) !important;
+  border-left: 3px solid hsl(var(--accent-hsl) / 0.3) !important;
   padding-left: 1rem !important;
   margin-left: -1rem !important;
 }
 
-.cm-list {
-  color: #60a5fa !important;
-}
-
-.cm-hr {
-  color: #374151 !important;
-}
-
-.cm-meta {
-  color: #9ca3af !important;
-}
+.cm-meta { color: var(--color-text-secondary) !important; }
+.cm-hr { color: var(--color-border) !important; }
 
 .cm-activeLine {
-  background-color: rgba(59, 130, 246, 0.05) !important;
-}
-
-.cm-activeLineGutter {
-  background-color: rgba(59, 130, 246, 0.05) !important;
+  background-color: hsl(var(--surface-primary-hsl) / 0.5) !important;
 }
 
 .cm-gutters {
-  background-color: theme('colors.gray.900') !important;
-  border-right: 1px solid theme('colors.gray.800') !important;
-  color: theme('colors.gray.500') !important;
+  background-color: var(--color-surface-primary) !important;
+  border-right: 1px solid var(--color-border) !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .cm-lineNumbers .cm-gutterElement {
-  color: theme('colors.gray.500') !important;
+  color: var(--color-text-secondary) !important;
   font-size: 12px !important;
 }
 
-/* Smooth transitions for all interactive elements */
-* {
+.cm-activeLineGutter {
+  background-color: transparent !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Universal transitions for a smoother feel */
+button, a {
   transition-property: color, background-color, border-color, transform, opacity, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
 
-/* Custom focus styles */
+/* Custom focus-visible styles for accessibility */
 button:focus-visible,
 input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid theme('colors.blue.500');
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="switch"]:focus-visible {
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+  border-radius: 4px; /* Optional: adds rounded corners to the outline */
 }
 </style>

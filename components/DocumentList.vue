@@ -62,7 +62,7 @@ function formatDate(timestamp: number): string {
 <template>
   <aside
     v-if="isVisible"
-    class="border-r border-gray-200/10 bg-gray-950/95 flex flex-col h-full w-72"
+    class="border-r border-subtle bg-background flex flex-col h-full w-72"
   >
     <!-- Header -->
     <div class="px-4 border-b border-gray-200/10 flex h-14 items-center justify-between">
@@ -76,7 +76,7 @@ function formatDate(timestamp: number): string {
       </div>
 
       <button
-        class="group text-white rounded-lg bg-blue-600 flex h-8 w-8 shadow-blue-600/20 shadow-lg transition-all duration-200 items-center justify-center hover:bg-blue-500"
+        class="group text-white rounded-md bg-accent flex h-7 w-7 shadow-accent/20 shadow-lg transition-all duration-200 items-center justify-center hover:bg-accent-hover"
         title="New note"
         @click="handleCreateDocument"
       >
@@ -102,15 +102,15 @@ function formatDate(timestamp: number): string {
                 class="px-3 py-3 border rounded-lg cursor-pointer transition-all duration-200 relative"
                 :class="[
                   document.id === activeDocumentId
-                    ? 'bg-blue-500/10 border-blue-500/30 shadow-lg shadow-blue-500/5'
-                    : 'border-transparent hover:bg-gray-800/40 hover:border-gray-700/50',
+                    ? 'bg-accent/10 border-accent/30 shadow-lg shadow-accent/5'
+                    : 'border-transparent hover:bg-surface-hover hover:border-border',
                 ]"
                 @click="handleDocumentClick(document.id)"
               >
                 <!-- Active indicator line -->
                 <div
                   v-if="document.id === activeDocumentId"
-                  class="rounded-full bg-blue-500 h-8 w-0.5 left-0 top-1/2 absolute -translate-y-1/2"
+                  class="rounded-full bg-accent h-6 w-1 left-0 top-1/2 absolute -translate-y-1/2"
                 />
 
                 <div class="flex gap-3 items-start">
@@ -120,8 +120,8 @@ function formatDate(timestamp: number): string {
                       class="rounded-md flex h-6 w-6 transition-all duration-200 items-center justify-center"
                       :class="[
                         document.id === activeDocumentId
-                          ? 'bg-blue-500/20 text-blue-400'
-                          : 'bg-gray-800/40 text-gray-500 group-hover:bg-gray-700/60 group-hover:text-gray-400',
+                          ? 'bg-accent/20 text-accent-brighter'
+                          : 'bg-surface-secondary text-text-tertiary group-hover:bg-surface-hover group-hover:text-text-secondary',
                       ]"
                     >
                       <Icon
