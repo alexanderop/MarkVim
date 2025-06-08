@@ -3,12 +3,6 @@ import type { Browser, BrowserContext, Page } from '@playwright/test'
 import { World } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
 
-export interface CustomWorld extends World {
-  browser: Browser
-  context: BrowserContext
-  page: Page
-}
-
 export interface PlaywrightTestOptions {
   browser: string
 }

@@ -2,8 +2,8 @@ name: E2E Tests on Pull Request
 
 on:
   pull_request:
-    branches: [ main ]
-    types: [ opened, synchronize, reopened ]
+    branches: [main]
+    types: [opened, synchronize, reopened]
 
 # Cancel previous runs when a new commit is pushed
 concurrency:
@@ -15,7 +15,7 @@ jobs:
     name: End-to-End Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    
+
     steps:
       - name: 🔄 Checkout code
         uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: 📥 Install dependencies
         run: |
@@ -78,10 +78,10 @@ jobs:
           echo "  - Timeout: 30s per step"
           echo "  - Parallel: 1 worker"
           echo ""
-          
+
           # Run tests with verbose output
           pnpm run test:e2e --format progress-bar --format json:cucumber-results.json
-          
+
           echo ""
           echo "✅ E2E tests completed successfully!"
 
@@ -89,11 +89,11 @@ jobs:
         if: always()
         run: |
           echo "📊 Processing test results..."
-          
+
           # Check if cucumber report exists
           if [ -f "cucumber-report.html" ]; then
             echo "✅ Test report generated: cucumber-report.html"
-            
+
             # Extract test summary if JSON results exist
             if [ -f "cucumber-results.json" ]; then
               echo "📈 Test Summary:"
@@ -103,7 +103,7 @@ jobs:
           else
             echo "❌ Test report not found"
           fi
-          
+
           # Show server logs if tests failed
           if [ "${{ steps.e2e_tests.outcome }}" != "success" ]; then
             echo ""
@@ -140,10 +140,10 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
-            
+
             // Check if tests passed
             const testsPassed = '${{ steps.e2e_tests.outcome }}' === 'success';
-            
+
             // Read test report if it exists
             let reportExists = false;
             try {
@@ -153,34 +153,34 @@ jobs:
             } catch (error) {
               console.log('Could not check for report file:', error.message);
             }
-            
+
             // Create comment body
             const emoji = testsPassed ? '✅' : '❌';
             const status = testsPassed ? 'PASSED' : 'FAILED';
             const color = testsPassed ? '🟢' : '🔴';
-            
+
             let body = `## ${emoji} E2E Test Results ${color}\n\n`;
             body += `**Status:** ${status}\n`;
             body += `**Commit:** \`${context.sha.substring(0, 7)}\`\n`;
             body += `**Workflow:** [View Details](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n`;
-            
+
             if (reportExists) {
               body += `📊 **Test Report:** Available in workflow artifacts\n\n`;
             }
-            
+
             if (!testsPassed) {
               body += `### 🔍 Troubleshooting\n`;
               body += `- Check the workflow logs for detailed error messages\n`;
               body += `- Download the test report artifact for more details\n`;
               body += `- Verify your changes don't break existing functionality\n\n`;
             }
-            
+
             body += `### 🧪 Test Coverage\n`;
             body += `- ✅ Document Management (create, delete, select)\n`;
             body += `- ✅ Markdown Editing & Live Preview\n`;
             body += `- ✅ View Modes (editor, preview, split)\n`;
             body += `- ✅ Settings Configuration\n\n`;
-            
+
             body += `<details>\n<summary>📋 Test Details</summary>\n\n`;
             body += `- **Framework:** Cucumber + Playwright\n`;
             body += `- **Browser:** Chromium (headless)\n`;
@@ -188,19 +188,19 @@ jobs:
             body += `- **Timeout:** 30 seconds per step\n`;
             body += `- **Parallel Workers:** 1\n`;
             body += `</details>`;
-            
+
             // Find existing comment
             const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number
             });
-            
-            const existingComment = comments.data.find(comment => 
-              comment.user.type === 'Bot' && 
+
+            const existingComment = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
               comment.body.includes('E2E Test Results')
             );
-            
+
             if (existingComment) {
               // Update existing comment
               await github.rest.issues.updateComment({
@@ -230,7 +230,7 @@ jobs:
           echo "✅ Project built successfully"
           echo "✅ Development server started"
           echo "✅ Server readiness verified"
-          
+
           if [ "${{ steps.e2e_tests.outcome }}" == "success" ]; then
             echo "✅ E2E tests PASSED"
             echo ""
@@ -241,4 +241,4 @@ jobs:
             echo ""
             echo "🔍 Please check the test results and fix any issues before merging."
             echo "📊 Test report and logs are available in the artifacts."
-          fi 
+          fi

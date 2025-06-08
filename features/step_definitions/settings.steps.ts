@@ -12,7 +12,7 @@ When('I press {string} then {string}', async function (this: CustomWorld, firstK
   await this.page.waitForTimeout(500)
 })
 
-When('I click the {string} button in the toolbar', async function (this: CustomWorld, buttonText: string) {
+When('I click the {string} button in the toolbar', async function (this: CustomWorld, _buttonText: string) {
   // Look for the settings button - it has title "Settings (g s)"
   const settingsButton = this.page.locator('button[title*="Settings"]')
   await expect(settingsButton).toBeVisible({ timeout: 5000 })
