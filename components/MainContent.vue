@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useSyncedScroll } from '@/composables/useSyncedScroll'
+
 interface LayoutState {
   isEditorVisible: boolean
   isPreviewVisible: boolean
@@ -27,6 +30,24 @@ interface Emits {
 
 const { layout, content } = defineProps<Props>()
 defineEmits<Emits>()
+
+// Initialize synced scroll with the setting
+const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(
+  computed(() => content.settings.previewSync),
+)
+
+// Ref functions that conditionally assign based on split view
+function setEditorRef(el: HTMLElement | null) {
+  if (layout.isSplitView && !layout.isMobile) {
+    editorScrollContainer.value = el || undefined
+  }
+}
+
+function setPreviewRef(el: HTMLElement | null) {
+  if (layout.isSplitView && !layout.isMobile) {
+    previewScrollContainer.value = el || undefined
+  }
+}
 </script>
 
 <template>
@@ -38,6 +59,7 @@ defineEmits<Emits>()
   >
     <div
       v-if="layout.isEditorVisible"
+      :ref="setEditorRef"
       class="w-full transition-all duration-300 ease-in-out" :class="[
         layout.isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
@@ -66,6 +88,7 @@ defineEmits<Emits>()
 
     <div
       v-if="layout.isPreviewVisible"
+      :ref="setPreviewRef"
       class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
         !layout.isSplitView && !layout.isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',

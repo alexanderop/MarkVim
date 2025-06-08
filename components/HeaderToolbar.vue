@@ -8,8 +8,8 @@ interface Props {
 
 interface Emits {
   (e: 'update:viewMode', value: 'split' | 'editor' | 'preview'): void
-  (e: 'toggle-sidebar'): void
-  (e: 'delete-document'): void
+  (e: 'toggleSidebar'): void
+  (e: 'deleteDocument'): void
 }
 
 defineProps<Props>()
@@ -17,62 +17,81 @@ defineEmits<Emits>()
 </script>
 
 <template>
-  <div class="px-3 py-2 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between backdrop-blur md:px-6 md:py-3">
-    <div class="flex items-center space-x-2 md:space-x-4">
-      <div class="flex items-center space-x-2">
-        <ToolbarButton
-          variant="icon"
-          :icon="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
-          title="Toggle sidebar"
-          @click="$emit('toggle-sidebar')"
+  <header class="px-4 border-b border-gray-200/10 bg-gray-950/80 flex h-14 items-center justify-between backdrop-blur-xl">
+    <!-- Left section -->
+    <div class="flex gap-3 items-center">
+      <button
+        class="group rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:bg-gray-800/60"
+        :title="isSidebarVisible ? 'Hide sidebar' : 'Show sidebar'"
+        @click="$emit('toggleSidebar')"
+      >
+        <Icon
+          :name="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
+          class="text-gray-400 h-4 w-4 transition-colors duration-200 group-hover:text-gray-300"
         />
-        
-        <h1 class="text-base text-white font-semibold md:text-lg">
+      </button>
+
+      <div class="flex gap-2 items-center">
+        <div class="rounded-full bg-emerald-400 h-2 w-2 shadow-emerald-400/30 shadow-lg" />
+        <h1 class="text-sm text-gray-100 tracking-tight font-medium">
           {{ activeDocumentTitle }}
         </h1>
       </div>
-
-      <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
-        <ToolbarButton
-          variant="toggle"
-          icon="lucide:edit-3"
-          text="Editor"
-          title="Editor only (⌘1)"
-          :active="viewMode === 'editor'"
-          @click="$emit('update:viewMode', 'editor')"
-        />
-
-        <ToolbarButton
-          variant="toggle"
-          icon="lucide:columns-2"
-          text="Split"
-          title="Split view (⌘2)"
-          :active="viewMode === 'split'"
-          @click="$emit('update:viewMode', 'split')"
-        />
-
-        <ToolbarButton
-          variant="toggle"
-          icon="lucide:eye"
-          text="Preview"
-          title="Preview only (⌘3)"
-          :active="viewMode === 'preview'"
-          @click="$emit('update:viewMode', 'preview')"
-        />
-      </div>
     </div>
 
-    <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
-      <ToolbarButton
-        variant="icon"
-        icon="lucide:trash-2"
-        title="Delete current note"
-        @click="$emit('delete-document')"
-      />
-      <div class="hidden md:block">
-        <ShortcutsModal />
-      </div>
-      <SettingsModal />
+    <!-- Center section - View mode toggle -->
+    <div class="p-1 border border-gray-800/50 rounded-lg bg-gray-900/60 flex items-center">
+      <button
+        v-for="mode in [
+          { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
+          { key: 'split', icon: 'lucide:columns-2', label: 'Split', shortcut: '⌘2' },
+          { key: 'preview', icon: 'lucide:eye', label: 'Preview', shortcut: '⌘3' },
+        ]"
+        :key="mode.key"
+        class="group text-xs font-medium px-3 py-1.5 rounded-md flex gap-1.5 transition-all duration-200 items-center relative"
+        :class="[
+          viewMode === mode.key
+            ? 'bg-white/10 text-white shadow-sm'
+            : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/40',
+        ]"
+        :title="`${mode.label} (${mode.shortcut})`"
+        @click="$emit('update:viewMode', mode.key)"
+      >
+        <Icon
+          :name="mode.icon"
+          class="h-3.5 w-3.5 transition-colors duration-200"
+        />
+        <span class="hidden sm:inline">{{ mode.label }}</span>
+
+        <!-- Active indicator -->
+        <div
+          v-if="viewMode === mode.key"
+          class="rounded-md ring-1 ring-white/20 inset-0 absolute"
+        />
+      </button>
     </div>
-  </div>
+
+    <!-- Right section -->
+    <div class="flex gap-2 items-center">
+      <button
+        class="group text-gray-400 rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:text-red-400 hover:bg-red-500/10"
+        title="Delete note"
+        @click="$emit('deleteDocument')"
+      >
+        <Icon
+          name="lucide:trash-2"
+          class="h-4 w-4 transition-colors duration-200"
+        />
+      </button>
+
+      <div class="bg-gray-700/50 h-4 w-px" />
+
+      <div class="flex gap-1 items-center">
+        <div class="hidden md:block">
+          <ShortcutsModal />
+        </div>
+        <SettingsModal />
+      </div>
+    </div>
+  </header>
 </template>

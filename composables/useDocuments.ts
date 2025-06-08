@@ -159,7 +159,7 @@ gitgraph
       createdAt: Date.now(),
       updatedAt: Date.now(),
     }
-    
+
     documentsStorage.value.unshift(newDoc)
     activeDocumentId.value = newDoc.id
     return newDoc.id
@@ -185,7 +185,8 @@ gitgraph
 
   function deleteDocument(id: string): void {
     const docIndex = documentsStorage.value.findIndex(d => d.id === id)
-    if (docIndex === -1) return
+    if (docIndex === -1)
+      return
 
     documentsStorage.value.splice(docIndex, 1)
 
@@ -194,7 +195,8 @@ gitgraph
       if (documentsStorage.value.length === 0) {
         // Create a new document if none exist
         createDocument()
-      } else {
+      }
+      else {
         // Select the first available document
         activeDocumentId.value = documentsStorage.value[0].id
       }
@@ -219,4 +221,4 @@ gitgraph
     deleteDocument,
     getDocumentTitle,
   }
-} 
+}

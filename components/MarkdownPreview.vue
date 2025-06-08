@@ -39,14 +39,14 @@ if (process.client) {
 </script>
 
 <template>
-  <div ref="root" class="bg-editor-bg flex flex-col h-screen w-full">
+  <div class="bg-editor-bg flex flex-col h-full w-full">
     <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
         <Icon name="lucide:eye" class="text-text-primary h-4 w-4" />
       </div>
     </div>
 
-    <div class="bg-editor-bg flex-1 min-h-0 overflow-auto">
+    <div ref="root" class="bg-editor-bg flex-1 min-h-0 overflow-auto">
       <div class="mx-auto px-12 py-12 max-w-none">
         <article class="prose-lg max-w-none prose prose-gray prose-invert" v-html="renderedHtml" />
       </div>

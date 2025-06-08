@@ -28,7 +28,7 @@ const activeMarkdown = computed({
 const { renderedMarkdown, shikiCSS } = useMarkdown(activeMarkdown)
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
-const { settings, toggleVimMode, toggleLineNumbers } = useEditorSettings()
+const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
 const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'preview')
 const isSplitView = computed(() => viewMode.value === 'split')
 const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
@@ -101,6 +101,10 @@ function handleToggleVimMode() {
 
 function handleToggleLineNumbers() {
   toggleLineNumbers()
+}
+
+function handleTogglePreviewSync() {
+  togglePreviewSync()
 }
 
 function handleToggleSettings() {
@@ -198,7 +202,7 @@ useHead({
 </script>
 
 <template>
-  <div ref="containerRef" class="text-gray-100 font-sans bg-editor-bg flex flex-col h-screen">
+  <div ref="containerRef" class="text-gray-100 font-sans bg-gray-950 flex flex-col h-screen overflow-hidden">
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
@@ -209,33 +213,47 @@ useHead({
       @delete-document="handleDeleteDocument"
     />
 
-    <div class="flex flex-1 overflow-hidden">
-      <DocumentList
-        :documents="documents"
-        :active-document-id="activeDocumentId"
-        :is-visible="isSidebarVisible"
-        @select-document="handleDocumentSelect"
-        @create-document="handleCreateDocument"
-      />
+    <div class="flex flex-1 relative overflow-hidden">
+      <!-- Sidebar with smooth transition -->
+      <Transition
+        enter-active-class="transition-all duration-300 ease-out"
+        leave-active-class="transition-all duration-300 ease-in"
+        enter-from-class="transform -translate-x-full opacity-0"
+        enter-to-class="transform translate-x-0 opacity-100"
+        leave-from-class="transform translate-x-0 opacity-100"
+        leave-to-class="transform -translate-x-full opacity-0"
+      >
+        <DocumentList
+          v-if="isSidebarVisible"
+          :documents="documents"
+          :active-document-id="activeDocumentId"
+          :is-visible="isSidebarVisible"
+          @select-document="handleDocumentSelect"
+          @create-document="handleCreateDocument"
+        />
+      </Transition>
 
-      <MainContent
-        :layout="{
-          isEditorVisible,
-          isPreviewVisible,
-          isSplitView,
-          isMobile,
-          leftPaneWidth,
-          rightPaneWidth,
-          isDragging,
-        }"
-        :content="{
-          markdown: activeMarkdown,
-          settings,
-          renderedMarkdown,
-        }"
-        @update:markdown="activeMarkdown = $event"
-        @start-drag="startDrag"
-      />
+      <!-- Main content area -->
+      <div class="bg-gray-900/30 flex flex-1 flex-col overflow-hidden">
+        <MainContent
+          :layout="{
+            isEditorVisible,
+            isPreviewVisible,
+            isSplitView,
+            isMobile,
+            leftPaneWidth,
+            rightPaneWidth,
+            isDragging,
+          }"
+          :content="{
+            markdown: activeMarkdown,
+            settings,
+            renderedMarkdown,
+          }"
+          @update:markdown="activeMarkdown = $event"
+          @start-drag="startDrag"
+        />
+      </div>
     </div>
 
     <StatusBar
@@ -255,34 +273,39 @@ useHead({
       @insert-text="handleInsertText"
       @toggle-vim-mode="handleToggleVimMode"
       @toggle-line-numbers="handleToggleLineNumbers"
+      @toggle-preview-sync="handleTogglePreviewSync"
       @toggle-settings="handleToggleSettings"
     />
   </div>
 </template>
 
 <style>
+/* Global scrollbar styling for Linear-like feel */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: theme('colors.editor.bg');
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: theme('colors.editor.hover');
+  background: rgba(156, 163, 175, 0.3);
   border-radius: 3px;
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3f52;
+  background: rgba(156, 163, 175, 0.5);
 }
 
+/* CodeMirror styling improvements */
 .cm-editor {
-  background-color: theme('colors.editor.bg') !important;
-  color: #b4bcd0 !important;
+  background-color: theme('colors.gray.900') !important;
+  color: #e5e7eb !important;
   border: none !important;
+  border-radius: 0 !important;
 }
 
 .cm-focused {
@@ -291,24 +314,25 @@ useHead({
 
 .cm-content {
   padding: 32px !important;
-  font-size: 17px !important;
-  line-height: 1.6 !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
 }
 
 .cm-placeholder {
-  color: theme('colors.text.secondary') !important;
+  color: theme('colors.gray.500') !important;
 }
 
 .cm-cursor {
-  border-left-color: theme('colors.editor.active') !important;
+  border-left-color: theme('colors.blue.500') !important;
   border-left-width: 2px !important;
 }
 
 .cm-selectionBackground {
-  background-color: rgba(theme('colors.editor.active'), 0.125) !important;
+  background-color: rgba(59, 130, 246, 0.15) !important;
 }
 
-/* Markdown-specific syntax highlighting */
+/* Markdown syntax highlighting improvements */
 .cm-line {
   position: relative;
 }
@@ -318,91 +342,113 @@ useHead({
 }
 
 .cm-header.cm-header-1 {
-  color: #ffffff !important;
+  color: #f9fafb !important;
   font-weight: 700 !important;
+  font-size: 1.25em !important;
 }
 
 .cm-header.cm-header-2 {
-  color: #e6edf3 !important;
+  color: #f3f4f6 !important;
   font-weight: 600 !important;
+  font-size: 1.15em !important;
 }
 
 .cm-header.cm-header-3 {
-  color: #d2d9e0 !important;
+  color: #e5e7eb !important;
   font-weight: 600 !important;
+  font-size: 1.1em !important;
 }
 
 .cm-header.cm-header-4,
 .cm-header.cm-header-5,
 .cm-header.cm-header-6 {
-  color: #c9d1d9 !important;
+  color: #d1d5db !important;
   font-weight: 600 !important;
 }
 
 .cm-strong {
-  color: #ffffff !important;
+  color: #f9fafb !important;
   font-weight: 600 !important;
 }
 
 .cm-emphasis {
-  color: #e6edf3 !important;
+  color: #e5e7eb !important;
   font-style: italic !important;
 }
 
 .cm-strikethrough {
-  color: #8b949e !important;
+  color: #9ca3af !important;
   text-decoration: line-through !important;
 }
 
 .cm-code {
-  background: rgba(110, 118, 129, 0.15) !important;
-  color: #ff7b72 !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: #60a5fa !important;
   padding: 0.125rem 0.25rem !important;
   border-radius: 0.25rem !important;
+  font-family: 'JetBrains Mono', monospace !important;
 }
 
 .cm-link {
-  color: #58a6ff !important;
+  color: #60a5fa !important;
   text-decoration: none !important;
 }
 
 .cm-url {
-  color: #58a6ff !important;
+  color: #60a5fa !important;
 }
 
 .cm-quote {
-  color: #8b949e !important;
+  color: #9ca3af !important;
   font-style: italic !important;
+  border-left: 3px solid rgba(59, 130, 246, 0.3) !important;
+  padding-left: 1rem !important;
+  margin-left: -1rem !important;
 }
 
 .cm-list {
-  color: #58a6ff !important;
+  color: #60a5fa !important;
 }
 
 .cm-hr {
-  color: #30363d !important;
+  color: #374151 !important;
 }
 
 .cm-meta {
-  color: #8b949e !important;
+  color: #9ca3af !important;
 }
 
 .cm-activeLine {
-  background-color: rgba(110, 118, 129, 0.05) !important;
+  background-color: rgba(59, 130, 246, 0.05) !important;
 }
 
 .cm-activeLineGutter {
-  background-color: rgba(110, 118, 129, 0.05) !important;
+  background-color: rgba(59, 130, 246, 0.05) !important;
 }
 
 .cm-gutters {
-  background-color: theme('colors.editor.bg') !important;
-  border-right: 1px solid theme('colors.editor.border') !important;
-  color: theme('colors.text.secondary') !important;
+  background-color: theme('colors.gray.900') !important;
+  border-right: 1px solid theme('colors.gray.800') !important;
+  color: theme('colors.gray.500') !important;
 }
 
 .cm-lineNumbers .cm-gutterElement {
-  color: theme('colors.text.secondary') !important;
-  font-size: 13px !important;
+  color: theme('colors.gray.500') !important;
+  font-size: 12px !important;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, transform, opacity, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom focus styles */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid theme('colors.blue.500');
+  outline-offset: 2px;
 }
 </style>
