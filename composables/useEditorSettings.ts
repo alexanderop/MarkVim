@@ -79,6 +79,10 @@ export function useEditorSettings() {
     settings.value.lineNumbers = !settings.value.lineNumbers
   }
 
+  const togglePreviewSync = () => {
+    settings.value.previewSync = !settings.value.previewSync
+  }
+
   const updateTheme = (theme: EditorSettings['theme']) => {
     settings.value.theme = theme
   }
@@ -107,9 +111,10 @@ export function useEditorSettings() {
   }
 
   return {
-    settings: readonly(settings),
+    settings,
     toggleVimMode,
     toggleLineNumbers,
+    togglePreviewSync,
     updateTheme,
     updateFontSize,
     resetToDefaults,

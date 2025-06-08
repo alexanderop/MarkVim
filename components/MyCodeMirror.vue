@@ -7,7 +7,7 @@ import { EditorState as CMEditorState, Compartment, StateEffect } from '@codemir
 import { oneDark } from '@codemirror/theme-one-dark'
 import { lineNumbers as cmLineNumbers, placeholder as cmPlaceholder, drawSelection, EditorView, keymap } from '@codemirror/view'
 import { tags } from '@lezer/highlight'
-import { vim, Vim } from '@replit/codemirror-vim'
+import { getCM, vim, Vim } from '@replit/codemirror-vim'
 
 const props = withDefaults(defineProps<{
   extensions?: Extension[]
@@ -35,6 +35,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   (event: 'update', viewUpdate: ViewUpdate): void
+  (event: 'vimModeChange', mode: string, subMode?: string): void
 }>()
 
 const {
@@ -213,6 +214,29 @@ function useEditorExtensions() {
         const newCode = viewUpdate.state.doc.toString()
         if (newCode !== modelValue.value) {
           modelValue.value = newCode
+        }
+      }
+
+      // Track vim mode changes
+      if (vimMode.value) {
+        const cm = getCM(viewUpdate.view)
+        if (cm) {
+          const currentKeyMap = cm.state.keyMap || ''
+
+          // Map keyMap values to readable mode names
+          let modeName = 'NORMAL'
+          if (currentKeyMap === 'vim-insert') {
+            modeName = 'INSERT'
+          }
+          else if (currentKeyMap === 'vim-replace') {
+            modeName = 'REPLACE'
+          }
+          else if (currentKeyMap.startsWith('vim-visual')) {
+            modeName = 'VISUAL'
+          }
+
+          // Only emit if the mode has actually changed
+          emit('vimModeChange', modeName)
         }
       }
     }))

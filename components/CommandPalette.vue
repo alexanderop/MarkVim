@@ -29,6 +29,7 @@ const emit = defineEmits<{
   'insertText': [text: string]
   'toggleVimMode': []
   'toggleLineNumbers': []
+  'togglePreviewSync': []
   'toggleSettings': []
 }>()
 
@@ -122,8 +123,17 @@ const appCommands: Command[] = [
     id: 'toggle-line-numbers',
     label: 'Toggle Line Numbers',
     description: 'Show or hide line numbers in editor',
+    shortcut: '⌘⇧L',
     icon: '🔢',
     action: () => emit('toggleLineNumbers'),
+    group: 'View',
+  },
+  {
+    id: 'toggle-preview-sync',
+    label: 'Toggle Preview Sync',
+    description: 'Enable or disable synchronized scrolling',
+    icon: '🔄',
+    action: () => emit('togglePreviewSync'),
     group: 'View',
   },
 
