@@ -46,7 +46,7 @@ const commandPalettePosition = ref({ x: 0, y: 0 })
 const deleteModalOpen = ref(false)
 const documentToDelete = ref<{ id: string, title: string } | null>(null)
 
-const { registerShortcuts, formatKeys } = useShortcuts()
+const { registerShortcuts, registerAppCommands, formatKeys } = useShortcuts()
 
 // Get the title of the active document
 const activeDocumentTitle = computed(() => {
@@ -209,6 +209,79 @@ onMounted(() => {
         handleToggleSidebar()
       },
       category: 'View',
+    },
+  ])
+
+  // Register app commands for command palette
+  registerAppCommands([
+    // File Commands
+    {
+      id: 'save',
+      keys: 'meta+s',
+      description: 'Save Document',
+      category: 'File',
+      icon: '💾',
+      action: () => handleSaveDocument(),
+    },
+    {
+      id: 'download',
+      keys: '',
+      description: 'Download as Markdown',
+      category: 'File',
+      icon: '⬇️',
+      action: () => {
+        if (!activeDocument.value)
+          return
+        const blob = new Blob([activeDocument.value.content], { type: 'text/markdown' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${getDocumentTitle(activeDocument.value.content)}.md`
+        a.click()
+        URL.revokeObjectURL(url)
+      },
+    },
+    {
+      id: 'new-document',
+      keys: '',
+      description: 'New Document',
+      category: 'File',
+      icon: '📄',
+      action: () => handleCreateDocument(),
+    },
+
+    // Settings Commands
+    {
+      id: 'toggle-vim-mode',
+      keys: '',
+      description: 'Toggle Vim Mode',
+      category: 'Settings',
+      icon: '⚡',
+      action: () => handleToggleVimMode(),
+    },
+    {
+      id: 'toggle-line-numbers',
+      keys: '',
+      description: 'Toggle Line Numbers',
+      category: 'Settings',
+      icon: '🔢',
+      action: () => handleToggleLineNumbers(),
+    },
+    {
+      id: 'toggle-preview-sync',
+      keys: '',
+      description: 'Toggle Preview Sync',
+      category: 'Settings',
+      icon: '🔄',
+      action: () => handleTogglePreviewSync(),
+    },
+    {
+      id: 'toggle-sidebar',
+      keys: 'meta+shift+backslash',
+      description: 'Toggle Sidebar',
+      category: 'View',
+      icon: '📋',
+      action: () => handleToggleSidebar(),
     },
   ])
 })

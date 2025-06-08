@@ -1,13 +1,5 @@
 <script setup lang="ts">
-export interface Command {
-  id: string
-  label: string
-  description?: string
-  shortcut?: string
-  action: () => void
-  group?: string
-  icon?: string
-}
+import type { Command } from '~/composables/useShortcuts'
 
 const props = withDefaults(defineProps<{
   open?: boolean
@@ -38,294 +30,16 @@ const selectedIndex = ref(0)
 const scrollContainer = ref<HTMLElement>()
 const inputRef = ref<HTMLInputElement>()
 
-// Get shortcuts from the useShortcuts composable
-const { shortcutsByCategory, formatKeys } = useShortcuts()
-
-// Define app-specific commands with shortcuts and icons
-const appCommands: Command[] = [
-  // File Commands
-  {
-    id: 'save',
-    label: 'Save Document',
-    description: 'Save the current markdown document',
-    shortcut: '⌘S',
-    icon: '💾',
-    action: () => emit('saveDocument'),
-    group: 'File',
-  },
-  {
-    id: 'download',
-    label: 'Download as Markdown',
-    description: 'Download the document as .md file',
-    icon: '⬇️',
-    action: () => {
-      const blob = new Blob([props.markdown], { type: 'text/markdown' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `markvim-${new Date().toISOString().split('T')[0]}.md`
-      a.click()
-      URL.revokeObjectURL(url)
-    },
-    group: 'File',
-  },
-  {
-    id: 'new-document',
-    label: 'New Document',
-    description: 'Create a new markdown document',
-    shortcut: '⌘N',
-    icon: '📄',
-    action: () => {
-      // This would clear the current document
-      emit('insertText', '# New Document\n\nStart writing here...\n')
-    },
-    group: 'File',
-  },
-
-  // View Commands
-  {
-    id: 'view-editor',
-    label: 'Editor Only',
-    description: 'Show only the markdown editor',
-    shortcut: '1',
-    icon: '📝',
-    action: () => emit('changeViewMode', 'editor'),
-    group: 'View',
-  },
-  {
-    id: 'view-split',
-    label: 'Split View',
-    description: 'Show editor and preview side-by-side',
-    shortcut: '2',
-    icon: '⚡',
-    action: () => emit('changeViewMode', 'split'),
-    group: 'View',
-  },
-  {
-    id: 'view-preview',
-    label: 'Preview Only',
-    description: 'Show only the markdown preview',
-    shortcut: '3',
-    icon: '👀',
-    action: () => emit('changeViewMode', 'preview'),
-    group: 'View',
-  },
-  {
-    id: 'toggle-vim',
-    label: 'Toggle Vim Mode',
-    description: 'Enable or disable Vim modal editing',
-    shortcut: '⌘⇧V',
-    icon: '⚡',
-    action: () => emit('toggleVimMode'),
-    group: 'View',
-  },
-  {
-    id: 'toggle-line-numbers',
-    label: 'Toggle Line Numbers',
-    description: 'Show or hide line numbers in editor',
-    shortcut: '⌘⇧L',
-    icon: '🔢',
-    action: () => emit('toggleLineNumbers'),
-    group: 'View',
-  },
-  {
-    id: 'toggle-preview-sync',
-    label: 'Toggle Preview Sync',
-    description: 'Enable or disable synchronized scrolling',
-    icon: '🔄',
-    action: () => emit('togglePreviewSync'),
-    group: 'View',
-  },
-
-  // Insert Commands
-  {
-    id: 'insert-heading-1',
-    label: 'Insert H1 Heading',
-    description: 'Insert level 1 heading',
-    icon: '📋',
-    action: () => emit('insertText', '\n# Heading 1\n'),
-    group: 'Insert',
-  },
-  {
-    id: 'insert-heading-2',
-    label: 'Insert H2 Heading',
-    description: 'Insert level 2 heading',
-    icon: '📋',
-    action: () => emit('insertText', '\n## Heading 2\n'),
-    group: 'Insert',
-  },
-  {
-    id: 'insert-heading-3',
-    label: 'Insert H3 Heading',
-    description: 'Insert level 3 heading',
-    icon: '📋',
-    action: () => emit('insertText', '\n### Heading 3\n'),
-    group: 'Insert',
-  },
-  {
-    id: 'insert-code-block',
-    label: 'Insert Code Block',
-    description: 'Insert markdown code block',
-    shortcut: '⌘⇧C',
-    icon: '💻',
-    action: () => emit('insertText', '\n```javascript\n// Your code here\n```\n'),
-    group: 'Insert',
-  },
-  {
-    id: 'insert-table',
-    label: 'Insert Table',
-    description: 'Insert markdown table',
-    icon: '📊',
-    action: () => {
-      const table = '\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Row 1    | Data     | Data     |\n| Row 2    | Data     | Data     |\n'
-      emit('insertText', table)
-    },
-    group: 'Insert',
-  },
-  {
-    id: 'insert-link',
-    label: 'Insert Link',
-    description: 'Insert markdown link',
-    shortcut: '⌘L',
-    icon: '🔗',
-    action: () => emit('insertText', '[Link text](https://example.com)'),
-    group: 'Insert',
-  },
-  {
-    id: 'insert-image',
-    label: 'Insert Image',
-    description: 'Insert markdown image',
-    icon: '🖼️',
-    action: () => emit('insertText', '![Alt text](image-url.jpg)'),
-    group: 'Insert',
-  },
-  {
-    id: 'insert-date',
-    label: 'Insert Current Date',
-    description: 'Insert current date at cursor position',
-    icon: '📅',
-    action: () => {
-      const date = new Date().toLocaleDateString()
-      emit('insertText', date)
-    },
-    group: 'Insert',
-  },
-  {
-    id: 'insert-datetime',
-    label: 'Insert Date & Time',
-    description: 'Insert current date and time',
-    icon: '🕐',
-    action: () => {
-      const datetime = new Date().toLocaleString()
-      emit('insertText', datetime)
-    },
-    group: 'Insert',
-  },
-
-  // Format Commands
-  {
-    id: 'format-bold',
-    label: 'Bold Text',
-    description: 'Make selected text bold',
-    shortcut: '⌘B',
-    icon: '**',
-    action: () => emit('insertText', '**bold text**'),
-    group: 'Format',
-  },
-  {
-    id: 'format-italic',
-    label: 'Italic Text',
-    description: 'Make selected text italic',
-    shortcut: '⌘I',
-    icon: '*',
-    action: () => emit('insertText', '*italic text*'),
-    group: 'Format',
-  },
-  {
-    id: 'format-code',
-    label: 'Inline Code',
-    description: 'Format as inline code',
-    icon: '`',
-    action: () => emit('insertText', '`code`'),
-    group: 'Format',
-  },
-  {
-    id: 'format-quote',
-    label: 'Block Quote',
-    description: 'Insert block quote',
-    icon: '💬',
-    action: () => emit('insertText', '\n> Quote text\n'),
-    group: 'Format',
-  },
-  {
-    id: 'format-list',
-    label: 'Bullet List',
-    description: 'Insert bullet list',
-    icon: '•',
-    action: () => emit('insertText', '\n- List item 1\n- List item 2\n- List item 3\n'),
-    group: 'Format',
-  },
-  {
-    id: 'format-numbered-list',
-    label: 'Numbered List',
-    description: 'Insert numbered list',
-    icon: '1.',
-    action: () => emit('insertText', '\n1. First item\n2. Second item\n3. Third item\n'),
-    group: 'Format',
-  },
-]
-
-// Convert shortcuts from useShortcuts to Command format
-const shortcutCommands = computed((): Command[] => {
-  const commands: Command[] = []
-
-  shortcutsByCategory.value.forEach((category) => {
-    category.shortcuts.forEach((shortcut) => {
-      // Skip shortcuts that are already covered by app commands
-      const isDuplicate = appCommands.some(cmd =>
-        cmd.shortcut === shortcut.keys
-        || cmd.shortcut === formatKeys(shortcut.keys)
-        || cmd.id === shortcut.keys.replace(/\s+/g, '-'),
-      )
-
-      if (!isDuplicate) {
-        // Map category names to icons
-        const categoryIcons: Record<string, string> = {
-          Navigation: '🧭',
-          View: '👁️',
-          File: '📁',
-          General: '⚙️',
-          Help: '❓',
-        }
-
-        commands.push({
-          id: `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
-          label: shortcut.description,
-          description: `Keyboard shortcut: ${formatKeys(shortcut.keys)}`,
-          shortcut: formatKeys(shortcut.keys),
-          icon: categoryIcons[shortcut.category || 'General'] || '⌨️',
-          action: shortcut.action,
-          group: shortcut.category || 'General',
-        })
-      }
-    })
-  })
-
-  return commands
-})
-
-// Combine app commands with shortcut commands
-const commands = computed(() => {
-  return [...appCommands, ...shortcutCommands.value]
-})
+// Get all commands from the useShortcuts composable
+const { allCommands } = useShortcuts()
 
 // Filter commands based on search term
 const filteredCommands = computed(() => {
   if (!searchTerm.value)
-    return commands.value
+    return allCommands.value
 
   const term = searchTerm.value.toLowerCase()
-  return commands.value.filter(command =>
+  return allCommands.value.filter(command =>
     command.label.toLowerCase().includes(term)
     || (command.description && command.description.toLowerCase().includes(term))
     || (command.group && command.group.toLowerCase().includes(term))
@@ -345,7 +59,7 @@ const groupedCommands = computed(() => {
   }, {} as Record<string, Command[]>)
 
   // Define group order
-  const groupOrder = ['File', 'View', 'Insert', 'Format', 'Navigation', 'Help', 'General', 'Settings', 'Other']
+  const groupOrder = ['File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
 
   return groupOrder
     .filter(groupName => groups[groupName]?.length > 0)
@@ -423,7 +137,6 @@ watch(() => props.open, (isOpen) => {
     nextTick(() => {
       searchTerm.value = ''
       selectedIndex.value = 0
-      // Focus the input when opening
       inputRef.value?.focus()
     })
   }
@@ -436,7 +149,6 @@ watch(searchTerm, () => {
 
 // Auto-focus management
 onMounted(() => {
-  // Add global keydown listener when component is mounted
   document.addEventListener('keydown', handleGlobalKeydown)
 })
 
@@ -445,11 +157,9 @@ onBeforeUnmount(() => {
 })
 
 function handleGlobalKeydown(event: KeyboardEvent) {
-  // Only handle keyboard navigation when command palette is open
   if (!props.open)
     return
 
-  // Don't handle if focus is on input and user is typing normally
   if (event.target === inputRef.value && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(event.key)) {
     return
   }

@@ -7,6 +7,16 @@ function logicAnd(...args: MaybeRefOrGetter<any>[]): ComputedRef<boolean> {
   return computed(() => args.every(i => toValue(i)))
 }
 
+export interface Command {
+  id: string
+  label: string
+  description?: string
+  shortcut?: string
+  action: () => void
+  group?: string
+  icon?: string
+}
+
 export interface ShortcutAction {
   keys: string
   description: string
@@ -14,6 +24,8 @@ export interface ShortcutAction {
   category?: string
   disabled?: ComputedRef<boolean> | Ref<boolean>
   allowInEditor?: boolean // Allow shortcut to work even when editor is focused
+  icon?: string
+  id?: string
 }
 
 export interface ShortcutCategory {
@@ -57,6 +69,18 @@ export function useShortcuts() {
 
   // Use Nuxt's useState for global shortcuts storage
   const registeredShortcuts = useState<Map<string, ShortcutAction>>('shortcuts', () => new Map())
+
+  // App-specific commands that don't need keyboard shortcuts but should appear in command palette
+  const appCommands = useState<Map<string, ShortcutAction>>('appCommands', () => new Map())
+
+  // Function to register app commands (for command palette without keyboard shortcuts)
+  function registerAppCommand(command: ShortcutAction) {
+    appCommands.value.set(command.id || command.keys, command)
+  }
+
+  function registerAppCommands(commands: ShortcutAction[]) {
+    commands.forEach(registerAppCommand)
+  }
 
   // Register a single shortcut
   function registerShortcut(shortcut: ShortcutAction) {
@@ -131,6 +155,7 @@ export function useShortcuts() {
   const shortcutsByCategory = computed((): ShortcutCategory[] => {
     const categories = new Map<string, ShortcutAction[]>()
 
+    // Add keyboard shortcuts
     registeredShortcuts.value.forEach((shortcut) => {
       const category = shortcut.category || 'General'
       if (!categories.has(category)) {
@@ -139,11 +164,68 @@ export function useShortcuts() {
       categories.get(category)!.push(shortcut)
     })
 
+    // Add app commands
+    appCommands.value.forEach((command) => {
+      const category = command.category || 'General'
+      if (!categories.has(category)) {
+        categories.set(category, [])
+      }
+      categories.get(category)!.push(command)
+    })
+
     return Array.from(categories.entries()).map(([name, shortcuts]) => ({
       name,
       shortcuts: shortcuts.sort((a, b) => a.keys.localeCompare(b.keys)),
     }))
   })
+
+  // Get all commands in Command interface format for command palette
+  const allCommands = computed((): Command[] => {
+    const commands: Command[] = []
+
+    // Add shortcuts as commands
+    registeredShortcuts.value.forEach((shortcut) => {
+      commands.push({
+        id: shortcut.id || `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
+        label: shortcut.description,
+        description: `Keyboard shortcut: ${formatKeys(shortcut.keys)}`,
+        shortcut: formatKeys(shortcut.keys),
+        icon: shortcut.icon || getDefaultIconForCategory(shortcut.category || 'General'),
+        action: shortcut.action,
+        group: shortcut.category || 'General',
+      })
+    })
+
+    // Add app commands
+    appCommands.value.forEach((command) => {
+      commands.push({
+        id: command.id || command.keys,
+        label: command.description,
+        description: command.description,
+        shortcut: command.keys ? formatKeys(command.keys) : undefined,
+        icon: command.icon || getDefaultIconForCategory(command.category || 'General'),
+        action: command.action,
+        group: command.category || 'General',
+      })
+    })
+
+    return commands
+  })
+
+  // Helper function to get default icons for categories
+  function getDefaultIconForCategory(category: string): string {
+    const categoryIcons: Record<string, string> = {
+      Navigation: '🧭',
+      View: '👁️',
+      File: '📁',
+      General: '⚙️',
+      Help: '❓',
+      Insert: '📋',
+      Format: '✏️',
+      Settings: '⚙️',
+    }
+    return categoryIcons[category] || '⌨️'
+  }
 
   // Utility to format key combination for display
   function formatKeys(keys: string): string {
@@ -274,16 +356,21 @@ export function useShortcuts() {
     // Core functions
     registerShortcut,
     registerShortcuts,
+    registerAppCommand,
+    registerAppCommands,
 
     // State
     shortcutsByCategory: readonly(shortcutsByCategory),
+    allCommands: readonly(allCommands),
     registeredShortcuts: readonly(registeredShortcuts),
+    appCommands: readonly(appCommands),
     notUsingInput: readonly(notUsingInput),
     showSettings: readonly(showSettings),
 
     // Utilities
     formatKeys,
     isShortcutActive,
+    getDefaultIconForCategory,
 
     // Settings functions
     openSettings,
