@@ -83,6 +83,11 @@ function closeCommandPalette() {
   commandPaletteOpen.value = false
 }
 
+function handleDocumentSelectFromPalette(id: string) {
+  setActiveDocument(id)
+  closeCommandPalette()
+}
+
 function handleSaveDocument() {
   if (!activeDocument.value)
     return
@@ -365,6 +370,7 @@ useHead({
       :position="commandPalettePosition"
       :view-mode="viewMode"
       :markdown="activeMarkdown"
+      :documents="documents"
       @command-selected="closeCommandPalette"
       @change-view-mode="viewMode = $event"
       @save-document="handleSaveDocument"
@@ -373,6 +379,7 @@ useHead({
       @toggle-line-numbers="handleToggleLineNumbers"
       @toggle-preview-sync="handleTogglePreviewSync"
       @toggle-settings="handleToggleSettings"
+      @select-document="handleDocumentSelectFromPalette"
     />
 
     <!-- Delete Confirmation Modal -->

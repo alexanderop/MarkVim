@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type { Command } from '~/composables/useShortcuts'
+import type { Document } from '~/composables/useDocuments'
 
 const props = withDefaults(defineProps<{
   open?: boolean
   position?: { x: number, y: number }
   viewMode?: 'split' | 'editor' | 'preview'
   markdown?: string
+  documents?: Document[]
 }>(), {
   open: false,
   position: () => ({ x: 0, y: 0 }),
   viewMode: 'split',
   markdown: '',
+  documents: () => [],
 })
 
 const emit = defineEmits<{
@@ -23,6 +26,7 @@ const emit = defineEmits<{
   'toggleLineNumbers': []
   'togglePreviewSync': []
   'toggleSettings': []
+  'selectDocument': [id: string]
 }>()
 
 const searchTerm = ref('')
@@ -32,24 +36,97 @@ const inputRef = ref<HTMLInputElement>()
 
 // Get all commands from the useShortcuts composable
 const { allCommands } = useShortcuts()
+const { getDocumentTitle } = useDocuments()
+const { trackCommandUsage, sortCommandsByHistory } = useCommandHistory()
+
+// Create a computed property to transform documents into commands
+const documentCommands = computed((): Command[] => {
+  return (props.documents || []).map(doc => ({
+    id: `doc-${doc.id}`,
+    label: getDocumentTitle(doc.content),
+    description: `Last updated: ${new Date(doc.updatedAt).toLocaleDateString()}`,
+    action: () => emit('selectDocument', doc.id),
+    group: 'Files',
+    icon: '📄',
+  }))
+})
+
+// Combine app commands with document commands
+const combinedCommands = computed(() => {
+  return [...documentCommands.value, ...allCommands.value]
+})
 
 // Filter commands based on search term
 const filteredCommands = computed(() => {
-  if (!searchTerm.value)
-    return allCommands.value
+  if (!searchTerm.value) {
+    // When no search term, show commands sorted by usage history
+    return sortCommandsByHistory(combinedCommands.value)
+  }
 
   const term = searchTerm.value.toLowerCase()
-  return allCommands.value.filter(command =>
+  const filtered = combinedCommands.value.filter(command =>
     command.label.toLowerCase().includes(term)
     || (command.description && command.description.toLowerCase().includes(term))
     || (command.group && command.group.toLowerCase().includes(term))
     || (command.shortcut && command.shortcut.toLowerCase().includes(term)),
   )
+  
+  // Also sort filtered results by history for better UX
+  return sortCommandsByHistory(filtered)
 })
 
 // Group filtered commands
 const groupedCommands = computed(() => {
-  const groups = filteredCommands.value.reduce((acc, command) => {
+  const commands = filteredCommands.value
+  const { commandHistory } = useCommandHistory()
+  
+  // If no search term and we have history, create a "Recently Used" section
+  if (!searchTerm.value && commandHistory.value.length > 0) {
+    const recentCommands: Command[] = []
+    const otherCommands: Command[] = []
+    const recentIds = new Set(commandHistory.value.slice(0, 8)) // Show top 8 recent
+    
+    commands.forEach(command => {
+      if (recentIds.has(command.id)) {
+        recentCommands.push(command)
+      } else {
+        otherCommands.push(command)
+      }
+    })
+    
+    const groups: { name: string, commands: Command[] }[] = []
+    
+    // Add recently used section if we have recent commands
+    if (recentCommands.length > 0) {
+      groups.push({ name: 'Recently Used', commands: recentCommands })
+    }
+    
+    // Group other commands normally
+    const otherGroups = otherCommands.reduce((acc, command) => {
+      const group = command.group || 'Other'
+      if (!acc[group]) {
+        acc[group] = []
+      }
+      acc[group].push(command)
+      return acc
+    }, {} as Record<string, Command[]>)
+    
+    const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
+    
+    groupOrder
+      .filter(groupName => otherGroups[groupName]?.length > 0)
+      .forEach(groupName => {
+        groups.push({
+          name: groupName,
+          commands: otherGroups[groupName],
+        })
+      })
+    
+    return groups
+  }
+  
+  // Regular grouping for search results or when no history
+  const groups = commands.reduce((acc, command) => {
     const group = command.group || 'Other'
     if (!acc[group]) {
       acc[group] = []
@@ -58,8 +135,8 @@ const groupedCommands = computed(() => {
     return acc
   }, {} as Record<string, Command[]>)
 
-  // Define group order
-  const groupOrder = ['File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
+  // Define group order - prioritize Files group
+  const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
 
   return groupOrder
     .filter(groupName => groups[groupName]?.length > 0)
@@ -71,6 +148,9 @@ const groupedCommands = computed(() => {
 
 // Handle command selection
 function selectCommand(command: Command) {
+  // Track command usage for history
+  trackCommandUsage(command.id)
+  
   emit('commandSelected', command)
   emit('update:open', false)
   command.action()
