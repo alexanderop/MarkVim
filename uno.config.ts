@@ -1,47 +1,43 @@
-import { presetTypography } from '@unocss/preset-typography'
+import presetWebFonts from '@unocss/preset-web-fonts'
+import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local'
 import presetWind4 from '@unocss/preset-wind4'
-import { defineConfig } from 'unocss'
+import { defineConfig, presetTypography } from 'unocss'
 
 export default defineConfig({
+  // ①  Wind4 first → base utilities & reset
   presets: [
-    presetWind4(),
+    presetWind4({
+      preflights: {
+        reset: true, // use the built-in Tailwind-4 reset
+        theme: 'on-demand', // only emit CSS vars you actually use (default)
+      },
+    }),
     presetTypography(),
+    presetWebFonts({
+      fonts: {
+        sans: 'DM Sans',
+        serif: 'DM Serif Display',
+        mono: 'DM Mono',
+      },
+      processors: createLocalFontProcessor(),
+    }),
   ],
+
+  // ③  Wind4 theme keys
   theme: {
-    fontFamily: {
-      sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'avenir next', 'avenir', 'segoe ui', 'helvetica neue', 'helvetica', 'Ubuntu', 'roboto', 'noto', 'arial', 'sans-serif'],
-      mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', 'monospace'],
-    },
+    // your colours stay unchanged
     colors: {
-      // Editor theme colors
-      editor: {
-        bg: '#0c0d11', // Main background
-        border: '#1d1f23', // Border color
-        divider: '#1d1f23', // Divider lines
-        hover: '#2a2d3a', // Hover states
-        active: '#5e6ad2', // Active/selected states
-      },
-      // Text colors
-      text: {
-        primary: '#9ca3af', // Primary text color
-        secondary: '#6c7383', // Secondary text color
-      },
-      // macOS window controls (traffic lights)
-      window: {
-        close: '#ff5f57', // Red dot
-        minimize: '#ffbd2e', // Yellow dot
-        maximize: '#28ca42', // Green dot
-      },
-      // Surface colors for different backgrounds
-      surface: {
-        primary: '#0c0d11', // Main surface
-        secondary: '#1d1f23', // Secondary surface
-      },
+      editor: { bg: '#0c0d11', border: '#1d1f23', divider: '#1d1f23', hover: '#2a2d3a', active: '#5e6ad2' },
+      text: { primary: '#9ca3af', secondary: '#6c7383' },
+      window: { close: '#ff5f57', minimize: '#ffbd2e', maximize: '#28ca42' },
+      surface: { primary: '#0c0d11', secondary: '#1d1f23' },
     },
   },
+
+  // ④  keep your custom prose / codeblock overrides
   preflights: [
     {
-      getCSS({ theme }) {
+      getCSS() {
         return `
           /* Default font family for the entire app */
           :root {
@@ -61,7 +57,7 @@ export default defineConfig({
           /* Enhanced prose code block styling for Shiki integration */
           .prose pre {
             background-color: #1e1f22 !important;
-            border: 1px solid ${theme.colors.editor.border};
+            border: 1px solid var(--color-editor-border);
             border-radius: 8px;
             padding: 1.5rem;
             margin: 1.5rem 0;
@@ -112,7 +108,7 @@ export default defineConfig({
           }
 
           .prose pre::-webkit-scrollbar-track {
-            background: ${theme.colors.editor.bg};
+            background: var(--color-editor-bg);
             border-radius: 3px;
           }
 
