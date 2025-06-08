@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import { CustomWorld } from '../support/world';
+import { CustomWorld } from '../support/world.js';
 
 Given('I am on the MarkVim application', async function (this: CustomWorld) {
   // This step is handled by the Before hook, but we keep it for readability.

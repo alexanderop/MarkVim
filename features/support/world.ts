@@ -1,9 +1,12 @@
-import { IWorld, setWorldConstructor, World } from '@cucumber/cucumber';
+import { setWorldConstructor, World } from '@cucumber/cucumber';
+import type { IWorld } from '@cucumber/cucumber';
 import {
+  chromium,
+} from '@playwright/test';
+import type {
   Browser,
   BrowserContext,
   Page,
-  chromium,
   PlaywrightTestOptions,
 } from '@playwright/test';
 

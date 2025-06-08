@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import { CustomWorld } from '../support/world';
+import { CustomWorld } from '../support/world.js';
 
 Given('I have selected the {string} view mode', async function (this: CustomWorld, mode: string) {
   // From HeaderToolbar.vue
