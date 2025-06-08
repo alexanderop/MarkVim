@@ -26,6 +26,7 @@ interface Props {
 interface Emits {
   (e: 'update:markdown', value: string): void
   (e: 'startDrag', event: PointerEvent): void
+  (e: 'vimModeChange', mode: string, subMode?: string): void
 }
 
 const { layout, content } = defineProps<Props>()
@@ -76,6 +77,7 @@ function setPreviewRef(el: HTMLElement | null) {
         :settings="content.settings"
         class="h-full"
         @update:model-value="$emit('update:markdown', $event)"
+        @vim-mode-change="(mode, subMode) => $emit('vimModeChange', mode, subMode)"
       />
     </div>
 

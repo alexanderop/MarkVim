@@ -33,6 +33,9 @@ const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.v
 const isSplitView = computed(() => viewMode.value === 'split')
 const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
 
+// Vim mode tracking
+const currentVimMode = ref<string>('NORMAL')
+
 const isMobile = useMediaQuery('(max-width: 768px)')
 
 // Command palette state
@@ -134,6 +137,15 @@ function handleDocumentSelect(id: string) {
 
 function handleCreateDocument() {
   createDocument()
+}
+
+function handleVimModeChange(mode: string, subMode?: string) {
+  if (subMode) {
+    currentVimMode.value = `${mode.toUpperCase()} (${subMode.toUpperCase()})`
+  }
+  else {
+    currentVimMode.value = mode.toUpperCase()
+  }
 }
 
 onMounted(() => {
@@ -252,6 +264,7 @@ useHead({
           }"
           @update:markdown="activeMarkdown = $event"
           @start-drag="startDrag"
+          @vim-mode-change="handleVimModeChange"
         />
       </div>
     </div>
@@ -260,6 +273,8 @@ useHead({
       :line-count="activeMarkdown.split('\n').length"
       :character-count="activeMarkdown.length"
       :format-keys="formatKeys"
+      :vim-mode="currentVimMode"
+      :show-vim-mode="settings.vimMode"
     />
 
     <CommandPalette

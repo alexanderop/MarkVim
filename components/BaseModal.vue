@@ -15,7 +15,7 @@ interface Emits {
   (e: 'close'): void
 }
 
- withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   maxWidth: '3xl',
   maxHeight: '85vh',
   showCloseButton: true,

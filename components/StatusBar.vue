@@ -3,6 +3,8 @@ interface Props {
   lineCount: number
   characterCount: number
   formatKeys: (keys: string) => string
+  vimMode?: string
+  showVimMode?: boolean
 }
 
 defineProps<Props>()
@@ -11,6 +13,10 @@ defineProps<Props>()
 <template>
   <footer class="px-4 border-t border-gray-200/10 bg-gray-950/90 flex h-8 items-center justify-between backdrop-blur-xl">
     <div class="text-xs text-gray-500 flex gap-4 items-center">
+      <div v-if="showVimMode && vimMode" class="flex gap-1 items-center">
+        <span class="text-green-400 font-medium font-mono">{{ vimMode }}</span>
+      </div>
+      <div v-if="showVimMode && vimMode" class="bg-gray-700/50 h-3 w-px" />
       <div class="flex gap-1 items-center">
         <span class="tabular-nums">{{ lineCount }}</span>
         <span>lines</span>

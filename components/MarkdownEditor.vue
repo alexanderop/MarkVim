@@ -6,6 +6,10 @@ const { settings } = defineProps<{
   settings: EditorSettings
 }>()
 
+const emit = defineEmits<{
+  vimModeChange: [mode: string, subMode?: string]
+}>()
+
 const modelValue = defineModel<string>()
 </script>
 
@@ -42,6 +46,7 @@ const modelValue = defineModel<string>()
           fontSize: `${settings.fontSize}px`,
           fontFamily: settings.fontFamily === 'mono' ? 'var(--font-mono)' : 'var(--font-sans)',
         }"
+        @vim-mode-change="(mode, subMode) => emit('vimModeChange', mode, subMode)"
       />
     </div>
   </div>
