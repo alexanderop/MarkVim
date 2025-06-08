@@ -461,18 +461,18 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 <template>
   <DialogRoot :open="open" @update:open="emit('update:open', $event)">
     <DialogPortal>
-      <DialogOverlay class="bg-black/50 inset-0 fixed z-50" />
+      <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
       <DialogContent
-        class="border border-zinc-700 rounded-lg bg-zinc-900 w-[500px] shadow-2xl left-1/2 top-1/3 fixed z-50 overflow-hidden -translate-x-1/2 -translate-y-1/2"
+        class="border border-gray-700 rounded-lg bg-gray-900 w-[500px] shadow-2xl left-1/2 top-1/3 fixed z-50 overflow-hidden -translate-x-1/2 -translate-y-1/2"
       >
         <!-- Search Input -->
-        <div class="px-4 py-3 border-b border-zinc-700">
+        <div class="px-4 py-3 border-b border-gray-700">
           <input
             ref="inputRef"
             v-model="searchTerm"
             type="text"
             placeholder="Type a command or search..."
-            class="text-base text-zinc-100 outline-none bg-transparent w-full placeholder-zinc-400"
+            class="text-base text-gray-100 outline-none bg-transparent w-full placeholder-gray-400"
             autofocus
           >
         </div>
@@ -480,7 +480,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         <!-- Commands List -->
         <div ref="scrollContainer" class="max-h-80 overflow-y-auto">
           <template v-if="filteredCommands.length === 0">
-            <div class="text-sm text-zinc-500 px-4 py-8 text-center">
+            <div class="text-sm text-gray-500 px-4 py-8 text-center">
               No commands found
             </div>
           </template>
@@ -488,7 +488,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
           <template v-else>
             <div v-for="group in groupedCommands" :key="group.name" class="py-2">
               <!-- Group Label -->
-              <div class="text-xs text-zinc-400 tracking-wider font-medium px-4 py-2 uppercase">
+              <div class="text-xs text-gray-400 tracking-wider font-medium px-4 py-2 uppercase">
                 {{ group.name }}
               </div>
 
@@ -498,8 +498,8 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                 :key="command.id"
                 class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between" :class="[
                   isSelected(command)
-                    ? 'bg-zinc-700/50'
-                    : 'hover:bg-zinc-800/50',
+                    ? 'bg-gray-700/50'
+                    : 'hover:bg-gray-800/50',
                 ]"
                 :data-command-index="getCommandIndex(command)"
                 @click="selectCommand(command)"
@@ -508,19 +508,19 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                   <!-- Icon -->
                   <span
                     v-if="command.icon"
-                    class="text-zinc-300 text-center flex-shrink-0 w-5"
+                    class="text-gray-300 text-center flex-shrink-0 w-5"
                   >
                     {{ command.icon }}
                   </span>
 
                   <!-- Content -->
                   <div class="flex flex-1 flex-col min-w-0">
-                    <div class="text-sm text-zinc-100 font-medium">
+                    <div class="text-sm text-gray-100 font-medium">
                       {{ command.label }}
                     </div>
                     <div
                       v-if="command.description"
-                      class="text-xs text-zinc-400 truncate"
+                      class="text-xs text-gray-400 truncate"
                     >
                       {{ command.description }}
                     </div>
@@ -530,7 +530,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                 <!-- Keyboard Shortcut -->
                 <div
                   v-if="command.shortcut"
-                  class="text-xs text-zinc-400 font-mono px-2 py-1 border border-zinc-600 rounded bg-zinc-800 flex-shrink-0"
+                  class="text-xs text-gray-400 font-mono px-2 py-1 border border-gray-600 rounded bg-gray-800 flex-shrink-0"
                 >
                   {{ command.shortcut }}
                 </div>
@@ -540,7 +540,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         </div>
 
         <!-- Footer hint -->
-        <div class="text-xs text-zinc-500 px-4 py-2 border-t border-zinc-700 flex justify-between">
+        <div class="text-xs text-gray-500 px-4 py-2 border-t border-gray-700 flex justify-between">
           <span>↑↓ to navigate</span>
           <span>↵ to select</span>
           <span>esc to close</span>

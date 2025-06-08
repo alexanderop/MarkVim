@@ -42,6 +42,10 @@ const isMobile = useMediaQuery('(max-width: 768px)')
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
 
+// Delete modal state
+const deleteModalOpen = ref(false)
+const documentToDelete = ref<{ id: string, title: string } | null>(null)
+
 const { registerShortcuts, formatKeys } = useShortcuts()
 
 // Get the title of the active document
@@ -123,12 +127,21 @@ function handleDeleteDocument() {
     return
 
   const title = getDocumentTitle(activeDocument.value.content)
-  // eslint-disable-next-line no-alert
-  const confirmed = window.confirm(`Are you sure you want to delete "${title}"?`)
+  documentToDelete.value = { id: activeDocument.value.id, title }
+  deleteModalOpen.value = true
+}
 
-  if (confirmed) {
-    deleteDocument(activeDocument.value.id)
+function confirmDeleteDocument() {
+  if (documentToDelete.value) {
+    deleteDocument(documentToDelete.value.id)
+    deleteModalOpen.value = false
+    documentToDelete.value = null
   }
+}
+
+function cancelDeleteDocument() {
+  deleteModalOpen.value = false
+  documentToDelete.value = null
 }
 
 function handleDocumentSelect(id: string) {
@@ -291,6 +304,39 @@ useHead({
       @toggle-preview-sync="handleTogglePreviewSync"
       @toggle-settings="handleToggleSettings"
     />
+
+    <!-- Delete Confirmation Modal -->
+    <BaseModal
+      :open="deleteModalOpen"
+      title="Delete Document"
+      max-width="md"
+      @update:open="deleteModalOpen = $event"
+      @close="cancelDeleteDocument"
+    >
+      <div class="py-4">
+        <p class="text-gray-200 text-sm leading-relaxed">
+          Are you sure you want to delete <span class="font-semibold text-white">"{{ documentToDelete?.title }}"</span>?
+        </p>
+        <p class="text-gray-400 text-sm mt-2">
+          This action cannot be undone.
+        </p>
+      </div>
+
+      <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
+        <button
+          class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
+          @click="cancelDeleteDocument"
+        >
+          Cancel
+        </button>
+        <button
+          class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+          @click="confirmDeleteDocument"
+        >
+          Delete
+        </button>
+      </div>
+    </BaseModal>
   </div>
 </template>
 

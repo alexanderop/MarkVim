@@ -46,27 +46,27 @@ const maxWidthClasses = {
     <slot name="trigger" />
 
     <DialogPortal>
-      <DialogOverlay class="bg-black/50 inset-0 fixed z-50 backdrop-blur-sm" />
+      <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
 
       <DialogContent
-        class="bg-background p-6 border flex flex-col gap-3 grid w-full shadow-lg translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden sm:rounded-lg"
+        class="bg-gray-900 border border-gray-700 p-6 flex flex-col gap-3 w-full shadow-2xl translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg"
         :class="[maxWidthClasses[maxWidth]]"
         :style="{ maxHeight }"
       >
         <!-- Header -->
         <div class="pb-2 flex items-center justify-between">
           <div>
-            <DialogTitle class="text-lg font-semibold">
+            <DialogTitle class="text-lg font-semibold text-gray-100">
               {{ title }}
             </DialogTitle>
-            <DialogDescription v-if="description" class="text-muted-foreground text-sm">
+            <DialogDescription v-if="description" class="text-gray-400 text-sm mt-1">
               {{ description }}
             </DialogDescription>
           </div>
 
           <DialogClose v-if="showCloseButton" as-child>
             <button
-              class="ring-offset-background focus:ring-ring rounded-sm opacity-70 transition-opacity focus:outline-none hover:opacity-100 disabled:pointer-events-none focus:ring-2 focus:ring-offset-2"
+              class="text-gray-400 hover:text-gray-100 hover:bg-gray-700/50 rounded-md p-1.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
               @click="handleClose"
             >
               <Icon name="lucide:x" class="h-4 w-4" />

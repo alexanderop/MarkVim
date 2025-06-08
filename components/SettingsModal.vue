@@ -34,18 +34,18 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
           Editor Behavior
         </h3>
         <div class="space-y-2">
-          <div class="p-3 border border-editor-border rounded-md bg-surface-secondary flex items-center justify-between">
+          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
             <div>
-              <h4 class="text-sm text-text-primary font-medium">
+              <h4 class="text-sm text-gray-100 font-medium">
                 Vim Mode
               </h4>
-              <p class="text-xs text-text-secondary">
+              <p class="text-xs text-gray-400">
                 Enable vim keybindings
               </p>
             </div>
             <button
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-editor-active focus:ring-offset-1" :class="[
-                settings.vimMode ? 'bg-editor-active' : 'bg-gray-600',
+              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
+                settings.vimMode ? 'bg-blue-600' : 'bg-gray-600',
               ]"
               role="switch"
               :aria-checked="settings.vimMode"
@@ -59,18 +59,18 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
             </button>
           </div>
 
-          <div class="p-3 border border-editor-border rounded-md bg-surface-secondary flex items-center justify-between">
+          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
             <div>
-              <h4 class="text-sm text-text-primary font-medium">
+              <h4 class="text-sm text-gray-100 font-medium">
                 Synchronized Scrolling
               </h4>
-              <p class="text-xs text-text-secondary">
+              <p class="text-xs text-gray-400">
                 Sync scroll position in split view
               </p>
             </div>
             <button
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-editor-active focus:ring-offset-1" :class="[
-                settings.previewSync ? 'bg-editor-active' : 'bg-gray-600',
+              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
+                settings.previewSync ? 'bg-blue-600' : 'bg-gray-600',
               ]"
               role="switch"
               :aria-checked="settings.previewSync"
@@ -93,10 +93,10 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
         </h3>
         <div class="space-y-2">
           <!-- Theme and Font Size in one row -->
-          <div class="p-3 border border-editor-border rounded-md bg-surface-secondary">
+          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
             <div class="gap-4 grid grid-cols-2">
               <div>
-                <h4 class="text-sm text-text-primary font-medium mb-1">
+                <h4 class="text-sm text-gray-100 font-medium mb-1">
                   Theme
                 </h4>
                 <div class="flex gap-1">
@@ -105,8 +105,8 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
                     :key="theme"
                     class="text-xs font-medium px-2 py-1 rounded capitalize transition-colors" :class="[
                       settings.theme === theme
-                        ? 'bg-editor-active text-white'
-                        : 'bg-editor-border text-text-secondary hover:bg-editor-hover',
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600',
                     ]"
                     @click="updateTheme(theme)"
                   >
@@ -116,22 +116,22 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
               </div>
 
               <div>
-                <h4 class="text-sm text-text-primary font-medium mb-1">
+                <h4 class="text-sm text-gray-100 font-medium mb-1">
                   Font Size
                 </h4>
                 <div class="flex gap-2 items-center">
                   <button
-                    class="p-1 rounded hover:bg-editor-hover"
+                    class="p-1 rounded hover:bg-gray-700 text-gray-300"
                     @click="updateFontSize(settings.fontSize - 1)"
                   >
-                    <Icon name="heroicons:minus" class="text-text-secondary h-3 w-3" />
+                    <Icon name="heroicons:minus" class="h-3 w-3" />
                   </button>
-                  <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
+                  <span class="text-sm text-gray-100 font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
                   <button
-                    class="p-1 rounded hover:bg-editor-hover"
+                    class="p-1 rounded hover:bg-gray-700 text-gray-300"
                     @click="updateFontSize(settings.fontSize + 1)"
                   >
-                    <Icon name="heroicons:plus" class="text-text-secondary h-3 w-3" />
+                    <Icon name="heroicons:plus" class="h-3 w-3" />
                   </button>
                 </div>
               </div>
@@ -147,15 +147,15 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
         </h3>
         <div class="space-y-2">
           <!-- Line Numbers -->
-          <div class="p-3 border border-editor-border rounded-md bg-surface-secondary">
+          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
             <div class="space-y-2">
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.lineNumbers"
                   type="checkbox"
-                  class="border-editor-border rounded h-3 w-3"
+                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
                 >
-                <span class="text-sm text-text-primary font-medium">Show Line Numbers</span>
+                <span class="text-sm text-gray-100 font-medium">Show Line Numbers</span>
               </label>
 
               <div v-if="settings.lineNumbers" class="ml-5 space-y-1">
@@ -165,27 +165,27 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="absolute"
-                      class="border-editor-border h-3 w-3"
+                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
                     >
-                    <span class="text-xs text-text-primary">Absolute</span>
+                    <span class="text-xs text-gray-200">Absolute</span>
                   </label>
                   <label class="flex gap-1 items-center">
                     <input
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="relative"
-                      class="border-editor-border h-3 w-3"
+                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
                     >
-                    <span class="text-xs text-text-primary">Relative</span>
+                    <span class="text-xs text-gray-200">Relative</span>
                   </label>
                   <label class="flex gap-1 items-center">
                     <input
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="both"
-                      class="border-editor-border h-3 w-3"
+                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
                     >
-                    <span class="text-xs text-text-primary">Hybrid</span>
+                    <span class="text-xs text-gray-200">Hybrid</span>
                   </label>
                 </div>
               </div>
@@ -193,31 +193,31 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
           </div>
 
           <!-- Other Settings -->
-          <div class="p-3 border border-editor-border rounded-md bg-surface-secondary">
+          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
             <div class="gap-3 grid grid-cols-3">
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.lineWrapping"
                   type="checkbox"
-                  class="border-editor-border rounded h-3 w-3"
+                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
                 >
-                <span class="text-xs text-text-primary">Line Wrapping</span>
+                <span class="text-xs text-gray-200">Line Wrapping</span>
               </label>
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.autoSave"
                   type="checkbox"
-                  class="border-editor-border rounded h-3 w-3"
+                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
                 >
-                <span class="text-xs text-text-primary">Auto Save</span>
+                <span class="text-xs text-gray-200">Auto Save</span>
               </label>
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.livePreview"
                   type="checkbox"
-                  class="border-editor-border rounded h-3 w-3"
+                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
                 >
-                <span class="text-xs text-text-primary">Live Preview</span>
+                <span class="text-xs text-gray-200">Live Preview</span>
               </label>
             </div>
           </div>

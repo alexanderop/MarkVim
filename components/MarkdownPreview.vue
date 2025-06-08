@@ -6,7 +6,7 @@ const { renderedHtml } = defineProps<{
 const root = ref<HTMLElement>()
 
 // Initialize Mermaid only on client side
-if (process.client) {
+if (import.meta.client) {
   const mermaid = await import('mermaid')
   mermaid.default.initialize({
     startOnLoad: false,
