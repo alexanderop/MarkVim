@@ -10,6 +10,7 @@ interface Props {
 interface Emits {
   (e: 'selectDocument', id: string): void
   (e: 'createDocument'): void
+  (e: 'deleteDocument', id: string): void
 }
 
 const _props = defineProps<Props>()
@@ -23,6 +24,14 @@ function handleDocumentClick(id: string) {
 
 function handleCreateDocument() {
   emit('createDocument')
+}
+
+function handleSelectDocument(id: string) {
+  emit('selectDocument', id)
+}
+
+function handleDeleteDocument(id: string) {
+  emit('deleteDocument', id)
 }
 
 function getDocumentPreview(content: string): string {
@@ -85,79 +94,106 @@ function formatDate(timestamp: number): string {
           v-for="(document, index) in documents"
           :key="document.id"
           class="group mb-1 relative last:mb-0"
-          @click="handleDocumentClick(document.id)"
         >
-          <!-- Main document item -->
-          <div
-            class="px-3 py-3 border rounded-lg cursor-pointer transition-all duration-200 relative"
-            :class="[
-              document.id === activeDocumentId
-                ? 'bg-blue-500/10 border-blue-500/30 shadow-lg shadow-blue-500/5'
-                : 'border-transparent hover:bg-gray-800/40 hover:border-gray-700/50',
-            ]"
-          >
-            <!-- Active indicator line -->
-            <div
-              v-if="document.id === activeDocumentId"
-              class="rounded-full bg-blue-500 h-8 w-0.5 left-0 top-1/2 absolute -translate-y-1/2"
-            />
-
-            <div class="flex gap-3 items-start">
-              <!-- Document icon -->
-              <div class="mt-0.5 flex-shrink-0">
+          <ContextMenuRoot>
+            <!-- Main document item -->
+            <ContextMenuTrigger as-child>
+              <div
+                class="px-3 py-3 border rounded-lg cursor-pointer transition-all duration-200 relative"
+                :class="[
+                  document.id === activeDocumentId
+                    ? 'bg-blue-500/10 border-blue-500/30 shadow-lg shadow-blue-500/5'
+                    : 'border-transparent hover:bg-gray-800/40 hover:border-gray-700/50',
+                ]"
+                @click="handleDocumentClick(document.id)"
+              >
+                <!-- Active indicator line -->
                 <div
-                  class="rounded-md flex h-6 w-6 transition-all duration-200 items-center justify-center"
-                  :class="[
-                    document.id === activeDocumentId
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-gray-800/40 text-gray-500 group-hover:bg-gray-700/60 group-hover:text-gray-400',
-                  ]"
-                >
-                  <Icon
-                    name="lucide:file-text"
-                    class="h-3.5 w-3.5"
-                  />
+                  v-if="document.id === activeDocumentId"
+                  class="rounded-full bg-blue-500 h-8 w-0.5 left-0 top-1/2 absolute -translate-y-1/2"
+                />
+
+                <div class="flex gap-3 items-start">
+                  <!-- Document icon -->
+                  <div class="mt-0.5 flex-shrink-0">
+                    <div
+                      class="rounded-md flex h-6 w-6 transition-all duration-200 items-center justify-center"
+                      :class="[
+                        document.id === activeDocumentId
+                          ? 'bg-blue-500/20 text-blue-400'
+                          : 'bg-gray-800/40 text-gray-500 group-hover:bg-gray-700/60 group-hover:text-gray-400',
+                      ]"
+                    >
+                      <Icon
+                        name="lucide:file-text"
+                        class="h-3.5 w-3.5"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Content -->
+                  <div class="flex-1 min-w-0">
+                    <div class="mb-1 flex gap-2 items-center justify-between">
+                      <h3
+                        class="text-sm leading-tight font-medium truncate"
+                        :class="[
+                          document.id === activeDocumentId
+                            ? 'text-gray-100'
+                            : 'text-gray-300 group-hover:text-gray-200',
+                        ]"
+                      >
+                        {{ getDocumentTitle(document.content) }}
+                      </h3>
+                      <span
+                        class="text-xs flex-shrink-0 tabular-nums"
+                        :class="[
+                          document.id === activeDocumentId
+                            ? 'text-blue-400'
+                            : 'text-gray-500 group-hover:text-gray-400',
+                        ]"
+                      >
+                        {{ formatDate(document.updatedAt) }}
+                      </span>
+                    </div>
+
+                    <p
+                      class="text-xs leading-relaxed truncate"
+                      :class="[
+                        document.id === activeDocumentId
+                          ? 'text-gray-400'
+                          : 'text-gray-500 group-hover:text-gray-400',
+                      ]"
+                    >
+                      {{ getDocumentPreview(document.content) }}
+                    </p>
+                  </div>
                 </div>
               </div>
+            </ContextMenuTrigger>
 
-              <!-- Content -->
-              <div class="flex-1 min-w-0">
-                <div class="mb-1 flex gap-2 items-center justify-between">
-                  <h3
-                    class="text-sm leading-tight font-medium truncate"
-                    :class="[
-                      document.id === activeDocumentId
-                        ? 'text-gray-100'
-                        : 'text-gray-300 group-hover:text-gray-200',
-                    ]"
-                  >
-                    {{ getDocumentTitle(document.content) }}
-                  </h3>
-                  <span
-                    class="text-xs flex-shrink-0 tabular-nums"
-                    :class="[
-                      document.id === activeDocumentId
-                        ? 'text-blue-400'
-                        : 'text-gray-500 group-hover:text-gray-400',
-                    ]"
-                  >
-                    {{ formatDate(document.updatedAt) }}
-                  </span>
-                </div>
-
-                <p
-                  class="text-xs leading-relaxed truncate"
-                  :class="[
-                    document.id === activeDocumentId
-                      ? 'text-gray-400'
-                      : 'text-gray-500 group-hover:text-gray-400',
-                  ]"
+            <!-- Context Menu -->
+            <ContextMenuPortal>
+              <ContextMenuContent class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-1 min-w-[160px] z-50">
+                <ContextMenuItem
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer transition-colors"
+                  @click="handleSelectDocument(document.id)"
                 >
-                  {{ getDocumentPreview(document.content) }}
-                </p>
-              </div>
-            </div>
-          </div>
+                  <Icon name="lucide:mouse-pointer-click" class="h-4 w-4" />
+                  Select
+                </ContextMenuItem>
+
+                <ContextMenuSeparator class="h-px bg-gray-700 my-1" />
+
+                <ContextMenuItem
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-md cursor-pointer transition-colors"
+                  @click="handleDeleteDocument(document.id)"
+                >
+                  <Icon name="lucide:trash-2" class="h-4 w-4" />
+                  Delete
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenuPortal>
+          </ContextMenuRoot>
 
           <!-- Separator line (except for last item) -->
           <div

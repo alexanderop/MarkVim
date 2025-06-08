@@ -332,7 +332,7 @@ watch(vimMode, (newVimMode) => {
     view.value.dispatch({
       effects: StateEffect.reconfigure.of(getExtensions()),
     })
-    
+
     if (newVimMode) {
       setupCustomVimKeybindings()
     }

@@ -328,6 +328,7 @@ useHead({
           :is-visible="isSidebarVisible"
           @select-document="handleDocumentSelect"
           @create-document="handleCreateDocument"
+          @delete-document="handleDeleteDocument"
         />
       </Transition>
 
