@@ -22,7 +22,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:markdown', value: string): void
-  (e: 'startDrag', event: MouseEvent): void
+  (e: 'startDrag', event: PointerEvent): void
 }
 
 const { layout, content } = defineProps<Props>()
@@ -33,6 +33,7 @@ defineEmits<Emits>()
   <div
     class="flex flex-1 flex-col relative overflow-hidden md:flex-row" :class="[
       !layout.isSplitView && !layout.isMobile ? 'md:justify-center md:items-center' : '',
+      layout.isDragging ? 'select-none' : '',
     ]"
   >
     <div
@@ -41,6 +42,7 @@ defineEmits<Emits>()
         layout.isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
         !layout.isSplitView && !layout.isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
+        layout.isDragging ? 'opacity-90' : '',
       ]"
       :style="{
         transform: layout.isEditorVisible ? 'translateX(0)' : 'translateX(-100%)',
@@ -67,6 +69,7 @@ defineEmits<Emits>()
       class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
         !layout.isSplitView && !layout.isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
+        layout.isDragging ? 'opacity-90' : '',
       ]"
       :style="{
         transform: layout.isPreviewVisible ? 'translateX(0)' : 'translateX(100%)',
@@ -78,5 +81,11 @@ defineEmits<Emits>()
         class="h-full"
       />
     </div>
+
+    <!-- Drag overlay for better visual feedback -->
+    <div
+      v-if="layout.isDragging"
+      class="bg-black/5 pointer-events-none transition-opacity duration-200 inset-0 fixed z-10"
+    />
   </div>
 </template>
