@@ -18,8 +18,10 @@ logs
 .fleet
 .idea
 
+# ESLint cache
+.eslintcache
+
 # Local env files
 .env
 .env.*
 !.env.example
-.eslintcache

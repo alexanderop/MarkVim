@@ -30,12 +30,15 @@ defineEmits<Emits>()
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col relative overflow-hidden md:flex-row">
+  <div class="flex flex-1 flex-col relative overflow-hidden md:flex-row" :class="[
+    !layout.isSplitView && !layout.isMobile ? 'md:justify-center md:items-center' : ''
+  ]">
     <div
       v-if="layout.isEditorVisible"
       class="w-full transition-all duration-300 ease-in-out" :class="[
         layout.isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+        !layout.isSplitView && !layout.isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : ''
       ]"
       :style="{
         transform: layout.isEditorVisible ? 'translateX(0)' : 'translateX(-100%)',
@@ -61,6 +64,7 @@ defineEmits<Emits>()
       v-if="layout.isPreviewVisible"
       class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+        !layout.isSplitView && !layout.isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : ''
       ]"
       :style="{
         transform: layout.isPreviewVisible ? 'translateX(0)' : 'translateX(100%)',
