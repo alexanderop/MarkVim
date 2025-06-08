@@ -241,10 +241,10 @@ When('I press "Escape"', async function (this: CustomWorld) {
   // Ensure the page is focused before sending keyboard input
   await this.page.locator('body').click()
   await this.page.waitForTimeout(200)
-  
+
   // Press Escape key
   await this.page.keyboard.press('Escape')
-  
+
   // Wait for any modal to close or UI to update
   await this.page.waitForTimeout(1000)
 })

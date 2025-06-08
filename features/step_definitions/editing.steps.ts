@@ -26,9 +26,9 @@ When('I clear the editor content', async function (this: CustomWorld) {
   // Wait for CodeMirror to be ready and fully loaded
   const editorLocator = this.page.locator('.cm-content')
   await expect(editorLocator).toBeVisible({ timeout: 15000 })
-  
+
   // Ensure editor is focused and ready for input
-  await editorLocator.click() 
+  await editorLocator.click()
   await this.page.waitForTimeout(500)
 
   // Verify CodeMirror is fully initialized
@@ -48,7 +48,7 @@ When('I clear the editor content', async function (this: CustomWorld) {
 
   // Wait for the content to be cleared and verify
   await this.page.waitForTimeout(1000)
-  
+
   // Verify content is actually cleared
   await this.page.waitForFunction(() => {
     const editor = document.querySelector('.cm-content')
@@ -82,11 +82,11 @@ When('I type {string} on a new line in the editor', async function (this: Custom
   // Make sure we're in insert mode by pressing Escape then 'i'
   await this.page.keyboard.press('Escape')
   await this.page.waitForTimeout(100)
-  
+
   // Move to end of current content and add a new line
   await this.page.keyboard.press('A') // Move to end of line in vim
   await this.page.keyboard.press('Enter') // Add new line
-  
+
   // Type the text directly (already in insert mode after pressing Enter)
   await editorLocator.pressSequentially(text, { delay: 50 })
 
@@ -120,7 +120,7 @@ Then('the preview pane should show an {string} element with the text {string}', 
 })
 
 Then('the preview pane should show a {string} element with the text {string}', async function (this: CustomWorld, elementType: string, text: string) {
-  // Wait for the markdown preview to be visible  
+  // Wait for the markdown preview to be visible
   const preview = this.page.getByTestId('markdown-preview')
   await expect(preview).toBeVisible({ timeout: 15000 })
 
