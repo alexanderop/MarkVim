@@ -51,17 +51,30 @@ export function useShortcuts() {
       return false
     }
 
-    // Check for CodeMirror editor (has cm-content class or is inside .cm-editor)
-    if (el.classList?.contains('cm-content') || el.closest('.cm-editor')) {
-      return false
-    }
-
     // Check for any element with role="textbox"
     if (el.getAttribute('role') === 'textbox') {
       return false
     }
 
     return true
+  })
+
+  // Helper to check if we're in editor but shortcut allows it
+  const canUseShortcut = (allowInEditor = false) => computed(() => {
+    if (allowInEditor) {
+      return notUsingInput.value
+    }
+
+    const el = activeElement.value
+    if (!el)
+      return true
+
+    // If allowInEditor is false, also block CodeMirror editor
+    if (el.classList?.contains('cm-content') || el.closest('.cm-editor')) {
+      return false
+    }
+
+    return notUsingInput.value
   })
 
   // Initialize magic keys for global shortcuts
@@ -84,7 +97,7 @@ export function useShortcuts() {
 
   // Register a single shortcut
   function registerShortcut(shortcut: ShortcutAction) {
-    const { keys: keyCombo, action, disabled } = shortcut
+    const { keys: keyCombo, action, disabled, allowInEditor = false } = shortcut
 
     // Store the shortcut for help display
     registeredShortcuts.value.set(keyCombo, shortcut)
@@ -129,7 +142,7 @@ export function useShortcuts() {
     whenever(
       logicAnd(
         keyPressed,
-        notUsingInput,
+        canUseShortcut(allowInEditor),
         disabled ? computed(() => !disabled.value) : ref(true),
       ),
       () => {
@@ -300,7 +313,8 @@ export function useShortcuts() {
       const keyRef = keys[key as keyof typeof keys]
 
       whenever(keyRef, () => {
-        if (!notUsingInput.value) {
+        // Allow sequential shortcuts to work in editor for settings and other global actions
+        if (!canUseShortcut(true).value) {
           resetSequence()
           return
         }
@@ -340,8 +354,8 @@ export function useShortcuts() {
 
   // Pre-register settings shortcut (Linear style: g then s)
   onMounted(() => {
-    // Create g->s sequence shortcut
-    createSequentialShortcut(['g', 's'], openSettings)
+    // Create g->s sequence shortcut with longer timeout
+    createSequentialShortcut(['g', 's'], openSettings, 2000)
 
     // Also register it in the shortcuts list for help display
     registeredShortcuts.value.set('g s', {

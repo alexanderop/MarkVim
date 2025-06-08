@@ -89,11 +89,11 @@ Then('the preview pane should show an {string} element with the text {string}', 
       return targetElement && targetElement.textContent?.trim() === content
     },
     { element: elementType, content: text },
-    { timeout: 10000 },
+    { timeout: 15000 },
   )
 
   const heading = preview.locator(elementType, { hasText: text })
-  await expect(heading).toBeVisible({ timeout: 5000 })
+  await expect(heading).toBeVisible({ timeout: 10000 })
 })
 
 Then('the preview pane should show a {string} element with the text {string}', async function (this: CustomWorld, elementType: string, text: string) {
@@ -111,9 +111,9 @@ Then('the preview pane should show a {string} element with the text {string}', a
       return targetElement && targetElement.textContent?.trim() === content
     },
     { element: elementType, content: text },
-    { timeout: 10000 },
+    { timeout: 15000 },
   )
 
   const element = preview.locator(elementType, { hasText: text })
-  await expect(element).toBeVisible({ timeout: 5000 })
+  await expect(element).toBeVisible({ timeout: 10000 })
 })

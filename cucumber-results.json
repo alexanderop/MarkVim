@@ -1,0 +1,849 @@
+[
+  {
+    "description": "  As a user of MarkVim\n  I want to create, manage, and delete documents\n  So I can effectively organize my notes.",
+    "elements": [
+      {
+        "description": "",
+        "id": "document-management;a-user-can-create-a-new-document",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "A user can create a new document",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1686303666
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 20918749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I click the \"New note\" button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:11"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2101105416
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the document title in the header should be \"New Note\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 22950415
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I should see \"# New Note\" in the editor content",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:36"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10964624
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 63478500
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "document-management;a-user-can-delete-a-document",
+        "keyword": "Scenario",
+        "line": 12,
+        "name": "A user can delete a document",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1576966124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 13,
+            "name": "I see the default document titled \"Welcome to MarkVim\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:7"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9299916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 14,
+            "name": "I click the \"Delete note\" button in the header",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:19"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1106064957
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "I should see the \"Delete Document\" confirmation modal",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:47"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 51127916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 16,
+            "name": "the modal should contain the text \"Are you sure you want to delete\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9745750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 17,
+            "name": "I click the \"Delete\" confirmation button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:59"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1076024333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 18,
+            "name": "the \"Welcome to MarkVim\" document should no longer be in the document list",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:66"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2014448207
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 60466207
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "document-management;a-user-can-toggle-the-sidebar-with-keyboard-shortcut",
+        "keyword": "Scenario",
+        "line": 20,
+        "name": "A user can toggle the sidebar with keyboard shortcut",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1572291165
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 21,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10727750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 22,
+            "name": "the sidebar is visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:73"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5255040
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 23,
+            "name": "I press \"Meta+Shift+Backslash\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:77"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1019421041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 24,
+            "name": "the sidebar should be hidden",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:91"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16288749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 25,
+            "name": "I press \"Meta+Shift+Backslash\" again",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:84"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 515976125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "the sidebar should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:108"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9276250
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 32008458
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "document-management;a-user-can-switch-between-view-modes-with-keyboard-shortcuts",
+        "keyword": "Scenario",
+        "line": 28,
+        "name": "A user can switch between view modes with keyboard shortcuts",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1665843417
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 29,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 7445041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 30,
+            "name": "the view mode is \"split\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:120"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9107083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 31,
+            "name": "I press \"1\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:77"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1012327499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 32,
+            "name": "the view mode should be \"editor\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:132"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13750124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 33,
+            "name": "only the editor should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:155"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10005041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 34,
+            "name": "I press \"2\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:77"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1019941167
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "the view mode should be \"split\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:132"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9663584
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 36,
+            "name": "both editor and preview should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:162"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5592375
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 37,
+            "name": "I press \"3\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:77"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1011538583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "the view mode should be \"preview\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:132"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4797832
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 39,
+            "name": "only the preview should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:169"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4807541
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 28233083
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "document-management",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Document Management",
+    "tags": [],
+    "uri": "features/document_management.feature"
+  },
+  {
+    "description": "  As a user\n  I want to see my markdown rendered as I type\n  So I can verify my formatting instantly.",
+    "elements": [
+      {
+        "description": "",
+        "id": "real-time-markdown-editing-and-preview;editor-content-updates-the-preview",
+        "keyword": "Scenario",
+        "line": 10,
+        "name": "Editor content updates the preview",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1534594458
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5973333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 8,
+            "name": "I have selected the \"split\" view mode",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/editing.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1071881124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 11,
+            "name": "I clear the editor content",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/editing.steps.ts:18"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1180418958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 12,
+            "name": "I type \"# My Title\" into the editor",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/editing.steps.ts:35"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1794856208
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "the preview pane should show an \"h1\" element with the text \"My Title\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/editing.steps.ts:58"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18002166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 15,
+            "name": "I type \"**important** text\" on a new line in the editor",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/editing.steps.ts:48"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2123872457
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "the preview pane should show a \"strong\" element with the text \"important\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/editing.steps.ts:73"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16273332
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 35122290
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "real-time-markdown-editing-and-preview",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Real-time Markdown Editing and Preview",
+    "tags": [],
+    "uri": "features/editing.feature"
+  },
+  {
+    "description": "  As a user of MarkVim\n  I want to access and configure application settings\n  So I can customize my editing experience.",
+    "elements": [
+      {
+        "description": "",
+        "id": "settings-modal;a-user-can-open-the-settings-modal-with-keyboard-shortcut",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "A user can open the settings modal with keyboard shortcut",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1544203583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6020708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I press \"g\" then \"s\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2244075875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the settings modal should be open",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:19"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9900832
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "I should see the title \"Settings\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10389833
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 40868791
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "settings-modal;a-user-can-open-the-settings-modal-with-the-toolbar-button",
+        "keyword": "Scenario",
+        "line": 12,
+        "name": "A user can open the settings modal with the toolbar button",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1523603792
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 13,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5867040
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 14,
+            "name": "I click the \"Settings\" button in the toolbar",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:11"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1094746749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "the settings modal should be open",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:19"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6798249
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 16,
+            "name": "I should see the title \"Settings\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:27"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 7218582
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 26454166
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "settings-modal;a-user-can-close-the-settings-modal-with-escape-key",
+        "keyword": "Scenario",
+        "line": 18,
+        "name": "A user can close the settings modal with Escape key",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1594232334
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 19,
+            "name": "I am on the MarkVim application",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3572374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 20,
+            "name": "the settings modal is open",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:32"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2250700333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 21,
+            "name": "I press \"Escape\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/document_management.steps.ts:77"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1017250124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "the settings modal should be closed",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/features/step_definitions/settings.steps.ts:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 31440584
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 58921667
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "settings-modal",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Settings Modal",
+    "tags": [],
+    "uri": "features/settings.feature"
+  }
+]

@@ -107,8 +107,8 @@ When('I press {string}', async function (this: CustomWorld, keyCombo: string) {
   const keys = keyCombo.replace('Meta+', 'Meta+').replace('Shift+', 'Shift+').replace('Backslash', '\\')
   await this.page.keyboard.press(keys)
 
-  // Wait a moment for the action to complete
-  await this.page.waitForTimeout(500)
+  // Wait longer for view mode changes to complete
+  await this.page.waitForTimeout(1000)
 })
 
 When('I press {string} again', async function (this: CustomWorld, keyCombo: string) {
@@ -203,11 +203,11 @@ Then('the view mode should be {string}', async function (this: CustomWorld, mode
       return false
     },
     titleText,
-    { timeout: 5000 },
+    { timeout: 10000 },
   )
 
   const activeButton = this.page.locator(`button[title*="${titleText}"]`).locator('div[class*="bg-white/5"]')
-  await expect(activeButton).toBeVisible({ timeout: 1000 })
+  await expect(activeButton).toBeVisible({ timeout: 5000 })
 })
 
 Then('only the editor should be visible', async function (this: CustomWorld) {

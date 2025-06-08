@@ -120,7 +120,8 @@ function handleTogglePreviewSync() {
 }
 
 function handleToggleSettings() {
-  // This would open the settings modal - for now, just log
+  const { toggleSettings } = useShortcuts()
+  toggleSettings()
 }
 
 function handleToggleSidebar() {
@@ -176,18 +177,21 @@ onMounted(() => {
       description: 'Switch to Editor only',
       action: () => { viewMode.value = 'editor' },
       category: 'View',
+      allowInEditor: true,
     },
     {
       keys: '2',
       description: 'Switch to Split view',
       action: () => { viewMode.value = 'split' },
       category: 'View',
+      allowInEditor: true,
     },
     {
       keys: '3',
       description: 'Switch to Preview only',
       action: () => { viewMode.value = 'preview' },
       category: 'View',
+      allowInEditor: true,
     },
 
     // Editor shortcuts (Linear-inspired)
