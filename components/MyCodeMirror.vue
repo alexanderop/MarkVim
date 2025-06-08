@@ -325,7 +325,21 @@ watch(modelValue, (newValue) => {
   syncModelValue(newValue)
 })
 
-watch(() => [extensions, theme, editable, indentWithTab, placeholder, vimMode, lineNumbers, lineNumberMode, lineWrapping], () => {
+// Watch vim mode separately for more aggressive reconfiguration
+watch(vimMode, (newVimMode) => {
+  if (view.value) {
+    // Force a complete reconfiguration when vim mode changes
+    view.value.dispatch({
+      effects: StateEffect.reconfigure.of(getExtensions()),
+    })
+    
+    if (newVimMode) {
+      setupCustomVimKeybindings()
+    }
+  }
+}, { immediate: false })
+
+watch(() => [extensions, theme, editable, indentWithTab, placeholder, lineNumbers, lineNumberMode, lineWrapping], () => {
   reconfigureExtensions()
 })
 

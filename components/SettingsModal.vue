@@ -43,20 +43,19 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
                 Enable vim keybindings
               </p>
             </div>
-            <button
+            <SwitchRoot
+              :model-value="settings.vimMode"
               class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
                 settings.vimMode ? 'bg-blue-600' : 'bg-gray-600',
               ]"
-              role="switch"
-              :aria-checked="settings.vimMode"
-              @click="toggleVimMode"
+              @update:model-value="toggleVimMode"
             >
-              <span
+              <SwitchThumb
                 class="rounded-full bg-white h-3 w-3 inline-block transform transition-transform" :class="[
                   settings.vimMode ? 'translate-x-5' : 'translate-x-1',
                 ]"
               />
-            </button>
+            </SwitchRoot>
           </div>
 
           <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
@@ -68,20 +67,19 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
                 Sync scroll position in split view
               </p>
             </div>
-            <button
+            <SwitchRoot
+              :model-value="settings.previewSync"
               class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
                 settings.previewSync ? 'bg-blue-600' : 'bg-gray-600',
               ]"
-              role="switch"
-              :aria-checked="settings.previewSync"
-              @click="togglePreviewSync"
+              @update:model-value="togglePreviewSync"
             >
-              <span
+              <SwitchThumb
                 class="rounded-full bg-white h-3 w-3 inline-block transform transition-transform" :class="[
                   settings.previewSync ? 'translate-x-5' : 'translate-x-1',
                 ]"
               />
-            </button>
+            </SwitchRoot>
           </div>
         </div>
       </div>
