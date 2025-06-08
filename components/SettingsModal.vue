@@ -7,31 +7,33 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
   <DialogRoot :open="showSettings" @update:open="(open) => !open && closeSettings()">
     <DialogTrigger as-child>
       <button
-        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4"
+        class="focus-visible:ring-ring ring-offset-background border-input bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium px-4 py-2 border rounded-md inline-flex h-10 transition-colors items-center justify-center focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-offset-2"
         title="Settings (g s)"
         @click="openSettings"
       >
-        <Icon name="lucide:settings" class="w-4 h-4 mr-2" />
+        <Icon name="lucide:settings" class="mr-2 h-4 w-4" />
         Settings
       </button>
     </DialogTrigger>
 
     <DialogPortal>
-      <DialogOverlay class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-      
-      <DialogContent class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-4xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogOverlay class="bg-black/50 inset-0 fixed z-50 backdrop-blur-sm" />
+
+      <DialogContent class="bg-background p-6 border flex flex-col gap-4 grid max-h-[90vh] max-w-4xl w-full shadow-lg translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden sm:rounded-lg">
         <!-- Header -->
         <div class="flex items-center justify-between">
           <div>
-            <DialogTitle class="text-lg font-semibold">Settings</DialogTitle>
-            <DialogDescription class="text-sm text-muted-foreground mt-1">
+            <DialogTitle class="text-lg font-semibold">
+              Settings
+            </DialogTitle>
+            <DialogDescription class="text-muted-foreground text-sm mt-1">
               Configure your MarkVim editor preferences
             </DialogDescription>
           </div>
-          
+
           <DialogClose as-child>
             <button
-              class="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+              class="ring-offset-background focus:ring-ring rounded-sm opacity-70 transition-opacity focus:outline-none hover:opacity-100 disabled:pointer-events-none focus:ring-2 focus:ring-offset-2"
               @click="closeSettings"
             >
               <Icon name="lucide:x" class="h-4 w-4" />
@@ -41,56 +43,60 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
         </div>
 
         <!-- Content -->
-        <div class="overflow-y-auto flex-1 pr-2">
-
+        <div class="pr-2 flex-1 overflow-y-auto">
           <div class="space-y-6">
             <!-- Vim Mode Section -->
             <div>
-              <h3 class="font-medium text-sm text-gray-400 uppercase tracking-wider">Editor Behavior</h3>
+              <h3 class="text-sm text-gray-400 tracking-wider font-medium uppercase">
+                Editor Behavior
+              </h3>
               <div class="space-y-4">
-                <div class="flex items-center justify-between p-4 bg-surface-secondary rounded-lg border border-editor-border">
+                <div class="p-4 border border-editor-border rounded-lg bg-surface-secondary flex items-center justify-between">
                   <div class="flex flex-col">
-                    <h4 class="text-text-primary font-medium">Vim Mode</h4>
-                    <p class="text-text-secondary text-sm">Enable vim keybindings for the editor</p>
+                    <h4 class="text-text-primary font-medium">
+                      Vim Mode
+                    </h4>
+                    <p class="text-sm text-text-secondary">
+                      Enable vim keybindings for the editor
+                    </p>
                   </div>
                   <button
-                    :class="[
-                      'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-editor-active focus:ring-offset-2 focus:ring-offset-surface-primary',
-                      settings.vimMode ? 'bg-editor-active' : 'bg-gray-600'
+                    class="rounded-full inline-flex h-6 w-11 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-editor-active focus:ring-offset-surface-primary focus:ring-offset-2" :class="[
+                      settings.vimMode ? 'bg-editor-active' : 'bg-gray-600',
                     ]"
                     role="switch"
                     :aria-checked="settings.vimMode"
                     @click="toggleVimMode"
                   >
                     <span
-                      :class="[
-                        'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                        settings.vimMode ? 'translate-x-6' : 'translate-x-1'
+                      class="rounded-full bg-white h-4 w-4 inline-block transform transition-transform" :class="[
+                        settings.vimMode ? 'translate-x-6' : 'translate-x-1',
                       ]"
                     />
                   </button>
                 </div>
-                
-
               </div>
             </div>
 
             <!-- Appearance Section -->
             <div>
-              <h3 class="font-medium text-sm text-gray-400 uppercase tracking-wider">Appearance</h3>
+              <h3 class="text-sm text-gray-400 tracking-wider font-medium uppercase">
+                Appearance
+              </h3>
               <div class="space-y-4">
                 <!-- Theme Selection -->
-                <div class="p-4 bg-surface-secondary rounded-lg border border-editor-border">
-                  <h4 class="text-text-primary font-medium mb-2">Theme</h4>
+                <div class="p-4 border border-editor-border rounded-lg bg-surface-secondary">
+                  <h4 class="text-text-primary font-medium mb-2">
+                    Theme
+                  </h4>
                   <div class="flex gap-2">
                     <button
                       v-for="theme in ['dark', 'light', 'auto']"
                       :key="theme"
-                      :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors capitalize',
+                      class="text-sm font-medium px-3 py-2 rounded-md capitalize transition-colors" :class="[
                         settings.theme === theme
                           ? 'bg-editor-active text-white'
-                          : 'bg-editor-border text-text-secondary hover:bg-editor-hover'
+                          : 'bg-editor-border text-text-secondary hover:bg-editor-hover',
                       ]"
                       @click="updateTheme(theme as any)"
                     >
@@ -100,21 +106,23 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
                 </div>
 
                 <!-- Font Size -->
-                <div class="p-4 bg-surface-secondary rounded-lg border border-editor-border">
-                  <h4 class="text-text-primary font-medium mb-2">Font Size</h4>
-                  <div class="flex items-center gap-3">
+                <div class="p-4 border border-editor-border rounded-lg bg-surface-secondary">
+                  <h4 class="text-text-primary font-medium mb-2">
+                    Font Size
+                  </h4>
+                  <div class="flex gap-3 items-center">
                     <button
                       class="p-1 rounded hover:bg-editor-hover"
                       @click="updateFontSize(settings.fontSize - 1)"
                     >
-                      <Icon name="heroicons:minus" class="w-4 h-4 text-text-secondary" />
+                      <Icon name="heroicons:minus" class="text-text-secondary h-4 w-4" />
                     </button>
                     <span class="text-text-primary font-mono">{{ settings.fontSize }}px</span>
                     <button
                       class="p-1 rounded hover:bg-editor-hover"
                       @click="updateFontSize(settings.fontSize + 1)"
                     >
-                      <Icon name="heroicons:plus" class="w-4 h-4 text-text-secondary" />
+                      <Icon name="heroicons:plus" class="text-text-secondary h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -123,50 +131,56 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
 
             <!-- Advanced Settings -->
             <div>
-              <h3 class="font-medium text-sm text-gray-400 uppercase tracking-wider">Advanced</h3>
+              <h3 class="text-sm text-gray-400 tracking-wider font-medium uppercase">
+                Advanced
+              </h3>
               <div class="space-y-4">
                 <!-- Line Numbers Configuration -->
-                <div class="p-4 bg-surface-secondary rounded-lg border border-editor-border">
-                  <h4 class="text-text-primary font-medium mb-3">Line Numbers</h4>
+                <div class="p-4 border border-editor-border rounded-lg bg-surface-secondary">
+                  <h4 class="text-text-primary font-medium mb-3">
+                    Line Numbers
+                  </h4>
                   <div class="space-y-3">
-                    <label class="flex items-center gap-2">
+                    <label class="flex gap-2 items-center">
                       <input
                         v-model="settings.lineNumbers"
                         type="checkbox"
-                        class="rounded border-editor-border"
+                        class="border-editor-border rounded"
                       >
-                      <span class="text-text-primary text-sm">Show Line Numbers</span>
+                      <span class="text-sm text-text-primary">Show Line Numbers</span>
                     </label>
-                    
+
                     <div v-if="settings.lineNumbers" class="ml-6 space-y-2">
-                      <div class="text-text-secondary text-xs mb-2">Line Number Mode:</div>
+                      <div class="text-xs text-text-secondary mb-2">
+                        Line Number Mode:
+                      </div>
                       <div class="space-y-2">
-                        <label class="flex items-center gap-2">
+                        <label class="flex gap-2 items-center">
                           <input
                             v-model="settings.lineNumberMode"
                             type="radio"
                             value="absolute"
-                            class="rounded-full border-editor-border"
+                            class="border-editor-border rounded-full"
                           >
-                          <span class="text-text-primary text-sm">Absolute (1, 2, 3...)</span>
+                          <span class="text-sm text-text-primary">Absolute (1, 2, 3...)</span>
                         </label>
-                        <label class="flex items-center gap-2">
+                        <label class="flex gap-2 items-center">
                           <input
                             v-model="settings.lineNumberMode"
                             type="radio"
                             value="relative"
-                            class="rounded-full border-editor-border"
+                            class="border-editor-border rounded-full"
                           >
-                          <span class="text-text-primary text-sm">Relative (0, 1, 2... from cursor)</span>
+                          <span class="text-sm text-text-primary">Relative (0, 1, 2... from cursor)</span>
                         </label>
-                        <label class="flex items-center gap-2">
+                        <label class="flex gap-2 items-center">
                           <input
                             v-model="settings.lineNumberMode"
                             type="radio"
                             value="both"
-                            class="rounded-full border-editor-border"
+                            class="border-editor-border rounded-full"
                           >
-                          <span class="text-text-primary text-sm">Hybrid (absolute on current, relative on others)</span>
+                          <span class="text-sm text-text-primary">Hybrid (absolute on current, relative on others)</span>
                         </label>
                       </div>
                     </div>
@@ -174,48 +188,47 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
                 </div>
 
                 <!-- Other Settings -->
-                <div class="p-4 bg-surface-secondary rounded-lg border border-editor-border">
-                  <div class="grid grid-cols-2 gap-4">
-                    <label class="flex items-center gap-2">
+                <div class="p-4 border border-editor-border rounded-lg bg-surface-secondary">
+                  <div class="gap-4 grid grid-cols-2">
+                    <label class="flex gap-2 items-center">
                       <input
                         v-model="settings.lineWrapping"
                         type="checkbox"
-                        class="rounded border-editor-border"
+                        class="border-editor-border rounded"
                       >
-                      <span class="text-text-primary text-sm">Line Wrapping</span>
+                      <span class="text-sm text-text-primary">Line Wrapping</span>
                     </label>
-                    <label class="flex items-center gap-2">
+                    <label class="flex gap-2 items-center">
                       <input
                         v-model="settings.autoSave"
                         type="checkbox"
-                        class="rounded border-editor-border"
+                        class="border-editor-border rounded"
                       >
-                      <span class="text-text-primary text-sm">Auto Save</span>
+                      <span class="text-sm text-text-primary">Auto Save</span>
                     </label>
-                    <label class="flex items-center gap-2">
+                    <label class="flex gap-2 items-center">
                       <input
                         v-model="settings.livePreview"
                         type="checkbox"
-                        class="rounded border-editor-border"
+                        class="border-editor-border rounded"
                       >
-                      <span class="text-text-primary text-sm">Live Preview</span>
+                      <span class="text-sm text-text-primary">Live Preview</span>
                     </label>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
         <!-- Footer -->
-        <div class="flex items-center justify-between pt-4 border-t border-gray-800">
+        <div class="pt-4 border-t border-gray-800 flex items-center justify-between">
           <div class="text-xs text-gray-500">
-            Press <kbd class="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1 text-xs font-mono bg-gray-700 text-gray-200 border border-gray-600 rounded">⎋</kbd> to close
+            Press <kbd class="text-xs text-gray-200 font-mono px-1 border border-gray-600 rounded bg-gray-700 inline-flex h-5 min-w-[1.5rem] items-center justify-center">⎋</kbd> to close
           </div>
-          
+
           <button
-            class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-gray-200 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+            class="text-sm text-gray-400 font-medium px-4 py-2 border border-gray-600 rounded-lg transition-colors hover:text-gray-200 hover:bg-gray-700"
             @click="resetToDefaults"
           >
             Reset to Defaults
@@ -244,4 +257,4 @@ const { showSettings, closeSettings, openSettings } = useShortcuts()
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
-</style> 
+</style>

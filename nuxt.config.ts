@@ -8,12 +8,18 @@ export default defineNuxtConfig({
     'reka-ui/nuxt',
     '@unocss/nuxt',
     '@nuxtjs/google-fonts',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
   ],
   googleFonts: {
     families: {
-      Inter: [300, 400, 500, 600, 700]
+      Inter: [300, 400, 500, 600, 700],
     },
-    display: 'swap'
-  }
+    display: 'swap',
+  },
+  eslint: {
+    checker: true,
+    config: {
+      standalone: false,
+    },
+  },
 })
