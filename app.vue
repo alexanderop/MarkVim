@@ -1,126 +1,32 @@
 <script setup lang="ts">
-const initialMarkdown = `# Welcome to MarkVim
-
-MarkVim is a markdown editor with full Vim modal editing support and custom keybindings.
-
-## 🚀 Custom Vim Keybindings
-
-When **Custom Vim Keybindings** is enabled in settings, you get these additional shortcuts:
-
-### Insert Mode Shortcuts
-- \`jj\` → **Escape** (quickly return to normal mode)
-- \`kk\` → **Escape** (alternative escape shortcut)
-
-### Normal Mode Enhancements  
-- \`Y\` → **y$** (yank to end of line, consistent with D and C)
-
-### Ex Commands
-- \`:w\` or \`:write\` → **Save** (shows console message)
-
-## How to Use
-
-1. **Open Settings** (⚙️ button in top-right)
-2. **Enable Vim Mode** if not already enabled  
-3. **Enable "Custom Vim Keybindings"**
-4. **Click in this editor** to focus it
-5. **Press \`i\`** to enter insert mode
-6. **Type some text** then quickly press \`jj\`
-7. **You should return to normal mode** instantly!
-
-## Standard Vim Features
-
-All standard Vim motions and operators work:
-
-### Navigation
-- \`h j k l\` → Move cursor
-- \`w b e\` → Word motions  
-- \`0 $\` → Line start/end
-- \`gg G\` → File start/end
-
-### Editing
-- \`i a o O\` → Insert modes
-- \`d y c\` → Delete, yank, change
-- \`u Ctrl-r\` → Undo/redo
-- \`.\` → Repeat last command
-
-### Visual Mode
-- \`v V Ctrl-v\` → Character/line/block selection
-
-## 📝 **Test Area**
-
-Click here and test your \`jj\` mapping:
-
-\`\`\`javascript
-// Test your jj mapping here!
-// 1. Press 'i' to enter insert mode
-// 2. Type some code like this comment
-// 3. Press 'jj' quickly to escape to normal mode
-console.log("Testing jj -> Escape mapping");
-
-function testVimMapping() {
-  // Try editing this function and using jj to escape
-  return "jj should work perfectly!";
-}
-\`\`\`
-
-**Perfect test sequence:**
-1. **i** → enter insert mode
-2. **Hello World** → type some text
-3. **jj** → should escape to normal mode instantly
-4. **$** → move to end of line (confirms you're in normal mode)
-5. **a** → enter insert mode at end
-6. **!** → add exclamation
-7. **jj** → escape again
-
-Happy writing with Vim! ✨
-
-## 🎨 Mermaid Diagrams
-
-MarkVim now supports beautiful Mermaid diagrams! Here are some examples:
-
-### Flowchart Example
-\`\`\`mermaid
-flowchart TD
-    A[Start] --> B{Is it working?}
-    B -->|Yes| C[Great!]
-    B -->|No| D[Debug]
-    D --> B
-    C --> E[End]
-\`\`\`
-
-### Sequence Diagram
-\`\`\`mermaid
-sequenceDiagram
-    participant E as Editor
-    participant P as Preview
-    participant M as Mermaid
-    
-    E->>P: Save markdown
-    P->>M: Process diagram
-    M-->>P: Render SVG
-    P->>P: Display result
-\`\`\`
-
-### Git Flow
-\`\`\`mermaid
-gitgraph
-    commit
-    branch feature
-    checkout feature
-    commit
-    commit
-    checkout main
-    merge feature
-    commit
-\`\`\`
-
----
-
-*Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`
-
 const viewMode = ref<'split' | 'editor' | 'preview'>('split')
+const isSidebarVisible = ref(true)
 
-const { markdown, renderedMarkdown, shikiCSS } = useMarkdown(initialMarkdown)
+// Document management
+const {
+  documents,
+  activeDocument,
+  activeDocumentId,
+  createDocument,
+  setActiveDocument,
+  updateDocument,
+  deleteDocument,
+  getDocumentTitle,
+} = useDocuments()
+
+// Create a writable computed for the active document's content
+const activeMarkdown = computed({
+  get: () => activeDocument.value?.content || '',
+  set: (value: string) => {
+    if (activeDocument.value) {
+      updateDocument(activeDocument.value.id, value)
+    }
+  },
+})
+
+// Use the refactored markdown composable
+const { renderedMarkdown, shikiCSS } = useMarkdown(activeMarkdown)
+
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings, toggleVimMode, toggleLineNumbers } = useEditorSettings()
 const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'preview')
@@ -134,6 +40,13 @@ const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
 
 const { registerShortcuts, formatKeys } = useShortcuts()
+
+// Get the title of the active document
+const activeDocumentTitle = computed(() => {
+  return activeDocument.value
+    ? getDocumentTitle(activeDocument.value.content)
+    : 'MarkVim'
+})
 
 // Global keyboard event handler for command palette
 function handleGlobalKeydown(event: KeyboardEvent) {
@@ -164,17 +77,22 @@ function closeCommandPalette() {
 }
 
 function handleSaveDocument() {
-  const blob = new Blob([markdown.value], { type: 'text/markdown' })
+  if (!activeDocument.value)
+    return
+
+  const blob = new Blob([activeDocument.value.content], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `markvim-document-${new Date().toISOString().split('T')[0]}.md`
+  a.download = `${getDocumentTitle(activeDocument.value.content)}.md`
   a.click()
   URL.revokeObjectURL(url)
 }
 
 function handleInsertText(text: string) {
-  markdown.value += text
+  if (activeDocument.value) {
+    activeMarkdown.value += text
+  }
 }
 
 function handleToggleVimMode() {
@@ -187,6 +105,31 @@ function handleToggleLineNumbers() {
 
 function handleToggleSettings() {
   // This would open the settings modal - for now, just log
+}
+
+function handleToggleSidebar() {
+  isSidebarVisible.value = !isSidebarVisible.value
+}
+
+function handleDeleteDocument() {
+  if (!activeDocument.value)
+    return
+
+  const title = getDocumentTitle(activeDocument.value.content)
+  // eslint-disable-next-line no-alert
+  const confirmed = window.confirm(`Are you sure you want to delete "${title}"?`)
+
+  if (confirmed) {
+    deleteDocument(activeDocument.value.id)
+  }
+}
+
+function handleDocumentSelect(id: string) {
+  setActiveDocument(id)
+}
+
+function handleCreateDocument() {
+  createDocument()
 }
 
 onMounted(() => {
@@ -226,9 +169,17 @@ onMounted(() => {
       keys: 'meta+s',
       description: 'Save document',
       action: () => {
-        // TODO: Implement save functionality
+        handleSaveDocument()
       },
       category: 'File',
+    },
+    {
+      keys: 'meta+shift+backslash',
+      description: 'Toggle sidebar',
+      action: () => {
+        handleToggleSidebar()
+      },
+      category: 'View',
     },
   ])
 })
@@ -251,31 +202,45 @@ useHead({
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
+      :is-sidebar-visible="isSidebarVisible"
+      :active-document-title="activeDocumentTitle"
       @update:view-mode="viewMode = $event"
+      @toggle-sidebar="handleToggleSidebar"
+      @delete-document="handleDeleteDocument"
     />
 
-    <MainContent
-      :layout="{
-        isEditorVisible,
-        isPreviewVisible,
-        isSplitView,
-        isMobile,
-        leftPaneWidth,
-        rightPaneWidth,
-        isDragging,
-      }"
-      :content="{
-        markdown,
-        settings,
-        renderedMarkdown,
-      }"
-      @update:markdown="markdown = $event"
-      @start-drag="startDrag"
-    />
+    <div class="flex flex-1 overflow-hidden">
+      <DocumentList
+        :documents="documents"
+        :active-document-id="activeDocumentId"
+        :is-visible="isSidebarVisible"
+        @select-document="handleDocumentSelect"
+        @create-document="handleCreateDocument"
+      />
+
+      <MainContent
+        :layout="{
+          isEditorVisible,
+          isPreviewVisible,
+          isSplitView,
+          isMobile,
+          leftPaneWidth,
+          rightPaneWidth,
+          isDragging,
+        }"
+        :content="{
+          markdown: activeMarkdown,
+          settings,
+          renderedMarkdown,
+        }"
+        @update:markdown="activeMarkdown = $event"
+        @start-drag="startDrag"
+      />
+    </div>
 
     <StatusBar
-      :line-count="markdown.split('\n').length"
-      :character-count="markdown.length"
+      :line-count="activeMarkdown.split('\n').length"
+      :character-count="activeMarkdown.length"
       :format-keys="formatKeys"
     />
 
@@ -283,7 +248,7 @@ useHead({
       v-model:open="commandPaletteOpen"
       :position="commandPalettePosition"
       :view-mode="viewMode"
-      :markdown="markdown"
+      :markdown="activeMarkdown"
       @command-selected="closeCommandPalette"
       @change-view-mode="viewMode = $event"
       @save-document="handleSaveDocument"

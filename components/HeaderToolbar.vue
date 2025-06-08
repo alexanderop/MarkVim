@@ -2,10 +2,14 @@
 interface Props {
   viewMode: 'split' | 'editor' | 'preview'
   isMobile: boolean
+  isSidebarVisible: boolean
+  activeDocumentTitle: string
 }
 
 interface Emits {
   (e: 'update:viewMode', value: 'split' | 'editor' | 'preview'): void
+  (e: 'toggle-sidebar'): void
+  (e: 'delete-document'): void
 }
 
 defineProps<Props>()
@@ -15,9 +19,18 @@ defineEmits<Emits>()
 <template>
   <div class="px-3 py-2 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between backdrop-blur md:px-6 md:py-3">
     <div class="flex items-center space-x-2 md:space-x-4">
-      <h1 class="text-base text-white font-semibold md:text-lg">
-        MarkVim
-      </h1>
+      <div class="flex items-center space-x-2">
+        <ToolbarButton
+          variant="icon"
+          :icon="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
+          title="Toggle sidebar"
+          @click="$emit('toggle-sidebar')"
+        />
+        
+        <h1 class="text-base text-white font-semibold md:text-lg">
+          {{ activeDocumentTitle }}
+        </h1>
+      </div>
 
       <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
         <ToolbarButton
@@ -50,6 +63,12 @@ defineEmits<Emits>()
     </div>
 
     <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
+      <ToolbarButton
+        variant="icon"
+        icon="lucide:trash-2"
+        title="Delete current note"
+        @click="$emit('delete-document')"
+      />
       <div class="hidden md:block">
         <ShortcutsModal />
       </div>
