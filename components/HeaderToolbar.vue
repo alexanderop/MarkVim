@@ -87,9 +87,7 @@ defineEmits<Emits>()
       <div class="bg-gray-700/50 h-4 w-px" />
 
       <div class="flex gap-1 items-center">
-        <div class="hidden md:block">
-          <ShortcutsModal />
-        </div>
+        <ShortcutsModal />
         <SettingsModal />
       </div>
     </div>
