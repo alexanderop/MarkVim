@@ -12,7 +12,7 @@ const modelValue = defineModel<string>()
 <template>
   <div class="bg-editor-bg flex flex-col h-screen w-full">
     <!-- Header -->
-    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-14 items-center justify-between">
+    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5">
           <div class="rounded-full bg-window-close h-3 w-3 shadow-sm" />
@@ -20,13 +20,9 @@ const modelValue = defineModel<string>()
           <div class="rounded-full bg-window-maximize h-3 w-3 shadow-sm" />
         </div>
         <div class="bg-editor-divider h-4 w-px" />
-        <span class="text-sm text-text-primary tracking-tight font-medium">Editor</span>
+        <Icon name="lucide:edit-3" class="text-text-primary h-4 w-4" />
       </div>
-      <div class="flex items-center space-x-3">
-        <div class="text-xs text-text-secondary font-mono">
-          Markdown
-        </div>
-      </div>
+      <div class="flex items-center space-x-3" />
     </div>
 
     <!-- Editor container -->

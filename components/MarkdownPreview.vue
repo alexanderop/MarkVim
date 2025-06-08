@@ -40,13 +40,9 @@ if (process.client) {
 
 <template>
   <div ref="root" class="bg-editor-bg flex flex-col h-screen w-full">
-    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-14 items-center justify-between">
+    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
-        <span class="text-sm text-text-primary tracking-tight font-medium">Preview</span>
-        <div class="bg-editor-divider h-4 w-px" />
-        <div class="text-xs text-text-secondary font-mono">
-          Rendered
-        </div>
+        <Icon name="lucide:eye" class="text-text-primary h-4 w-4" />
       </div>
     </div>
 
