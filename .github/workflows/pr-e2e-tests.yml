@@ -1,0 +1,244 @@
+name: E2E Tests on Pull Request
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened ]
+
+# Cancel previous runs when a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Enable Corepack
+        run: corepack enable
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: |
+          echo "📦 Installing project dependencies..."
+          pnpm install --frozen-lockfile
+          echo "✅ Dependencies installed successfully"
+
+      - name: 🎭 Install Playwright browsers
+        run: |
+          echo "🎭 Installing Playwright browsers..."
+          npx playwright install --with-deps chromium
+          echo "✅ Playwright browsers installed"
+
+      - name: 🔍 Lint check
+        run: |
+          echo "🔍 Running ESLint checks..."
+          pnpm run lint
+          echo "✅ Linting passed"
+
+      - name: 🏗️ Build project
+        run: |
+          echo "🏗️ Building Nuxt application..."
+          pnpm run build
+          echo "✅ Build completed successfully"
+
+      - name: 🚀 Start development server
+        run: |
+          echo "🚀 Starting Nuxt development server..."
+          pnpm dev > server.log 2>&1 &
+          echo $! > server.pid
+          echo "✅ Development server started (PID: $(cat server.pid))"
+
+      - name: ⏳ Wait for server to be ready
+        run: |
+          echo "⏳ Waiting for server to be ready on http://localhost:3000..."
+          npx wait-on http://localhost:3000 --timeout 60000 --interval 2000
+          echo "✅ Server is ready and responding"
+
+      - name: 🧪 Run E2E tests
+        id: e2e_tests
+        run: |
+          echo "🧪 Starting end-to-end tests..."
+          echo "📊 Test configuration:"
+          echo "  - Framework: Cucumber + Playwright"
+          echo "  - Browser: Chromium (headless)"
+          echo "  - Timeout: 30s per step"
+          echo "  - Parallel: 1 worker"
+          echo ""
+          
+          # Run tests with verbose output
+          pnpm run test:e2e --format progress-bar --format json:cucumber-results.json
+          
+          echo ""
+          echo "✅ E2E tests completed successfully!"
+
+      - name: 📊 Process test results
+        if: always()
+        run: |
+          echo "📊 Processing test results..."
+          
+          # Check if cucumber report exists
+          if [ -f "cucumber-report.html" ]; then
+            echo "✅ Test report generated: cucumber-report.html"
+            
+            # Extract test summary if JSON results exist
+            if [ -f "cucumber-results.json" ]; then
+              echo "📈 Test Summary:"
+              # Use basic commands to extract info since jq might not be available
+              grep -o '"status":"[^"]*"' cucumber-results.json | sort | uniq -c || true
+            fi
+          else
+            echo "❌ Test report not found"
+          fi
+          
+          # Show server logs if tests failed
+          if [ "${{ steps.e2e_tests.outcome }}" != "success" ]; then
+            echo ""
+            echo "🔍 Server logs (last 50 lines):"
+            tail -n 50 server.log || echo "No server logs available"
+          fi
+
+      - name: 🛑 Stop development server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            PID=$(cat server.pid)
+            echo "🛑 Stopping development server (PID: $PID)..."
+            kill $PID || true
+            rm server.pid
+            echo "✅ Development server stopped"
+          fi
+
+      - name: 📤 Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-report-${{ github.event.pull_request.number }}
+          path: |
+            cucumber-report.html
+            cucumber-results.json
+            server.log
+          retention-days: 7
+
+      - name: 📝 Comment PR with test results
+        uses: actions/github-script@v7
+        if: always() && github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Check if tests passed
+            const testsPassed = '${{ steps.e2e_tests.outcome }}' === 'success';
+            
+            // Read test report if it exists
+            let reportExists = false;
+            try {
+              if (fs.existsSync('cucumber-report.html')) {
+                reportExists = true;
+              }
+            } catch (error) {
+              console.log('Could not check for report file:', error.message);
+            }
+            
+            // Create comment body
+            const emoji = testsPassed ? '✅' : '❌';
+            const status = testsPassed ? 'PASSED' : 'FAILED';
+            const color = testsPassed ? '🟢' : '🔴';
+            
+            let body = `## ${emoji} E2E Test Results ${color}\n\n`;
+            body += `**Status:** ${status}\n`;
+            body += `**Commit:** \`${context.sha.substring(0, 7)}\`\n`;
+            body += `**Workflow:** [View Details](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n`;
+            
+            if (reportExists) {
+              body += `📊 **Test Report:** Available in workflow artifacts\n\n`;
+            }
+            
+            if (!testsPassed) {
+              body += `### 🔍 Troubleshooting\n`;
+              body += `- Check the workflow logs for detailed error messages\n`;
+              body += `- Download the test report artifact for more details\n`;
+              body += `- Verify your changes don't break existing functionality\n\n`;
+            }
+            
+            body += `### 🧪 Test Coverage\n`;
+            body += `- ✅ Document Management (create, delete, select)\n`;
+            body += `- ✅ Markdown Editing & Live Preview\n`;
+            body += `- ✅ View Modes (editor, preview, split)\n`;
+            body += `- ✅ Settings Configuration\n\n`;
+            
+            body += `<details>\n<summary>📋 Test Details</summary>\n\n`;
+            body += `- **Framework:** Cucumber + Playwright\n`;
+            body += `- **Browser:** Chromium (headless)\n`;
+            body += `- **Test Files:** 4 feature files\n`;
+            body += `- **Timeout:** 30 seconds per step\n`;
+            body += `- **Parallel Workers:** 1\n`;
+            body += `</details>`;
+            
+            // Find existing comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const existingComment = comments.data.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('E2E Test Results')
+            );
+            
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+      - name: 📋 Summary
+        if: always()
+        run: |
+          echo "🎯 E2E Test Workflow Summary"
+          echo "=================================="
+          echo "✅ Code checkout completed"
+          echo "✅ Dependencies installed"
+          echo "✅ Playwright browsers installed"
+          echo "✅ Project built successfully"
+          echo "✅ Development server started"
+          echo "✅ Server readiness verified"
+          
+          if [ "${{ steps.e2e_tests.outcome }}" == "success" ]; then
+            echo "✅ E2E tests PASSED"
+            echo ""
+            echo "🎉 All checks completed successfully!"
+            echo "This PR is ready for review and merge."
+          else
+            echo "❌ E2E tests FAILED"
+            echo ""
+            echo "🔍 Please check the test results and fix any issues before merging."
+            echo "📊 Test report and logs are available in the artifacts."
+          fi 

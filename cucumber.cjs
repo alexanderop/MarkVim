@@ -3,7 +3,7 @@ module.exports = {
     loader: ['ts-node/esm'],
     import: ['features/**/*.ts'],
     paths: ['features/**/*.feature'],
-    format: ['progress-bar', 'html:cucumber-report.html'],
+    format: ['progress-bar', 'html:cucumber-report.html', 'json:cucumber-results.json'],
     parallel: 1, // Playwright tests are often best run sequentially per worker
     timeout: 30000, // 30 seconds timeout for each step
     worldParameters: {
@@ -14,7 +14,7 @@ module.exports = {
     loader: ['ts-node/esm'],
     import: ['features/**/*.ts'],
     paths: ['features/**/*.feature'],
-    format: ['progress-bar', 'html:cucumber-report.html'],
+    format: ['progress-bar', 'html:cucumber-report.html', 'json:cucumber-results.json'],
     parallel: 1,
     timeout: 30000, // 30 seconds timeout for each step
     worldParameters: {
