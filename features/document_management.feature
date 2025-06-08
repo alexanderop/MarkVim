@@ -24,3 +24,16 @@ Feature: Document Management
     Then the sidebar should be hidden
     When I press "Meta+Shift+Backslash" again
     Then the sidebar should be visible
+
+  Scenario: A user can switch between view modes with keyboard shortcuts
+    Given I am on the MarkVim application
+    And the view mode is "split"
+    When I press "1"
+    Then the view mode should be "editor"
+    And only the editor should be visible
+    When I press "2"
+    Then the view mode should be "split"
+    And both editor and preview should be visible
+    When I press "3"
+    Then the view mode should be "preview"
+    And only the preview should be visible

@@ -160,3 +160,77 @@ Then('the sidebar should be visible', async function (this: CustomWorld) {
   
   await expect(sidebar).toBeVisible({ timeout: 1000 })
 })
+
+Given('the view mode is {string}', async function (this: CustomWorld, mode: string) {
+  // Map mode names to their button titles
+  const modeToTitle = {
+    'editor': 'Editor',
+    'split': 'Split', 
+    'preview': 'Preview'
+  }
+  
+  const titleText = modeToTitle[mode as keyof typeof modeToTitle] || mode
+  
+  // Check that the correct view mode button is active by looking for the active indicator
+  const activeButton = this.page.locator(`button[title*="${titleText}"]`).locator('div[class*="bg-white/5"]')
+  await expect(activeButton).toBeVisible({ timeout: 5000 })
+})
+
+Then('the view mode should be {string}', async function (this: CustomWorld, mode: string) {
+  // Map mode names to their button titles
+  const modeToTitle = {
+    'editor': 'Editor',
+    'split': 'Split', 
+    'preview': 'Preview'
+  }
+  
+  const titleText = modeToTitle[mode as keyof typeof modeToTitle] || mode
+  
+  // Wait for the view mode to change and check the active indicator
+  await this.page.waitForFunction(
+    (expectedTitle) => {
+      const buttons = document.querySelectorAll('button[title*="Editor"], button[title*="Split"], button[title*="Preview"]')
+      for (const button of buttons) {
+        const title = button.getAttribute('title') || ''
+        const indicator = button.querySelector('div[class*="bg-white/5"]')
+        
+        if (title.includes(expectedTitle) && indicator) {
+          return true
+        }
+      }
+      return false
+    },
+    titleText,
+    { timeout: 5000 }
+  )
+  
+  const activeButton = this.page.locator(`button[title*="${titleText}"]`).locator('div[class*="bg-white/5"]')
+  await expect(activeButton).toBeVisible({ timeout: 1000 })
+})
+
+Then('only the editor should be visible', async function (this: CustomWorld) {
+  // Check that editor is visible and preview is not visible
+  const editorContainer = this.page.locator('.cm-editor')
+  const previewContainer = this.page.locator('[data-testid="markdown-preview"]')
+  
+  await expect(editorContainer).toBeVisible({ timeout: 5000 })
+  await expect(previewContainer).not.toBeVisible({ timeout: 1000 })
+})
+
+Then('both editor and preview should be visible', async function (this: CustomWorld) {
+  // Check that both editor and preview are visible
+  const editorContainer = this.page.locator('.cm-editor')
+  const previewContainer = this.page.locator('[data-testid="markdown-preview"]')
+  
+  await expect(editorContainer).toBeVisible({ timeout: 5000 })
+  await expect(previewContainer).toBeVisible({ timeout: 5000 })
+})
+
+Then('only the preview should be visible', async function (this: CustomWorld) {
+  // Check that preview is visible and editor is not visible
+  const editorContainer = this.page.locator('.cm-editor')
+  const previewContainer = this.page.locator('[data-testid="markdown-preview"]')
+  
+  await expect(previewContainer).toBeVisible({ timeout: 5000 })
+  await expect(editorContainer).not.toBeVisible({ timeout: 1000 })
+})
