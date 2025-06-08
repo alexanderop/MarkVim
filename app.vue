@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const initialMarkdown = `# Welcome to MarkVim
 
 MarkVim is a markdown editor with full Vim modal editing support and custom keybindings.
@@ -127,6 +128,8 @@ const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.v
 const isSplitView = computed(() => viewMode.value === 'split')
 const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
 
+const isMobile = useMediaQuery('(max-width: 768px)')
+
 // Command palette state
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
@@ -162,7 +165,6 @@ function closeCommandPalette() {
 }
 
 function handleSaveDocument() {
-  // Create a blob and download the file
   const blob = new Blob([markdown.value], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -173,7 +175,6 @@ function handleSaveDocument() {
 }
 
 function handleInsertText(text: string) {
-  // For now, we'll append to the markdown - this could be improved with cursor position
   markdown.value += text
 }
 
@@ -248,17 +249,15 @@ useHead({
 
 <template>
   <div ref="containerRef" class="text-gray-100 font-sans bg-editor-bg flex flex-col h-screen">
-    <!-- Linear-inspired toolbar -->
-    <div class="px-6 py-3 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between backdrop-blur">
-      <div class="flex items-center space-x-4">
-        <h1 class="text-lg text-white font-semibold">
+    <div class="px-3 py-2 border-b border-gray-800 bg-gray-900/50 flex items-center justify-between backdrop-blur md:px-6 md:py-3">
+      <div class="flex items-center space-x-2 md:space-x-4">
+        <h1 class="text-base text-white font-semibold md:text-lg">
           MarkVim
         </h1>
 
-        <!-- Linear-style view mode toggle -->
-        <div class="p-1 rounded-lg bg-gray-800 flex items-center">
+        <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
           <button
-            class="text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200" :class="[
+            class="text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 md:text-sm md:px-3 md:py-1.5" :class="[
               viewMode === 'editor'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
@@ -266,12 +265,12 @@ useHead({
             title="Editor only (⌘1)"
             @click="viewMode = 'editor'"
           >
-            <Icon name="lucide:edit-3" class="mr-1.5 h-4 w-4" />
-            Editor
+            <Icon name="lucide:edit-3" class="h-3 w-3 md:h-4 md:w-4" :class="isMobile ? '' : 'mr-1.5'" />
+            <span v-if="!isMobile">Editor</span>
           </button>
 
           <button
-            class="text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200" :class="[
+            class="text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 md:text-sm md:px-3 md:py-1.5" :class="[
               viewMode === 'split'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
@@ -279,12 +278,12 @@ useHead({
             title="Split view (⌘2)"
             @click="viewMode = 'split'"
           >
-            <Icon name="lucide:columns-2" class="mr-1.5 h-4 w-4" />
-            Split
+            <Icon name="lucide:columns-2" class="h-3 w-3 md:h-4 md:w-4" :class="isMobile ? '' : 'mr-1.5'" />
+            <span v-if="!isMobile">Split</span>
           </button>
 
           <button
-            class="text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-200" :class="[
+            class="text-xs font-medium px-2 py-1 rounded-md transition-all duration-200 md:text-sm md:px-3 md:py-1.5" :class="[
               viewMode === 'preview'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700',
@@ -292,30 +291,30 @@ useHead({
             title="Preview only (⌘3)"
             @click="viewMode = 'preview'"
           >
-            <Icon name="lucide:eye" class="mr-1.5 h-4 w-4" />
-            Preview
+            <Icon name="lucide:eye" class="h-3 w-3 md:h-4 md:w-4" :class="isMobile ? '' : 'mr-1.5'" />
+            <span v-if="!isMobile">Preview</span>
           </button>
         </div>
       </div>
 
-      <!-- Action buttons -->
       <div class="flex items-center space-x-2">
-        <ShortcutsModal />
+        <div class="hidden md:block">
+          <ShortcutsModal />
+        </div>
         <SettingsModal />
       </div>
     </div>
 
-    <!-- Main content area with responsive layout -->
-    <div class="flex flex-1 relative overflow-hidden">
-      <!-- Editor pane -->
+    <div class="flex flex-1 flex-col relative overflow-hidden md:flex-row">
       <div
         v-if="isEditorVisible"
-        class="transition-all duration-300 ease-in-out" :class="[
-          isSplitView ? 'border-r border-gray-800' : '',
+        class="w-full transition-all duration-300 ease-in-out" :class="[
+          isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
+          isSplitView ? 'h-1/2 md:h-full' : 'h-full',
         ]"
         :style="{
-          width: isSplitView ? `${leftPaneWidth}%` : '100%',
           transform: isEditorVisible ? 'translateX(0)' : 'translateX(-100%)',
+          width: isSplitView && !isMobile ? `${leftPaneWidth}%` : '100%',
         }"
       >
         <MarkdownEditor
@@ -325,20 +324,21 @@ useHead({
         />
       </div>
 
-      <!-- Resizable splitter - only show in split mode -->
       <ResizableSplitter
         v-if="isSplitView"
         :is-dragging="isDragging"
+        class="hidden md:block"
         @start-drag="startDrag"
       />
 
-      <!-- Preview pane -->
       <div
         v-if="isPreviewVisible"
-        class="transition-all duration-300 ease-in-out overflow-hidden"
+        class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
+          isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+        ]"
         :style="{
-          width: isSplitView ? `${rightPaneWidth}%` : '100%',
           transform: isPreviewVisible ? 'translateX(0)' : 'translateX(100%)',
+          width: isSplitView && !isMobile ? `${rightPaneWidth}%` : '100%',
         }"
       >
         <MarkdownPreview
@@ -348,11 +348,10 @@ useHead({
       </div>
     </div>
 
-    <!-- Linear-style status bar with keyboard shortcuts hint -->
-    <div class="px-6 py-2 border-t border-gray-800 bg-gray-900/30 backdrop-blur">
+    <div class="px-3 py-2 border-t border-gray-800 bg-gray-900/30 backdrop-blur md:px-6">
       <div class="text-xs text-gray-500 flex items-center justify-between">
-        <span>{{ markdown.split('\n').length }} lines • {{ markdown.length }} characters</span>
-        <div class="flex items-center space-x-4">
+        <span class="truncate">{{ markdown.split('\n').length }} lines<span class="hidden sm:inline"> • {{ markdown.length }} characters</span></span>
+        <div class="hidden items-center space-x-4 md:flex">
           <span>{{ formatKeys('1') }} Editor</span>
           <span>{{ formatKeys('2') }} Split</span>
           <span>{{ formatKeys('3') }} Preview</span>
@@ -362,7 +361,6 @@ useHead({
       </div>
     </div>
 
-    <!-- Global command palette -->
     <CommandPalette
       v-model:open="commandPaletteOpen"
       :position="commandPalettePosition"
@@ -380,7 +378,6 @@ useHead({
 </template>
 
 <style>
-/* Linear-style scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -399,7 +396,6 @@ useHead({
   background: #3a3f52;
 }
 
-/* Custom CodeMirror theme for Linear-style markdown highlighting */
 .cm-editor {
   background-color: theme('colors.editor.bg') !important;
   color: #b4bcd0 !important;
@@ -434,7 +430,6 @@ useHead({
   position: relative;
 }
 
-/* Headings with Linear-style colors - uniform height */
 .cm-header {
   font-weight: 600 !important;
 }
@@ -461,7 +456,6 @@ useHead({
   font-weight: 600 !important;
 }
 
-/* Markdown tokens */
 .cm-strong {
   color: #ffffff !important;
   font-weight: 600 !important;
@@ -506,12 +500,10 @@ useHead({
   color: #30363d !important;
 }
 
-/* Code blocks */
 .cm-meta {
   color: #8b949e !important;
 }
 
-/* Active line highlighting */
 .cm-activeLine {
   background-color: rgba(110, 118, 129, 0.05) !important;
 }
@@ -520,7 +512,6 @@ useHead({
   background-color: rgba(110, 118, 129, 0.05) !important;
 }
 
-/* Line numbers if enabled */
 .cm-gutters {
   background-color: theme('colors.editor.bg') !important;
   border-right: 1px solid theme('colors.editor.border') !important;
