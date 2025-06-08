@@ -96,3 +96,67 @@ Then('the {string} document should no longer be in the document list', async fun
   const documentList = this.page.locator('aside')
   await expect(documentList.getByText(title)).not.toBeVisible({ timeout: 10000 })
 })
+
+Given('the sidebar is visible', async function (this: CustomWorld) {
+  const sidebar = this.page.locator('aside')
+  await expect(sidebar).toBeVisible({ timeout: 5000 })
+})
+
+When('I press {string}', async function (this: CustomWorld, keyCombo: string) {
+  // Convert the key combination to Playwright format
+  const keys = keyCombo.replace('Meta+', 'Meta+').replace('Shift+', 'Shift+').replace('Backslash', '\\')
+  await this.page.keyboard.press(keys)
+  
+  // Wait a moment for the action to complete
+  await this.page.waitForTimeout(500)
+})
+
+When('I press {string} again', async function (this: CustomWorld, keyCombo: string) {
+  // Convert the key combination to Playwright format
+  const keys = keyCombo.replace('Meta+', 'Meta+').replace('Shift+', 'Shift+').replace('Backslash', '\\')
+  await this.page.keyboard.press(keys)
+  
+  // Wait a moment for the action to complete
+  await this.page.waitForTimeout(500)
+})
+
+Then('the sidebar should be hidden', async function (this: CustomWorld) {
+  const sidebar = this.page.locator('aside')
+  
+  // Wait for the sidebar to become hidden with CSS transitions
+  await this.page.waitForFunction(
+    () => {
+      const sidebarElement = document.querySelector('aside')
+      if (!sidebarElement) return true
+      
+      const style = window.getComputedStyle(sidebarElement)
+      return style.transform === 'translateX(-100%)' || style.opacity === '0' || !sidebarElement.offsetParent
+    },
+    { timeout: 5000 }
+  )
+  
+  // For visual confirmation, check if it's not visible or has the hidden class/style
+  await expect(sidebar).not.toBeVisible({ timeout: 1000 }).catch(async () => {
+    // If still visible, check for hidden transform
+    const transform = await sidebar.evaluate(el => window.getComputedStyle(el).transform)
+    expect(transform).toContain('translateX(-100%)')
+  })
+})
+
+Then('the sidebar should be visible', async function (this: CustomWorld) {
+  const sidebar = this.page.locator('aside')
+  
+  // Wait for the sidebar to become visible with CSS transitions
+  await this.page.waitForFunction(
+    () => {
+      const sidebarElement = document.querySelector('aside')
+      if (!sidebarElement) return false
+      
+      const style = window.getComputedStyle(sidebarElement)
+      return style.transform === 'translateX(0px)' || style.transform === 'none' || style.opacity === '1'
+    },
+    { timeout: 5000 }
+  )
+  
+  await expect(sidebar).toBeVisible({ timeout: 1000 })
+})

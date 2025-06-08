@@ -16,3 +16,11 @@ Feature: Document Management
     And the modal should contain the text "Are you sure you want to delete"
     When I click the "Delete" confirmation button
     Then the "Welcome to MarkVim" document should no longer be in the document list
+
+  Scenario: A user can toggle the sidebar with keyboard shortcut
+    Given I am on the MarkVim application
+    And the sidebar is visible
+    When I press "Meta+Shift+Backslash"
+    Then the sidebar should be hidden
+    When I press "Meta+Shift+Backslash" again
+    Then the sidebar should be visible
