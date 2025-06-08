@@ -17,35 +17,35 @@ export default defineConfig({
   theme: {
     colors: {
       // Base colors
-      background: 'hsl(224 71.4% 4.1%)', // #020817
-      foreground: 'hsl(210 20% 98%)', // #fafafa
-      
+      'background': 'hsl(224 71.4% 4.1%)', // #020817
+      'foreground': 'hsl(210 20% 98%)', // #fafafa
+
       // Surfaces
-      surface: {
+      'surface': {
         primary: 'hsl(220 26% 8%)', // #111317
         secondary: 'hsl(220 26% 12%)', // #181a20
         hover: 'hsl(220 26% 16%)', // #21242b
       },
 
       // Borders
-      border: 'hsl(215 18% 20%)', // #2c303a
-      subtle: 'hsl(215 18% 15%)', // #21252e
+      'border': 'hsl(215 18% 20%)', // #2c303a
+      'subtle': 'hsl(215 18% 15%)', // #21252e
 
       // Accent colors
-      accent: 'hsl(250 84% 60%)', // #5D37F0
+      'accent': 'hsl(250 84% 60%)', // #5D37F0
       'accent-hover': 'hsl(250 84% 65%)',
       'accent-brighter': 'hsl(250 84% 70%)',
 
       // Text colors
-      text: {
+      'text': {
         primary: 'hsl(215 15% 75%)', // #b8bcc4
         secondary: 'hsl(215 12% 55%)', // #838996
         tertiary: 'hsl(215 10% 40%)', // #606572
         bright: 'hsl(210 20% 98%)', // #fafafa
       },
-      
+
       // Window decoration (for fake window UI)
-      window: {
+      'window': {
         close: '#ff5f57',
         minimize: '#ffbd2e',
         maximize: '#28ca42',

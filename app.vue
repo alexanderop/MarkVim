@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const viewMode = ref<'split' | 'editor' | 'preview'>('split')
-const isSidebarVisible = ref(true)
+const isSidebarVisible = useLocalStorage('markvim-sidebar-visible', true)
 
 // Document management
 const {
@@ -313,24 +313,20 @@ useHead({
 
     <div class="flex flex-1 relative overflow-hidden">
       <!-- Sidebar with smooth transition -->
-      <Transition
-        enter-active-class="transition-all duration-300 ease-out"
-        leave-active-class="transition-all duration-300 ease-in"
-        enter-from-class="transform -translate-x-full opacity-0"
-        enter-to-class="transform translate-x-0 opacity-100"
-        leave-from-class="transform translate-x-0 opacity-100"
-        leave-to-class="transform -translate-x-full opacity-0"
-      >
-        <DocumentList
-          v-if="isSidebarVisible"
-          :documents="documents"
-          :active-document-id="activeDocumentId"
-          :is-visible="isSidebarVisible"
-          @select-document="handleDocumentSelect"
-          @create-document="handleCreateDocument"
-          @delete-document="handleDeleteDocument"
-        />
-      </Transition>
+      <DocumentList
+        v-show="isSidebarVisible"
+        :documents="documents"
+        :active-document-id="activeDocumentId"
+        :is-visible="isSidebarVisible"
+        class="transition-all duration-300 ease-out" :class="[
+          isSidebarVisible
+            ? 'transform translate-x-0 opacity-100'
+            : 'transform -translate-x-full opacity-0 pointer-events-none',
+        ]"
+        @select-document="handleDocumentSelect"
+        @create-document="handleCreateDocument"
+        @delete-document="handleDeleteDocument"
+      />
 
       <!-- Main content area -->
       <div class="bg-gray-900/30 flex flex-1 flex-col overflow-hidden">
