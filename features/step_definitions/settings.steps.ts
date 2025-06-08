@@ -7,7 +7,7 @@ When('I press {string} then {string}', async function (this: CustomWorld, firstK
   await this.page.keyboard.press(firstKey)
   await this.page.waitForTimeout(100) // Small delay between keys
   await this.page.keyboard.press(secondKey)
-  
+
   // Wait a moment for the action to complete
   await this.page.waitForTimeout(500)
 })
@@ -17,7 +17,7 @@ When('I click the {string} button in the toolbar', async function (this: CustomW
   const settingsButton = this.page.locator('button[title*="Settings"]')
   await expect(settingsButton).toBeVisible({ timeout: 5000 })
   await settingsButton.click()
-  
+
   // Wait for the modal to appear
   await this.page.waitForTimeout(1000)
 })
@@ -26,7 +26,7 @@ Then('the settings modal should be open', async function (this: CustomWorld) {
   // Look for the modal content with the settings title
   const modal = this.page.getByTestId('modal-content')
   await expect(modal).toBeVisible({ timeout: 5000 })
-  
+
   // Check that it's specifically the settings modal
   const modalTitle = this.page.getByTestId('modal-title')
   await expect(modalTitle).toHaveText('Settings', { timeout: 5000 })
@@ -44,7 +44,7 @@ Given('the settings modal is open', async function (this: CustomWorld) {
   await this.page.waitForTimeout(100)
   await this.page.keyboard.press('s')
   await this.page.waitForTimeout(1000)
-  
+
   // Verify it's open
   const modal = this.page.getByTestId('modal-content')
   await expect(modal).toBeVisible({ timeout: 5000 })
@@ -54,4 +54,4 @@ Then('the settings modal should be closed', async function (this: CustomWorld) {
   // Wait for the modal to disappear
   const modal = this.page.getByTestId('modal-content')
   await expect(modal).not.toBeVisible({ timeout: 5000 })
-}) 
+})

@@ -41,7 +41,7 @@ Then('the document title in the header should be {string}', async function (this
       return titleElement?.textContent?.trim() === expectedTitle
     },
     title,
-    { timeout: 15000 }
+    { timeout: 15000 },
   )
   await expect(headerTitle).toHaveText(title)
 })
@@ -50,7 +50,7 @@ Then('I should see {string} in the editor content', async function (this: Custom
   // Wait for CodeMirror to load and render content
   const editorContent = this.page.locator('.cm-content')
   await expect(editorContent).toBeVisible({ timeout: 10000 })
-  
+
   // Wait for the content to actually appear
   await this.page.waitForFunction(
     (expectedContent) => {
@@ -58,9 +58,9 @@ Then('I should see {string} in the editor content', async function (this: Custom
       return editorElement?.textContent?.includes(expectedContent)
     },
     content,
-    { timeout: 10000 }
+    { timeout: 10000 },
   )
-  
+
   await expect(editorContent).toContainText(content)
 })
 
@@ -68,7 +68,7 @@ Then('I should see the "Delete Document" confirmation modal', async function (th
   // Wait for the modal to appear with a more specific selector
   const modal = this.page.getByTestId('modal-content')
   await expect(modal).toBeVisible({ timeout: 10000 })
-  
+
   const modalTitle = this.page.getByTestId('modal-title')
   await expect(modalTitle).toBeVisible({ timeout: 5000 })
   await expect(modalTitle).toHaveText('Delete Document')
@@ -83,7 +83,7 @@ When('I click the "Delete" confirmation button', async function (this: CustomWor
   const confirmButton = this.page.getByTestId('confirm-delete-button')
   await expect(confirmButton).toBeVisible({ timeout: 5000 })
   await confirmButton.click()
-  
+
   // Wait for the deletion to complete and modal to close
   await this.page.waitForTimeout(1000)
 })
@@ -91,7 +91,7 @@ When('I click the "Delete" confirmation button', async function (this: CustomWor
 Then('the {string} document should no longer be in the document list', async function (this: CustomWorld, title: string) {
   // Wait for the UI to update after deletion
   await this.page.waitForTimeout(2000)
-  
+
   // Look in the aside element (DocumentList component)
   const documentList = this.page.locator('aside')
   await expect(documentList.getByText(title)).not.toBeVisible({ timeout: 10000 })
@@ -106,7 +106,7 @@ When('I press {string}', async function (this: CustomWorld, keyCombo: string) {
   // Convert the key combination to Playwright format
   const keys = keyCombo.replace('Meta+', 'Meta+').replace('Shift+', 'Shift+').replace('Backslash', '\\')
   await this.page.keyboard.press(keys)
-  
+
   // Wait a moment for the action to complete
   await this.page.waitForTimeout(500)
 })
@@ -115,26 +115,27 @@ When('I press {string} again', async function (this: CustomWorld, keyCombo: stri
   // Convert the key combination to Playwright format
   const keys = keyCombo.replace('Meta+', 'Meta+').replace('Shift+', 'Shift+').replace('Backslash', '\\')
   await this.page.keyboard.press(keys)
-  
+
   // Wait a moment for the action to complete
   await this.page.waitForTimeout(500)
 })
 
 Then('the sidebar should be hidden', async function (this: CustomWorld) {
   const sidebar = this.page.locator('aside')
-  
+
   // Wait for the sidebar to become hidden with CSS transitions
   await this.page.waitForFunction(
     () => {
       const sidebarElement = document.querySelector('aside')
-      if (!sidebarElement) return true
-      
+      if (!sidebarElement)
+        return true
+
       const style = window.getComputedStyle(sidebarElement)
       return style.transform === 'translateX(-100%)' || style.opacity === '0' || !sidebarElement.offsetParent
     },
-    { timeout: 5000 }
+    { timeout: 5000 },
   )
-  
+
   // For visual confirmation, check if it's not visible or has the hidden class/style
   await expect(sidebar).not.toBeVisible({ timeout: 1000 }).catch(async () => {
     // If still visible, check for hidden transform
@@ -145,32 +146,33 @@ Then('the sidebar should be hidden', async function (this: CustomWorld) {
 
 Then('the sidebar should be visible', async function (this: CustomWorld) {
   const sidebar = this.page.locator('aside')
-  
+
   // Wait for the sidebar to become visible with CSS transitions
   await this.page.waitForFunction(
     () => {
       const sidebarElement = document.querySelector('aside')
-      if (!sidebarElement) return false
-      
+      if (!sidebarElement)
+        return false
+
       const style = window.getComputedStyle(sidebarElement)
       return style.transform === 'translateX(0px)' || style.transform === 'none' || style.opacity === '1'
     },
-    { timeout: 5000 }
+    { timeout: 5000 },
   )
-  
+
   await expect(sidebar).toBeVisible({ timeout: 1000 })
 })
 
 Given('the view mode is {string}', async function (this: CustomWorld, mode: string) {
   // Map mode names to their button titles
   const modeToTitle = {
-    'editor': 'Editor',
-    'split': 'Split', 
-    'preview': 'Preview'
+    editor: 'Editor',
+    split: 'Split',
+    preview: 'Preview',
   }
-  
+
   const titleText = modeToTitle[mode as keyof typeof modeToTitle] || mode
-  
+
   // Check that the correct view mode button is active by looking for the active indicator
   const activeButton = this.page.locator(`button[title*="${titleText}"]`).locator('div[class*="bg-white/5"]')
   await expect(activeButton).toBeVisible({ timeout: 5000 })
@@ -179,13 +181,13 @@ Given('the view mode is {string}', async function (this: CustomWorld, mode: stri
 Then('the view mode should be {string}', async function (this: CustomWorld, mode: string) {
   // Map mode names to their button titles
   const modeToTitle = {
-    'editor': 'Editor',
-    'split': 'Split', 
-    'preview': 'Preview'
+    editor: 'Editor',
+    split: 'Split',
+    preview: 'Preview',
   }
-  
+
   const titleText = modeToTitle[mode as keyof typeof modeToTitle] || mode
-  
+
   // Wait for the view mode to change and check the active indicator
   await this.page.waitForFunction(
     (expectedTitle) => {
@@ -193,7 +195,7 @@ Then('the view mode should be {string}', async function (this: CustomWorld, mode
       for (const button of buttons) {
         const title = button.getAttribute('title') || ''
         const indicator = button.querySelector('div[class*="bg-white/5"]')
-        
+
         if (title.includes(expectedTitle) && indicator) {
           return true
         }
@@ -201,9 +203,9 @@ Then('the view mode should be {string}', async function (this: CustomWorld, mode
       return false
     },
     titleText,
-    { timeout: 5000 }
+    { timeout: 5000 },
   )
-  
+
   const activeButton = this.page.locator(`button[title*="${titleText}"]`).locator('div[class*="bg-white/5"]')
   await expect(activeButton).toBeVisible({ timeout: 1000 })
 })
@@ -212,7 +214,7 @@ Then('only the editor should be visible', async function (this: CustomWorld) {
   // Check that editor is visible and preview is not visible
   const editorContainer = this.page.locator('.cm-editor')
   const previewContainer = this.page.locator('[data-testid="markdown-preview"]')
-  
+
   await expect(editorContainer).toBeVisible({ timeout: 5000 })
   await expect(previewContainer).not.toBeVisible({ timeout: 1000 })
 })
@@ -221,7 +223,7 @@ Then('both editor and preview should be visible', async function (this: CustomWo
   // Check that both editor and preview are visible
   const editorContainer = this.page.locator('.cm-editor')
   const previewContainer = this.page.locator('[data-testid="markdown-preview"]')
-  
+
   await expect(editorContainer).toBeVisible({ timeout: 5000 })
   await expect(previewContainer).toBeVisible({ timeout: 5000 })
 })
@@ -230,7 +232,7 @@ Then('only the preview should be visible', async function (this: CustomWorld) {
   // Check that preview is visible and editor is not visible
   const editorContainer = this.page.locator('.cm-editor')
   const previewContainer = this.page.locator('[data-testid="markdown-preview"]')
-  
+
   await expect(previewContainer).toBeVisible({ timeout: 5000 })
   await expect(editorContainer).not.toBeVisible({ timeout: 1000 })
 })

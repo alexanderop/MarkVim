@@ -16,26 +16,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      
+
       # Install dependencies
       - run: pnpm install
-      
+
       # Install Playwright browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      
+
       # Start the development server in background
       - name: Start development server
         run: pnpm dev &
-        
+
       # Wait for server to be ready
       - name: Wait for server
         run: npx wait-on http://localhost:3000 --timeout 60000
-        
+
       # Run E2E tests
       - name: Run E2E tests
         run: pnpm run test:e2e
-        
+
       # Upload test results on failure
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -46,7 +46,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: test-e2e  # Only build if E2E tests pass
+    needs: test-e2e # Only build if E2E tests pass
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable

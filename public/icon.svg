@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#1a1a1a" rx="64"/>
+  
+  <!-- Markdown "M" symbol -->
+  <path d="M128 160v192h32v-128l48 64 48-64v128h32V160h-32l-48 64-48-64z" fill="#ffffff"/>
+  
+  <!-- Vim-style cursor -->
+  <rect x="320" y="240" width="24" height="32" fill="#00ff00"/>
+  
+  <!-- Code brackets -->
+  <path d="M280 200l-16 16 16 16v16l-24-24 24-24v16zm72 0v16l24 24-24 24v-16l16-16-16-16z" fill="#888888"/>
+  
+  <!-- Text lines to represent markdown -->
+  <rect x="160" y="320" width="120" height="4" fill="#666666"/>
+  <rect x="160" y="340" width="80" height="4" fill="#666666"/>
+  <rect x="160" y="360" width="140" height="4" fill="#666666"/>
+</svg> 
