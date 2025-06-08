@@ -12,6 +12,7 @@ export default defineConfig({
         sans: 'Inter:400,500,600,700',
         mono: 'JetBrains Mono:400,500',
       },
+      themeKey: 'font', // Use 'font' instead of 'fontFamily' for Wind4 compatibility
     }),
   ],
   theme: {
