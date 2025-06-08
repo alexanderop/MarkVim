@@ -61,12 +61,19 @@ if (process.client) {
 .mermaid {
   background: transparent !important;
   color: #e6edf3 !important;
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 2rem 0 !important;
 }
 
 .mermaid svg {
   max-width: 100%;
   height: auto;
   background: transparent !important;
+  margin: 0 auto !important;
 }
 
 /* Override Mermaid's default colors for better dark theme integration */
