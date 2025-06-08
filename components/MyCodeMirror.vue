@@ -167,6 +167,8 @@ function useVimMode() {
 }
 
 function useEditorExtensions() {
+  let previousVimMode = 'NORMAL'
+
   function getExtensions() {
     const extensionsList: Extension[] = [
       history(),
@@ -236,7 +238,10 @@ function useEditorExtensions() {
           }
 
           // Only emit if the mode has actually changed
-          emit('vimModeChange', modeName)
+          if (modeName !== previousVimMode) {
+            previousVimMode = modeName
+            emit('vimModeChange', modeName)
+          }
         }
       }
     }))

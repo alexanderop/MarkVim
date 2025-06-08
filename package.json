@@ -30,8 +30,6 @@
     "@shikijs/markdown-it": "^3.6.0",
     "@vueuse/core": "^13.3.0",
     "@vueuse/nuxt": "13.3.0",
-    "codemirror": "^5",
-    "codemirror-editor-vue3": "^2.8.0",
     "eslint": "^9.0.0",
     "markdown-it": "^14.1.0",
     "mermaid": "^11.6.0",
