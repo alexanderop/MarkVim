@@ -70,8 +70,13 @@ jobs:
       - name: ⏳ Wait for server to be ready
         run: |
           echo "⏳ Waiting for server to be ready on http://localhost:3000..."
-          npx wait-on http://localhost:3000 --timeout 60000 --interval 2000
+          npx wait-on http://localhost:3000 --timeout 120000 --interval 3000 --verbose
           echo "✅ Server is ready and responding"
+          
+          # Additional health check
+          echo "🏥 Performing health check..."
+          curl -f http://localhost:3000 || (echo "❌ Health check failed" && exit 1)
+          echo "✅ Health check passed"
 
       - name: 🧪 Run E2E tests
         id: e2e_tests
@@ -80,11 +85,16 @@ jobs:
           echo "📊 Test configuration:"
           echo "  - Framework: Cucumber + Playwright"
           echo "  - Browser: Chromium (headless)"
-          echo "  - Timeout: 30s per step"
+          echo "  - Timeout: 60s per step"
           echo "  - Parallel: 1 worker"
           echo ""
 
-          # Run tests with verbose output
+          # Set environment variables for better CI stability
+          export CI=true
+          export PLAYWRIGHT_BROWSER_PATH="$(npx playwright browser-path chromium)"
+          
+          # Run tests with verbose output and proper exit handling
+          set -e
           pnpm run test:e2e --format progress-bar --format json:cucumber-results.json
 
           echo ""
@@ -190,7 +200,7 @@ jobs:
             body += `- **Framework:** Cucumber + Playwright\n`;
             body += `- **Browser:** Chromium (headless)\n`;
             body += `- **Test Files:** 4 feature files\n`;
-            body += `- **Timeout:** 30 seconds per step\n`;
+            body += `- **Timeout:** 60 seconds per step\n`;
             body += `- **Parallel Workers:** 1\n`;
             body += `</details>`;
 

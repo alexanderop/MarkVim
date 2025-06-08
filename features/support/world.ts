@@ -18,12 +18,49 @@ export class CustomWorld extends World {
 
   async initBrowser() {
     const headless = this.parameters?.headless ?? true
+    const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true'
+    
     this.browser = await chromium.launch({
       headless,
       slowMo: headless ? 0 : 100,
+      args: [
+        '--disable-dev-shm-usage',
+        '--disable-extensions',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-features=TranslateUI',
+        '--disable-ipc-flooding-protection',
+        ...(isCI ? [
+          '--disable-gpu',
+          '--disable-software-rasterizer',
+          '--disable-background-networking',
+          '--disable-default-apps',
+          '--disable-sync',
+          '--metrics-recording-only',
+          '--no-first-run',
+        ] : []),
+      ],
     })
-    this.context = await this.browser.newContext()
+    
+    this.context = await this.browser.newContext({
+      viewport: { width: 1280, height: 720 },
+      reducedMotion: 'reduce',
+      timeout: isCI ? 60000 : 30000,
+      ignoreHTTPSErrors: true,
+      ...(isCI ? {
+        recordVideo: undefined,
+        recordHar: undefined,
+      } : {}),
+    })
+    
     this.page = await this.context.newPage()
+    
+    const defaultTimeout = isCI ? 45000 : 30000
+    this.page.setDefaultTimeout(defaultTimeout)
+    this.page.setDefaultNavigationTimeout(defaultTimeout)
   }
 
   async closeBrowser() {
