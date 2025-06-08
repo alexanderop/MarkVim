@@ -12,7 +12,8 @@
     "typecheck": "nuxt typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test:e2e": "cucumber-js"
+    "test:e2e": "cucumber-js",
+    "test:e2e:headed": "cucumber-js --profile headed"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",

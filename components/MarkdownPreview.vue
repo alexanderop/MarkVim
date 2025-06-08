@@ -48,7 +48,7 @@ if (import.meta.client) {
 
     <div ref="root" class="bg-editor-bg flex-1 min-h-0 overflow-auto">
       <div class="mx-auto px-12 py-12 max-w-none">
-        <article class="prose-lg max-w-none prose prose-gray prose-invert" v-html="renderedHtml" />
+        <article class="prose-lg max-w-none prose prose-gray prose-invert" data-testid="markdown-preview" v-html="renderedHtml" />
       </div>
     </div>
   </div>

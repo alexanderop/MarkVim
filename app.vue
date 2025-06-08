@@ -408,6 +408,7 @@ useHead({
         </button>
         <button
           class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+          data-testid="confirm-delete-button"
           @click="confirmDeleteDocument"
         >
           Delete

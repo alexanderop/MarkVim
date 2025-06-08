@@ -78,6 +78,7 @@ function formatDate(timestamp: number): string {
       <button
         class="group text-white rounded-md bg-accent flex h-7 w-7 shadow-accent/20 shadow-lg transition-all duration-200 items-center justify-center hover:bg-accent-hover"
         title="New note"
+        data-testid="new-note-button"
         @click="handleCreateDocument"
       >
         <Icon

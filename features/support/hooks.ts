@@ -1,14 +1,15 @@
-import { Before, After } from '@cucumber/cucumber';
-import { CustomWorld } from './world.js';
+import { After, Before, setWorldConstructor } from '@cucumber/cucumber'
+import { CustomWorld } from './world.js'
 
 Before(async function (this: CustomWorld) {
-  await this.openApplication();
-  // Clear localStorage to ensure a clean state for each test
-  await this.page.evaluate(() => window.localStorage.clear());
-  // Reload the page to apply the cleared storage
-  await this.page.reload();
-});
+  await this.initBrowser()
+  await this.page.goto('http://localhost:3000')
+  // Clear localStorage to ensure clean state
+  await this.page.evaluate(() => localStorage.clear())
+})
 
 After(async function (this: CustomWorld) {
-  await this.closeApplication();
-});
+  await this.closeBrowser()
+})
+
+setWorldConstructor(CustomWorld)

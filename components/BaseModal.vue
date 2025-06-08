@@ -52,10 +52,11 @@ const maxWidthClasses = {
         class="bg-surface-secondary border border-subtle flex flex-col gap-3 w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
         :class="[maxWidthClasses[maxWidth]]"
         :style="{ maxHeight }"
+        data-testid="modal-content"
       >
         <div class="p-4 border-b border-subtle flex items-center justify-between">
           <div>
-            <DialogTitle class="text-lg font-semibold text-text-bright">
+            <DialogTitle class="text-lg font-semibold text-text-bright" data-testid="modal-title">
               {{ title }}
             </DialogTitle>
             <DialogDescription v-if="description" class="text-text-secondary text-sm mt-1">

@@ -135,7 +135,7 @@ Consider adding `data-testid` attributes to your Vue components:
 
 Then use in tests:
 ```typescript
-await this.page.getByTestId('delete-document-button').click();
+await this.page.getByTestId('delete-document-button').click()
 ```
 
 ## Best Practices Implemented
@@ -171,7 +171,7 @@ To add E2E tests to your CI/CD pipeline, update `.github/workflows/deploy.yml`:
 Run tests in headed mode for debugging:
 ```typescript
 // In features/support/world.ts
-this.browser = await chromium.launch({ headless: false });
+this.browser = await chromium.launch({ headless: false })
 ```
 
 ## Performance Considerations
