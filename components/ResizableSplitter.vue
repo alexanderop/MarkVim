@@ -32,7 +32,7 @@ defineEmits<Emits>()
 
     <div
       v-if="props.isDragging"
-      class="bg-gradient-to-r opacity-50 w-full inset-y-0 left-0 absolute from-transparent to-transparent via-editor-active/20"
+      class="bg-gradient-to-r opacity-50 w-full inset-y-0 left-0 absolute from-transparent to-transparent via-accent/20"
     />
   </div>
 </template>
