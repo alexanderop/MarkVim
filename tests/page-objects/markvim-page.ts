@@ -22,6 +22,8 @@ export class MarkVimPage {
   readonly keyboardShortcutsButton: Locator
   readonly keyboardShortcutsModal: Locator
   readonly keyboardShortcutsModalTitle: Locator
+  readonly settingsButton: Locator
+  readonly settingsModal: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -44,6 +46,8 @@ export class MarkVimPage {
     this.keyboardShortcutsButton = page.locator('[data-testid="keyboard-shortcuts-button"]')
     this.keyboardShortcutsModal = page.locator('[data-testid="keyboard-shortcuts-modal"]')
     this.keyboardShortcutsModalTitle = page.locator('[data-testid="keyboard-shortcuts-modal"] h2')
+    this.settingsButton = page.locator('[data-testid="settings-button"]')
+    this.settingsModal = page.locator('[data-testid="settings-modal"]')
   }
 
   async navigate(): Promise<void> {
@@ -150,6 +154,19 @@ export class MarkVimPage {
   async verifyMarkdownRendering(): Promise<void> {
     await expect(this.previewContent.locator('h1')).toBeVisible()
     await expect(this.previewContent.locator('strong')).toBeVisible()
+  }
+
+  async openSettingsWithKeyboard(): Promise<void> {
+    await this.page.keyboard.press('KeyG')
+    await this.page.keyboard.press('KeyS')
+  }
+
+  async verifySettingsModalVisible(): Promise<void> {
+    await expect(this.settingsModal).toBeVisible()
+  }
+
+  async verifySettingsModalHidden(): Promise<void> {
+    await expect(this.settingsModal).not.toBeVisible()
   }
 
   async toggleSidebarWithKeyboard(): Promise<void> {

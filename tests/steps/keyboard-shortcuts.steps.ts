@@ -13,6 +13,11 @@ When('I open the keyboard shortcuts modal', async function (this: MarkVimWorld) 
   await markVimPage.openKeyboardShortcutsModal()
 })
 
+When('I open the settings modal with keyboard shortcut', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.openSettingsWithKeyboard()
+})
+
 Given('the keyboard shortcuts modal is open', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.clickKeyboardShortcutsButton()
