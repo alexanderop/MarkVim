@@ -85,4 +85,9 @@ Feature: Keyboard Shortcuts Modal
     When I click the keyboard shortcuts button
     Then all shortcuts should have visible key combinations
     And no shortcuts should be missing key bindings
-    And settings shortcuts should have proper key combinations 
+    And settings shortcuts should have proper key combinations
+
+  Scenario: Open settings modal via keyboard shortcut
+    Given I am on the MarkVim homepage
+    When I open the settings modal with keyboard shortcut
+    Then the settings modal should be visible
