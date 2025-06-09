@@ -6,7 +6,9 @@ export class MarkVimPage {
   readonly headerToolbar: Locator
   readonly headerTitle: Locator
   readonly editorPane: Locator
+  readonly editorContent: Locator
   readonly previewPane: Locator
+  readonly previewContent: Locator
   readonly statusBar: Locator
   readonly commandPalette: Locator
   readonly commandPaletteSearch: Locator
@@ -22,7 +24,9 @@ export class MarkVimPage {
     this.headerToolbar = page.locator('[data-testid="header-toolbar"]')
     this.headerTitle = this.headerToolbar.locator('h1')
     this.editorPane = page.locator('[data-testid="editor-pane"]')
+    this.editorContent = this.editorPane.locator('.cm-content')
     this.previewPane = page.locator('[data-testid="preview-pane"]')
+    this.previewContent = this.previewPane.locator('.prose')
     this.statusBar = page.locator('[data-testid="status-bar"]')
     this.commandPalette = page.locator('[data-testid="command-palette"]')
     this.commandPaletteSearch = page.locator('[data-testid="command-palette-search"]')
@@ -46,6 +50,10 @@ export class MarkVimPage {
       'Escape': 'Escape',
       'Tab': 'Tab',
       'Enter': 'Enter',
+      '1': 'Digit1',
+      '2': 'Digit2',
+      '3': 'Digit3',
+      'Cmd+Shift+\\': 'Meta+Shift+Backslash',
     }
 
     const mappedKey = keyMap[key] || key
@@ -113,5 +121,26 @@ export class MarkVimPage {
 
   async verifyNewDocumentCreated(): Promise<void> {
     await expect(this.headerTitle).toHaveText('New Note')
+  }
+
+  async focusEditor(): Promise<void> {
+    await this.editorContent.click()
+  }
+
+  async typeInEditor(text: string): Promise<void> {
+    await this.page.keyboard.type(text)
+  }
+
+  async verifyPreviewContains(text: string): Promise<void> {
+    await expect(this.previewContent).toContainText(text)
+  }
+
+  async verifyMarkdownRendering(): Promise<void> {
+    await expect(this.previewContent.locator('h1')).toBeVisible()
+    await expect(this.previewContent.locator('strong')).toBeVisible()
+  }
+
+  async toggleSidebarWithKeyboard(): Promise<void> {
+    await this.page.keyboard.press('Meta+Shift+Backslash')
   }
 }

@@ -122,3 +122,43 @@ Then('a new document should be created automatically', async function (this: Mar
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.verifyNewDocumentCreated()
 })
+
+When('I focus the editor', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.focusEditor()
+})
+
+When('I press {string} to enter insert mode', async function (this: MarkVimWorld, key: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.pressKey(key)
+})
+
+When('I type {string} in the editor', async function (this: MarkVimWorld, text: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.typeInEditor(text)
+})
+
+When('I press {string} to exit insert mode', async function (this: MarkVimWorld, key: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.pressKey(key)
+})
+
+When('I press {string} to create new line and enter insert mode', async function (this: MarkVimWorld, key: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.pressKey(key)
+})
+
+Then('the preview should contain {string}', async function (this: MarkVimWorld, expectedText: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyPreviewContains(expectedText)
+})
+
+Then('the preview should have rendered markdown formatting', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyMarkdownRendering()
+})
+
+When('I toggle the sidebar with keyboard shortcut', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.toggleSidebarWithKeyboard()
+})

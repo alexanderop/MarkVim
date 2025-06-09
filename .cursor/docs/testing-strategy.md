@@ -33,7 +33,7 @@ tests/
 
 ## ✅ Current Test Status
 
-**All tests passing**: 9 scenarios, 45 steps ✅
+**All tests passing**: 12 scenarios, 73 steps ✅
 
 **Test Coverage**:
 - ✅ Core UI components visibility
@@ -43,6 +43,10 @@ tests/
 - ✅ Document management UI
 - ✅ Sidebar functionality
 - ✅ Note deletion with confirmation modal
+- ✅ Document creation and vim-based text editing
+- ✅ Markdown preview rendering and synchronization
+- ✅ Keyboard shortcuts for view mode switching (1/2/3 keys)
+- ✅ Sidebar toggle keyboard shortcut (Cmd+Shift+\)
 
 ## 🔄 Refactoring Improvements
 
