@@ -1,75 +1,60 @@
-# Nuxt Minimal Starter
+# MarkVim
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+MarkVim is a Nuxt 3 based Markdown editor that provides a full Vim editing experience. It includes live preview, document management and enhanced Markdown features like Mermaid diagrams and GitHub style alerts.
 
-## Setup
+## Features
 
-Make sure to install dependencies:
+  - Vim mode with optional custom keybindings
+  - Live preview with synced scrolling
+  - Local document storage and management
+  - Support for Mermaid diagrams and footnotes
+  - Keyboard shortcuts and command palette
+
+## Installation
+
+Use **pnpm** to install dependencies:
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## Development
 
-Start the development server on `http://localhost:3000`:
+Start the application at `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## Production Build
 
-Build the application for production:
+Create a production build and preview it locally:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
 pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+pnpm preview
 ```
 
-Locally preview production build:
+## End-to-End Tests
+
+MarkVim ships with Playwright+Cucumber tests. Start the dev server then run:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+pnpm run test:e2e
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Directory Structure
+
+  - `components/` – Vue components
+  - `composables/` – reusable logic functions
+  - `tests/` – end‑to‑end tests
+
+## Contributing
+
+Ensure code style is respected by running the linter:
+
+```bash
+pnpm run lint:fix
+```
+
+Feel free to open issues or pull requests to improve MarkVim.
