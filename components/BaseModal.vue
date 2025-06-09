@@ -80,7 +80,7 @@ const maxWidthClasses = {
           <slot />
         </div>
 
-        <div v-if="footerLeft || footerRight || $slots.footer" class="p-3 bg-surface-primary/60 border-t border-subtle flex items-center justify-between">
+        <div v-if="footerLeft || footerRight || $slots.footer || $slots['footer-left'] || $slots['footer-right']" class="p-3 bg-surface-primary/60 border-t border-subtle flex items-center justify-between">
           <div class="text-xs text-text-tertiary">
             <slot name="footer-left">
               {{ footerLeft || '' }}

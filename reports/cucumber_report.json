@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1046412958
+              "duration": 501737833
             }
           },
           {
@@ -23,11 +23,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 3047328083
+              "duration": 3100409832
             }
           },
           {
@@ -40,7 +40,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 129927332
+              "duration": 170587917
             }
           },
           {
@@ -53,7 +53,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10351083
+              "duration": 7696958
             }
           },
           {
@@ -66,7 +66,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10243542
+              "duration": 8018958
             }
           },
           {
@@ -79,7 +79,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 12167542
+              "duration": 10600249
             }
           },
           {
@@ -87,7 +87,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 153253999
+              "duration": 23670833
             }
           }
         ],
@@ -111,7 +111,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1003393082
+              "duration": 466027417
             }
           },
           {
@@ -120,11 +120,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 3050382542
+              "duration": 3100401832
             }
           },
           {
@@ -133,11 +133,11 @@
             "line": 15,
             "name": "I press \"?\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 34308915
+              "duration": 68044958
             }
           },
           {
@@ -150,7 +150,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 19245457
+              "duration": 38500917
             }
           },
           {
@@ -163,7 +163,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 26600916
+              "duration": 7590791
             }
           },
           {
@@ -176,7 +176,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 6212999
+              "duration": 10334542
             }
           },
           {
@@ -184,7 +184,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 200221999
+              "duration": 32829040
             }
           }
         ],
@@ -208,7 +208,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 320358291
+              "duration": 173313707
             }
           },
           {
@@ -217,11 +217,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2255724958
+              "duration": 1698760709
             }
           },
           {
@@ -234,7 +234,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 119213083
+              "duration": 108967583
             }
           },
           {
@@ -247,7 +247,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 7814666
+              "duration": 14441832
             }
           },
           {
@@ -260,7 +260,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 5122707
+              "duration": 3117750
             }
           },
           {
@@ -273,7 +273,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3228709
+              "duration": 2035041
             }
           },
           {
@@ -286,7 +286,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2043999
+              "duration": 6381167
             }
           },
           {
@@ -299,7 +299,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1612333
+              "duration": 2580417
             }
           },
           {
@@ -307,7 +307,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 149899749
+              "duration": 32267749
             }
           }
         ],
@@ -326,7 +326,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 296546041
+              "duration": 198957000
             }
           },
           {
@@ -335,11 +335,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2419754999
+              "duration": 1665682625
             }
           },
           {
@@ -352,7 +352,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 110036000
+              "duration": 97928167
             }
           },
           {
@@ -365,7 +365,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 57439749
+              "duration": 57913459
             }
           },
           {
@@ -378,7 +378,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 34659707
+              "duration": 32556333
             }
           },
           {
@@ -386,7 +386,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 149984167
+              "duration": 79237875
             }
           }
         ],
@@ -405,7 +405,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 340003541
+              "duration": 176182415
             }
           },
           {
@@ -414,11 +414,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2432346999
+              "duration": 1723867125
             }
           },
           {
@@ -431,7 +431,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 82852541
+              "duration": 105173666
             }
           },
           {
@@ -444,7 +444,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 85315875
+              "duration": 73230458
             }
           },
           {
@@ -457,7 +457,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 33997124
+              "duration": 40329332
             }
           },
           {
@@ -470,7 +470,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 29232583
+              "duration": 47984208
             }
           },
           {
@@ -483,7 +483,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 29688000
+              "duration": 39689749
             }
           },
           {
@@ -496,7 +496,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 31562249
+              "duration": 33629875
             }
           },
           {
@@ -509,7 +509,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 26423958
+              "duration": 38371375
             }
           },
           {
@@ -522,7 +522,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 25870915
+              "duration": 37368749
             }
           },
           {
@@ -535,7 +535,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 34641583
+              "duration": 33129708
             }
           },
           {
@@ -548,7 +548,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 38125332
+              "duration": 39141834
             }
           },
           {
@@ -561,7 +561,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 39892834
+              "duration": 30223458
             }
           },
           {
@@ -569,7 +569,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 105335707
+              "duration": 17364458
             }
           }
         ],
@@ -588,7 +588,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 380482916
+              "duration": 249841082
             }
           },
           {
@@ -597,11 +597,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2444972707
+              "duration": 1628831500
             }
           },
           {
@@ -614,7 +614,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 96442291
+              "duration": 98014624
             }
           },
           {
@@ -627,7 +627,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 48067917
+              "duration": 58399917
             }
           },
           {
@@ -640,7 +640,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 48199708
+              "duration": 39114999
             }
           },
           {
@@ -653,7 +653,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 45083208
+              "duration": 35331624
             }
           },
           {
@@ -666,7 +666,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 33326749
+              "duration": 40605125
             }
           },
           {
@@ -679,7 +679,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 34268834
+              "duration": 34240417
             }
           },
           {
@@ -692,7 +692,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 29412041
+              "duration": 32786458
             }
           },
           {
@@ -700,7 +700,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 132712250
+              "duration": 22138000
             }
           }
         ],
@@ -719,7 +719,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 338223874
+              "duration": 221250291
             }
           },
           {
@@ -728,11 +728,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2659383582
+              "duration": 1685933833
             }
           },
           {
@@ -741,11 +741,11 @@
             "line": 56,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 1162960957
+              "duration": 1145662709
             }
           },
           {
@@ -754,11 +754,11 @@
             "line": 57,
             "name": "I press \"l\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 8323374
+              "duration": 3756084
             }
           },
           {
@@ -771,7 +771,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 113388833
+              "duration": 112914875
             }
           },
           {
@@ -780,11 +780,11 @@
             "line": 59,
             "name": "I press \"p\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 1186915
+              "duration": 1345208
             }
           },
           {
@@ -797,7 +797,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 127125457
+              "duration": 105853415
             }
           },
           {
@@ -806,11 +806,11 @@
             "line": 61,
             "name": "I press \"v\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 18944041
+              "duration": 7885291
             }
           },
           {
@@ -823,7 +823,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 106398166
+              "duration": 105456041
             }
           },
           {
@@ -836,7 +836,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 504608750
+              "duration": 505252333
             }
           },
           {
@@ -844,7 +844,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 102209040
+              "duration": 22021625
             }
           }
         ],
@@ -863,7 +863,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 288890416
+              "duration": 178026374
             }
           },
           {
@@ -872,11 +872,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2606676875
+              "duration": 1695961792
             }
           },
           {
@@ -889,7 +889,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 99400000
+              "duration": 118971499
             }
           },
           {
@@ -902,7 +902,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2909416
+              "duration": 4613624
             }
           },
           {
@@ -911,11 +911,11 @@
             "line": 68,
             "name": "I press \"Escape\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 13165291
+              "duration": 12139958
             }
           },
           {
@@ -928,7 +928,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2767166
+              "duration": 4535416
             }
           },
           {
@@ -937,11 +937,11 @@
             "line": 70,
             "name": "I press \"?\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 11566249
+              "duration": 14829915
             }
           },
           {
@@ -954,7 +954,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1817583
+              "duration": 1899250
             }
           },
           {
@@ -962,7 +962,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 128455165
+              "duration": 25878875
             }
           }
         ],
@@ -981,7 +981,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 352147750
+              "duration": 188184082
             }
           },
           {
@@ -990,11 +990,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 1895697874
+              "duration": 1450061292
             }
           },
           {
@@ -1007,7 +1007,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 86960708
+              "duration": 118394416
             }
           },
           {
@@ -1016,11 +1016,11 @@
             "line": 75,
             "name": "I press \"Escape\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 9379375
+              "duration": 8264291
             }
           },
           {
@@ -1033,7 +1033,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2708749
+              "duration": 2737415
             }
           },
           {
@@ -1041,7 +1041,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 116694666
+              "duration": 35952083
             }
           }
         ],
@@ -1060,7 +1060,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 305843833
+              "duration": 222155666
             }
           },
           {
@@ -1069,11 +1069,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2052835290
+              "duration": 1676766290
             }
           },
           {
@@ -1086,7 +1086,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 71676791
+              "duration": 134002250
             }
           },
           {
@@ -1099,7 +1099,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 49788708
+              "duration": 60248833
             }
           },
           {
@@ -1112,7 +1112,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 50805374
+              "duration": 37398207
             }
           },
           {
@@ -1125,7 +1125,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 37364250
+              "duration": 33606249
             }
           },
           {
@@ -1133,7 +1133,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 118514749
+              "duration": 29304707
             }
           }
         ],
@@ -1152,7 +1152,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 317540166
+              "duration": 210878624
             }
           },
           {
@@ -1161,11 +1161,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2195145584
+              "duration": 1692666416
             }
           },
           {
@@ -1178,7 +1178,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 92102167
+              "duration": 117243625
             }
           },
           {
@@ -1191,7 +1191,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 41153540
+              "duration": 61837208
             }
           },
           {
@@ -1204,7 +1204,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 26827875
+              "duration": 36985749
             }
           },
           {
@@ -1217,7 +1217,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 29045291
+              "duration": 34470541
             }
           },
           {
@@ -1225,7 +1225,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 88195665
+              "duration": 27519792
             }
           }
         ],
@@ -1255,7 +1255,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 296934583
+              "duration": 212714332
             }
           },
           {
@@ -1264,11 +1264,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2310712750
+              "duration": 1737843791
             }
           },
           {
@@ -1277,11 +1277,11 @@
             "line": 8,
             "name": "I switch to editor view",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:65"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:64"
             },
             "result": {
               "status": "passed",
-              "duration": 60544291
+              "duration": 104386666
             }
           },
           {
@@ -1290,11 +1290,11 @@
             "line": 9,
             "name": "the editor pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:81"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:80"
             },
             "result": {
               "status": "passed",
-              "duration": 12628875
+              "duration": 2341500
             }
           },
           {
@@ -1303,11 +1303,11 @@
             "line": 10,
             "name": "the preview pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:89"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:88"
             },
             "result": {
               "status": "passed",
-              "duration": 2770791
+              "duration": 1534999
             }
           },
           {
@@ -1316,11 +1316,11 @@
             "line": 12,
             "name": "I switch to preview view",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:73"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:72"
             },
             "result": {
               "status": "passed",
-              "duration": 85873834
+              "duration": 63090207
             }
           },
           {
@@ -1329,11 +1329,11 @@
             "line": 13,
             "name": "the preview pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:85"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:84"
             },
             "result": {
               "status": "passed",
-              "duration": 3714499
+              "duration": 7705874
             }
           },
           {
@@ -1342,11 +1342,11 @@
             "line": 14,
             "name": "the editor pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:93"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:92"
             },
             "result": {
               "status": "passed",
-              "duration": 2930124
+              "duration": 3923707
             }
           },
           {
@@ -1355,11 +1355,11 @@
             "line": 16,
             "name": "I switch to split view",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:69"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:68"
             },
             "result": {
               "status": "passed",
-              "duration": 64553416
+              "duration": 45171666
             }
           },
           {
@@ -1368,11 +1368,11 @@
             "line": 17,
             "name": "both editor and preview panes should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:45"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:44"
             },
             "result": {
               "status": "passed",
-              "duration": 5965790
+              "duration": 8491083
             }
           },
           {
@@ -1380,7 +1380,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 95973041
+              "duration": 45565041
             }
           }
         ],
@@ -1404,7 +1404,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 328432625
+              "duration": 212641541
             }
           },
           {
@@ -1413,11 +1413,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2255471624
+              "duration": 1727954209
             }
           },
           {
@@ -1426,11 +1426,11 @@
             "line": 21,
             "name": "I open the command palette",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:29"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:28"
             },
             "result": {
               "status": "passed",
-              "duration": 25782749
+              "duration": 50176332
             }
           },
           {
@@ -1439,11 +1439,11 @@
             "line": 22,
             "name": "the command palette should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:37"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:36"
             },
             "result": {
               "status": "passed",
-              "duration": 35654958
+              "duration": 18092667
             }
           },
           {
@@ -1452,11 +1452,11 @@
             "line": 23,
             "name": "the search input should be focused",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:41"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:40"
             },
             "result": {
               "status": "passed",
-              "duration": 3535458
+              "duration": 2380915
             }
           },
           {
@@ -1469,7 +1469,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 15805959
+              "duration": 9550583
             }
           },
           {
@@ -1482,7 +1482,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 8739916
+              "duration": 3436959
             }
           },
           {
@@ -1490,7 +1490,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 220181457
+              "duration": 21525249
             }
           }
         ],
@@ -1514,7 +1514,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 301893584
+              "duration": 176302374
             }
           },
           {
@@ -1523,11 +1523,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2343475916
+              "duration": 1518044834
             }
           },
           {
@@ -1540,7 +1540,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 20368417
+              "duration": 43285208
             }
           },
           {
@@ -1553,7 +1553,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10440041
+              "duration": 18104000
             }
           },
           {
@@ -1566,7 +1566,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10884874
+              "duration": 7726707
             }
           },
           {
@@ -1579,7 +1579,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 13558208
+              "duration": 10417792
             }
           },
           {
@@ -1592,7 +1592,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3038166
+              "duration": 1975458
             }
           },
           {
@@ -1600,7 +1600,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 115798458
+              "duration": 22348708
             }
           }
         ],
@@ -1619,7 +1619,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 409691875
+              "duration": 235600041
             }
           },
           {
@@ -1628,11 +1628,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 2237781875
+              "duration": 1513738208
             }
           },
           {
@@ -1641,11 +1641,11 @@
             "line": 37,
             "name": "I create a new document",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:77"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:76"
             },
             "result": {
               "status": "passed",
-              "duration": 60654999
+              "duration": 112918208
             }
           },
           {
@@ -1654,11 +1654,11 @@
             "line": 38,
             "name": "the MarkVim UI should be fully loaded",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:61"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:60"
             },
             "result": {
               "status": "passed",
-              "duration": 13065916
+              "duration": 11256041
             }
           },
           {
@@ -1667,11 +1667,11 @@
             "line": 39,
             "name": "the document list should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:53"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:52"
             },
             "result": {
               "status": "passed",
-              "duration": 1987667
+              "duration": 3465709
             }
           },
           {
@@ -1679,7 +1679,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 117598957
+              "duration": 28542000
             }
           }
         ],
@@ -1698,7 +1698,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 304843832
+              "duration": 154410334
             }
           },
           {
@@ -1707,11 +1707,11 @@
             "line": 4,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 1908637750
+              "duration": 1552848958
             }
           },
           {
@@ -1720,11 +1720,11 @@
             "line": 43,
             "name": "I am on the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
             },
             "result": {
               "status": "passed",
-              "duration": 1191322707
+              "duration": 1303239790
             }
           },
           {
@@ -1733,11 +1733,11 @@
             "line": 44,
             "name": "I switch to editor view",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:65"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:64"
             },
             "result": {
               "status": "passed",
-              "duration": 65184790
+              "duration": 329522457
             }
           },
           {
@@ -1746,11 +1746,11 @@
             "line": 45,
             "name": "the editor pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:81"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:80"
             },
             "result": {
               "status": "passed",
-              "duration": 2936875
+              "duration": 16721874
             }
           },
           {
@@ -1759,11 +1759,11 @@
             "line": 46,
             "name": "the preview pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:89"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:88"
             },
             "result": {
               "status": "passed",
-              "duration": 5304749
+              "duration": 19395042
             }
           },
           {
@@ -1772,11 +1772,11 @@
             "line": 47,
             "name": "the view mode should be stored in localStorage as \"editor\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:133"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:132"
             },
             "result": {
               "status": "passed",
-              "duration": 3313874
+              "duration": 3417540
             }
           },
           {
@@ -1785,11 +1785,11 @@
             "line": 49,
             "name": "I reload the page",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:141"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:140"
             },
             "result": {
               "status": "passed",
-              "duration": 911596291
+              "duration": 910585625
             }
           },
           {
@@ -1798,11 +1798,11 @@
             "line": 50,
             "name": "the editor pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:81"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:80"
             },
             "result": {
               "status": "passed",
-              "duration": 12483833
+              "duration": 12970249
             }
           },
           {
@@ -1811,11 +1811,11 @@
             "line": 51,
             "name": "the preview pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:89"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:88"
             },
             "result": {
               "status": "passed",
-              "duration": 4227124
+              "duration": 2950500
             }
           },
           {
@@ -1824,11 +1824,11 @@
             "line": 52,
             "name": "the view mode should be \"editor\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:137"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:136"
             },
             "result": {
               "status": "passed",
-              "duration": 8887708
+              "duration": 14388666
             }
           },
           {
@@ -1837,11 +1837,11 @@
             "line": 54,
             "name": "I switch to preview view",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:73"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:72"
             },
             "result": {
               "status": "passed",
-              "duration": 84809250
+              "duration": 58333833
             }
           },
           {
@@ -1850,11 +1850,11 @@
             "line": 55,
             "name": "the preview pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:85"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:84"
             },
             "result": {
               "status": "passed",
-              "duration": 16201541
+              "duration": 16672750
             }
           },
           {
@@ -1863,11 +1863,11 @@
             "line": 56,
             "name": "the editor pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:93"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:92"
             },
             "result": {
               "status": "passed",
-              "duration": 26756874
+              "duration": 10940082
             }
           },
           {
@@ -1876,11 +1876,11 @@
             "line": 57,
             "name": "the view mode should be stored in localStorage as \"preview\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:133"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:132"
             },
             "result": {
               "status": "passed",
-              "duration": 2977290
+              "duration": 16270375
             }
           },
           {
@@ -1889,11 +1889,11 @@
             "line": 59,
             "name": "I reload the page",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:141"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:140"
             },
             "result": {
               "status": "passed",
-              "duration": 1176363667
+              "duration": 1217331874
             }
           },
           {
@@ -1902,11 +1902,11 @@
             "line": 60,
             "name": "the preview pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:85"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:84"
             },
             "result": {
               "status": "passed",
-              "duration": 10746624
+              "duration": 16385915
             }
           },
           {
@@ -1915,11 +1915,11 @@
             "line": 61,
             "name": "the editor pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:93"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:92"
             },
             "result": {
               "status": "passed",
-              "duration": 2319665
+              "duration": 2349541
             }
           },
           {
@@ -1928,11 +1928,11 @@
             "line": 62,
             "name": "the view mode should be \"preview\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:137"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:136"
             },
             "result": {
               "status": "passed",
-              "duration": 6135000
+              "duration": 9294000
             }
           },
           {
@@ -1940,7 +1940,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 354819875
+              "duration": 30123833
             }
           }
         ],
@@ -1975,7 +1975,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 370432832
+              "duration": 234934667
             }
           },
           {
@@ -1984,11 +1984,11 @@
             "line": 4,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2224105875
+              "duration": 1557349292
             }
           },
           {
@@ -2027,11 +2027,11 @@
             "line": 5,
             "name": "the following elements are visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:33"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:32"
             },
             "result": {
               "status": "passed",
-              "duration": 36246707
+              "duration": 17693875
             }
           },
           {
@@ -2039,7 +2039,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 132850707
+              "duration": 21370082
             }
           }
         ],
@@ -2058,7 +2058,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 367713499
+              "duration": 200246209
             }
           },
           {
@@ -2067,11 +2067,11 @@
             "line": 13,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 1967632959
+              "duration": 1566596708
             }
           },
           {
@@ -2080,11 +2080,11 @@
             "line": 14,
             "name": "I press \"Cmd+K\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 35953500
+              "duration": 45982166
             }
           },
           {
@@ -2093,11 +2093,11 @@
             "line": 15,
             "name": "the command palette should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:37"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:36"
             },
             "result": {
               "status": "passed",
-              "duration": 147569707
+              "duration": 22191791
             }
           },
           {
@@ -2106,11 +2106,11 @@
             "line": 16,
             "name": "the search input should be focused",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:41"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:40"
             },
             "result": {
               "status": "passed",
-              "duration": 19959374
+              "duration": 15386582
             }
           },
           {
@@ -2118,7 +2118,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 314994875
+              "duration": 35730583
             }
           }
         ],
@@ -2137,7 +2137,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 322944541
+              "duration": 175093333
             }
           },
           {
@@ -2146,11 +2146,11 @@
             "line": 19,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2225586458
+              "duration": 1635861750
             }
           },
           {
@@ -2159,11 +2159,11 @@
             "line": 20,
             "name": "both editor and preview panes should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:45"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:44"
             },
             "result": {
               "status": "passed",
-              "duration": 19727582
+              "duration": 16128458
             }
           },
           {
@@ -2172,11 +2172,11 @@
             "line": 21,
             "name": "the view mode toggle should be present",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:49"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:48"
             },
             "result": {
               "status": "passed",
-              "duration": 2055959
+              "duration": 1862332
             }
           },
           {
@@ -2184,7 +2184,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 106309916
+              "duration": 23918832
             }
           }
         ],
@@ -2203,7 +2203,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 422369791
+              "duration": 173020000
             }
           },
           {
@@ -2212,11 +2212,11 @@
             "line": 24,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2033949166
+              "duration": 1538173249
             }
           },
           {
@@ -2225,11 +2225,11 @@
             "line": 25,
             "name": "the document list should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:53"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:52"
             },
             "result": {
               "status": "passed",
-              "duration": 12670083
+              "duration": 25868875
             }
           },
           {
@@ -2238,11 +2238,11 @@
             "line": 26,
             "name": "the create document button should be present",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:57"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:56"
             },
             "result": {
               "status": "passed",
-              "duration": 2084374
+              "duration": 3166874
             }
           },
           {
@@ -2250,7 +2250,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 128169415
+              "duration": 30420917
             }
           }
         ],
@@ -2269,7 +2269,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 339740749
+              "duration": 227769082
             }
           },
           {
@@ -2278,11 +2278,11 @@
             "line": 29,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2510411124
+              "duration": 1503573333
             }
           },
           {
@@ -2295,7 +2295,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 121663875
+              "duration": 89687458
             }
           },
           {
@@ -2308,7 +2308,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 45553041
+              "duration": 5148166
             }
           },
           {
@@ -2321,7 +2321,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3066291
+              "duration": 2787667
             }
           },
           {
@@ -2334,7 +2334,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2707750
+              "duration": 5468250
             }
           },
           {
@@ -2347,7 +2347,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 73227292
+              "duration": 51844624
             }
           },
           {
@@ -2360,7 +2360,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3805166
+              "duration": 5377166
             }
           },
           {
@@ -2369,11 +2369,11 @@
             "line": 36,
             "name": "a new document should be created automatically",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:97"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:96"
             },
             "result": {
               "status": "passed",
-              "duration": 4517791
+              "duration": 4109541
             }
           },
           {
@@ -2381,7 +2381,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 130595374
+              "duration": 33618916
             }
           }
         ],
@@ -2400,7 +2400,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 293967208
+              "duration": 155637333
             }
           },
           {
@@ -2409,11 +2409,11 @@
             "line": 39,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2400633333
+              "duration": 1538819040
             }
           },
           {
@@ -2422,11 +2422,11 @@
             "line": 40,
             "name": "I create a new document",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:77"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:76"
             },
             "result": {
               "status": "passed",
-              "duration": 93087583
+              "duration": 64337208
             }
           },
           {
@@ -2435,11 +2435,11 @@
             "line": 41,
             "name": "a new document should be created automatically",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:97"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:96"
             },
             "result": {
               "status": "passed",
-              "duration": 5132124
+              "duration": 32176707
             }
           },
           {
@@ -2448,11 +2448,11 @@
             "line": 42,
             "name": "I focus the editor",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:101"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:100"
             },
             "result": {
               "status": "passed",
-              "duration": 87848291
+              "duration": 45264374
             }
           },
           {
@@ -2461,11 +2461,11 @@
             "line": 43,
             "name": "I press \"i\" to enter insert mode",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:105"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:104"
             },
             "result": {
               "status": "passed",
-              "duration": 6272457
+              "duration": 5448000
             }
           },
           {
@@ -2474,11 +2474,11 @@
             "line": 44,
             "name": "I type \"# My Test Note\" in the editor",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:109"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:108"
             },
             "result": {
               "status": "passed",
-              "duration": 91682875
+              "duration": 63919332
             }
           },
           {
@@ -2487,11 +2487,11 @@
             "line": 45,
             "name": "I press \"Escape\" to exit insert mode",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:113"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:112"
             },
             "result": {
               "status": "passed",
-              "duration": 6756084
+              "duration": 3857250
             }
           },
           {
@@ -2500,11 +2500,11 @@
             "line": 46,
             "name": "I press \"o\" to create new line and enter insert mode",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:117"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:116"
             },
             "result": {
               "status": "passed",
-              "duration": 10060375
+              "duration": 9367584
             }
           },
           {
@@ -2513,11 +2513,11 @@
             "line": 47,
             "name": "I type \"This is a **bold** text with vim motions.\" in the editor",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:109"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:108"
             },
             "result": {
               "status": "passed",
-              "duration": 157415874
+              "duration": 147005500
             }
           },
           {
@@ -2526,11 +2526,11 @@
             "line": 48,
             "name": "I press \"Escape\" to exit insert mode",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:113"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:112"
             },
             "result": {
               "status": "passed",
-              "duration": 3358874
+              "duration": 3431458
             }
           },
           {
@@ -2539,11 +2539,11 @@
             "line": 49,
             "name": "the preview should contain \"My Test Note\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:121"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:120"
             },
             "result": {
               "status": "passed",
-              "duration": 2477292
+              "duration": 2904459
             }
           },
           {
@@ -2552,11 +2552,11 @@
             "line": 50,
             "name": "the preview should contain \"This is a bold text with vim motions.\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:121"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:120"
             },
             "result": {
               "status": "passed",
-              "duration": 1668041
+              "duration": 1628958
             }
           },
           {
@@ -2565,11 +2565,11 @@
             "line": 51,
             "name": "the preview should have rendered markdown formatting",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:125"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:124"
             },
             "result": {
               "status": "passed",
-              "duration": 2362791
+              "duration": 8013083
             }
           },
           {
@@ -2577,7 +2577,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 138578207
+              "duration": 31282792
             }
           }
         ],
@@ -2596,7 +2596,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 361884833
+              "duration": 224749750
             }
           },
           {
@@ -2605,11 +2605,11 @@
             "line": 54,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2232287209
+              "duration": 1480162916
             }
           },
           {
@@ -2618,11 +2618,11 @@
             "line": 55,
             "name": "I press \"1\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 8223041
+              "duration": 5237958
             }
           },
           {
@@ -2631,11 +2631,11 @@
             "line": 56,
             "name": "the editor pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:81"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:80"
             },
             "result": {
               "status": "passed",
-              "duration": 19431042
+              "duration": 14769458
             }
           },
           {
@@ -2644,11 +2644,11 @@
             "line": 57,
             "name": "the preview pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:89"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:88"
             },
             "result": {
               "status": "passed",
-              "duration": 1296957
+              "duration": 1962458
             }
           },
           {
@@ -2657,11 +2657,11 @@
             "line": 58,
             "name": "I press \"2\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 11429875
+              "duration": 12348582
             }
           },
           {
@@ -2670,11 +2670,11 @@
             "line": 59,
             "name": "both editor and preview panes should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:45"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:44"
             },
             "result": {
               "status": "passed",
-              "duration": 30528624
+              "duration": 29420707
             }
           },
           {
@@ -2683,11 +2683,11 @@
             "line": 60,
             "name": "I press \"3\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 8710417
+              "duration": 6946749
             }
           },
           {
@@ -2696,11 +2696,11 @@
             "line": 61,
             "name": "the preview pane should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:85"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:84"
             },
             "result": {
               "status": "passed",
-              "duration": 2015041
+              "duration": 1990875
             }
           },
           {
@@ -2709,11 +2709,11 @@
             "line": 62,
             "name": "the editor pane should not be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:93"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:92"
             },
             "result": {
               "status": "passed",
-              "duration": 1442415
+              "duration": 1183499
             }
           },
           {
@@ -2721,7 +2721,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 96515957
+              "duration": 22390374
             }
           }
         ],
@@ -2740,7 +2740,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 349639250
+              "duration": 216376833
             }
           },
           {
@@ -2749,11 +2749,11 @@
             "line": 65,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2415767790
+              "duration": 1674905291
             }
           },
           {
@@ -2762,11 +2762,11 @@
             "line": 66,
             "name": "the document list should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:53"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:52"
             },
             "result": {
               "status": "passed",
-              "duration": 17483709
+              "duration": 21280415
             }
           },
           {
@@ -2775,11 +2775,11 @@
             "line": 67,
             "name": "I toggle the sidebar with keyboard shortcut",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:129"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:128"
             },
             "result": {
               "status": "passed",
-              "duration": 7710999
+              "duration": 8721833
             }
           },
           {
@@ -2792,7 +2792,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2052374
+              "duration": 2361791
             }
           },
           {
@@ -2801,11 +2801,11 @@
             "line": 69,
             "name": "I toggle the sidebar with keyboard shortcut",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:129"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:128"
             },
             "result": {
               "status": "passed",
-              "duration": 10357041
+              "duration": 10966583
             }
           },
           {
@@ -2818,7 +2818,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3507124
+              "duration": 1646499
             }
           },
           {
@@ -2826,7 +2826,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 167332625
+              "duration": 21660458
             }
           }
         ],
@@ -2840,5 +2840,501 @@
     "name": "MarkVim UI Elements",
     "tags": [],
     "uri": "tests/features/markvim-ui.feature"
+  },
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "settings-clear-local-data;settings-modal-contains-clear-data-button",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "Settings modal contains clear data button",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 201159167
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1674823375
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "I open the settings modal",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 106805500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 8,
+            "name": "the settings modal should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:52"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3267750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "I should see a \"Clear Local Data\" button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:58"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1003893250
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 22256416
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "settings-clear-local-data;clear-data-button-removes-all-localstorage-data",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Clear data button removes all localStorage data",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 158440166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1327292624
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "I have some data stored in localStorage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4551290
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "I open the settings modal",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 99015458
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "I click the \"Clear Local Data\" button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:41"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 41491167
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "a confirmation modal should appear",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:68"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4170208
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 16,
+            "name": "I confirm the clear data action",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:46"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 57845083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "all localStorage data should be cleared",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:74"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3091374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 18,
+            "name": "the confirmation modal should close",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33449833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 19,
+            "name": "the settings modal should close",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:106"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 8778833
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 29452459
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "settings-clear-local-data;clear-data-confirmation-can-be-cancelled",
+        "keyword": "Scenario",
+        "line": 21,
+        "name": "Clear data confirmation can be cancelled",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 181128000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2720505915
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 22,
+            "name": "I have some data stored in localStorage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2141958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 23,
+            "name": "I open the settings modal",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 90314542
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 24,
+            "name": "I click the \"Clear Local Data\" button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:41"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 32880291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 25,
+            "name": "a confirmation modal should appear",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:68"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2344209
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 26,
+            "name": "I cancel the clear data action",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 46252249
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 27,
+            "name": "the confirmation modal should close",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:100"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2146209
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 28,
+            "name": "all localStorage data should still exist",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:87"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1821415
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 25016958
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "settings-clear-local-data;clear-data-restores-default-settings",
+        "keyword": "Scenario",
+        "line": 30,
+        "name": "Clear data restores default settings",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 179310124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2730478125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 31,
+            "name": "I have modified settings in localStorage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:22"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4178833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 32,
+            "name": "I open the settings modal",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 121235374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 33,
+            "name": "I click the \"Clear Local Data\" button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:41"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 39267833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 34,
+            "name": "I confirm the clear data action",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:46"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 46140083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "the view mode should be \"split\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:136"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 28839750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 36,
+            "name": "the editor settings should be reset to defaults",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:112"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2003288749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 37,
+            "name": "the sidebar should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/settings-clear-data.steps.ts:147"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5182249
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 24158583
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "settings-clear-local-data",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Settings Clear Local Data",
+    "tags": [],
+    "uri": "tests/features/settings-clear-data.feature"
   }
 ]

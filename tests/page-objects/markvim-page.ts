@@ -18,6 +18,7 @@ export class MarkVimPage {
   readonly viewModePreview: Locator
   readonly documentList: Locator
   readonly createDocumentBtn: Locator
+  readonly sidebarToggleBtn: Locator
   readonly keyboardShortcutsButton: Locator
   readonly keyboardShortcutsModal: Locator
   readonly keyboardShortcutsModalTitle: Locator
@@ -39,6 +40,7 @@ export class MarkVimPage {
     this.viewModePreview = page.locator('[data-testid="view-mode-preview"]')
     this.documentList = page.locator('[data-testid="document-list"]')
     this.createDocumentBtn = page.locator('[data-testid="create-document-btn"]')
+    this.sidebarToggleBtn = page.locator('[data-testid="sidebar-toggle"]')
     this.keyboardShortcutsButton = page.locator('[data-testid="keyboard-shortcuts-button"]')
     this.keyboardShortcutsModal = page.locator('[data-testid="keyboard-shortcuts-modal"]')
     this.keyboardShortcutsModalTitle = page.locator('[data-testid="keyboard-shortcuts-modal"] h2')
@@ -99,7 +101,7 @@ export class MarkVimPage {
   }
 
   async verifyDocumentListVisible(): Promise<void> {
-    await expect(this.documentList).toBeVisible()
+    await this.verifySidebarVisible()
   }
 
   async verifyCreateDocumentButtonPresent(): Promise<void> {
@@ -152,6 +154,22 @@ export class MarkVimPage {
 
   async toggleSidebarWithKeyboard(): Promise<void> {
     await this.page.keyboard.press('Meta+Shift+Backslash')
+  }
+
+  async toggleSidebarWithButton(): Promise<void> {
+    await this.sidebarToggleBtn.click()
+  }
+
+  async verifySidebarVisible(): Promise<void> {
+    await expect(this.documentList).toBeVisible()
+  }
+
+  async verifySidebarHidden(): Promise<void> {
+    await expect(this.documentList).toBeHidden()
+  }
+
+  async verifySidebarToggleButton(): Promise<void> {
+    await expect(this.sidebarToggleBtn).toBeVisible()
   }
 
   async verifyViewModeInLocalStorage(expectedMode: string): Promise<void> {
