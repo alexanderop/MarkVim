@@ -14,7 +14,7 @@
     "lint:fix": "eslint . --fix",
     "test:e2e": "NODE_OPTIONS='--loader ts-node/esm' cucumber-js",
     "test:e2e:headed": "HEADED=true NODE_OPTIONS='--loader ts-node/esm' cucumber-js",
-    "test:e2e:ci": "wait-on http://localhost:4173 --timeout 30000 && npm run test:e2e"
+    "test:e2e:ci": "wait-on http://localhost:3000 --timeout 30000 && npm run test:e2e"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
