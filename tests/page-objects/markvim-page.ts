@@ -305,6 +305,29 @@ export class MarkVimPage {
       expect(statusText).not.toMatch(/\b(NORMAL|INSERT|VISUAL|REPLACE)\b/)
     }
   }
+
+  async changeTheme(theme: string): Promise<void> {
+    await this.page.getByText(theme).click()
+  }
+
+  async getStoredTheme(): Promise<string | null> {
+    return await this.page.evaluate(() => {
+      const stored = localStorage.getItem('markvim-settings')
+      if (!stored)
+        return null
+      try {
+        return JSON.parse(stored).theme as string
+      }
+      catch {
+        return null
+      }
+    })
+  }
+
+  async verifyThemeInLocalStorage(expected: string): Promise<void> {
+    const storedTheme = await this.getStoredTheme()
+    expect(storedTheme).toBe(expected)
+  }
 }
 
 // Helper function to get MarkVimPage instance
