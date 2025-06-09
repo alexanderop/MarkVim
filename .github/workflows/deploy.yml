@@ -90,17 +90,17 @@ jobs:
         run: |
           echo "🔍 Verifying deployment..."
           SITE_URL="https://alexanderopalic.github.io/MarkVim/"
-          
+
           # Wait longer for GitHub Pages propagation
           echo "⏳ Waiting for GitHub Pages to propagate..."
           sleep 30
-          
+
           # Try multiple times with increasing delays
           for i in {1..5}; do
             echo "Attempt $i/5..."
             response=$(curl -s -o /dev/null -w "%{http_code}" "$SITE_URL")
             echo "Response: HTTP $response"
-            
+
             if [ $response = "200" ]; then
               echo "✅ Site is accessible on attempt $i"
               echo "## ✅ Deployment Verification" >> $GITHUB_STEP_SUMMARY
@@ -116,7 +116,7 @@ jobs:
               fi
             fi
           done
-          
+
           echo "❌ All verification attempts failed"
           echo "## ❌ Deployment Verification Failed" >> $GITHUB_STEP_SUMMARY
           echo "🌐 **URL:** $SITE_URL" >> $GITHUB_STEP_SUMMARY
