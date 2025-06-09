@@ -42,9 +42,43 @@ const isMobile = useMediaQuery('(max-width: 768px)')
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
 
-// Delete modal state
-const deleteModalOpen = ref(false)
-const documentToDelete = ref<{ id: string, title: string } | null>(null)
+// Document deletion modal - inline composable
+function useDocumentDeletion() {
+  const deleteModalOpen = ref(false)
+  const documentToDelete = ref<{ id: string, title: string } | null>(null)
+
+  const handleDeleteDocument = () => {
+    if (!activeDocument.value)
+      return
+
+    const title = getDocumentTitle(activeDocument.value.content)
+    documentToDelete.value = { id: activeDocument.value.id, title }
+    deleteModalOpen.value = true
+  }
+
+  const confirmDeleteDocument = () => {
+    if (documentToDelete.value) {
+      deleteDocument(documentToDelete.value.id)
+      deleteModalOpen.value = false
+      documentToDelete.value = null
+    }
+  }
+
+  const cancelDeleteDocument = () => {
+    deleteModalOpen.value = false
+    documentToDelete.value = null
+  }
+
+  return {
+    deleteModalOpen,
+    documentToDelete,
+    handleDeleteDocument,
+    confirmDeleteDocument,
+    cancelDeleteDocument,
+  }
+}
+
+const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDocument, cancelDeleteDocument } = useDocumentDeletion()
 
 const { registerShortcuts, registerAppCommands, formatKeys } = useShortcuts()
 
@@ -125,28 +159,6 @@ function handleToggleSettings() {
 
 function handleToggleSidebar() {
   isSidebarVisible.value = !isSidebarVisible.value
-}
-
-function handleDeleteDocument() {
-  if (!activeDocument.value)
-    return
-
-  const title = getDocumentTitle(activeDocument.value.content)
-  documentToDelete.value = { id: activeDocument.value.id, title }
-  deleteModalOpen.value = true
-}
-
-function confirmDeleteDocument() {
-  if (documentToDelete.value) {
-    deleteDocument(documentToDelete.value.id)
-    deleteModalOpen.value = false
-    documentToDelete.value = null
-  }
-}
-
-function cancelDeleteDocument() {
-  deleteModalOpen.value = false
-  documentToDelete.value = null
 }
 
 function handleDocumentSelect(id: string) {
