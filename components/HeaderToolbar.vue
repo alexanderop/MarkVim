@@ -33,7 +33,7 @@ defineEmits<Emits>()
 
       <div class="flex gap-2 items-center">
         <div class="rounded-full bg-emerald-400 h-2 w-2 shadow-emerald-400/30 shadow-lg" />
-        <h1 class="text-sm text-gray-100 tracking-tight font-medium">
+        <h1 class="text-sm text-gray-100 tracking-tight font-medium w-48 truncate">
           {{ activeDocumentTitle }}
         </h1>
       </div>
