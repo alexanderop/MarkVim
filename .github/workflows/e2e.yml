@@ -9,6 +9,11 @@ on:
 env:
   PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   e2e:
     runs-on: ubuntu-latest
