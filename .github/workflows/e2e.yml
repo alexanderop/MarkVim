@@ -30,12 +30,20 @@ jobs:
           restore-keys: |
             modules-${{ runner.os }}-
 
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install dependencies
-        uses: ./.github/actions/pnpm-install
+        run: pnpm install --frozen-lockfile
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
 
       - name: Get installed Playwright version
-        id: playwright-version  
+        id: playwright-version
         run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'])")" >> $GITHUB_ENV
 
       - name: Restore Playwright browsers cache

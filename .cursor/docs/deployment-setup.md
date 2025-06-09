@@ -168,6 +168,12 @@ If builds are using stale cache:
 # Or update cache keys in workflow files
 ```
 
+#### PNPM Command Not Found
+If you see "pnpm: command not found" errors:
+1. Ensure `corepack enable` is run before using pnpm commands
+2. Verify Node.js setup step is present
+3. Check that pnpm is available in all workflow steps that need it
+
 ### Debugging Commands
 
 ```bash

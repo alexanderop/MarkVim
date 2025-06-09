@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Cache node modules
         uses: actions/cache@v4
         id: node-modules-cache
@@ -22,10 +22,18 @@ jobs:
           restore-keys: |
             modules-${{ runner.os }}-
 
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install dependencies
-        uses: ./.github/actions/pnpm-install
+        run: pnpm install --frozen-lockfile
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
-      
+
       - name: Cache build
         uses: actions/cache@v4
         id: build-cache
@@ -40,7 +48,7 @@ jobs:
       - name: Build application
         run: NUXT_APP_BASE_URL=/MarkVim/ pnpm run build --preset github_pages
         if: steps.build-cache.outputs.cache-hit != 'true'
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -64,7 +72,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-      
+
       - name: Create Deployment Summary
         run: |
           echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
