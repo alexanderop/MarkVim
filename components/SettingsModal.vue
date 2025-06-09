@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useEditorSettings, useShortcuts } from '#imports'
+import { useEditorSettings, useShortcuts, useTheme } from '#imports'
 
 const { settings, toggleVimMode, updateFontSize, resetToDefaults, togglePreviewSync, clearAllLocalData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
-const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
+const { theme } = useTheme()
+const themes = ['dark', 'light', 'auto'] as const
 
 function useClearDataModal() {
   const showClearDataModal = ref(false)
@@ -21,7 +22,6 @@ function useClearDataModal() {
     closeClearDataModal()
     closeSettings()
 
-    // Reload the page to ensure all components reflect the cleared state
     if (import.meta.client) {
       window.location.reload()
     }
@@ -36,7 +36,6 @@ function useClearDataModal() {
 }
 
 const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClearData } = useClearDataModal()
->>>>>>> origin/main
 </script>
 
 <template>
@@ -55,11 +54,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
         icon="lucide:settings"
         text="Settings"
         title="Settings (g s)"
-<<<<<<< HEAD
-        data-testid="settings-modal-trigger"
-=======
         data-testid="settings-button"
->>>>>>> origin/main
         @click="openSettings"
       />
     </template>
@@ -268,14 +263,6 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     </template>
 
     <template #footer-right>
-<<<<<<< HEAD
-      <button
-        class="text-xs text-text-secondary font-medium px-3 py-1.5 border border-border rounded transition-colors hover:text-text-primary hover:bg-surface-hover"
-        @click="resetToDefaults"
-      >
-        Reset to Defaults
-      </button>
-=======
       <div class="flex gap-2 items-center">
         <button
           class="text-xs text-red-400 font-medium px-3 py-1.5 border border-red-600/50 rounded transition-colors hover:text-red-300 hover:bg-red-600/10"
@@ -291,7 +278,6 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           Reset to Defaults
         </button>
       </div>
->>>>>>> origin/main
     </template>
   </BaseModal>
 

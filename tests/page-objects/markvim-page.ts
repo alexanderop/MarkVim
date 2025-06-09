@@ -25,7 +25,6 @@ export class MarkVimPage {
   readonly settingsButton: Locator
   readonly settingsModal: Locator
   readonly settingsModalTrigger: Locator
-  readonly settingsModal: Locator
   readonly themeToggleLight: Locator
   readonly themeToggleDark: Locator
 
@@ -52,8 +51,7 @@ export class MarkVimPage {
     this.keyboardShortcutsModalTitle = page.locator('[data-testid="keyboard-shortcuts-modal"] h2')
     this.settingsButton = page.locator('[data-testid="settings-button"]')
     this.settingsModal = page.locator('[data-testid="settings-modal"]')
-    this.settingsModalTrigger = page.locator('[data-testid="settings-modal-trigger"]')
-    this.settingsModal = page.locator('[data-testid="settings-modal"]')
+    this.settingsModalTrigger = page.locator('[data-testid="settings-button"]')
     this.themeToggleLight = page.locator('[data-testid="theme-light-btn"]')
     this.themeToggleDark = page.locator('[data-testid="theme-dark-btn"]')
   }
@@ -231,10 +229,6 @@ export class MarkVimPage {
 
   async openSettingsModal(): Promise<void> {
     await this.settingsModalTrigger.click()
-    await expect(this.settingsModal).toBeVisible()
-  }
-
-  async verifySettingsModalVisible(): Promise<void> {
     await expect(this.settingsModal).toBeVisible()
   }
 
