@@ -2,6 +2,7 @@ import type { Highlighter } from 'shiki'
 import markdownItMermaid from '@markslides/markdown-it-mermaid'
 import { fromHighlighter } from '@shikijs/markdown-it/core'
 import MarkdownIt from 'markdown-it'
+import markdownItFootnote from 'markdown-it-footnote'
 import markdownItGitHubAlerts from 'markdown-it-github-alerts'
 import { createHighlighter } from 'shiki'
 
@@ -80,6 +81,9 @@ export async function createMarkdownRenderer() {
     // Add Mermaid support
     markdownInstance.use(markdownItMermaid)
 
+    // Add footnote support
+    markdownInstance.use(markdownItFootnote)
+
     // Add GitHub alerts support
     markdownInstance.use(markdownItGitHubAlerts)
 
@@ -113,6 +117,7 @@ export async function createMarkdownRenderer() {
       linkify: true,
       typographer: true,
     })
+    markdownInstance.use(markdownItFootnote)
     markdownInstance.use(markdownItGitHubAlerts)
     return markdownInstance
   }

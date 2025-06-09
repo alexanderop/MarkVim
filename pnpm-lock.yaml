@@ -62,6 +62,9 @@ importers:
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
+      markdown-it-footnote:
+        specifier: ^4.0.0
+        version: 4.0.0
       markdown-it-github-alerts:
         specifier: ^0.3.0
         version: 0.3.2(markdown-it@14.1.0)
@@ -3755,6 +3758,9 @@ packages:
 
   magicast@0.3.5:
     resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
+
+  markdown-it-footnote@4.0.0:
+    resolution: {integrity: sha512-WYJ7urf+khJYl3DqofQpYfEYkZKbmXmwxQV8c8mO/hGIhgZ1wOe7R4HLFNwqx7TjILbnC98fuyeSsin19JdFcQ==}
 
   markdown-it-github-alerts@0.3.2:
     resolution: {integrity: sha512-WKHmbrNDQ3jdixBJPeTXquMy0KjTr1qhwPDjPozTsO9i+UyfhHmV9gQXE/enpIwrzf7qKk+w4s69CX3jM2t1tA==}
@@ -9931,6 +9937,8 @@ snapshots:
       '@babel/parser': 7.27.5
       '@babel/types': 7.27.6
       source-map-js: 1.2.1
+
+  markdown-it-footnote@4.0.0: {}
 
   markdown-it-github-alerts@0.3.2(markdown-it@14.1.0):
     dependencies:

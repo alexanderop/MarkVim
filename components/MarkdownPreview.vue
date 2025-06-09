@@ -222,4 +222,50 @@ if (import.meta.client) {
 .prose .markdown-alert[data-collapsible][data-state="closed"] > .markdown-alert-title::after {
   transform: rotate(-90deg);
 }
+
+/* Footnotes Styling */
+.prose hr.footnotes-sep {
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  border-color: hsl(215 18% 15%);
+}
+
+.prose .footnotes-list {
+  padding-left: 1.25rem;
+  font-size: 0.9em;
+  color: hsl(215 12% 55%);
+}
+
+.prose .footnote-item p {
+  display: inline;
+}
+
+.prose .footnote-backref {
+  margin-left: 0.5rem;
+  text-decoration: none;
+  color: hsl(250 84% 60%);
+}
+
+.prose .footnote-backref:hover {
+  text-decoration: underline;
+}
+
+.prose sup[id^='fnref'] {
+  line-height: 0;
+}
+
+.prose sup[id^='fnref'] a {
+  padding: 0.1rem 0.3rem;
+  text-decoration: none;
+  color: hsl(250 84% 65%);
+  background-color: hsl(250 84% 60% / 0.1);
+  border-radius: 5px;
+  font-weight: 500;
+  transition: all 150ms ease-in-out;
+}
+
+.prose sup[id^='fnref'] a:hover {
+  background-color: hsl(250 84% 60% / 0.2);
+  color: hsl(250 84% 70%);
+}
 </style>

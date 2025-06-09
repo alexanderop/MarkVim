@@ -155,6 +155,27 @@ The alerts have been enhanced with:
 > [!TIP]
 > **Pro tip**: Hover over any alert to see the enhanced visual effects! The alerts now have smooth transitions and hover states that make them feel more interactive and modern.
 
+## 📚 Footnotes
+
+MarkVim now supports footnotes! Perfect for academic writing, blog posts, and documentation that needs citations and references.
+
+Here is a simple footnote[^1].
+
+A footnote can also have multiple lines[^2].
+
+You can also reference the same footnote multiple times[^1].
+
+### How to Use Footnotes
+
+- Use \`[^1]\` in your text to create a footnote reference
+- Define the footnote content with \`[^1]: Your footnote text\`  
+- Footnotes are automatically numbered and linked
+- Click footnote numbers to jump between references and definitions
+
+[^1]: My reference.
+[^2]: To add line breaks within a footnote, prefix new lines with 2 spaces.
+  This is a second line.
+
 ---
 
 *Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`,
