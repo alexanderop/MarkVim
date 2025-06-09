@@ -36,4 +36,27 @@ Feature: MarkVim Navigation and View Modes
   Scenario: Document management
     When I create a new document
     Then the MarkVim UI should be fully loaded
-    And the document list should be visible 
+    And the document list should be visible
+
+  @smoke
+  Scenario: View mode preference persists across page reloads
+    Given I am on the MarkVim homepage
+    When I switch to editor view
+    Then the editor pane should be visible
+    And the preview pane should not be visible
+    And the view mode should be stored in localStorage as "editor"
+    
+    When I reload the page
+    Then the editor pane should be visible
+    And the preview pane should not be visible
+    And the view mode should be "editor"
+    
+    When I switch to preview view
+    Then the preview pane should be visible
+    And the editor pane should not be visible
+    And the view mode should be stored in localStorage as "preview"
+    
+    When I reload the page
+    Then the preview pane should be visible
+    And the editor pane should not be visible
+    And the view mode should be "preview" 

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { Document } from '~/composables/useDocuments'
 import type { Command } from '~/composables/useShortcuts'
+import type { ViewMode } from '~/composables/useViewMode'
 
 const props = withDefaults(defineProps<{
   open?: boolean
   position?: { x: number, y: number }
-  viewMode?: 'split' | 'editor' | 'preview'
+  viewMode?: ViewMode
   markdown?: string
   documents?: Document[]
 }>(), {
@@ -19,7 +20,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   'update:open': [value: boolean]
   'commandSelected': [command: Command]
-  'changeViewMode': [mode: 'split' | 'editor' | 'preview']
+  'changeViewMode': [mode: ViewMode]
   'saveDocument': []
   'insertText': [text: string]
   'toggleVimMode': []

@@ -33,7 +33,7 @@ tests/
 
 ## ✅ Current Test Status
 
-**All tests passing**: 12 scenarios, 73 steps ✅
+**All tests passing**: 13 scenarios, 91 steps ✅
 
 **Test Coverage**:
 - ✅ Core UI components visibility
@@ -47,6 +47,7 @@ tests/
 - ✅ Markdown preview rendering and synchronization
 - ✅ Keyboard shortcuts for view mode switching (1/2/3 keys)
 - ✅ Sidebar toggle keyboard shortcut (Cmd+Shift+\)
+- ✅ View mode localStorage persistence across page reloads
 
 ## 🔄 Refactoring Improvements
 
@@ -166,6 +167,11 @@ export class MarkVimPage {
     await this.page.goto(url)
     await this.page.waitForLoadState('networkidle')
   }
+
+  // localStorage testing methods
+  async verifyViewModeInLocalStorage(expectedMode: string): Promise<void>
+  async verifyCurrentViewMode(expectedMode: string): Promise<void>
+  async reloadPage(): Promise<void>
 }
 ```
 
@@ -195,6 +201,8 @@ After(async function (this: MarkVimWorld) {
 - Use `data-testid` attributes for reliable element selection
 - Follow naming convention: `feature-component-action` (e.g., `command-palette-search`)
 - Avoid coupling tests to CSS classes or DOM structure
+- **Active state indicators**: Use specific testids like `view-mode-{mode}-active` for state-dependent elements
+- **Toolbar buttons**: Each button has both base testid (`view-mode-editor`) and active state testid (`view-mode-editor-active`)
 
 ### Environment Variables
 - `HEADED=true` - Controls browser visibility
@@ -307,6 +315,26 @@ When('I switch to editor view')          // ✅ MarkVim-specific
 // 3. Avoid duplicating existing functionality
 When('I click on editor button')         // ❌ Use common step instead
 ```
+
+### localStorage Testing Strategy
+The test suite includes comprehensive localStorage persistence testing:
+
+```gherkin
+Scenario: View mode preference persists across page reloads
+  Given I am on the MarkVim homepage
+  When I switch to editor view
+  Then the view mode should be stored in localStorage as "editor"
+  
+  When I reload the page
+  Then the view mode should be "editor"
+```
+
+**Implementation Details**:
+- **localStorage Verification**: Tests verify that `markvim-view-mode` key is correctly set
+- **Page Reload Testing**: Uses `page.reload()` to simulate browser refresh
+- **State Persistence**: Validates that UI state matches localStorage after reload
+- **Cross-Session Testing**: Ensures view mode preferences survive browser navigation
+- **Active State Detection**: Uses `view-mode-{mode}-active` testids for reliable active state verification
 
 ### Debugging Failed Tests
 1. **Run in headed mode**: `pnpm run test:e2e:headed`

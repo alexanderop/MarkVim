@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { ViewMode } from '~/composables/useViewMode'
+
 interface Props {
-  viewMode: 'split' | 'editor' | 'preview'
+  viewMode: ViewMode
   isMobile: boolean
 }
 
 interface Emits {
-  (e: 'update:viewMode', value: 'split' | 'editor' | 'preview'): void
+  (e: 'update:viewMode', value: ViewMode): void
 }
 
 defineProps<Props>()

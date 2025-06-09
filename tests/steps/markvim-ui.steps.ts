@@ -1,6 +1,7 @@
 import type { MarkVimWorld } from '../support/world.js'
 import { Given, Then, When } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
+import { expect } from '@playwright/test'
 import { MarkVimPage } from '../page-objects/markvim-page.js'
 
 async function getMarkVimPage(world: MarkVimWorld): Promise<MarkVimPage> {
@@ -161,4 +162,19 @@ Then('the preview should have rendered markdown formatting', async function (thi
 When('I toggle the sidebar with keyboard shortcut', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.toggleSidebarWithKeyboard()
+})
+
+Then('the view mode should be stored in localStorage as {string}', async function (this: MarkVimWorld, expectedMode: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyViewModeInLocalStorage(expectedMode)
+})
+
+Then('the view mode should be {string}', async function (this: MarkVimWorld, expectedMode: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyCurrentViewMode(expectedMode)
+})
+
+When('I reload the page', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.reloadPage()
 })

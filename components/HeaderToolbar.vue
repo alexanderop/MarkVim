@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import type { ViewMode } from '~/composables/useViewMode'
+
 interface Props {
-  viewMode: 'split' | 'editor' | 'preview'
+  viewMode: ViewMode
   isMobile: boolean
   isSidebarVisible: boolean
   activeDocumentTitle: string
 }
 
 interface Emits {
-  (e: 'update:viewMode', value: 'split' | 'editor' | 'preview'): void
+  (e: 'update:viewMode', value: ViewMode): void
   (e: 'toggleSidebar'): void
   (e: 'deleteDocument'): void
 }
@@ -65,6 +67,7 @@ defineEmits<Emits>()
         <!-- Active indicator -->
         <div
           v-if="viewMode === mode.key"
+          :data-testid="`view-mode-${mode.key}-active`"
           class="rounded-md ring-1 ring-white/10 inset-0 absolute bg-white/5"
         />
       </button>

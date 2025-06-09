@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const viewMode = ref<'split' | 'editor' | 'preview'>('split')
 const isSidebarVisible = useLocalStorage('markvim-sidebar-visible', true)
 const currentVimMode = ref<string>('NORMAL')
 const commandPaletteOpen = ref(false)
@@ -20,6 +19,7 @@ const {
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
+const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode } = useViewMode()
 
 const activeMarkdown = computed({
   get: () => activeDocument.value?.content || '',
@@ -31,10 +31,6 @@ const activeMarkdown = computed({
 })
 
 const { renderedMarkdown, shikiCSS } = useMarkdown(activeMarkdown)
-
-const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'preview')
-const isSplitView = computed(() => viewMode.value === 'split')
-const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
 
 function useDocumentDeletion() {
   const deleteModalOpen = ref(false)
@@ -175,19 +171,19 @@ onMounted(() => {
     {
       keys: '1',
       description: 'Switch to Editor only',
-      action: () => { viewMode.value = 'editor' },
+      action: () => { setViewMode('editor') },
       category: 'View',
     },
     {
       keys: '2',
       description: 'Switch to Split view',
-      action: () => { viewMode.value = 'split' },
+      action: () => { setViewMode('split') },
       category: 'View',
     },
     {
       keys: '3',
       description: 'Switch to Preview only',
-      action: () => { viewMode.value = 'preview' },
+      action: () => { setViewMode('preview') },
       category: 'View',
     },
 
@@ -308,7 +304,7 @@ useHead({
       :is-mobile="isMobile"
       :is-sidebar-visible="isSidebarVisible"
       :active-document-title="activeDocumentTitle"
-      @update:view-mode="viewMode = $event"
+      @update:view-mode="setViewMode"
       @toggle-sidebar="handleToggleSidebar"
       @delete-document="handleDeleteDocument"
     />
@@ -367,7 +363,7 @@ useHead({
       :markdown="activeMarkdown"
       :documents="documents"
       @command-selected="closeCommandPalette"
-      @change-view-mode="viewMode = $event"
+      @change-view-mode="setViewMode"
       @save-document="handleSaveDocument"
       @insert-text="handleInsertText"
       @toggle-vim-mode="handleToggleVimMode"
@@ -381,7 +377,7 @@ useHead({
       :open="deleteModalOpen"
       title="Delete Document"
       max-width="md"
-      dataTestid="delete-confirm-modal"
+      data-testid="delete-confirm-modal"
       @update:open="deleteModalOpen = $event"
       @close="cancelDeleteDocument"
     >

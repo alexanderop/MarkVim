@@ -143,4 +143,36 @@ export class MarkVimPage {
   async toggleSidebarWithKeyboard(): Promise<void> {
     await this.page.keyboard.press('Meta+Shift+Backslash')
   }
+
+  async verifyViewModeInLocalStorage(expectedMode: string): Promise<void> {
+    const storedValue = await this.page.evaluate(() => {
+      return localStorage.getItem('markvim-view-mode')
+    })
+    expect(storedValue).toBe(expectedMode)
+  }
+
+  async verifyCurrentViewMode(expectedMode: string): Promise<void> {
+    // Check for the active indicator element which is more reliable
+    const activeIndicator = this.page.locator(`[data-testid="view-mode-${expectedMode}-active"]`)
+    await expect(activeIndicator).toBeVisible()
+
+    // Also verify the UI state matches the expected mode
+    if (expectedMode === 'editor') {
+      await expect(this.editorPane).toBeVisible()
+      await expect(this.previewPane).toBeHidden()
+    }
+    else if (expectedMode === 'preview') {
+      await expect(this.previewPane).toBeVisible()
+      await expect(this.editorPane).toBeHidden()
+    }
+    else if (expectedMode === 'split') {
+      await expect(this.editorPane).toBeVisible()
+      await expect(this.previewPane).toBeVisible()
+    }
+  }
+
+  async reloadPage(): Promise<void> {
+    await this.page.reload()
+    await this.page.waitForLoadState('networkidle')
+  }
 }
