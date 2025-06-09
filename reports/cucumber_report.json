@@ -4,17 +4,17 @@
     "elements": [
       {
         "description": "",
-        "id": "markvim-navigation-and-view-modes;switch-between-view-modes",
+        "id": "keyboard-shortcuts-modal;keyboard-shortcuts-modal-displays-correctly-via-button-click",
         "keyword": "Scenario",
         "line": 7,
-        "name": "Switch between view modes",
+        "name": "Keyboard shortcuts modal displays correctly via button click",
         "steps": [
           {
             "keyword": "Before",
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 314583165
+              "duration": 1046412958
             }
           },
           {
@@ -27,7 +27,1248 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2165863582
+              "duration": 3047328083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 129927332
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the keyboard shortcuts modal should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:17"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10351083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "the modal should have title \"Keyboard Shortcuts\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10243542
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "the shortcuts should be properly categorized",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12167542
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 153253999
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@smoke",
+            "line": 6
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;keyboard-shortcuts-modal-displays-correctly-via-question-mark-key",
+        "keyword": "Scenario",
+        "line": 14,
+        "name": "Keyboard shortcuts modal displays correctly via question mark key",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1003393082
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3050382542
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 15,
+            "name": "I press \"?\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34308915
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "the keyboard shortcuts modal should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:17"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 19245457
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 17,
+            "name": "the modal should have title \"Keyboard Shortcuts\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 26600916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 18,
+            "name": "the shortcuts should be properly categorized",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6212999
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 200221999
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@smoke",
+            "line": 13
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;keyboard-shortcuts-modal-shows-all-expected-categories",
+        "keyword": "Scenario",
+        "line": 20,
+        "name": "Keyboard shortcuts modal shows all expected categories",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 320358291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2255724958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 21,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 119213083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "the modal should display category \"Navigation\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:37"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 7814666
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 23,
+            "name": "the modal should display category \"View\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:37"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5122707
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 24,
+            "name": "the modal should display category \"File\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:37"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3228709
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 25,
+            "name": "the modal should display category \"Settings\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:37"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2043999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 26,
+            "name": "the modal should display category \"Help\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:37"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1612333
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 149899749
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;no-duplicate-shortcuts-in-modal",
+        "keyword": "Scenario",
+        "line": 28,
+        "name": "No duplicate shortcuts in modal",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 296546041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2419754999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 29,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 110036000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 30,
+            "name": "there should be no duplicate shortcuts displayed",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:42"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 57439749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 31,
+            "name": "each shortcut should appear only once",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34659707
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 149984167
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;all-essential-shortcuts-are-present",
+        "keyword": "Scenario",
+        "line": 33,
+        "name": "All essential shortcuts are present",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 340003541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2432346999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 34,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 82852541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "the modal should contain shortcut \"Open command palette\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 85315875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 36,
+            "name": "the modal should contain shortcut \"Switch to Editor only\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33997124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 37,
+            "name": "the modal should contain shortcut \"Switch to Split view\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 29232583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 38,
+            "name": "the modal should contain shortcut \"Switch to Preview only\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 29688000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 39,
+            "name": "the modal should contain shortcut \"Toggle sidebar\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 31562249
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 40,
+            "name": "the modal should contain shortcut \"Save document\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 26423958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 41,
+            "name": "the modal should contain shortcut \"New Document\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 25870915
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 42,
+            "name": "the modal should contain shortcut \"Download as Markdown\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34641583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 43,
+            "name": "the modal should contain shortcut \"Open settings\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 38125332
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 44,
+            "name": "the modal should contain shortcut \"Show keyboard shortcuts\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 39892834
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 105335707
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;settings-shortcuts-use-single-keys",
+        "keyword": "Scenario",
+        "line": 46,
+        "name": "Settings shortcuts use single keys",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 380482916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2444972707
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 47,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 96442291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 48,
+            "name": "the modal should contain shortcut \"Toggle Line Numbers\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48067917
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 49,
+            "name": "the shortcut \"Toggle Line Numbers\" should use key \"L\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:62"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48199708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 50,
+            "name": "the modal should contain shortcut \"Toggle Preview Sync\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 45083208
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 51,
+            "name": "the shortcut \"Toggle Preview Sync\" should use key \"P\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:62"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 33326749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 52,
+            "name": "the modal should contain shortcut \"Toggle Vim Mode\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:56"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34268834
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 53,
+            "name": "the shortcut \"Toggle Vim Mode\" should use key \"V\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:62"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 29412041
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 132712250
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;single-key-settings-shortcuts-work-functionally",
+        "keyword": "Scenario",
+        "line": 55,
+        "name": "Single key settings shortcuts work functionally",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 338223874
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2659383582
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 56,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1162960957
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 57,
+            "name": "I press \"l\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 8323374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 58,
+            "name": "line numbers should be toggled",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:114"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 113388833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 59,
+            "name": "I press \"p\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1186915
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 60,
+            "name": "preview sync should be toggled",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:118"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 127125457
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 61,
+            "name": "I press \"v\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18944041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 62,
+            "name": "vim mode should be toggled",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:122"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 106398166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 63,
+            "name": "the vim mode indicator should show the new state",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:126"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 504608750
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 102209040
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;modal-can-be-opened-both-ways",
+        "keyword": "Scenario",
+        "line": 65,
+        "name": "Modal can be opened both ways",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 288890416
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2606676875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 66,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 99400000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 67,
+            "name": "the keyboard shortcuts modal should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:17"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2909416
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 68,
+            "name": "I press \"Escape\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13165291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 69,
+            "name": "the keyboard shortcuts modal should not be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2767166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 70,
+            "name": "I press \"?\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11566249
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 71,
+            "name": "the keyboard shortcuts modal should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:17"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1817583
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 128455165
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;modal-can-be-closed-with-escape-key",
+        "keyword": "Scenario",
+        "line": 73,
+        "name": "Modal can be closed with escape key",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 352147750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1895697874
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 74,
+            "name": "the keyboard shortcuts modal is open",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 86960708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 75,
+            "name": "I press \"Escape\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9379375
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 76,
+            "name": "the keyboard shortcuts modal should not be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2708749
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 116694666
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;shortcuts-are-formatted-properly",
+        "keyword": "Scenario",
+        "line": 78,
+        "name": "Shortcuts are formatted properly",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 305843833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2052835290
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 79,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 71676791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 80,
+            "name": "shortcuts should display formatted key combinations",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:69"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 49788708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 81,
+            "name": "single keys should be displayed properly",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:78"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 50805374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 82,
+            "name": "modifier keys should use platform-specific symbols",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:84"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 37364250
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 118514749
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "keyboard-shortcuts-modal;all-shortcuts-show-keyboard-combinations",
+        "keyword": "Scenario",
+        "line": 84,
+        "name": "All shortcuts show keyboard combinations",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 317540166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2195145584
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 85,
+            "name": "I click the keyboard shortcuts button",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 92102167
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 86,
+            "name": "all shortcuts should have visible key combinations",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:90"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 41153540
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 87,
+            "name": "no shortcuts should be missing key bindings",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:97"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 26827875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 88,
+            "name": "settings shortcuts should have proper key combinations",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/keyboard-shortcuts.steps.ts:103"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 29045291
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 88195665
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "keyboard-shortcuts-modal",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Keyboard Shortcuts Modal",
+    "tags": [],
+    "uri": "tests/features/keyboard-shortcuts.feature"
+  },
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "markvim-navigation-and-view-modes;switch-between-view-modes",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Switch between view modes",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 296934583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2310712750
             }
           },
           {
@@ -40,7 +1281,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 137206666
+              "duration": 60544291
             }
           },
           {
@@ -53,7 +1294,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3599290
+              "duration": 12628875
             }
           },
           {
@@ -66,7 +1307,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2952166
+              "duration": 2770791
             }
           },
           {
@@ -79,7 +1320,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 74664499
+              "duration": 85873834
             }
           },
           {
@@ -92,7 +1333,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 5139333
+              "duration": 3714499
             }
           },
           {
@@ -105,7 +1346,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2717166
+              "duration": 2930124
             }
           },
           {
@@ -118,7 +1359,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 52054375
+              "duration": 64553416
             }
           },
           {
@@ -131,7 +1372,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 14178666
+              "duration": 5965790
             }
           },
           {
@@ -139,7 +1380,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 33530708
+              "duration": 95973041
             }
           }
         ],
@@ -163,7 +1404,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 308665708
+              "duration": 328432625
             }
           },
           {
@@ -176,7 +1417,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2166324916
+              "duration": 2255471624
             }
           },
           {
@@ -189,7 +1430,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 55716167
+              "duration": 25782749
             }
           },
           {
@@ -202,7 +1443,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 34492208
+              "duration": 35654958
             }
           },
           {
@@ -215,7 +1456,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3428625
+              "duration": 3535458
             }
           },
           {
@@ -228,7 +1469,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 15186832
+              "duration": 15805959
             }
           },
           {
@@ -241,7 +1482,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4221665
+              "duration": 8739916
             }
           },
           {
@@ -249,7 +1490,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 40553332
+              "duration": 220181457
             }
           }
         ],
@@ -273,7 +1514,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 93177499
+              "duration": 301893584
             }
           },
           {
@@ -286,7 +1527,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1650205541
+              "duration": 2343475916
             }
           },
           {
@@ -299,7 +1540,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 31493624
+              "duration": 20368417
             }
           },
           {
@@ -312,7 +1553,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 14838499
+              "duration": 10440041
             }
           },
           {
@@ -325,7 +1566,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 8942291
+              "duration": 10884874
             }
           },
           {
@@ -338,7 +1579,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 8570709
+              "duration": 13558208
             }
           },
           {
@@ -351,7 +1592,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3851166
+              "duration": 3038166
             }
           },
           {
@@ -359,7 +1600,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 19512250
+              "duration": 115798458
             }
           }
         ],
@@ -378,7 +1619,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 121957500
+              "duration": 409691875
             }
           },
           {
@@ -391,7 +1632,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1658340250
+              "duration": 2237781875
             }
           },
           {
@@ -404,7 +1645,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 53367124
+              "duration": 60654999
             }
           },
           {
@@ -417,7 +1658,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 42658292
+              "duration": 13065916
             }
           },
           {
@@ -430,7 +1671,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4581250
+              "duration": 1987667
             }
           },
           {
@@ -438,7 +1679,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 36458999
+              "duration": 117598957
             }
           }
         ],
@@ -457,7 +1698,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 94054791
+              "duration": 304843832
             }
           },
           {
@@ -470,7 +1711,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1647541874
+              "duration": 1908637750
             }
           },
           {
@@ -483,7 +1724,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1087029458
+              "duration": 1191322707
             }
           },
           {
@@ -496,7 +1737,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 62324042
+              "duration": 65184790
             }
           },
           {
@@ -509,7 +1750,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 34361249
+              "duration": 2936875
             }
           },
           {
@@ -522,7 +1763,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4241708
+              "duration": 5304749
             }
           },
           {
@@ -535,7 +1776,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2550874
+              "duration": 3313874
             }
           },
           {
@@ -548,7 +1789,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 821623750
+              "duration": 911596291
             }
           },
           {
@@ -561,7 +1802,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10469166
+              "duration": 12483833
             }
           },
           {
@@ -574,7 +1815,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1628999
+              "duration": 4227124
             }
           },
           {
@@ -587,7 +1828,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 6187334
+              "duration": 8887708
             }
           },
           {
@@ -600,7 +1841,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 31005916
+              "duration": 84809250
             }
           },
           {
@@ -613,7 +1854,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 16129500
+              "duration": 16201541
             }
           },
           {
@@ -626,7 +1867,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2381374
+              "duration": 26756874
             }
           },
           {
@@ -639,7 +1880,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1053667
+              "duration": 2977290
             }
           },
           {
@@ -652,7 +1893,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1130537083
+              "duration": 1176363667
             }
           },
           {
@@ -665,7 +1906,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 9310500
+              "duration": 10746624
             }
           },
           {
@@ -678,7 +1919,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1782709
+              "duration": 2319665
             }
           },
           {
@@ -691,7 +1932,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3424291
+              "duration": 6135000
             }
           },
           {
@@ -699,7 +1940,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 23134749
+              "duration": 354819875
             }
           }
         ],
@@ -734,7 +1975,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 142844583
+              "duration": 370432832
             }
           },
           {
@@ -747,7 +1988,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1616668459
+              "duration": 2224105875
             }
           },
           {
@@ -790,7 +2031,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 19377749
+              "duration": 36246707
             }
           },
           {
@@ -798,7 +2039,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 17536250
+              "duration": 132850707
             }
           }
         ],
@@ -817,7 +2058,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 113580250
+              "duration": 367713499
             }
           },
           {
@@ -830,7 +2071,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1512534583
+              "duration": 1967632959
             }
           },
           {
@@ -843,7 +2084,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 36367582
+              "duration": 35953500
             }
           },
           {
@@ -856,7 +2097,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 12206708
+              "duration": 147569707
             }
           },
           {
@@ -869,7 +2110,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2568208
+              "duration": 19959374
             }
           },
           {
@@ -877,7 +2118,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 27050665
+              "duration": 314994875
             }
           }
         ],
@@ -896,7 +2137,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 113412582
+              "duration": 322944541
             }
           },
           {
@@ -909,7 +2150,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1555632750
+              "duration": 2225586458
             }
           },
           {
@@ -922,7 +2163,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 23455832
+              "duration": 19727582
             }
           },
           {
@@ -935,7 +2176,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4151959
+              "duration": 2055959
             }
           },
           {
@@ -943,7 +2184,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 29714707
+              "duration": 106309916
             }
           }
         ],
@@ -962,7 +2203,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 97347958
+              "duration": 422369791
             }
           },
           {
@@ -975,7 +2216,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1635978124
+              "duration": 2033949166
             }
           },
           {
@@ -988,7 +2229,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 14349667
+              "duration": 12670083
             }
           },
           {
@@ -1001,7 +2242,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2983417
+              "duration": 2084374
             }
           },
           {
@@ -1009,7 +2250,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 18681749
+              "duration": 128169415
             }
           }
         ],
@@ -1028,7 +2269,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 96251125
+              "duration": 339740749
             }
           },
           {
@@ -1041,7 +2282,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1534264708
+              "duration": 2510411124
             }
           },
           {
@@ -1054,7 +2295,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 103477915
+              "duration": 121663875
             }
           },
           {
@@ -1067,7 +2308,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3777667
+              "duration": 45553041
             }
           },
           {
@@ -1080,7 +2321,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 5083125
+              "duration": 3066291
             }
           },
           {
@@ -1093,7 +2334,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3303916
+              "duration": 2707750
             }
           },
           {
@@ -1106,7 +2347,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 44121666
+              "duration": 73227292
             }
           },
           {
@@ -1119,7 +2360,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4373999
+              "duration": 3805166
             }
           },
           {
@@ -1132,7 +2373,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4303416
+              "duration": 4517791
             }
           },
           {
@@ -1140,7 +2381,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 20707458
+              "duration": 130595374
             }
           }
         ],
@@ -1159,7 +2400,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 93570332
+              "duration": 293967208
             }
           },
           {
@@ -1172,7 +2413,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1584840291
+              "duration": 2400633333
             }
           },
           {
@@ -1185,7 +2426,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 49126166
+              "duration": 93087583
             }
           },
           {
@@ -1198,7 +2439,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 37247375
+              "duration": 5132124
             }
           },
           {
@@ -1211,7 +2452,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 41245041
+              "duration": 87848291
             }
           },
           {
@@ -1224,7 +2465,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 6594125
+              "duration": 6272457
             }
           },
           {
@@ -1237,7 +2478,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 66700666
+              "duration": 91682875
             }
           },
           {
@@ -1250,7 +2491,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 5306166
+              "duration": 6756084
             }
           },
           {
@@ -1263,7 +2504,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 7775417
+              "duration": 10060375
             }
           },
           {
@@ -1276,7 +2517,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 155232582
+              "duration": 157415874
             }
           },
           {
@@ -1289,7 +2530,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3668958
+              "duration": 3358874
             }
           },
           {
@@ -1302,7 +2543,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2693834
+              "duration": 2477292
             }
           },
           {
@@ -1315,7 +2556,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2391416
+              "duration": 1668041
             }
           },
           {
@@ -1328,7 +2569,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2675166
+              "duration": 2362791
             }
           },
           {
@@ -1336,7 +2577,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 20145666
+              "duration": 138578207
             }
           }
         ],
@@ -1355,7 +2596,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 96924791
+              "duration": 361884833
             }
           },
           {
@@ -1368,7 +2609,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1665994875
+              "duration": 2232287209
             }
           },
           {
@@ -1381,7 +2622,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 7633708
+              "duration": 8223041
             }
           },
           {
@@ -1394,7 +2635,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 15805082
+              "duration": 19431042
             }
           },
           {
@@ -1407,7 +2648,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 7591457
+              "duration": 1296957
             }
           },
           {
@@ -1420,7 +2661,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 13846709
+              "duration": 11429875
             }
           },
           {
@@ -1433,7 +2674,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 30515166
+              "duration": 30528624
             }
           },
           {
@@ -1446,7 +2687,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 5926124
+              "duration": 8710417
             }
           },
           {
@@ -1459,7 +2700,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3509667
+              "duration": 2015041
             }
           },
           {
@@ -1472,7 +2713,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3540999
+              "duration": 1442415
             }
           },
           {
@@ -1480,7 +2721,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 28201750
+              "duration": 96515957
             }
           }
         ],
@@ -1499,7 +2740,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 96161665
+              "duration": 349639250
             }
           },
           {
@@ -1512,7 +2753,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1500194875
+              "duration": 2415767790
             }
           },
           {
@@ -1525,7 +2766,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 19085834
+              "duration": 17483709
             }
           },
           {
@@ -1538,7 +2779,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 8295417
+              "duration": 7710999
             }
           },
           {
@@ -1551,7 +2792,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2301166
+              "duration": 2052374
             }
           },
           {
@@ -1564,7 +2805,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10582958
+              "duration": 10357041
             }
           },
           {
@@ -1577,7 +2818,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2036041
+              "duration": 3507124
             }
           },
           {
@@ -1585,7 +2826,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 15100667
+              "duration": 167332625
             }
           }
         ],

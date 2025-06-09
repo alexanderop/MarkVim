@@ -22,7 +22,7 @@ onMounted(() => {
   // This works better with useMagicKeys than trying to detect shift+/
   registerShortcut({
     keys: '?',
-    description: 'Show keyboard shortcuts (?)',
+    description: 'Show keyboard shortcuts',
     action: openModal,
     category: 'Help',
   })
@@ -51,6 +51,7 @@ const totalShortcuts = computed(() =>
     description="Navigate MarkVim faster with these keyboard shortcuts"
     max-width="4xl"
     max-height="90vh"
+    data-testid="keyboard-shortcuts-modal"
     @update:open="isOpen = $event"
     @close="closeModal"
   >
@@ -60,6 +61,7 @@ const totalShortcuts = computed(() =>
         icon="lucide:keyboard"
         text="Shortcuts"
         title="Keyboard shortcuts (Shift + ?)"
+        data-testid="keyboard-shortcuts-button"
         @click="openModal"
       />
     </template>

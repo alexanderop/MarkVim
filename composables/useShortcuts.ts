@@ -154,23 +154,31 @@ export function useShortcuts() {
   // Get all registered shortcuts grouped by category
   const shortcutsByCategory = computed((): ShortcutCategory[] => {
     const categories = new Map<string, ShortcutAction[]>()
+    const processedShortcuts = new Set<string>()
 
-    // Add keyboard shortcuts
+    // First, add keyboard shortcuts (these take priority)
     registeredShortcuts.value.forEach((shortcut) => {
       const category = shortcut.category || 'General'
       if (!categories.has(category)) {
         categories.set(category, [])
       }
       categories.get(category)!.push(shortcut)
+      processedShortcuts.add(shortcut.description)
     })
 
-    // Add app commands
+    // Then add app commands, but only if they don't duplicate existing shortcuts
     appCommands.value.forEach((command) => {
+      // Skip if we already have this shortcut description
+      if (processedShortcuts.has(command.description)) {
+        return
+      }
+      
       const category = command.category || 'General'
       if (!categories.has(category)) {
         categories.set(category, [])
       }
       categories.get(category)!.push(command)
+      processedShortcuts.add(command.description)
     })
 
     return Array.from(categories.entries()).map(([name, shortcuts]) => ({

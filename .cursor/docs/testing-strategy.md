@@ -33,7 +33,7 @@ tests/
 
 ## ✅ Current Test Status
 
-**All tests passing**: 13 scenarios, 91 steps ✅
+**All tests passing**: 24 scenarios, 162 steps ✅
 
 **Test Coverage**:
 - ✅ Core UI components visibility
@@ -48,6 +48,11 @@ tests/
 - ✅ Keyboard shortcuts for view mode switching (1/2/3 keys)
 - ✅ Sidebar toggle keyboard shortcut (Cmd+Shift+\)
 - ✅ View mode localStorage persistence across page reloads
+- ✅ Keyboard shortcuts modal functionality and accessibility
+- ✅ Complete shortcut coverage with no duplicates or missing key bindings
+- ✅ Single key settings shortcuts (l, p, v) that avoid browser conflicts
+- ✅ Dual modal access methods (button click and '?' key)
+- ✅ **Functional keyboard shortcuts testing** - Verifies l/p/v keys actually trigger their respective functions
 
 ## 🔄 Refactoring Improvements
 
@@ -453,4 +458,29 @@ module.exports = {
 - **Type safety** with TypeScript throughout
 - **Clear patterns** for new team members
 
-This refactored testing strategy ensures MarkVim maintains high quality while supporting rapid development, confident refactoring, and seamless team collaboration. 
+This refactored testing strategy ensures MarkVim maintains high quality while supporting rapid development, confident refactoring, and seamless team collaboration.
+
+## 🎯 Summary: Functional Keyboard Shortcuts Implementation
+
+**Achievement**: Successfully implemented and tested functional keyboard shortcuts using TDD methodology.
+
+**Final Implementation Status**:
+- **24 scenarios passing, 162 steps total** ✅
+- **Complete keyboard shortcuts coverage**: 
+  - View modes: `1/2/3` 
+  - Navigation: `⌘K` (command palette), `G S` (settings)
+  - File operations: `⌘S` (save), `⌘N` (new), `⌘⇧S` (download)
+  - UI controls: `⌘⇧\` (sidebar), `?` (shortcuts modal)
+  - Settings toggles: `l/p/v` (line numbers/preview sync/vim mode)
+- **Browser conflict resolution**: Single key shortcuts avoid conflicts with browser defaults
+- **Functional verification**: Tests confirm shortcuts actually trigger their intended functions
+- **Smart input detection**: Shortcuts disabled when typing in editor or input fields
+- **Dual modal access**: Keyboard shortcuts modal accessible via button click and `?` key
+- **No duplicates or missing key bindings**: Clean, complete shortcut system
+
+**Key Technical Achievements**:
+1. **TDD Implementation**: Tests written first, then functionality implemented
+2. **Robust Testing**: Functional tests verify actual behavior, not just UI presence
+3. **State Management**: Proper handling of vim mode toggle states and localStorage persistence
+4. **Cross-browser Compatibility**: Single key shortcuts work without browser conflicts
+5. **User Experience**: Intuitive shortcuts that enhance productivity without interfering with normal typing 
