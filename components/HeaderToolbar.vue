@@ -20,16 +20,13 @@ defineEmits<Emits>()
   <header class="px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
     <!-- Left section -->
     <div class="flex gap-3 items-center">
-      <button
-        class="group rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:bg-gray-800/60"
-        :title="isSidebarVisible ? 'Hide sidebar' : 'Show sidebar'"
+      <ToolbarButton
+        :icon="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
+        :text="isSidebarVisible ? 'Hide' : 'Show'"
+        :title="isSidebarVisible ? 'Hide' : 'Show'"
+        variant="toggle"
         @click="$emit('toggleSidebar')"
-      >
-        <Icon
-          :name="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
-          class="text-text-secondary h-4 w-4 transition-colors duration-200 group-hover:text-text-primary"
-        />
-      </button>
+      />
 
       <div class="flex gap-2 items-center">
         <div class="rounded-full bg-emerald-400 h-2 w-2 shadow-emerald-400/30 shadow-lg" />
