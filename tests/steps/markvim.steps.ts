@@ -8,8 +8,6 @@
 // This file is kept for backward compatibility and legacy step definitions
 // Consider migrating remaining steps to appropriate domain-specific files
 
-import type { MarkVimWorld } from '../support/world.js'
-
 // Note: Browser setup and teardown is now handled in tests/support/world.ts
 // Note: MarkVim-specific steps are now in tests/steps/markvim-ui.steps.ts
 // Note: Common reusable steps are now in tests/steps/common.steps.ts

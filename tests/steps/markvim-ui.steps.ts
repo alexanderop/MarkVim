@@ -1,7 +1,6 @@
 import type { MarkVimWorld } from '../support/world.js'
 import { Given, Then, When } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
-import { expect } from '@playwright/test'
 import { MarkVimPage } from '../page-objects/markvim-page.js'
 
 async function getMarkVimPage(world: MarkVimWorld): Promise<MarkVimPage> {

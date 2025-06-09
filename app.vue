@@ -69,7 +69,7 @@ function useDocumentDeletion() {
 
 const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDocument, cancelDeleteDocument } = useDocumentDeletion()
 
-const { registerShortcuts, registerAppCommands, formatKeys } = useShortcuts()
+const { registerShortcuts, formatKeys } = useShortcuts()
 
 const activeDocumentTitle = computed(() => {
   return activeDocument.value
@@ -186,7 +186,6 @@ onMounted(() => {
       action: () => { setViewMode('preview') },
       category: 'View',
     },
-
     {
       keys: 'meta+k',
       description: 'Open command palette',
@@ -204,30 +203,16 @@ onMounted(() => {
       category: 'File',
     },
     {
-      keys: 'meta+shift+backslash',
-      description: 'Toggle sidebar',
+      keys: 'meta+n',
+      description: 'New Document',
       action: () => {
-        handleToggleSidebar()
+        handleCreateDocument()
       },
-      category: 'View',
-    },
-  ])
-
-  registerAppCommands([
-    {
-      id: 'save',
-      keys: 'meta+s',
-      description: 'Save Document',
       category: 'File',
-      icon: '💾',
-      action: () => handleSaveDocument(),
     },
     {
-      id: 'download',
-      keys: '',
+      keys: 'meta+shift+s',
       description: 'Download as Markdown',
-      category: 'File',
-      icon: '⬇️',
       action: () => {
         if (!activeDocument.value)
           return
@@ -239,49 +224,43 @@ onMounted(() => {
         a.click()
         URL.revokeObjectURL(url)
       },
-    },
-    {
-      id: 'new-document',
-      keys: '',
-      description: 'New Document',
       category: 'File',
-      icon: '📄',
-      action: () => handleCreateDocument(),
-    },
-
-    {
-      id: 'toggle-vim-mode',
-      keys: '',
-      description: 'Toggle Vim Mode',
-      category: 'Settings',
-      icon: '⚡',
-      action: () => handleToggleVimMode(),
     },
     {
-      id: 'toggle-line-numbers',
-      keys: '',
-      description: 'Toggle Line Numbers',
-      category: 'Settings',
-      icon: '🔢',
-      action: () => handleToggleLineNumbers(),
-    },
-    {
-      id: 'toggle-preview-sync',
-      keys: '',
-      description: 'Toggle Preview Sync',
-      category: 'Settings',
-      icon: '🔄',
-      action: () => handleTogglePreviewSync(),
-    },
-    {
-      id: 'toggle-sidebar',
       keys: 'meta+shift+backslash',
-      description: 'Toggle Sidebar',
+      description: 'Toggle sidebar',
+      action: () => {
+        handleToggleSidebar()
+      },
       category: 'View',
-      icon: '📋',
-      action: () => handleToggleSidebar(),
+    },
+    {
+      keys: 'v',
+      description: 'Toggle Vim Mode',
+      action: () => {
+        handleToggleVimMode()
+      },
+      category: 'Settings',
+    },
+    {
+      keys: 'l',
+      description: 'Toggle Line Numbers',
+      action: () => {
+        handleToggleLineNumbers()
+      },
+      category: 'Settings',
+    },
+    {
+      keys: 'p',
+      description: 'Toggle Preview Sync',
+      action: () => {
+        handleTogglePreviewSync()
+      },
+      category: 'Settings',
     },
   ])
+
+  // All settings actions now have keyboard shortcuts, so no need for separate app commands
 })
 
 onBeforeUnmount(() => {

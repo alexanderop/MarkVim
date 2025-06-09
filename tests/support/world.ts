@@ -1,13 +1,13 @@
-import { Before, After, setWorldConstructor, World } from '@cucumber/cucumber'
 import type { IWorldOptions } from '@cucumber/cucumber'
-import { chromium } from '@playwright/test'
 import type { Browser, Page } from '@playwright/test'
+import { After, Before, setWorldConstructor, World } from '@cucumber/cucumber'
+import { chromium } from '@playwright/test'
 
 export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
-  init(): Promise<void>
-  cleanup(): Promise<void>
+  init: () => Promise<void>
+  cleanup: () => Promise<void>
 }
 
 class CustomWorld extends World implements MarkVimWorld {
@@ -28,7 +28,8 @@ class CustomWorld extends World implements MarkVimWorld {
       if (!this.page) {
         this.page = await this.browser.newPage()
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to initialize browser/page:', error)
       throw error
     }
@@ -44,7 +45,8 @@ class CustomWorld extends World implements MarkVimWorld {
         await this.browser.close()
         this.browser = undefined
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Failed to cleanup browser/page:', error)
     }
   }
@@ -58,4 +60,4 @@ Before(async function (this: MarkVimWorld) {
 
 After(async function (this: MarkVimWorld) {
   await this.cleanup()
-}) 
+})

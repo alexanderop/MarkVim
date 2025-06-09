@@ -12,13 +12,43 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: corepack enable
-      - uses: actions/setup-node@v4
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        id: node-modules-cache
+        with:
+          path: node_modules
+          key: modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            modules-${{ runner.os }}-
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Use pnpm as specified in the project
-      - run: pnpm install
-      - run: NUXT_APP_BASE_URL=/MarkVim/ pnpm run build --preset github_pages
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+
+      - name: Cache build
+        uses: actions/cache@v4
+        id: build-cache
+        with:
+          path: |
+            .nuxt
+            .output
+          key: build-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts', 'package.json') }}
+          restore-keys: |
+            build-${{ runner.os }}-
+
+      - name: Build application
+        run: NUXT_APP_BASE_URL=/MarkVim/ pnpm run build --preset github_pages
+        if: steps.build-cache.outputs.cache-hit != 'true'
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -42,3 +72,32 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Create Deployment Summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Status:** Successfully deployed to GitHub Pages" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **URL:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "📦 **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "⏰ **Deployed at:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify deployment
+        run: |
+          echo "🔍 Verifying deployment..."
+          sleep 10
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://alexanderopalic.github.io/MarkVim/)
+          if [ $response = "200" ]; then
+            echo "✅ Site is accessible"
+            echo "## ✅ Deployment Verification" >> $GITHUB_STEP_SUMMARY
+            echo "Site is live and responding correctly!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Site returned HTTP $response"
+            echo "## ❌ Deployment Verification Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Site returned HTTP $response" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

@@ -2,9 +2,41 @@
 import type { EditorSettings } from '#imports'
 import { useEditorSettings, useShortcuts } from '#imports'
 
-const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync } = useEditorSettings()
+const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync, clearAllLocalData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
+
+function useClearDataModal() {
+  const showClearDataModal = ref(false)
+
+  const openClearDataModal = () => {
+    showClearDataModal.value = true
+  }
+
+  const closeClearDataModal = () => {
+    showClearDataModal.value = false
+  }
+
+  const confirmClearData = () => {
+    clearAllLocalData()
+    closeClearDataModal()
+    closeSettings()
+
+    // Reload the page to ensure all components reflect the cleared state
+    if (import.meta.client) {
+      window.location.reload()
+    }
+  }
+
+  return {
+    showClearDataModal,
+    openClearDataModal,
+    closeClearDataModal,
+    confirmClearData,
+  }
+}
+
+const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClearData } = useClearDataModal()
 </script>
 
 <template>
@@ -13,6 +45,7 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
     title="Settings"
     description="Configure your MarkVim editor preferences"
     max-width="3xl"
+    data-testid="settings-modal"
     @update:open="(open) => !open && closeSettings()"
     @close="closeSettings"
   >
@@ -22,6 +55,7 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
         icon="lucide:settings"
         text="Settings"
         title="Settings (g s)"
+        data-testid="settings-button"
         @click="openSettings"
       />
     </template>
@@ -228,12 +262,64 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
     </template>
 
     <template #footer-right>
-      <button
-        class="text-xs text-gray-400 font-medium px-3 py-1.5 border border-gray-600 rounded transition-colors hover:text-gray-200 hover:bg-gray-700"
-        @click="resetToDefaults"
-      >
-        Reset to Defaults
-      </button>
+      <div class="flex gap-2 items-center">
+        <button
+          class="text-xs text-red-400 font-medium px-3 py-1.5 border border-red-600/50 rounded transition-colors hover:text-red-300 hover:bg-red-600/10"
+          data-testid="clear-data-button"
+          @click="openClearDataModal"
+        >
+          Clear Local Data
+        </button>
+        <button
+          class="text-xs text-gray-400 font-medium px-3 py-1.5 border border-gray-600 rounded transition-colors hover:text-gray-200 hover:bg-gray-700"
+          @click="resetToDefaults"
+        >
+          Reset to Defaults
+        </button>
+      </div>
     </template>
+  </BaseModal>
+
+  <!-- Clear Data Confirmation Modal -->
+  <BaseModal
+    :open="showClearDataModal"
+    title="Clear Local Data"
+    max-width="md"
+    data-testid="clear-data-confirm-modal"
+    @update:open="showClearDataModal = $event"
+    @close="closeClearDataModal"
+  >
+    <div class="py-4">
+      <p class="text-gray-200 text-sm leading-relaxed">
+        Are you sure you want to clear all local data? This will remove:
+      </p>
+      <ul class="text-gray-400 text-sm mt-3 space-y-1 list-disc list-inside">
+        <li>All saved documents</li>
+        <li>Editor settings and preferences</li>
+        <li>View mode preferences</li>
+        <li>Command history</li>
+        <li>Sidebar and pane layout settings</li>
+      </ul>
+      <p class="text-red-400 text-sm mt-3 font-medium">
+        This action cannot be undone.
+      </p>
+    </div>
+
+    <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
+      <button
+        data-testid="clear-data-cancel-btn"
+        class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
+        @click="closeClearDataModal"
+      >
+        Cancel
+      </button>
+      <button
+        data-testid="clear-data-confirm-btn"
+        class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        @click="confirmClearData"
+      >
+        Clear All Data
+      </button>
+    </div>
   </BaseModal>
 </template>

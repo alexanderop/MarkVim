@@ -1,5 +1,5 @@
-import { Given, When, Then } from '@cucumber/cucumber'
 import type { MarkVimWorld } from '../support/world.js'
+import { Given, Then, When } from '@cucumber/cucumber'
 
 async function ensurePage(world: MarkVimWorld) {
   if (!world.page) {
@@ -25,7 +25,7 @@ Given('I navigate to the application', async function (this: MarkVimWorld) {
 
 When('I press the key {string}', async function (this: MarkVimWorld, key: string) {
   const page = await ensurePage(this)
-  
+
   const keyMap: Record<string, string> = {
     'Cmd+K': 'Meta+KeyK',
     'Ctrl+K': 'Control+KeyK',
@@ -33,7 +33,7 @@ When('I press the key {string}', async function (this: MarkVimWorld, key: string
     'Tab': 'Tab',
     'Enter': 'Enter',
   }
-  
+
   const mappedKey = keyMap[key] || key
   await page.keyboard.press(mappedKey)
 })
@@ -116,4 +116,4 @@ Then('I should be on the page {string}', async function (this: MarkVimWorld, url
 Then('I wait for {int} seconds', async function (this: MarkVimWorld, seconds: number) {
   const page = await ensurePage(this)
   await page?.waitForTimeout(seconds * 1000)
-}) 
+})

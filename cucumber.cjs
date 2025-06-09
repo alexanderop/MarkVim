@@ -3,15 +3,15 @@ module.exports = {
     paths: ['tests/features/**/*.feature'],
     import: [
       'tests/support/**/*.ts',
-      'tests/steps/**/*.ts'
+      'tests/steps/**/*.ts',
     ],
     format: [
       'progress',
       'json:reports/cucumber_report.json',
-      'html:reports/cucumber_report.html'
+      'html:reports/cucumber_report.html',
     ],
     formatOptions: {
-      snippetInterface: 'async-await'
+      snippetInterface: 'async-await',
     },
     parallel: 2,
   },
