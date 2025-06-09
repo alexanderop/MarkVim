@@ -4,7 +4,6 @@ export interface EditorSettings {
   vimKeymap: 'vim' | 'emacs' | 'sublime' | 'vscode'
 
   // Editor appearance
-  theme: 'dark' | 'light' | 'auto'
   fontSize: number
   fontFamily: 'mono' | 'sans'
   lineNumbers: boolean
@@ -39,7 +38,6 @@ export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   vimKeymap: 'vim',
 
   // Editor appearance
-  theme: 'dark',
   fontSize: 14,
   fontFamily: 'mono',
   lineNumbers: true,
@@ -83,10 +81,6 @@ export function useEditorSettings() {
     settings.value.previewSync = !settings.value.previewSync
   }
 
-  const updateTheme = (theme: EditorSettings['theme']) => {
-    settings.value.theme = theme
-  }
-
   const updateFontSize = (size: number) => {
     settings.value.fontSize = Math.max(8, Math.min(32, size))
   }
@@ -115,7 +109,6 @@ export function useEditorSettings() {
     toggleVimMode,
     toggleLineNumbers,
     togglePreviewSync,
-    updateTheme,
     updateFontSize,
     resetToDefaults,
     exportSettings,

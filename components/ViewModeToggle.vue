@@ -15,7 +15,7 @@ defineEmits<Emits>()
 </script>
 
 <template>
-  <div class="p-0.5 rounded-lg bg-gray-800 flex items-center md:p-1">
+  <div class="p-0.5 rounded-lg bg-surface-secondary flex items-center md:p-1">
     <ToolbarButton
       variant="toggle"
       icon="lucide:edit-3"

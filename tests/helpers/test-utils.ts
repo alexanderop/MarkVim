@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import type { Buffer } from 'node:buffer'
 
 export class TestUtils {
   static async waitForPageLoad(page: Page): Promise<void> {
@@ -20,7 +21,7 @@ export class TestUtils {
   static async waitForElementCount(page: Page, selector: string, count: number): Promise<void> {
     await page.waitForFunction(
       ({ selector, count }) => document.querySelectorAll(selector).length === count,
-      { selector, count }
+      { selector, count },
     )
   }
 
@@ -35,19 +36,20 @@ export class TestUtils {
   static async waitForStableElement(page: Page, selector: string, timeout: number = 5000): Promise<void> {
     const element = page.locator(selector)
     await element.waitFor({ state: 'visible', timeout })
-    
+
     // Wait for element to be stable (no position changes)
     let previousBox = await element.boundingBox()
     let stabilityCount = 0
     const requiredStabilityChecks = 3
-    
+
     while (stabilityCount < requiredStabilityChecks) {
       await page.waitForTimeout(100)
       const currentBox = await element.boundingBox()
-      
+
       if (this.areBoxesEqual(previousBox, currentBox)) {
         stabilityCount++
-      } else {
+      }
+      else {
         stabilityCount = 0
         previousBox = currentBox
       }
@@ -55,13 +57,14 @@ export class TestUtils {
   }
 
   private static areBoxesEqual(box1: any, box2: any): boolean {
-    if (!box1 || !box2) return box1 === box2
-    
+    if (!box1 || !box2)
+      return box1 === box2
+
     return (
-      Math.abs(box1.x - box2.x) < 1 &&
-      Math.abs(box1.y - box2.y) < 1 &&
-      Math.abs(box1.width - box2.width) < 1 &&
-      Math.abs(box1.height - box2.height) < 1
+      Math.abs(box1.x - box2.x) < 1
+      && Math.abs(box1.y - box2.y) < 1
+      && Math.abs(box1.width - box2.width) < 1
+      && Math.abs(box1.height - box2.height) < 1
     )
   }
 
@@ -100,7 +103,7 @@ export class TestUtils {
     page.on('response', responseHandler)
 
     const startTime = Date.now()
-    
+
     while (Date.now() - startTime < timeout) {
       await page.waitForTimeout(100)
       if (requestCount === responseCount && requestCount > 0) {
@@ -111,4 +114,4 @@ export class TestUtils {
     page.off('request', requestHandler)
     page.off('response', responseHandler)
   }
-} 
+}

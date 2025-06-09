@@ -8,7 +8,7 @@ MarkVim uses a comprehensive End-to-End (E2E) testing strategy built on modern t
 
 ### Core Testing Tools
 - **Cucumber.js** - Behavior-Driven Development (BDD) framework for writing human-readable test scenarios
-- **Playwright** - Browser automation for cross-browser testing and UI interactions  
+- **Playwright** - Browser automation for cross-browser testing and UI interactions
 - **TypeScript** - Type-safe test definitions and step implementations
 
 ### Refactored Architecture ✨
@@ -37,7 +37,7 @@ tests/
 
 **Test Coverage**:
 - ✅ Core UI components visibility
-- ✅ Command palette functionality  
+- ✅ Command palette functionality
 - ✅ View mode switching (Editor/Split/Preview)
 - ✅ Keyboard navigation
 - ✅ Document management UI
@@ -56,7 +56,7 @@ tests/
 **Common Steps** (`common.steps.ts`) - Generic interactions:
 ```gherkin
 Given I navigate to the application
-When I press the key "Cmd+K"  
+When I press the key "Cmd+K"
 When I click on element with testid "button"
 Then element with testid "modal" should be visible
 ```
@@ -68,15 +68,15 @@ When I switch to editor view
 Then both editor and preview panes should be visible
 ```
 
-### 2. **Page Object Model** 
+### 2. **Page Object Model**
 
 Centralized UI element management:
 ```typescript
 class MarkVimPage {
   readonly commandPalette: Locator
-  readonly editorPane: Locator  
+  readonly editorPane: Locator
   readonly previewPane: Locator
-  
+
   async switchToSplitView(): Promise<void>
   async verifyCommandPaletteVisible(): Promise<void>
 }
@@ -89,8 +89,8 @@ Reliable browser/page lifecycle with proper cleanup:
 export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
-  init(): Promise<void>
-  cleanup(): Promise<void>
+  init: () => Promise<void>
+  cleanup: () => Promise<void>
 }
 ```
 
@@ -126,8 +126,11 @@ Given('I am on the MarkVim homepage', async function (this: MarkVimWorld) {
   await markVimPage.navigate()
 })
 
-// Reusable common step  
-When('I press the key {string}', async function (this: MarkVimWorld, key: string) {
+// Reusable common step
+When('I press the key {string}', async (key: string) => {
+  // Implementation here
+})
+
 When('I click on element with testid {string}', async function (this: MarkVimWorld, testid: string) {
   await this.page?.locator(`[data-testid="${testid}"]`).click()
 })
@@ -182,8 +185,8 @@ Centralized browser and page management:
 export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
-  init(): Promise<void>
-  cleanup(): Promise<void>
+  init: () => Promise<void>
+  cleanup: () => Promise<void>
 }
 
 Before(async function (this: MarkVimWorld) {
@@ -268,12 +271,12 @@ When('I click on the editor pane', async function () {
 #### Organize by Domain
 ```typescript
 // common.steps.ts - Generic UI interactions
-Given('I navigate to {string}', ...)
-When('I press the key {string}', ...)
+Given('I navigate to {string}', async () => { /* implementation */ })
+When('I press the key {string}', async () => { /* implementation */ })
 
 // markvim-ui.steps.ts - MarkVim-specific actions
-When('I switch to editor view', ...)
-When('I open the command palette', ...)
+When('I switch to editor view', async () => { /* implementation */ })
+When('I open the command palette', async () => { /* implementation */ })
 ```
 
 #### Use Page Objects for Complex Interactions
@@ -285,11 +288,13 @@ When('I validate the UI is loaded', async function () {
 })
 
 // In page object
-async validateElementsVisible(testids: string[]): Promise<void> {
-  const results = await Promise.all(
-    testids.map(testid => this.isElementVisible(testid))
-  )
-  // ... validation logic
+class PageObject {
+  async validateElementsVisible(testids: string[]): Promise<void> {
+    const results = await Promise.all(
+      testids.map(testid => this.isElementVisible(testid))
+    )
+    // validation logic implementation
+  }
 }
 ```
 
@@ -307,13 +312,13 @@ async validateElementsVisible(testids: string[]): Promise<void> {
 ### Step Definition Strategy
 ```typescript
 // 1. Check if common steps can be used
-Given('I navigate to the application')  // ✅ Use existing
+Given('I navigate to the application') // ✅ Use existing
 
 // 2. Create domain-specific steps for business logic
-When('I switch to editor view')          // ✅ MarkVim-specific
+When('I switch to editor view') // ✅ MarkVim-specific
 
 // 3. Avoid duplicating existing functionality
-When('I click on editor button')         // ❌ Use common step instead
+When('I click on editor button') // ❌ Use common step instead
 ```
 
 ### localStorage Testing Strategy
@@ -324,7 +329,7 @@ Scenario: View mode preference persists across page reloads
   Given I am on the MarkVim homepage
   When I switch to editor view
   Then the view mode should be stored in localStorage as "editor"
-  
+
   When I reload the page
   Then the view mode should be "editor"
 ```
@@ -393,9 +398,11 @@ Given('I open the MarkVim homepage', async function (this: MarkVimWorld) {
 })
 
 // markvim-page.ts - Page object encapsulation
-async navigate(url: string = 'http://localhost:3000'): Promise<void> {
-  await this.page.goto(url)
-  await this.page.waitForLoadState('networkidle')
+class MarkVimPage {
+  async navigate(url: string = 'http://localhost:3000'): Promise<void> {
+    await this.page.goto(url)
+    await this.page.waitForLoadState('networkidle')
+  }
 }
 ```
 
@@ -417,7 +424,7 @@ Enhanced CI configuration with parallel execution:
 // cucumber.cjs
 module.exports = {
   default: {
-    parallel: 2,  // Run tests in parallel
+    parallel: 2, // Run tests in parallel
     format: [
       'progress',
       'json:reports/cucumber_report.json',
@@ -453,4 +460,4 @@ module.exports = {
 - **Type safety** with TypeScript throughout
 - **Clear patterns** for new team members
 
-This refactored testing strategy ensures MarkVim maintains high quality while supporting rapid development, confident refactoring, and seamless team collaboration. 
+This refactored testing strategy ensures MarkVim maintains high quality while supporting rapid development, confident refactoring, and seamless team collaboration.

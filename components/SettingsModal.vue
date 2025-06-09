@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { EditorSettings } from '#imports'
 import { useEditorSettings, useShortcuts } from '#imports'
+import { useTheme } from '@/composables/useTheme'
 
-const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync } = useEditorSettings()
+const { settings, toggleVimMode, updateFontSize, resetToDefaults, togglePreviewSync } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
-const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
+const { theme } = useTheme()
+
+const themes = ['light', 'dark', 'auto']
 </script>
 
 <template>
@@ -13,6 +15,7 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
     title="Settings"
     description="Configure your MarkVim editor preferences"
     max-width="3xl"
+    data-testid="settings-modal"
     @update:open="(open) => !open && closeSettings()"
     @close="closeSettings"
   >
@@ -22,6 +25,7 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
         icon="lucide:settings"
         text="Settings"
         title="Settings (g s)"
+        data-testid="settings-modal-trigger"
         @click="openSettings"
       />
     </template>
@@ -30,23 +34,23 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
     <div class="space-y-4">
       <!-- Editor Behavior Section -->
       <div>
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
           Editor Behavior
         </h3>
         <div class="space-y-2">
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
+          <div class="p-3 border border-subtle rounded-lg bg-surface-secondary flex items-center justify-between">
             <div>
-              <h4 class="text-sm text-gray-100 font-medium">
+              <h4 class="text-sm text-text-bright font-medium">
                 Vim Mode
               </h4>
-              <p class="text-xs text-gray-400">
+              <p class="text-xs text-text-secondary">
                 Enable vim keybindings
               </p>
             </div>
             <SwitchRoot
               :model-value="settings.vimMode"
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
-                settings.vimMode ? 'bg-blue-600' : 'bg-gray-600',
+              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-background" :class="[
+                settings.vimMode ? 'bg-accent' : 'bg-border',
               ]"
               @update:model-value="toggleVimMode"
             >
@@ -58,19 +62,19 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
             </SwitchRoot>
           </div>
 
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
+          <div class="p-3 border border-subtle rounded-lg bg-surface-secondary flex items-center justify-between">
             <div>
-              <h4 class="text-sm text-gray-100 font-medium">
+              <h4 class="text-sm text-text-bright font-medium">
                 Synchronized Scrolling
               </h4>
-              <p class="text-xs text-gray-400">
+              <p class="text-xs text-text-secondary">
                 Sync scroll position in split view
               </p>
             </div>
             <SwitchRoot
               :model-value="settings.previewSync"
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
-                settings.previewSync ? 'bg-blue-600' : 'bg-gray-600',
+              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-background" :class="[
+                settings.previewSync ? 'bg-accent' : 'bg-border',
               ]"
               @update:model-value="togglePreviewSync"
             >
@@ -86,47 +90,49 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
 
       <!-- Appearance Section -->
       <div>
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
           Appearance
         </h3>
         <div class="space-y-2">
           <!-- Theme and Font Size in one row -->
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
-            <div class="gap-4 grid grid-cols-2">
+          <div class="p-3 border border-subtle rounded-lg bg-surface-secondary">
+            <div class="gap-4 grid grid-cols-1 md:grid-cols-2">
               <div>
-                <h4 class="text-sm text-gray-100 font-medium mb-1">
+                <h4 class="text-sm text-text-bright font-medium mb-2">
                   Theme
                 </h4>
-                <div class="flex gap-1">
+                <div class="flex gap-1 p-1 bg-surface-primary rounded-lg">
                   <button
-                    v-for="theme in themes"
-                    :key="theme"
-                    class="text-xs font-medium px-2 py-1 rounded capitalize transition-colors" :class="[
-                      settings.theme === theme
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600',
+                    v-for="themeOption in themes"
+                    :key="themeOption"
+                    class="text-xs font-medium px-3 py-1.5 rounded-md capitalize transition-colors w-full"
+                    :class="[
+                      theme === themeOption
+                        ? 'bg-accent text-white shadow-md'
+                        : 'text-text-secondary hover:text-text-primary',
                     ]"
-                    @click="updateTheme(theme)"
+                    :data-testid="`theme-${themeOption}-btn`"
+                    @click="theme = themeOption"
                   >
-                    {{ theme }}
+                    {{ themeOption }}
                   </button>
                 </div>
               </div>
 
               <div>
-                <h4 class="text-sm text-gray-100 font-medium mb-1">
+                <h4 class="text-sm text-text-bright font-medium mb-2">
                   Font Size
                 </h4>
                 <div class="flex gap-2 items-center">
                   <button
-                    class="p-1 rounded hover:bg-gray-700 text-gray-300"
+                    class="p-1 rounded hover:bg-surface-hover text-text-secondary hover:text-text-primary"
                     @click="updateFontSize(settings.fontSize - 1)"
                   >
                     <Icon name="heroicons:minus" class="h-3 w-3" />
                   </button>
-                  <span class="text-sm text-gray-100 font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
+                  <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
                   <button
-                    class="p-1 rounded hover:bg-gray-700 text-gray-300"
+                    class="p-1 rounded hover:bg-surface-hover text-text-secondary hover:text-text-primary"
                     @click="updateFontSize(settings.fontSize + 1)"
                   >
                     <Icon name="heroicons:plus" class="h-3 w-3" />
@@ -140,20 +146,20 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
 
       <!-- Advanced Settings -->
       <div>
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
           Advanced
         </h3>
         <div class="space-y-2">
           <!-- Line Numbers -->
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
+          <div class="p-3 border border-subtle rounded-lg bg-surface-secondary">
             <div class="space-y-2">
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.lineNumbers"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-sm text-gray-100 font-medium">Show Line Numbers</span>
+                <span class="text-sm text-text-bright font-medium">Show Line Numbers</span>
               </label>
 
               <div v-if="settings.lineNumbers" class="ml-5 space-y-1">
@@ -163,27 +169,27 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="absolute"
-                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
+                      class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-gray-200">Absolute</span>
+                    <span class="text-xs text-text-primary">Absolute</span>
                   </label>
                   <label class="flex gap-1 items-center">
                     <input
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="relative"
-                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
+                      class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-gray-200">Relative</span>
+                    <span class="text-xs text-text-primary">Relative</span>
                   </label>
                   <label class="flex gap-1 items-center">
                     <input
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="both"
-                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
+                      class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-gray-200">Hybrid</span>
+                    <span class="text-xs text-text-primary">Hybrid</span>
                   </label>
                 </div>
               </div>
@@ -191,31 +197,31 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
           </div>
 
           <!-- Other Settings -->
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
+          <div class="p-3 border border-subtle rounded-lg bg-surface-secondary">
             <div class="gap-3 grid grid-cols-3">
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.lineWrapping"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-gray-200">Line Wrapping</span>
+                <span class="text-xs text-text-primary">Line Wrapping</span>
               </label>
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.autoSave"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-gray-200">Auto Save</span>
+                <span class="text-xs text-text-primary">Auto Save</span>
               </label>
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.livePreview"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-gray-200">Live Preview</span>
+                <span class="text-xs text-text-primary">Live Preview</span>
               </label>
             </div>
           </div>
@@ -224,12 +230,12 @@ const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
     </div>
 
     <template #footer-left>
-      Press <kbd class="text-xs text-gray-200 font-mono px-1 border border-gray-600 rounded bg-gray-700 inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
+      Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-primary inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
     </template>
 
     <template #footer-right>
       <button
-        class="text-xs text-gray-400 font-medium px-3 py-1.5 border border-gray-600 rounded transition-colors hover:text-gray-200 hover:bg-gray-700"
+        class="text-xs text-text-secondary font-medium px-3 py-1.5 border border-border rounded transition-colors hover:text-text-primary hover:bg-surface-hover"
         @click="resetToDefaults"
       >
         Reset to Defaults

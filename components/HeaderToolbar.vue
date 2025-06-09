@@ -33,7 +33,7 @@ defineEmits<Emits>()
 
       <div class="flex gap-2 items-center">
         <div class="rounded-full bg-emerald-400 h-2 w-2 shadow-emerald-400/30 shadow-lg" />
-        <h1 class="text-sm text-gray-100 tracking-tight font-medium w-48 truncate">
+        <h1 class="text-sm text-text-primary tracking-tight font-medium w-48 truncate">
           {{ activeDocumentTitle }}
         </h1>
       </div>
@@ -77,7 +77,7 @@ defineEmits<Emits>()
     <div class="flex gap-2 items-center">
       <button
         data-testid="delete-document-btn"
-        class="group text-gray-400 rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:text-red-400 hover:bg-red-500/10"
+        class="group text-text-secondary rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:text-red-400 hover:bg-red-500/10"
         title="Delete note"
         @click="$emit('deleteDocument')"
       >
@@ -87,7 +87,7 @@ defineEmits<Emits>()
         />
       </button>
 
-      <div class="bg-gray-700/50 h-4 w-px" />
+      <div class="bg-border h-4 w-px" />
 
       <div class="flex gap-1 items-center">
         <ShortcutsModal />

@@ -72,140 +72,67 @@ function testVimMapping() {
 }
 \`\`\`
 
-**Perfect test sequence:**
-1. **i** → enter insert mode
-2. **Hello World** → type some text
-3. **jj** → should escape to normal mode instantly
-4. **$** → move to end of line (confirms you're in normal mode)
-5. **a** → enter insert mode at end
-6. **!** → add exclamation
-7. **jj** → escape again
-
-Happy writing with Vim! ✨
-
-## 🎨 Mermaid Diagrams
-
-MarkVim now supports beautiful Mermaid diagrams! Here are some examples:
-
-### Flowchart Example
-\`\`\`mermaid
-flowchart TD
-    A[Start] --> B{Is it working?}
-    B -->|Yes| C[Great!]
-    B -->|No| D[Debug]
-    D --> B
-    C --> E[End]
-\`\`\`
-
-### Sequence Diagram
-\`\`\`mermaid
-sequenceDiagram
-    participant E as Editor
-    participant P as Preview
-    participant M as Mermaid
-    
-    E->>P: Save markdown
-    P->>M: Process diagram
-    M-->>P: Render SVG
-    P->>P: Display result
-\`\`\`
-
-### Git Flow
-\`\`\`mermaid
-gitgraph
-    commit
-    branch feature
-    checkout feature
-    commit
-    commit
-    checkout main
-    merge feature
-    commit
-\`\`\`
-
-## 📢 GitHub-style Alerts
-
-MarkVim now supports GitHub-style alerts! These are rendered as beautiful, colored callout boxes:
-
-> [!NOTE]
-> This is a note alert. Use it to highlight important information that users should pay attention to.
-
-> [!TIP]
-> This is a tip alert. Perfect for sharing helpful hints and best practices with your readers.
-
-> [!IMPORTANT]
-> This is an important alert. Use it for critical information that users must not miss.
-
-> [!WARNING]
-> This is a warning alert. Use it to caution users about potential issues or risks.
-
-> [!CAUTION]
-> This is a caution alert. Use it for serious warnings about dangerous actions or consequences.
-
-These alerts follow GitHub's styling and are perfect for documentation, guides, and README files!
-
-### 🎯 Enhanced Alert Features
-
-The alerts have been enhanced with:
-- **Hover effects** for better interactivity
-- **Subtle animations** that provide visual feedback
-- **Tooltip-ready styling** for future enhancements
-- **Preparation for collapsible content** using Reka UI components
-
-> [!TIP]
-> **Pro tip**: Hover over any alert to see the enhanced visual effects! The alerts now have smooth transitions and hover states that make them feel more interactive and modern.
-
-## 📚 Footnotes
-
-MarkVim now supports footnotes! Perfect for academic writing, blog posts, and documentation that needs citations and references.
-
-Here is a simple footnote[^1].
-
-A footnote can also have multiple lines[^2].
-
-You can also reference the same footnote multiple times[^1].
-
-### How to Use Footnotes
-
-- Use \`[^1]\` in your text to create a footnote reference
-- Define the footnote content with \`[^1]: Your footnote text\`  
-- Footnotes are automatically numbered and linked
-- Click footnote numbers to jump between references and definitions
-
-[^1]: My reference.
-[^2]: To add line breaks within a footnote, prefix new lines with 2 spaces.
-  This is a second line.
-
----
-
 *Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   }
 
-  const documentsStorage = useLocalStorage<Document[]>('markvim-documents', [defaultDocument])
-  const activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDocument.id)
+  // Use lazy initialization for SSR safety
+  const documentsStorage = useLocalStorage<Document[]>('markvim-documents', [])
+  const activeDocumentId = useLocalStorage<string>('markvim-active-document-id', '')
 
-  // Ensure we have at least one document
-  if (documentsStorage.value.length === 0) {
-    documentsStorage.value = [defaultDocument]
-    activeDocumentId.value = defaultDocument.id
+  // SSR-safe initialization flag
+  const isInitialized = ref(false)
+
+  // Initialize documents safely on client-side
+  function initializeDocuments() {
+    if (isInitialized.value)
+      return
+
+    // Ensure we have at least one document
+    if (documentsStorage.value.length === 0) {
+      documentsStorage.value = [defaultDocument]
+      activeDocumentId.value = defaultDocument.id
+    }
+
+    // Ensure active document exists and is valid
+    const activeDoc = documentsStorage.value.find(doc => doc.id === activeDocumentId.value)
+    if (!activeDoc) {
+      // Auto-select the most recently updated document
+      const sortedDocs = [...documentsStorage.value].sort((a, b) => b.updatedAt - a.updatedAt)
+      activeDocumentId.value = sortedDocs[0]?.id || defaultDocument.id
+    }
+
+    isInitialized.value = true
   }
 
-  // Ensure active document exists
-  if (!documentsStorage.value.find(doc => doc.id === activeDocumentId.value)) {
-    activeDocumentId.value = documentsStorage.value[0]?.id || defaultDocument.id
+  // Initialize on client-side only
+  if (import.meta.client) {
+    onMounted(() => {
+      initializeDocuments()
+    })
   }
 
   const documents = computed(() => {
+    if (!isInitialized.value && import.meta.client) {
+      initializeDocuments()
+    }
     return [...documentsStorage.value].sort((a, b) => b.updatedAt - a.updatedAt)
   })
 
   const activeDocument = computed(() => {
+    if (!isInitialized.value && import.meta.client) {
+      initializeDocuments()
+    }
     return documents.value.find(doc => doc.id === activeDocumentId.value) || documents.value[0]
   })
 
   function createDocument(): string {
+    // Ensure we're initialized
+    if (import.meta.client && !isInitialized.value) {
+      initializeDocuments()
+    }
+
     const newDoc: Document = {
       id: crypto.randomUUID(),
       content: '# New Note\n\nStart writing...',
@@ -219,6 +146,11 @@ You can also reference the same footnote multiple times[^1].
   }
 
   function setActiveDocument(id: string): void {
+    // Ensure we're initialized
+    if (import.meta.client && !isInitialized.value) {
+      initializeDocuments()
+    }
+
     const doc = documentsStorage.value.find(d => d.id === id)
     if (doc) {
       activeDocumentId.value = id
@@ -226,6 +158,11 @@ You can also reference the same footnote multiple times[^1].
   }
 
   function updateDocument(id: string, content: string): void {
+    // Ensure we're initialized
+    if (import.meta.client && !isInitialized.value) {
+      initializeDocuments()
+    }
+
     const docIndex = documentsStorage.value.findIndex(d => d.id === id)
     if (docIndex !== -1) {
       documentsStorage.value[docIndex] = {
@@ -237,21 +174,27 @@ You can also reference the same footnote multiple times[^1].
   }
 
   function deleteDocument(id: string): void {
+    // Ensure we're initialized
+    if (import.meta.client && !isInitialized.value) {
+      initializeDocuments()
+    }
+
     const docIndex = documentsStorage.value.findIndex(d => d.id === id)
     if (docIndex === -1)
       return
 
     documentsStorage.value.splice(docIndex, 1)
 
-    // If we deleted the active document, select another one
+    // If we deleted the active document, auto-select the most recently updated one
     if (activeDocumentId.value === id) {
       if (documentsStorage.value.length === 0) {
         // Create a new document if none exist
         createDocument()
       }
       else {
-        // Select the first available document
-        activeDocumentId.value = documentsStorage.value[0].id
+        // Select the most recently updated document (already sorted)
+        const sortedDocs = [...documentsStorage.value].sort((a, b) => b.updatedAt - a.updatedAt)
+        activeDocumentId.value = sortedDocs[0].id
       }
     }
   }

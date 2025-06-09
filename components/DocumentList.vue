@@ -66,13 +66,13 @@ function formatDate(timestamp: number): string {
     class="border-r border-subtle bg-background flex flex-col h-full w-72"
   >
     <!-- Header -->
-    <div class="px-4 border-b border-gray-200/10 flex h-14 items-center justify-between">
+    <div class="px-4 border-b border-border flex h-14 items-center justify-between">
       <div class="flex gap-3 items-center">
-        <h2 class="text-sm text-gray-100 font-medium">
+        <h2 class="text-sm text-text-bright font-medium">
           Notes
         </h2>
-        <div class="rounded-full bg-gray-800/60 flex h-5 w-5 items-center justify-center">
-          <span class="text-xs text-gray-400 font-medium">{{ documents.length }}</span>
+        <div class="rounded-full bg-surface-primary flex h-5 w-5 items-center justify-center">
+          <span class="text-xs text-text-secondary font-medium">{{ documents.length }}</span>
         </div>
       </div>
 
@@ -140,8 +140,8 @@ function formatDate(timestamp: number): string {
                         class="text-sm leading-tight font-medium truncate"
                         :class="[
                           document.id === activeDocumentId
-                            ? 'text-gray-100'
-                            : 'text-gray-300 group-hover:text-gray-200',
+                            ? 'text-text-bright'
+                            : 'text-text-secondary group-hover:text-text-primary',
                         ]"
                       >
                         {{ getDocumentTitle(document.content) }}
@@ -150,8 +150,8 @@ function formatDate(timestamp: number): string {
                         class="text-xs flex-shrink-0 tabular-nums"
                         :class="[
                           document.id === activeDocumentId
-                            ? 'text-blue-400'
-                            : 'text-gray-500 group-hover:text-gray-400',
+                            ? 'text-accent'
+                            : 'text-text-tertiary group-hover:text-text-secondary',
                         ]"
                       >
                         {{ formatDate(document.updatedAt) }}
@@ -162,8 +162,8 @@ function formatDate(timestamp: number): string {
                       class="text-xs leading-relaxed truncate"
                       :class="[
                         document.id === activeDocumentId
-                          ? 'text-gray-400'
-                          : 'text-gray-500 group-hover:text-gray-400',
+                          ? 'text-text-secondary'
+                          : 'text-text-tertiary group-hover:text-text-secondary',
                       ]"
                     >
                       {{ getDocumentPreview(document.content) }}
@@ -175,16 +175,16 @@ function formatDate(timestamp: number): string {
 
             <!-- Context Menu -->
             <ContextMenuPortal>
-              <ContextMenuContent class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-1 min-w-[160px] z-50">
+              <ContextMenuContent class="bg-surface-primary border border-subtle rounded-lg shadow-xl p-1 min-w-[160px] z-50">
                 <ContextMenuItem
-                  class="flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer transition-colors"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-surface-hover hover:text-text-bright rounded-md cursor-pointer transition-colors"
                   @click="handleSelectDocument(document.id)"
                 >
                   <Icon name="lucide:mouse-pointer-click" class="h-4 w-4" />
                   Select
                 </ContextMenuItem>
 
-                <ContextMenuSeparator class="h-px bg-gray-700 my-1" />
+                <ContextMenuSeparator class="h-px bg-border my-1" />
 
                 <ContextMenuItem
                   class="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-md cursor-pointer transition-colors"
@@ -200,7 +200,7 @@ function formatDate(timestamp: number): string {
           <!-- Separator line (except for last item) -->
           <div
             v-if="index < documents.length - 1"
-            class="mx-3 mt-1 bg-gray-800/30 h-px"
+            class="mx-3 mt-1 bg-border h-px"
           />
         </div>
 
@@ -209,13 +209,13 @@ function formatDate(timestamp: number): string {
           v-if="documents.length === 0"
           class="py-12 text-center flex flex-col items-center justify-center"
         >
-          <div class="mb-3 rounded-lg bg-gray-800/40 flex h-12 w-12 items-center justify-center">
-            <Icon name="lucide:file-plus" class="text-gray-500 h-6 w-6" />
+          <div class="mb-3 rounded-lg bg-surface-secondary flex h-12 w-12 items-center justify-center">
+            <Icon name="lucide:file-plus" class="text-text-tertiary h-6 w-6" />
           </div>
-          <p class="text-sm text-gray-400 mb-1">
+          <p class="text-sm text-text-secondary mb-1">
             No notes yet
           </p>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-text-tertiary">
             Create your first note to get started
           </p>
         </div>
@@ -240,11 +240,11 @@ function formatDate(timestamp: number): string {
 }
 
 /* Smooth transitions for active states */
-.group:hover .group-hover\:text-gray-200 {
+.group:hover .group-hover\:text-text-primary {
   transition: color 0.2s ease;
 }
 
-.group:hover .group-hover\:text-gray-400 {
+.group:hover .group-hover\:text-text-secondary {
   transition: color 0.2s ease;
 }
 </style>

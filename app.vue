@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { useTheme } from '~/composables/useTheme'
+
+// Initialize theme management
+useTheme()
+
 const isSidebarVisible = useLocalStorage('markvim-sidebar-visible', true)
 const currentVimMode = ref<string>('NORMAL')
 const commandPaletteOpen = ref(false)
@@ -298,7 +303,7 @@ useHead({
 </script>
 
 <template>
-  <div ref="containerRef" class="text-gray-100 font-sans bg-gray-950 flex flex-col h-screen overflow-hidden">
+  <div ref="containerRef" class="text-text-primary font-sans bg-background flex flex-col h-screen overflow-hidden">
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
@@ -325,7 +330,7 @@ useHead({
         @delete-document="handleDeleteDocument"
       />
 
-      <div class="bg-gray-900/30 flex flex-1 flex-col overflow-hidden">
+      <div class="bg-surface-secondary/30 flex flex-1 flex-col overflow-hidden">
         <MainContent
           :layout="{
             isEditorVisible,
@@ -382,25 +387,25 @@ useHead({
       @close="cancelDeleteDocument"
     >
       <div class="py-4">
-        <p class="text-gray-200 text-sm leading-relaxed">
-          Are you sure you want to delete <span class="font-semibold text-white">"{{ documentToDelete?.title }}"</span>?
+        <p class="text-text-primary text-sm leading-relaxed">
+          Are you sure you want to delete <span class="font-semibold text-text-bright">"{{ documentToDelete?.title }}"</span>?
         </p>
-        <p class="text-gray-400 text-sm mt-2">
+        <p class="text-text-secondary text-sm mt-2">
           This action cannot be undone.
         </p>
       </div>
 
-      <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
+      <div class="flex gap-3 items-center justify-end pt-4 border-t border-subtle">
         <button
           data-testid="delete-cancel-btn"
-          class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
+          class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-text-secondary hover:text-text-bright hover:bg-surface-hover border border-subtle"
           @click="cancelDeleteDocument"
         >
           Cancel
         </button>
         <button
           data-testid="delete-confirm-btn"
-          class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+          class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-surface-primary"
           @click="confirmDeleteDocument"
         >
           Delete

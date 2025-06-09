@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { setWorldConstructor } from '@cucumber/cucumber'
 import { type Browser, chromium, type Page } from '@playwright/test'
 
@@ -6,11 +7,9 @@ class CustomWorld {
   page!: Page
 
   async init() {
-    // Use environment variable to determine headed mode
-    // Type assertion to avoid TS issues with process
-    const env = (globalThis as any).process?.env || {}
+    const env = process.env || {}
     const isHeaded = env.HEADED === 'true'
-    
+
     this.browser = await chromium.launch({
       headless: !isHeaded,
       args: ['--no-sandbox', '--disable-dev-shm-usage'],
