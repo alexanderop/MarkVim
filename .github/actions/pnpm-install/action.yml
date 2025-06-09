@@ -1,0 +1,70 @@
+name: PNPM install with cache
+description: Run pnpm install with optimized cache enabled
+
+inputs:
+  cwd:
+    description: Working directory for pnpm install
+    required: false
+    default: .
+  frozen-lockfile:
+    description: Use frozen lockfile
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Expose pnpm config
+      id: pnpm-config
+      shell: bash
+      working-directory: ${{ inputs.cwd }}
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+        echo "YEAR_MONTH=$(/bin/date -u "+%Y%m")" >> $GITHUB_OUTPUT
+
+    - name: Cache rotation keys
+      id: cache-rotation
+      shell: bash
+      run: |
+        echo "YEAR_MONTH=$(/bin/date -u "+%Y%m")" >> $GITHUB_OUTPUT
+
+    - name: Cache pnpm store
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pnpm-config.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ steps.cache-rotation.outputs.YEAR_MONTH }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-${{ steps.cache-rotation.outputs.YEAR_MONTH }}-
+
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          **/node_modules
+          ~/.cache/Cypress
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-modules-
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.cwd }}
+      run: |
+        if [ "${{ inputs.frozen-lockfile }}" = "true" ]; then
+          pnpm install --frozen-lockfile --prefer-offline
+        else
+          pnpm install --prefer-offline
+        fi
+      env:
+        HUSKY: '0'

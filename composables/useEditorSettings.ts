@@ -104,6 +104,23 @@ export function useEditorSettings() {
     }
   }
 
+  const clearAllLocalData = () => {
+    if (import.meta.client) {
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key?.startsWith('markvim-')) {
+          keysToRemove.push(key)
+        }
+      }
+
+      keysToRemove.forEach(key => localStorage.removeItem(key))
+
+      // Don't reset settings here as it will recreate localStorage entries
+      // The page reload will handle the reset to defaults
+    }
+  }
+
   return {
     settings,
     toggleVimMode,
@@ -113,5 +130,6 @@ export function useEditorSettings() {
     resetToDefaults,
     exportSettings,
     importSettings,
+    clearAllLocalData,
   }
 }
