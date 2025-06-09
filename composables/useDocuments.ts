@@ -123,6 +123,38 @@ gitgraph
     commit
 \`\`\`
 
+## 📢 GitHub-style Alerts
+
+MarkVim now supports GitHub-style alerts! These are rendered as beautiful, colored callout boxes:
+
+> [!NOTE]
+> This is a note alert. Use it to highlight important information that users should pay attention to.
+
+> [!TIP]
+> This is a tip alert. Perfect for sharing helpful hints and best practices with your readers.
+
+> [!IMPORTANT]
+> This is an important alert. Use it for critical information that users must not miss.
+
+> [!WARNING]
+> This is a warning alert. Use it to caution users about potential issues or risks.
+
+> [!CAUTION]
+> This is a caution alert. Use it for serious warnings about dangerous actions or consequences.
+
+These alerts follow GitHub's styling and are perfect for documentation, guides, and README files!
+
+### 🎯 Enhanced Alert Features
+
+The alerts have been enhanced with:
+- **Hover effects** for better interactivity
+- **Subtle animations** that provide visual feedback
+- **Tooltip-ready styling** for future enhancements
+- **Preparation for collapsible content** using Reka UI components
+
+> [!TIP]
+> **Pro tip**: Hover over any alert to see the enhanced visual effects! The alerts now have smooth transitions and hover states that make them feel more interactive and modern.
+
 ---
 
 *Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`,

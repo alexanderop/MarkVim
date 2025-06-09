@@ -2,6 +2,7 @@ import type { Highlighter } from 'shiki'
 import markdownItMermaid from '@markslides/markdown-it-mermaid'
 import { fromHighlighter } from '@shikijs/markdown-it/core'
 import MarkdownIt from 'markdown-it'
+import markdownItGitHubAlerts from 'markdown-it-github-alerts'
 import { createHighlighter } from 'shiki'
 
 let markdownInstance: MarkdownIt | null = null
@@ -79,6 +80,9 @@ export async function createMarkdownRenderer() {
     // Add Mermaid support
     markdownInstance.use(markdownItMermaid)
 
+    // Add GitHub alerts support
+    markdownInstance.use(markdownItGitHubAlerts)
+
     // Override the default fence renderer to strip inline styles and add language data attribute
     const originalFence = markdownInstance.renderer.rules.fence || function () {
       return ''
@@ -109,6 +113,7 @@ export async function createMarkdownRenderer() {
       linkify: true,
       typographer: true,
     })
+    markdownInstance.use(markdownItGitHubAlerts)
     return markdownInstance
   }
 }

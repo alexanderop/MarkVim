@@ -52,7 +52,7 @@ defineEmits<Emits>()
             : 'text-text-secondary hover:text-text-primary',
         ]"
         :title="`${mode.label} (${mode.shortcut})`"
-        @click="$emit('update:viewMode', mode.key)"
+        @click="$emit('update:viewMode', mode.key as 'split' | 'editor' | 'preview')"
       >
         <Icon
           :name="mode.icon"

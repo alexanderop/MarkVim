@@ -129,4 +129,97 @@ if (import.meta.client) {
   stroke: #6e7681 !important;
   stroke-width: 1px !important;
 }
+
+/* GitHub-style Alert Styling */
+.prose .markdown-alert {
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid;
+  border-radius: 0.5rem;
+  background: hsl(220 26% 8%);
+  border-color: hsl(215 18% 20%);
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+.prose .markdown-alert:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.prose .markdown-alert > .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.prose .markdown-alert > .markdown-alert-title svg,
+.prose .markdown-alert > .markdown-alert-title .icon {
+  color: white !important;
+  fill: white !important;
+}
+
+.prose .markdown-alert-note {
+  border-color: #0969da;
+  background: hsla(212, 89%, 44%, 0.1);
+}
+
+.prose .markdown-alert-note > .markdown-alert-title {
+  color: #409cff;
+}
+
+.prose .markdown-alert-tip {
+  border-color: #2ea043;
+  background: hsla(134, 61%, 45%, 0.1);
+}
+
+.prose .markdown-alert-tip > .markdown-alert-title {
+  color: #3fb950;
+}
+
+.prose .markdown-alert-important {
+  border-color: #8957e5;
+  background: hsla(259, 68%, 62%, 0.1);
+}
+
+.prose .markdown-alert-important > .markdown-alert-title {
+  color: #a475f9;
+}
+
+.prose .markdown-alert-warning {
+  border-color: #d29922;
+  background: hsla(37, 66%, 47%, 0.1);
+}
+
+.prose .markdown-alert-warning > .markdown-alert-title {
+  color: #e3b341;
+}
+
+.prose .markdown-alert-caution {
+  border-color: #da3633;
+  background: hsla(1, 68%, 52%, 0.1);
+}
+
+.prose .markdown-alert-caution > .markdown-alert-title {
+  color: #f85149;
+}
+
+/* Special styling for collapsible alerts if implemented with Reka UI */
+.prose .markdown-alert[data-collapsible] {
+  cursor: pointer;
+}
+
+.prose .markdown-alert[data-collapsible] > .markdown-alert-title::after {
+  content: '▼';
+  margin-left: auto;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease-in-out;
+  color: inherit;
+}
+
+.prose .markdown-alert[data-collapsible][data-state="closed"] > .markdown-alert-title::after {
+  transform: rotate(-90deg);
+}
 </style>
