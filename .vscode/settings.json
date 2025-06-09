@@ -48,5 +48,12 @@
     "scss",
     "pcss",
     "postcss"
+  ],
+
+  "cucumber.features": [
+    "tests/features/**/*.feature"
+  ],
+  "cucumber.glue": [
+    "tests/steps/**/*.ts"
   ]
 }

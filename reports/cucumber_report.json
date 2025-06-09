@@ -4,22 +4,484 @@
     "elements": [
       {
         "description": "",
+        "id": "markvim-navigation-and-view-modes;switch-between-view-modes",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "Switch between view modes",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1038582124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3342925041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I switch to editor view",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:64"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 91388500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "the editor pane should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:80"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 37956707
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "the preview pane should not be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:88"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4082542
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 12,
+            "name": "I switch to preview view",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:72"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 98608916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "the preview pane should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:84"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3523292
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "the editor pane should not be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:92"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3264709
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 16,
+            "name": "I switch to split view",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:68"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 99581541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 17,
+            "name": "both editor and preview panes should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:44"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 14535791
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 150341500
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@smoke",
+            "line": 6
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-navigation-and-view-modes;command-palette-accessibility",
+        "keyword": "Scenario",
+        "line": 20,
+        "name": "Command palette accessibility",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 987801958
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3344936124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 21,
+            "name": "I open the command palette",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:28"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 31173833
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 22,
+            "name": "the command palette should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:36"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13055124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 23,
+            "name": "the search input should be focused",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:40"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3253541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 25,
+            "name": "I press the key \"Escape\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13640124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 26,
+            "name": "element with testid \"command-palette\" should not be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:53"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6481958
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 294260457
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@smoke",
+            "line": 19
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-navigation-and-view-modes;quick-keyboard-navigation",
+        "keyword": "Scenario",
+        "line": 28,
+        "name": "Quick keyboard navigation",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 352769832
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2171562000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 29,
+            "name": "I press the key \"Cmd+K\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 24614167
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 30,
+            "name": "element with testid \"command-palette\" should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10385125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 32,
+            "name": "I press the key \"Escape\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6783416
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 33,
+            "name": "I press the key \"Ctrl+K\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:21"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 8412582
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 34,
+            "name": "element with testid \"command-palette\" should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2414249
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 109397208
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-navigation-and-view-modes;document-management",
+        "keyword": "Scenario",
+        "line": 36,
+        "name": "Document management",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 277890374
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I am on the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:20"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2503233875
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 37,
+            "name": "I create a new document",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:76"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 89482541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 38,
+            "name": "the MarkVim UI should be fully loaded",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:60"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16285459
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 39,
+            "name": "the document list should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:52"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2870999
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 196587416
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "markvim-navigation-and-view-modes",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "MarkVim Navigation and View Modes",
+    "tags": [],
+    "uri": "tests/features/markvim-navigation.feature"
+  },
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
         "id": "markvim-ui-elements;essential-ui-components-are-present",
         "keyword": "Scenario",
         "line": 3,
         "name": "Essential UI components are present",
         "steps": [
           {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 313714500
+            }
+          },
+          {
             "arguments": [],
             "keyword": "Given ",
             "line": 4,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 3646953542
+              "duration": 2443002667
             }
           },
           {
@@ -58,11 +520,11 @@
             "line": 5,
             "name": "the following elements are visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:11"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:32"
             },
             "result": {
               "status": "passed",
-              "duration": 36749208
+              "duration": 22508875
             }
           },
           {
@@ -70,7 +532,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 198091583
+              "duration": 113044792
             }
           }
         ],
@@ -85,16 +547,24 @@
         "name": "Command palette can be opened",
         "steps": [
           {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 400097958
+            }
+          },
+          {
             "arguments": [],
             "keyword": "Given ",
             "line": 13,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2123957667
+              "duration": 2200153292
             }
           },
           {
@@ -103,11 +573,11 @@
             "line": 14,
             "name": "I press \"Cmd+K\"",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:17"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:24"
             },
             "result": {
               "status": "passed",
-              "duration": 29369999
+              "duration": 41660708
             }
           },
           {
@@ -116,11 +586,11 @@
             "line": 15,
             "name": "the command palette should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:25"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:36"
             },
             "result": {
               "status": "passed",
-              "duration": 14185749
+              "duration": 19876666
             }
           },
           {
@@ -129,11 +599,11 @@
             "line": 16,
             "name": "the search input should be focused",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:29"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:40"
             },
             "result": {
               "status": "passed",
-              "duration": 1999792
+              "duration": 6802124
             }
           },
           {
@@ -141,7 +611,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 238291957
+              "duration": 263401707
             }
           }
         ],
@@ -156,16 +626,24 @@
         "name": "Split view mode works correctly",
         "steps": [
           {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 297501749
+            }
+          },
+          {
             "arguments": [],
             "keyword": "Given ",
             "line": 19,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2368715916
+              "duration": 2334628584
             }
           },
           {
@@ -174,11 +652,11 @@
             "line": 20,
             "name": "both editor and preview panes should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:33"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:44"
             },
             "result": {
               "status": "passed",
-              "duration": 12616500
+              "duration": 14674209
             }
           },
           {
@@ -187,11 +665,11 @@
             "line": 21,
             "name": "the view mode toggle should be present",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:39"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:48"
             },
             "result": {
               "status": "passed",
-              "duration": 5312667
+              "duration": 2470624
             }
           },
           {
@@ -199,7 +677,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 171342916
+              "duration": 101392083
             }
           }
         ],
@@ -214,16 +692,24 @@
         "name": "Sidebar functionality works",
         "steps": [
           {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 297202167
+            }
+          },
+          {
             "arguments": [],
             "keyword": "Given ",
             "line": 24,
             "name": "I open the MarkVim homepage",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
             },
             "result": {
               "status": "passed",
-              "duration": 2192569832
+              "duration": 2205658874
             }
           },
           {
@@ -232,11 +718,11 @@
             "line": 25,
             "name": "the document list should be visible",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:49"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:52"
             },
             "result": {
               "status": "passed",
-              "duration": 13433083
+              "duration": 23301917
             }
           },
           {
@@ -245,11 +731,11 @@
             "line": 26,
             "name": "the create document button should be present",
             "match": {
-              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:53"
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:56"
             },
             "result": {
               "status": "passed",
-              "duration": 2447250
+              "duration": 5774708
             }
           },
           {
@@ -257,7 +743,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 168072333
+              "duration": 130383667
             }
           }
         ],
