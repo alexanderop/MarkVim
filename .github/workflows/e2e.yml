@@ -71,6 +71,30 @@ jobs:
       - name: Run E2E tests
         run: pnpm run test:e2e:ci
 
+      - name: Publish Cucumber Test Results
+        uses: deblockt/cucumber-report-annotations-action@v1.17
+        if: always()
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          path: "reports/*.json"
+          name: "🥒 E2E Test Results"
+          show-global-summary-report: true
+          show-number-of-error-on-check-title: true
+
+      - name: Create Job Summary
+        if: always()
+        run: |
+          echo "## 🎭 E2E Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "reports/cucumber_report.json" ]; then
+            echo "✅ Test report generated successfully" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📊 **Reports Location:** \`reports/\`" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 **Full Report:** Check the artifacts section below" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ No test report found" >> $GITHUB_STEP_SUMMARY
+          fi
+
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
