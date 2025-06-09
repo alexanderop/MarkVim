@@ -117,3 +117,8 @@ Then('the editor pane should not be visible', async function (this: MarkVimWorld
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.editorPane.waitFor({ state: 'hidden' })
 })
+
+Then('a new document should be created automatically', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyNewDocumentCreated()
+})

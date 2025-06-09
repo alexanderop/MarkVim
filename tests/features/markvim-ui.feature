@@ -23,4 +23,14 @@ Feature: MarkVim UI Elements
   Scenario: Sidebar functionality works
     Given I open the MarkVim homepage
     Then the document list should be visible
-    And the create document button should be present 
+    And the create document button should be present
+
+  Scenario: Note deletion functionality works
+    Given I open the MarkVim homepage
+    When I click on element with testid "delete-document-btn"
+    Then element with testid "delete-confirm-modal" should be visible
+    And element with testid "delete-confirm-btn" should be visible
+    And element with testid "delete-cancel-btn" should be visible
+    When I click on element with testid "delete-confirm-btn"
+    Then element with testid "delete-confirm-modal" should not be visible
+    And a new document should be created automatically 

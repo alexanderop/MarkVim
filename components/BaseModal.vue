@@ -8,6 +8,7 @@ interface Props {
   footerLeft?: string
   footerRight?: string
   showCloseButton?: boolean
+  dataTestid?: string
 }
 
 interface Emits {
@@ -15,7 +16,7 @@ interface Emits {
   (e: 'close'): void
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   maxWidth: '3xl',
   maxHeight: '85vh',
   showCloseButton: true,
@@ -49,9 +50,10 @@ const maxWidthClasses = {
       <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
 
       <DialogContent
+        :data-testid="props.dataTestid"
         class="bg-surface-secondary border border-subtle flex flex-col gap-3 w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
-        :class="[maxWidthClasses[maxWidth]]"
-        :style="{ maxHeight }"
+        :class="[maxWidthClasses[props.maxWidth]]"
+        :style="{ maxHeight: props.maxHeight }"
       >
         <div class="p-4 border-b border-subtle flex items-center justify-between">
           <div>

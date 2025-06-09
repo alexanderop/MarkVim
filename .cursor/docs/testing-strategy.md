@@ -33,7 +33,7 @@ tests/
 
 ## ✅ Current Test Status
 
-**All tests passing**: 8 scenarios, 37 steps ✅
+**All tests passing**: 9 scenarios, 45 steps ✅
 
 **Test Coverage**:
 - ✅ Core UI components visibility
@@ -42,6 +42,7 @@ tests/
 - ✅ Keyboard navigation
 - ✅ Document management UI
 - ✅ Sidebar functionality
+- ✅ Note deletion with confirmation modal
 
 ## 🔄 Refactoring Improvements
 

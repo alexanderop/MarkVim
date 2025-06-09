@@ -381,6 +381,7 @@ useHead({
       :open="deleteModalOpen"
       title="Delete Document"
       max-width="md"
+      dataTestid="delete-confirm-modal"
       @update:open="deleteModalOpen = $event"
       @close="cancelDeleteDocument"
     >
@@ -395,12 +396,14 @@ useHead({
 
       <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
         <button
+          data-testid="delete-cancel-btn"
           class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
           @click="cancelDeleteDocument"
         >
           Cancel
         </button>
         <button
+          data-testid="delete-confirm-btn"
           class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
           @click="confirmDeleteDocument"
         >

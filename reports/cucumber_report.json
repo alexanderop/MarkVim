@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1038582124
+              "duration": 332509708
             }
           },
           {
@@ -27,7 +27,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3342925041
+              "duration": 2203139500
             }
           },
           {
@@ -40,7 +40,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 91388500
+              "duration": 123053249
             }
           },
           {
@@ -53,7 +53,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 37956707
+              "duration": 6319166
             }
           },
           {
@@ -66,7 +66,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 4082542
+              "duration": 2896832
             }
           },
           {
@@ -79,7 +79,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 98608916
+              "duration": 65892125
             }
           },
           {
@@ -92,7 +92,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3523292
+              "duration": 3301375
             }
           },
           {
@@ -105,7 +105,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3264709
+              "duration": 2312832
             }
           },
           {
@@ -118,7 +118,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 99581541
+              "duration": 56633499
             }
           },
           {
@@ -131,7 +131,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 14535791
+              "duration": 15845333
             }
           },
           {
@@ -139,7 +139,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 150341500
+              "duration": 68452542
             }
           }
         ],
@@ -163,7 +163,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 987801958
+              "duration": 288683999
             }
           },
           {
@@ -176,7 +176,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3344936124
+              "duration": 2204685708
             }
           },
           {
@@ -189,7 +189,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 31173833
+              "duration": 48511791
             }
           },
           {
@@ -202,7 +202,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 13055124
+              "duration": 25519709
             }
           },
           {
@@ -215,7 +215,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 3253541
+              "duration": 6319582
             }
           },
           {
@@ -228,7 +228,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 13640124
+              "duration": 12298875
             }
           },
           {
@@ -241,7 +241,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 6481958
+              "duration": 4870458
             }
           },
           {
@@ -249,7 +249,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 294260457
+              "duration": 61075291
             }
           }
         ],
@@ -273,7 +273,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 352769832
+              "duration": 114605709
             }
           },
           {
@@ -286,7 +286,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2171562000
+              "duration": 1758649958
             }
           },
           {
@@ -299,7 +299,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 24614167
+              "duration": 33905333
             }
           },
           {
@@ -312,7 +312,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 10385125
+              "duration": 20414458
             }
           },
           {
@@ -325,7 +325,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 6783416
+              "duration": 8094541
             }
           },
           {
@@ -338,7 +338,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 8412582
+              "duration": 11459832
             }
           },
           {
@@ -351,7 +351,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2414249
+              "duration": 2862917
             }
           },
           {
@@ -359,7 +359,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 109397208
+              "duration": 23070415
             }
           }
         ],
@@ -378,7 +378,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 277890374
+              "duration": 95509041
             }
           },
           {
@@ -391,7 +391,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2503233875
+              "duration": 1684943124
             }
           },
           {
@@ -404,7 +404,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 89482541
+              "duration": 60535874
             }
           },
           {
@@ -417,7 +417,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 16285459
+              "duration": 55984875
             }
           },
           {
@@ -430,7 +430,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2870999
+              "duration": 6245208
             }
           },
           {
@@ -438,7 +438,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 196587416
+              "duration": 98078249
             }
           }
         ],
@@ -468,7 +468,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 313714500
+              "duration": 125852415
             }
           },
           {
@@ -481,7 +481,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2443002667
+              "duration": 1714401500
             }
           },
           {
@@ -524,7 +524,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 22508875
+              "duration": 26884666
             }
           },
           {
@@ -532,7 +532,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 113044792
+              "duration": 26495249
             }
           }
         ],
@@ -551,7 +551,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 400097958
+              "duration": 127746333
             }
           },
           {
@@ -564,7 +564,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2200153292
+              "duration": 1779315584
             }
           },
           {
@@ -577,7 +577,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 41660708
+              "duration": 35889332
             }
           },
           {
@@ -590,7 +590,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 19876666
+              "duration": 23649208
             }
           },
           {
@@ -603,7 +603,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 6802124
+              "duration": 7158333
             }
           },
           {
@@ -611,7 +611,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 263401707
+              "duration": 29398124
             }
           }
         ],
@@ -630,7 +630,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 297501749
+              "duration": 101135584
             }
           },
           {
@@ -643,7 +643,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2334628584
+              "duration": 1716264459
             }
           },
           {
@@ -656,7 +656,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 14674209
+              "duration": 19765459
             }
           },
           {
@@ -669,7 +669,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2470624
+              "duration": 2713292
             }
           },
           {
@@ -677,7 +677,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 101392083
+              "duration": 23201499
             }
           }
         ],
@@ -696,7 +696,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 297202167
+              "duration": 141314499
             }
           },
           {
@@ -709,7 +709,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2205658874
+              "duration": 1635724957
             }
           },
           {
@@ -722,7 +722,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 23301917
+              "duration": 16162249
             }
           },
           {
@@ -735,7 +735,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 5774708
+              "duration": 8184999
             }
           },
           {
@@ -743,7 +743,138 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 130383667
+              "duration": 51387749
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-ui-elements;note-deletion-functionality-works",
+        "keyword": "Scenario",
+        "line": 28,
+        "name": "Note deletion functionality works",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 99943792
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 29,
+            "name": "I open the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1502516625
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 30,
+            "name": "I click on element with testid \"delete-document-btn\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:33"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 95725333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 31,
+            "name": "element with testid \"delete-confirm-modal\" should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2365999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 32,
+            "name": "element with testid \"delete-confirm-btn\" should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2629667
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 33,
+            "name": "element with testid \"delete-cancel-btn\" should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3656000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 34,
+            "name": "I click on element with testid \"delete-confirm-btn\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:33"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34026499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 35,
+            "name": "element with testid \"delete-confirm-modal\" should not be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/common.steps.ts:53"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1358708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 36,
+            "name": "a new document should be created automatically",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim-ui.steps.ts:96"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4798333
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 18639000
             }
           }
         ],

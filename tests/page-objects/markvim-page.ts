@@ -4,6 +4,7 @@ import { expect } from '@playwright/test'
 export class MarkVimPage {
   readonly page: Page
   readonly headerToolbar: Locator
+  readonly headerTitle: Locator
   readonly editorPane: Locator
   readonly previewPane: Locator
   readonly statusBar: Locator
@@ -19,6 +20,7 @@ export class MarkVimPage {
   constructor(page: Page) {
     this.page = page
     this.headerToolbar = page.locator('[data-testid="header-toolbar"]')
+    this.headerTitle = this.headerToolbar.locator('h1')
     this.editorPane = page.locator('[data-testid="editor-pane"]')
     this.previewPane = page.locator('[data-testid="preview-pane"]')
     this.statusBar = page.locator('[data-testid="status-bar"]')
@@ -107,5 +109,9 @@ export class MarkVimPage {
 
   async createNewDocument(): Promise<void> {
     await this.createDocumentBtn.click()
+  }
+
+  async verifyNewDocumentCreated(): Promise<void> {
+    await expect(this.headerTitle).toHaveText('New Note')
   }
 }
