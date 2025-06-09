@@ -172,7 +172,7 @@ export function useShortcuts() {
       if (processedShortcuts.has(command.description)) {
         return
       }
-      
+
       const category = command.category || 'General'
       if (!categories.has(category)) {
         categories.set(category, [])

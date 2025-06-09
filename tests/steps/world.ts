@@ -7,10 +7,10 @@ class CustomWorld {
 
   async init() {
     // Use environment variable to determine headed mode
-    // Type assertion to avoid TS issues with process
-    const env = (globalThis as any).process?.env || {}
+    const process = await import('node:process')
+    const env = process.env || {}
     const isHeaded = env.HEADED === 'true'
-    
+
     this.browser = await chromium.launch({
       headless: !isHeaded,
       args: ['--no-sandbox', '--disable-dev-shm-usage'],

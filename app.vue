@@ -69,7 +69,7 @@ function useDocumentDeletion() {
 
 const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDocument, cancelDeleteDocument } = useDocumentDeletion()
 
-const { registerShortcuts, registerAppCommands, formatKeys } = useShortcuts()
+const { registerShortcuts, formatKeys } = useShortcuts()
 
 const activeDocumentTitle = computed(() => {
   return activeDocument.value

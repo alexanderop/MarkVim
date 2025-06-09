@@ -5,5 +5,8 @@ import withNuxt from './.nuxt/eslint.config.mjs'
 export default withNuxt(
   antfu({
     // @antfu/eslint-config options
+    ignores: [
+      '.cursor/**/*.md',
+    ],
   }),
 )

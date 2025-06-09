@@ -8,7 +8,7 @@ MarkVim uses a comprehensive End-to-End (E2E) testing strategy built on modern t
 
 ### Core Testing Tools
 - **Cucumber.js** - Behavior-Driven Development (BDD) framework for writing human-readable test scenarios
-- **Playwright** - Browser automation for cross-browser testing and UI interactions  
+- **Playwright** - Browser automation for cross-browser testing and UI interactions
 - **TypeScript** - Type-safe test definitions and step implementations
 
 ### Refactored Architecture ✨
@@ -37,7 +37,7 @@ tests/
 
 **Test Coverage**:
 - ✅ Core UI components visibility
-- ✅ Command palette functionality  
+- ✅ Command palette functionality
 - ✅ View mode switching (Editor/Split/Preview)
 - ✅ Keyboard navigation
 - ✅ Document management UI
@@ -61,7 +61,7 @@ tests/
 **Common Steps** (`common.steps.ts`) - Generic interactions:
 ```gherkin
 Given I navigate to the application
-When I press the key "Cmd+K"  
+When I press the key "Cmd+K"
 When I click on element with testid "button"
 Then element with testid "modal" should be visible
 ```
@@ -73,15 +73,15 @@ When I switch to editor view
 Then both editor and preview panes should be visible
 ```
 
-### 2. **Page Object Model** 
+### 2. **Page Object Model**
 
 Centralized UI element management:
 ```typescript
 class MarkVimPage {
   readonly commandPalette: Locator
-  readonly editorPane: Locator  
+  readonly editorPane: Locator
   readonly previewPane: Locator
-  
+
   async switchToSplitView(): Promise<void>
   async verifyCommandPaletteVisible(): Promise<void>
 }
@@ -94,8 +94,8 @@ Reliable browser/page lifecycle with proper cleanup:
 export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
-  init(): Promise<void>
-  cleanup(): Promise<void>
+  init: () => Promise<void>
+  cleanup: () => Promise<void>
 }
 ```
 
@@ -131,7 +131,7 @@ Given('I am on the MarkVim homepage', async function (this: MarkVimWorld) {
   await markVimPage.navigate()
 })
 
-// Reusable common step  
+// Reusable common step
 When('I press the key {string}', async function (this: MarkVimWorld, key: string) {
 When('I click on element with testid {string}', async function (this: MarkVimWorld, testid: string) {
   await this.page?.locator(`[data-testid="${testid}"]`).click()
@@ -187,8 +187,8 @@ Centralized browser and page management:
 export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
-  init(): Promise<void>
-  cleanup(): Promise<void>
+  init: () => Promise<void>
+  cleanup: () => Promise<void>
 }
 
 Before(async function (this: MarkVimWorld) {
@@ -312,13 +312,13 @@ async validateElementsVisible(testids: string[]): Promise<void> {
 ### Step Definition Strategy
 ```typescript
 // 1. Check if common steps can be used
-Given('I navigate to the application')  // ✅ Use existing
+Given('I navigate to the application') // ✅ Use existing
 
 // 2. Create domain-specific steps for business logic
-When('I switch to editor view')          // ✅ MarkVim-specific
+When('I switch to editor view') // ✅ MarkVim-specific
 
 // 3. Avoid duplicating existing functionality
-When('I click on editor button')         // ❌ Use common step instead
+When('I click on editor button') // ❌ Use common step instead
 ```
 
 ### localStorage Testing Strategy
@@ -329,7 +329,7 @@ Scenario: View mode preference persists across page reloads
   Given I am on the MarkVim homepage
   When I switch to editor view
   Then the view mode should be stored in localStorage as "editor"
-  
+
   When I reload the page
   Then the view mode should be "editor"
 ```
@@ -422,7 +422,7 @@ Enhanced CI configuration with parallel execution:
 // cucumber.cjs
 module.exports = {
   default: {
-    parallel: 2,  // Run tests in parallel
+    parallel: 2, // Run tests in parallel
     format: [
       'progress',
       'json:reports/cucumber_report.json',
@@ -466,8 +466,8 @@ This refactored testing strategy ensures MarkVim maintains high quality while su
 
 **Final Implementation Status**:
 - **24 scenarios passing, 162 steps total** ✅
-- **Complete keyboard shortcuts coverage**: 
-  - View modes: `1/2/3` 
+- **Complete keyboard shortcuts coverage**:
+  - View modes: `1/2/3`
   - Navigation: `⌘K` (command palette), `G S` (settings)
   - File operations: `⌘S` (save), `⌘N` (new), `⌘⇧S` (download)
   - UI controls: `⌘⇧\` (sidebar), `?` (shortcuts modal)
@@ -483,4 +483,4 @@ This refactored testing strategy ensures MarkVim maintains high quality while su
 2. **Robust Testing**: Functional tests verify actual behavior, not just UI presence
 3. **State Management**: Proper handling of vim mode toggle states and localStorage persistence
 4. **Cross-browser Compatibility**: Single key shortcuts work without browser conflicts
-5. **User Experience**: Intuitive shortcuts that enhance productivity without interfering with normal typing 
+5. **User Experience**: Intuitive shortcuts that enhance productivity without interfering with normal typing

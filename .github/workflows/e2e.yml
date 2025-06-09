@@ -13,16 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: corepack enable
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: pnpm
-
-      - run: pnpm install
+      - name: Install dependencies
+        uses: ./.github/actions/pnpm-install
 
       - run: pnpm run build
+
+      - run: pnpm lint
 
       - run: pnpm exec playwright install --with-deps
 
