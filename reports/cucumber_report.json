@@ -1,0 +1,275 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "markvim-ui-elements;essential-ui-components-are-present",
+        "keyword": "Scenario",
+        "line": 3,
+        "name": "Essential UI components are present",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "I open the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3646953542
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "testid"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "header-toolbar"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "editor-pane"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "preview-pane"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "status-bar"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 5,
+            "name": "the following elements are visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:11"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 36749208
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 198091583
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-ui-elements;command-palette-can-be-opened",
+        "keyword": "Scenario",
+        "line": 12,
+        "name": "Command palette can be opened",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 13,
+            "name": "I open the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2123957667
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 14,
+            "name": "I press \"Cmd+K\"",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:17"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 29369999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "the command palette should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:25"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 14185749
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 16,
+            "name": "the search input should be focused",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:29"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1999792
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 238291957
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-ui-elements;split-view-mode-works-correctly",
+        "keyword": "Scenario",
+        "line": 18,
+        "name": "Split view mode works correctly",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 19,
+            "name": "I open the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2368715916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "both editor and preview panes should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:33"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12616500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 21,
+            "name": "the view mode toggle should be present",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:39"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5312667
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 171342916
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "markvim-ui-elements;sidebar-functionality-works",
+        "keyword": "Scenario",
+        "line": 23,
+        "name": "Sidebar functionality works",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 24,
+            "name": "I open the MarkVim homepage",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2192569832
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 25,
+            "name": "the document list should be visible",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13433083
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 26,
+            "name": "the create document button should be present",
+            "match": {
+              "location": "file:/Users/alexanderopalic/git5/foo/MarkVim/tests/steps/markvim.steps.ts:53"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2447250
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 168072333
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "markvim-ui-elements",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "MarkVim UI Elements",
+    "tags": [],
+    "uri": "tests/features/markvim-ui.feature"
+  }
+]

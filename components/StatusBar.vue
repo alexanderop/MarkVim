@@ -11,7 +11,7 @@ defineProps<Props>()
 </script>
 
 <template>
-  <footer class="px-4 border-t border-subtle bg-background/90 flex h-8 items-center justify-between backdrop-blur-xl">
+  <footer data-testid="status-bar" class="px-4 border-t border-subtle bg-background/90 flex h-8 items-center justify-between backdrop-blur-xl">
     <div class="text-xs text-gray-500 flex gap-4 items-center">
       <div v-if="showVimMode && vimMode" class="flex gap-1 items-center">
         <span class="text-green-400 font-medium font-mono">{{ vimMode }}</span>

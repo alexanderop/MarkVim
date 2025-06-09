@@ -62,6 +62,7 @@ function formatDate(timestamp: number): string {
 <template>
   <aside
     v-if="isVisible"
+    data-testid="document-list"
     class="border-r border-subtle bg-background flex flex-col h-full w-72"
   >
     <!-- Header -->
@@ -76,6 +77,7 @@ function formatDate(timestamp: number): string {
       </div>
 
       <button
+        data-testid="create-document-btn"
         class="group text-white rounded-md bg-accent flex h-7 w-7 shadow-accent/20 shadow-lg transition-all duration-200 items-center justify-center hover:bg-accent-hover"
         title="New note"
         @click="handleCreateDocument"

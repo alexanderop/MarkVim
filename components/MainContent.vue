@@ -61,6 +61,7 @@ function setPreviewRef(el: HTMLElement | null) {
     <div
       v-if="layout.isEditorVisible"
       :ref="setEditorRef"
+      data-testid="editor-pane"
       class="w-full transition-all duration-300 ease-in-out" :class="[
         layout.isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
@@ -84,6 +85,7 @@ function setPreviewRef(el: HTMLElement | null) {
     <ResizableSplitter
       v-if="layout.isSplitView"
       :is-dragging="layout.isDragging"
+      data-testid="resize-splitter"
       class="hidden md:block"
       @start-drag="$emit('startDrag', $event)"
     />
@@ -91,6 +93,7 @@ function setPreviewRef(el: HTMLElement | null) {
     <div
       v-if="layout.isPreviewVisible"
       :ref="setPreviewRef"
+      data-testid="preview-pane"
       class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
         layout.isSplitView ? 'h-1/2 md:h-full' : 'h-full',
         !layout.isSplitView && !layout.isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',

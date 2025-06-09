@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "types": ["node", "@cucumber/cucumber", "@playwright/test"],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "ts-node": {
+    "esm": true
+  }
+}

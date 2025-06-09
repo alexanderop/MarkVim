@@ -17,7 +17,7 @@ defineEmits<Emits>()
 </script>
 
 <template>
-  <header class="px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
+  <header data-testid="header-toolbar" class="px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
     <!-- Left section -->
     <div class="flex gap-3 items-center">
       <ToolbarButton
@@ -25,6 +25,7 @@ defineEmits<Emits>()
         :text="isSidebarVisible ? 'Hide' : 'Show'"
         :title="isSidebarVisible ? 'Hide' : 'Show'"
         variant="toggle"
+        data-testid="sidebar-toggle"
         @click="$emit('toggleSidebar')"
       />
 
@@ -37,7 +38,7 @@ defineEmits<Emits>()
     </div>
 
     <!-- Center section - View mode toggle -->
-    <div class="p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
+    <div data-testid="view-mode-toggle" class="p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
       <button
         v-for="mode in [
           { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
@@ -45,6 +46,7 @@ defineEmits<Emits>()
           { key: 'preview', icon: 'lucide:eye', label: 'Preview', shortcut: '⌘3' },
         ]"
         :key="mode.key"
+        :data-testid="`view-mode-${mode.key}`"
         class="group text-xs font-medium px-3 py-1.5 rounded-md flex gap-1.5 transition-all duration-200 items-center relative"
         :class="[
           viewMode === mode.key
@@ -71,6 +73,7 @@ defineEmits<Emits>()
     <!-- Right section -->
     <div class="flex gap-2 items-center">
       <button
+        data-testid="delete-document-btn"
         class="group text-gray-400 rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:text-red-400 hover:bg-red-500/10"
         title="Delete note"
         @click="$emit('deleteDocument')"
