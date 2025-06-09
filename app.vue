@@ -1,8 +1,12 @@
 <script setup lang="ts">
 const viewMode = ref<'split' | 'editor' | 'preview'>('split')
 const isSidebarVisible = useLocalStorage('markvim-sidebar-visible', true)
+const currentVimMode = ref<string>('NORMAL')
+const commandPaletteOpen = ref(false)
+const commandPalettePosition = ref({ x: 0, y: 0 })
 
-// Document management
+const isMobile = useMediaQuery('(max-width: 768px)')
+
 const {
   documents,
   activeDocument,
@@ -14,7 +18,9 @@ const {
   getDocumentTitle,
 } = useDocuments()
 
-// Create a writable computed for the active document's content
+const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
+const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
+
 const activeMarkdown = computed({
   get: () => activeDocument.value?.content || '',
   set: (value: string) => {
@@ -24,25 +30,12 @@ const activeMarkdown = computed({
   },
 })
 
-// Use the refactored markdown composable
 const { renderedMarkdown, shikiCSS } = useMarkdown(activeMarkdown)
 
-const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
-const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
 const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'preview')
 const isSplitView = computed(() => viewMode.value === 'split')
 const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
 
-// Vim mode tracking
-const currentVimMode = ref<string>('NORMAL')
-
-const isMobile = useMediaQuery('(max-width: 768px)')
-
-// Command palette state
-const commandPaletteOpen = ref(false)
-const commandPalettePosition = ref({ x: 0, y: 0 })
-
-// Document deletion modal - inline composable
 function useDocumentDeletion() {
   const deleteModalOpen = ref(false)
   const documentToDelete = ref<{ id: string, title: string } | null>(null)
@@ -82,23 +75,19 @@ const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDo
 
 const { registerShortcuts, registerAppCommands, formatKeys } = useShortcuts()
 
-// Get the title of the active document
 const activeDocumentTitle = computed(() => {
   return activeDocument.value
     ? getDocumentTitle(activeDocument.value.content)
     : 'MarkVim'
 })
 
-// Global keyboard event handler for command palette
 function handleGlobalKeydown(event: KeyboardEvent) {
-  // Handle Meta+K (Cmd+K) shortcut for command palette
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
     event.preventDefault()
     openCommandPalette(event)
     return
   }
 
-  // Close command palette with Escape
   if (event.key === 'Escape' && commandPaletteOpen.value) {
     commandPaletteOpen.value = false
   }
@@ -202,7 +191,6 @@ onMounted(() => {
       category: 'View',
     },
 
-    // Editor shortcuts (Linear-inspired)
     {
       keys: 'meta+k',
       description: 'Open command palette',
@@ -229,9 +217,7 @@ onMounted(() => {
     },
   ])
 
-  // Register app commands for command palette
   registerAppCommands([
-    // File Commands
     {
       id: 'save',
       keys: 'meta+s',
@@ -267,7 +253,6 @@ onMounted(() => {
       action: () => handleCreateDocument(),
     },
 
-    // Settings Commands
     {
       id: 'toggle-vim-mode',
       keys: '',
@@ -329,7 +314,6 @@ useHead({
     />
 
     <div class="flex flex-1 relative overflow-hidden">
-      <!-- Sidebar with smooth transition -->
       <DocumentList
         v-show="isSidebarVisible"
         :documents="documents"
@@ -345,7 +329,6 @@ useHead({
         @delete-document="handleDeleteDocument"
       />
 
-      <!-- Main content area -->
       <div class="bg-gray-900/30 flex flex-1 flex-col overflow-hidden">
         <MainContent
           :layout="{
@@ -394,7 +377,6 @@ useHead({
       @select-document="handleDocumentSelectFromPalette"
     />
 
-    <!-- Delete Confirmation Modal -->
     <BaseModal
       :open="deleteModalOpen"
       title="Delete Document"
@@ -430,7 +412,6 @@ useHead({
 </template>
 
 <style>
-/* Global scrollbar styling for a more subtle, Linear-like feel */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -451,7 +432,6 @@ useHead({
   background: hsl(220 10% 30% / 0.7);
 }
 
-/* Base editor theming using CSS variables from UnoCSS */
 .cm-editor {
   background-color: var(--color-surface-primary) !important;
   color: var(--color-text-primary) !important;
@@ -483,7 +463,6 @@ useHead({
   background-color: hsl(var(--accent-hsl) / 0.15) !important;
 }
 
-/* Cleaned-up markdown syntax highlighting */
 .cm-header { font-weight: 600 !important; }
 .cm-header-1 { font-size: 1.25em !important; color: var(--color-text-bright) !important; }
 .cm-header-2 { font-size: 1.15em !important; color: var(--color-text-bright) !important; }
@@ -533,14 +512,12 @@ useHead({
   color: var(--color-text-primary) !important;
 }
 
-/* Universal transitions for a smoother feel */
 button, a {
   transition-property: color, background-color, border-color, transform, opacity, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
 
-/* Custom focus-visible styles for accessibility */
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
