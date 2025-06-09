@@ -7,6 +7,7 @@ export default withNuxt(
     // @antfu/eslint-config options
     ignores: [
       '.cursor/**/*.md',
+      'reports/**/*',
     ],
   }),
 )

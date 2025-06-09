@@ -18,6 +18,10 @@ logs
 .fleet
 .idea
 
+# Test reports
+cucumber.json
+reports/
+
 # ESLint cache
 .eslintcache
 
