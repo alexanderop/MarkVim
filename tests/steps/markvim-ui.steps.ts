@@ -177,3 +177,33 @@ When('I reload the page', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.reloadPage()
 })
+
+When('I open the settings modal', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.openSettingsModal()
+})
+
+When('I switch to light theme', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.switchToLightTheme()
+})
+
+When('I switch to dark theme', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.switchToDarkTheme()
+})
+
+Then('the settings modal should be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifySettingsModalVisible()
+})
+
+Then('the theme should be stored in localStorage as {string}', async function (this: MarkVimWorld, expectedTheme: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyThemeInLocalStorage(expectedTheme)
+})
+
+Then('the document should have {string} theme class', async function (this: MarkVimWorld, expectedTheme: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyDocumentHasThemeClass(expectedTheme)
+})

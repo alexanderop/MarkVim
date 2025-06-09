@@ -17,7 +17,7 @@ const { settings, toggleVimMode } = useEditorSettings()
 
     <button
       class="rounded-full inline-flex h-6 w-11 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-editor-active focus:ring-offset-surface-primary focus:ring-offset-2" :class="[
-        settings.vimMode ? 'bg-editor-active' : 'bg-gray-600',
+        settings.vimMode ? 'bg-editor-active' : 'bg-surface-tertiary',
       ]"
       role="switch"
       :aria-checked="settings.vimMode"

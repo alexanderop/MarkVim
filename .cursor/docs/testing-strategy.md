@@ -9,6 +9,7 @@ MarkVim uses a comprehensive End-to-End (E2E) testing strategy built on modern t
 ### Core Testing Tools
 - **Cucumber.js** - Behavior-Driven Development (BDD) framework for writing human-readable test scenarios
 - **Playwright** - Browser automation for cross-browser testing and UI interactions
+- **Playwright** - Browser automation for cross-browser testing and UI interactions
 - **TypeScript** - Type-safe test definitions and step implementations
 
 ### Refactored Architecture ✨
@@ -273,12 +274,12 @@ When('I click on the editor pane', async function () {
 #### Organize by Domain
 ```typescript
 // common.steps.ts - Generic UI interactions
-Given('I navigate to {string}', ...)
-When('I press the key {string}', ...)
+Given('I navigate to {string}', async () => { /* implementation */ })
+When('I press the key {string}', async () => { /* implementation */ })
 
 // markvim-ui.steps.ts - MarkVim-specific actions
-When('I switch to editor view', ...)
-When('I open the command palette', ...)
+When('I switch to editor view', async () => { /* implementation */ })
+When('I open the command palette', async () => { /* implementation */ })
 ```
 
 #### Use Page Objects for Complex Interactions
@@ -290,11 +291,13 @@ When('I validate the UI is loaded', async function () {
 })
 
 // In page object
-async validateElementsVisible(testids: string[]): Promise<void> {
-  const results = await Promise.all(
-    testids.map(testid => this.isElementVisible(testid))
-  )
-  // ... validation logic
+class PageObject {
+  async validateElementsVisible(testids: string[]): Promise<void> {
+    const results = await Promise.all(
+      testids.map(testid => this.isElementVisible(testid))
+    )
+    // validation logic implementation
+  }
 }
 ```
 
@@ -398,9 +401,11 @@ Given('I open the MarkVim homepage', async function (this: MarkVimWorld) {
 })
 
 // markvim-page.ts - Page object encapsulation
-async navigate(url: string = 'http://localhost:3000'): Promise<void> {
-  await this.page.goto(url)
-  await this.page.waitForLoadState('networkidle')
+class MarkVimPage {
+  async navigate(url: string = 'http://localhost:3000'): Promise<void> {
+    await this.page.goto(url)
+    await this.page.waitForLoadState('networkidle')
+  }
 }
 ```
 

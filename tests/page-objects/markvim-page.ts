@@ -24,6 +24,9 @@ export class MarkVimPage {
   readonly keyboardShortcutsModalTitle: Locator
   readonly settingsButton: Locator
   readonly settingsModal: Locator
+  readonly settingsModalTrigger: Locator
+  readonly themeToggleLight: Locator
+  readonly themeToggleDark: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -48,6 +51,9 @@ export class MarkVimPage {
     this.keyboardShortcutsModalTitle = page.locator('[data-testid="keyboard-shortcuts-modal"] h2')
     this.settingsButton = page.locator('[data-testid="settings-button"]')
     this.settingsModal = page.locator('[data-testid="settings-modal"]')
+    this.settingsModalTrigger = page.locator('[data-testid="settings-button"]')
+    this.themeToggleLight = page.locator('[data-testid="theme-light-btn"]')
+    this.themeToggleDark = page.locator('[data-testid="theme-dark-btn"]')
   }
 
   async navigate(): Promise<void> {
@@ -219,6 +225,36 @@ export class MarkVimPage {
   async reloadPage(): Promise<void> {
     await this.page.reload()
     await this.page.waitForLoadState('networkidle')
+  }
+
+  async openSettingsModal(): Promise<void> {
+    await this.settingsModalTrigger.click()
+    await expect(this.settingsModal).toBeVisible()
+  }
+
+  async switchToLightTheme(): Promise<void> {
+    await this.themeToggleLight.click()
+  }
+
+  async switchToDarkTheme(): Promise<void> {
+    await this.themeToggleDark.click()
+  }
+
+  async verifyThemeInLocalStorage(expectedTheme: string): Promise<void> {
+    const storedValue = await this.page.evaluate(() => {
+      return localStorage.getItem('markvim-theme')
+    })
+    expect(storedValue).toBe(expectedTheme)
+  }
+
+  async verifyDocumentHasThemeClass(expectedTheme: string): Promise<void> {
+    const htmlElement = this.page.locator('html')
+    if (expectedTheme === 'dark') {
+      await expect(htmlElement).toHaveClass(/dark/)
+    }
+    else if (expectedTheme === 'light') {
+      await expect(htmlElement).not.toHaveClass(/dark/)
+    }
   }
 
   async clickKeyboardShortcutsButton(): Promise<void> {

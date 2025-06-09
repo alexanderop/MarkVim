@@ -68,3 +68,14 @@ Feature: MarkVim UI Elements
     Then element with testid "document-list" should not be visible
     When I toggle the sidebar with keyboard shortcut
     Then element with testid "document-list" should be visible 
+
+  Scenario: Theme toggle functionality works
+    Given I open the MarkVim homepage
+    When I open the settings modal
+    Then the settings modal should be visible
+    When I switch to light theme
+    Then the theme should be stored in localStorage as "light"
+    And the document should have "light" theme class
+    When I switch to dark theme
+    Then the theme should be stored in localStorage as "dark"
+    And the document should have "dark" theme class

@@ -2,15 +2,14 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "types": ["node", "@cucumber/cucumber", "@playwright/test"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
   "include": [
     "**/*.ts"
-  ],
-  "ts-node": {
-    "esm": true
-  }
+  ]
 }

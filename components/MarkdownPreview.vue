@@ -1,64 +1,82 @@
 <script setup lang="ts">
+import { useTheme } from '~/composables/useTheme'
+
 const { renderedHtml } = defineProps<{
   renderedHtml: string
 }>()
 
 const root = ref<HTMLElement>()
+const { theme: colorMode } = useTheme()
+
+// Use a more robust theme detection that handles SSR
+const resolvedTheme = computed(() => {
+  if (import.meta.server) {
+    return 'dark' // Default to dark for SSR
+  }
+  return colorMode.value
+})
+
+const mermaidTheme = computed(() => (resolvedTheme.value === 'light' ? 'default' : 'dark'))
 
 // Initialize Mermaid only on client side
 if (import.meta.client) {
   const mermaid = await import('mermaid')
-  mermaid.default.initialize({
-    startOnLoad: false,
-    theme: 'dark',
-    darkMode: true,
-    // Dark theme configuration that matches your editor
-    themeVariables: {
-      primaryColor: '#58a6ff',
-      primaryTextColor: '#e6edf3',
-      primaryBorderColor: '#30363d',
-      lineColor: '#6e7681',
-      sectionBkgColor: '#161b22',
-      altSectionBkgColor: '#0d1117',
-      gridColor: '#30363d',
-      secondaryColor: '#21262d',
-      tertiaryColor: '#8b949e',
-    },
-  })
 
-  const run = () => {
+  const reinitializeMermaid = () => {
+    mermaid.default.initialize({
+      startOnLoad: false,
+      theme: mermaidTheme.value,
+      darkMode: resolvedTheme.value === 'dark',
+      themeVariables: {
+        primaryColor: '#58a6ff',
+        primaryTextColor: '#e6edf3',
+        primaryBorderColor: '#30363d',
+        lineColor: '#6e7681',
+        sectionBkgColor: '#161b22',
+        altSectionBkgColor: '#0d1117',
+        gridColor: '#30363d',
+        secondaryColor: '#21262d',
+        tertiaryColor: '#8b949e',
+      },
+    })
     const nodes = root.value?.querySelectorAll('.mermaid') ?? []
     if (nodes.length > 0) {
       mermaid.default.run({ nodes: Array.from(nodes) as HTMLElement[] })
     }
   }
 
-  onMounted(run)
-  watch(() => renderedHtml, () => nextTick(run))
+  onMounted(reinitializeMermaid)
+  watch([() => renderedHtml, resolvedTheme], () => nextTick(reinitializeMermaid), { deep: true })
 }
 </script>
 
 <template>
-  <div class="bg-editor-bg flex flex-col h-full w-full">
-    <div class="px-6 border-b border-editor-border bg-editor-bg flex flex-shrink-0 h-10 items-center justify-between">
+  <div class="bg-surface-primary flex flex-col h-full w-full">
+    <div class="px-6 border-b border-border bg-surface-secondary flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
         <Icon name="lucide:eye" class="text-text-primary h-4 w-4" />
       </div>
     </div>
 
-    <div ref="root" class="bg-editor-bg flex-1 min-h-0 overflow-auto">
+    <div ref="root" class="bg-surface-primary flex-1 min-h-0 overflow-auto">
       <div class="mx-auto px-12 py-12 max-w-none">
-        <article class="prose-lg max-w-none prose prose-gray prose-invert" v-html="renderedHtml" />
+        <article
+          class="prose-lg max-w-none prose prose-gray"
+          :class="{
+            'prose-invert': resolvedTheme === 'dark',
+          }"
+          v-html="renderedHtml"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style>
-/* Mermaid diagram styling to match dark theme */
+/* Mermaid diagram styling to match current theme */
 .mermaid {
   background: transparent !important;
-  color: #e6edf3 !important;
+  color: var(--color-text-primary) !important;
   text-align: center !important;
   display: flex !important;
   justify-content: center !important;
@@ -74,77 +92,77 @@ if (import.meta.client) {
   margin: 0 auto !important;
 }
 
-/* Override Mermaid's default colors for better dark theme integration */
+/* Override Mermaid's default colors for better theme integration */
 .mermaid .node rect,
 .mermaid .node circle,
 .mermaid .node ellipse,
 .mermaid .node polygon {
-  fill: #21262d !important;
-  stroke: #58a6ff !important;
+  fill: var(--color-surface-secondary) !important;
+  stroke: var(--color-accent) !important;
   stroke-width: 2px !important;
 }
 
 .mermaid .node .label {
-  color: #e6edf3 !important;
-  fill: #e6edf3 !important;
+  color: var(--color-text-primary) !important;
+  fill: var(--color-text-primary) !important;
 }
 
 .mermaid .edgePath .path {
-  stroke: #6e7681 !important;
+  stroke: var(--color-text-secondary) !important;
   stroke-width: 2px !important;
 }
 
 .mermaid .edgeLabel {
-  background-color: #161b22 !important;
-  color: #e6edf3 !important;
+  background-color: var(--color-surface-primary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 .mermaid .actor {
-  fill: #21262d !important;
-  stroke: #58a6ff !important;
+  fill: var(--color-surface-secondary) !important;
+  stroke: var(--color-accent) !important;
   stroke-width: 2px !important;
 }
 
 .mermaid .actor-line {
-  stroke: #6e7681 !important;
+  stroke: var(--color-text-secondary) !important;
   stroke-width: 1px !important;
 }
 
 .mermaid .messageLine0,
 .mermaid .messageLine1 {
-  stroke: #58a6ff !important;
+  stroke: var(--color-accent) !important;
   stroke-width: 2px !important;
 }
 
 .mermaid .messageText {
-  fill: #e6edf3 !important;
+  fill: var(--color-text-primary) !important;
   font-size: 14px !important;
 }
 
 .mermaid .loopText {
-  fill: #e6edf3 !important;
+  fill: var(--color-text-primary) !important;
 }
 
 .mermaid .loopLine {
-  stroke: #6e7681 !important;
+  stroke: var(--color-text-secondary) !important;
   stroke-width: 1px !important;
 }
 
-/* GitHub-style Alert Styling */
+/* GitHub-style Alert Styling - Theme-aware */
 .prose .markdown-alert {
   padding: 1rem;
   margin: 1.5rem 0;
   border-left: 4px solid;
   border-radius: 0.5rem;
-  background: hsl(220 26% 8%);
-  border-color: hsl(215 18% 20%);
+  background: var(--color-surface-secondary);
+  border-color: var(--color-border);
   transition: all 0.2s ease-in-out;
   position: relative;
 }
 
 .prose .markdown-alert:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px hsl(var(--surface-primary-hsl) / 0.3);
 }
 
 .prose .markdown-alert > .markdown-alert-title {
@@ -153,17 +171,18 @@ if (import.meta.client) {
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   font-weight: 600;
+  color: var(--color-text-bright);
 }
 
 .prose .markdown-alert > .markdown-alert-title svg,
 .prose .markdown-alert > .markdown-alert-title .icon {
-  color: white !important;
-  fill: white !important;
+  color: var(--color-text-bright) !important;
+  fill: var(--color-text-bright) !important;
 }
 
 .prose .markdown-alert-note {
   border-color: #0969da;
-  background: hsla(212, 89%, 44%, 0.1);
+  background: hsl(212 89% 44% / 0.1);
 }
 
 .prose .markdown-alert-note > .markdown-alert-title {
@@ -172,7 +191,7 @@ if (import.meta.client) {
 
 .prose .markdown-alert-tip {
   border-color: #2ea043;
-  background: hsla(134, 61%, 45%, 0.1);
+  background: hsl(134 61% 45% / 0.1);
 }
 
 .prose .markdown-alert-tip > .markdown-alert-title {
@@ -181,7 +200,7 @@ if (import.meta.client) {
 
 .prose .markdown-alert-important {
   border-color: #8957e5;
-  background: hsla(259, 68%, 62%, 0.1);
+  background: hsl(259 68% 62% / 0.1);
 }
 
 .prose .markdown-alert-important > .markdown-alert-title {
@@ -190,7 +209,7 @@ if (import.meta.client) {
 
 .prose .markdown-alert-warning {
   border-color: #d29922;
-  background: hsla(37, 66%, 47%, 0.1);
+  background: hsl(37 66% 47% / 0.1);
 }
 
 .prose .markdown-alert-warning > .markdown-alert-title {
@@ -199,7 +218,7 @@ if (import.meta.client) {
 
 .prose .markdown-alert-caution {
   border-color: #da3633;
-  background: hsla(1, 68%, 52%, 0.1);
+  background: hsl(1 68% 52% / 0.1);
 }
 
 .prose .markdown-alert-caution > .markdown-alert-title {
@@ -223,17 +242,17 @@ if (import.meta.client) {
   transform: rotate(-90deg);
 }
 
-/* Footnotes Styling */
+/* Footnotes Styling - Theme-aware */
 .prose hr.footnotes-sep {
   margin-top: 3rem;
   margin-bottom: 1.5rem;
-  border-color: hsl(215 18% 15%);
+  border-color: var(--color-border);
 }
 
 .prose .footnotes-list {
   padding-left: 1.25rem;
   font-size: 0.9em;
-  color: hsl(215 12% 55%);
+  color: var(--color-text-secondary);
 }
 
 .prose .footnote-item p {
@@ -243,7 +262,7 @@ if (import.meta.client) {
 .prose .footnote-backref {
   margin-left: 0.5rem;
   text-decoration: none;
-  color: hsl(250 84% 60%);
+  color: var(--color-accent);
 }
 
 .prose .footnote-backref:hover {
@@ -257,15 +276,15 @@ if (import.meta.client) {
 .prose sup[id^='fnref'] a {
   padding: 0.1rem 0.3rem;
   text-decoration: none;
-  color: hsl(250 84% 65%);
-  background-color: hsl(250 84% 60% / 0.1);
+  color: var(--color-accent);
+  background-color: hsl(var(--accent-hsl) / 0.1);
   border-radius: 5px;
   font-weight: 500;
   transition: all 150ms ease-in-out;
 }
 
 .prose sup[id^='fnref'] a:hover {
-  background-color: hsl(250 84% 60% / 0.2);
-  color: hsl(250 84% 70%);
+  background-color: hsl(var(--accent-hsl) / 0.2);
+  color: var(--color-accent-brighter);
 }
 </style>

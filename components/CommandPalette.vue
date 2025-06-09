@@ -259,14 +259,14 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         class="border border-subtle rounded-lg bg-surface-secondary w-[550px] shadow-2xl shadow-black/40 ring-1 ring-white/10 left-1/2 top-1/3 fixed z-50 overflow-hidden -translate-x-1/2 -translate-y-1/2"
       >
         <!-- Search Input -->
-        <div class="px-4 py-3 border-b border-gray-700">
+        <div class="px-4 py-3 border-b border-subtle">
           <input
             ref="inputRef"
             v-model="searchTerm"
             type="text"
             placeholder="Type a command or search..."
             data-testid="command-palette-search"
-            class="text-base text-gray-100 outline-none bg-transparent w-full placeholder-gray-400"
+            class="text-base text-text-bright outline-none bg-transparent w-full placeholder-text-tertiary"
             autofocus
           >
         </div>
@@ -274,7 +274,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         <!-- Commands List -->
         <div ref="scrollContainer" class="max-h-80 overflow-y-auto">
           <template v-if="filteredCommands.length === 0">
-            <div class="text-sm text-gray-500 px-4 py-8 text-center">
+            <div class="text-sm text-text-tertiary px-4 py-8 text-center">
               No commands found
             </div>
           </template>
@@ -282,7 +282,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
           <template v-else>
             <div v-for="group in groupedCommands" :key="group.name" class="py-2">
               <!-- Group Label -->
-              <div class="text-xs text-gray-400 tracking-wider font-medium px-4 py-2 uppercase">
+              <div class="text-xs text-text-tertiary tracking-wider font-medium px-4 py-2 uppercase">
                 {{ group.name }}
               </div>
 
@@ -292,8 +292,8 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                 :key="command.id"
                 class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between" :class="[
                   isSelected(command)
-                    ? 'bg-gray-700/50'
-                    : 'hover:bg-gray-800/50',
+                    ? 'bg-surface-hover'
+                    : 'hover:bg-surface-hover/50',
                 ]"
                 :data-command-index="getCommandIndex(command)"
                 @click="selectCommand(command)"
@@ -302,19 +302,19 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                   <!-- Icon -->
                   <span
                     v-if="command.icon"
-                    class="text-gray-300 text-center flex-shrink-0 w-5"
+                    class="text-text-secondary text-center flex-shrink-0 w-5"
                   >
                     {{ command.icon }}
                   </span>
 
                   <!-- Content -->
                   <div class="flex flex-1 flex-col min-w-0">
-                    <div class="text-sm text-gray-100 font-medium">
+                    <div class="text-sm text-text-bright font-medium">
                       {{ command.label }}
                     </div>
                     <div
                       v-if="command.description"
-                      class="text-xs text-gray-400 truncate"
+                      class="text-xs text-text-secondary truncate"
                     >
                       {{ command.description }}
                     </div>
@@ -324,7 +324,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                 <!-- Keyboard Shortcut -->
                 <div
                   v-if="command.shortcut"
-                  class="text-xs text-gray-400 font-mono px-2 py-1 border border-gray-600 rounded bg-gray-800 flex-shrink-0"
+                  class="text-xs text-text-secondary font-mono px-2 py-1 border border-subtle rounded bg-surface-secondary flex-shrink-0"
                 >
                   {{ command.shortcut }}
                 </div>
@@ -334,7 +334,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         </div>
 
         <!-- Footer hint -->
-        <div class="text-xs text-gray-500 px-4 py-2 border-t border-gray-700 flex justify-between">
+        <div class="text-xs text-text-tertiary px-4 py-2 border-t border-subtle flex justify-between">
           <span>↑↓ to navigate</span>
           <span>↵ to select</span>
           <span>esc to close</span>

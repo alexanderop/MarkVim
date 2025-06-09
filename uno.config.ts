@@ -2,50 +2,75 @@ import presetWebFonts from '@unocss/preset-web-fonts'
 import presetWind4 from '@unocss/preset-wind4'
 import { defineConfig, presetTypography } from 'unocss'
 
+const lightThemeColors = {
+  background: 'hsl(0 0% 100%)',
+  foreground: 'hsl(222.2 84% 4.9%)',
+  surface: {
+    primary: 'hsl(210 40% 96%)',
+    secondary: 'hsl(210 40% 94%)',
+    hover: 'hsl(210 40% 90%)',
+  },
+  border: 'hsl(214.3 31.8% 85%)',
+  subtle: 'hsl(214.3 31.8% 92%)',
+  text: {
+    primary: 'hsl(222.2 84% 4.9%)',
+    secondary: 'hsl(215.4 16.3% 25%)',
+    tertiary: 'hsl(215.3 12.3% 40%)',
+    bright: 'hsl(222.2 84% 4.9%)',
+  },
+}
+
+const darkThemeColors = {
+  background: 'hsl(224 71.4% 4.1%)',
+  foreground: 'hsl(210 20% 98%)',
+  surface: {
+    primary: 'hsl(220 26% 8%)',
+    secondary: 'hsl(220 26% 12%)',
+    hover: 'hsl(220 26% 16%)',
+  },
+  border: 'hsl(215 18% 20%)',
+  subtle: 'hsl(215 18% 15%)',
+  text: {
+    primary: 'hsl(215 15% 75%)',
+    secondary: 'hsl(215 12% 55%)',
+    tertiary: 'hsl(215 10% 40%)',
+    bright: 'hsl(210 20% 98%)',
+  },
+}
+
 export default defineConfig({
   presets: [
     presetWind4(),
     presetTypography(),
     presetWebFonts({
-      provider: 'google', // default provider
+      provider: 'google',
       fonts: {
         sans: 'Inter:400,500,600,700',
         mono: 'JetBrains Mono:400,500',
       },
-      themeKey: 'font', // Use 'font' instead of 'fontFamily' for Wind4 compatibility
+      themeKey: 'font',
     }),
   ],
   theme: {
     colors: {
-      // Base colors
-      'background': 'hsl(224 71.4% 4.1%)', // #020817
-      'foreground': 'hsl(210 20% 98%)', // #fafafa
-
-      // Surfaces
+      'background': 'var(--color-background)',
+      'foreground': 'var(--color-foreground)',
       'surface': {
-        primary: 'hsl(220 26% 8%)', // #111317
-        secondary: 'hsl(220 26% 12%)', // #181a20
-        hover: 'hsl(220 26% 16%)', // #21242b
+        primary: 'var(--color-surface-primary)',
+        secondary: 'var(--color-surface-secondary)',
+        hover: 'var(--color-surface-hover)',
       },
-
-      // Borders
-      'border': 'hsl(215 18% 20%)', // #2c303a
-      'subtle': 'hsl(215 18% 15%)', // #21252e
-
-      // Accent colors
-      'accent': 'hsl(250 84% 60%)', // #5D37F0
+      'border': 'var(--color-border)',
+      'subtle': 'var(--color-subtle)',
+      'accent': 'hsl(250 84% 60%)',
       'accent-hover': 'hsl(250 84% 65%)',
       'accent-brighter': 'hsl(250 84% 70%)',
-
-      // Text colors
       'text': {
-        primary: 'hsl(215 15% 75%)', // #b8bcc4
-        secondary: 'hsl(215 12% 55%)', // #838996
-        tertiary: 'hsl(215 10% 40%)', // #606572
-        bright: 'hsl(210 20% 98%)', // #fafafa
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
+        tertiary: 'var(--color-text-tertiary)',
+        bright: 'var(--color-text-bright)',
       },
-
-      // Window decoration (for fake window UI)
       'window': {
         close: '#ff5f57',
         minimize: '#ffbd2e',
@@ -53,7 +78,6 @@ export default defineConfig({
       },
     },
     extend: {
-      // Add HSL variables for opacity modifiers
       vars: {
         'accent-hsl': '250 84% 60%',
         'surface-primary-hsl': '220 26% 8%',
@@ -63,24 +87,37 @@ export default defineConfig({
   preflights: [
     {
       getCSS: ({ theme }) => {
-        // Extracting HSL variables for use in CSS
         const accentHsl = (theme.vars as any)?.['accent-hsl'] || '250 84% 60%'
 
         return `
           :root {
-            --color-background: ${theme.colors.background};
-            --color-foreground: ${theme.colors.foreground};
-            --color-surface-primary: ${theme.colors.surface.primary};
-            --color-surface-secondary: ${theme.colors.surface.secondary};
-            --color-surface-hover: ${theme.colors.surface.hover};
-            --color-border: ${theme.colors.border};
-            --color-accent: ${theme.colors.accent};
-            --color-text-primary: ${theme.colors.text.primary};
-            --color-text-secondary: ${theme.colors.text.secondary};
-            --color-text-bright: ${theme.colors.text.bright};
-            --accent-hsl: ${accentHsl};
+            --color-background: ${lightThemeColors.background};
+            --color-foreground: ${lightThemeColors.foreground};
+            --color-surface-primary: ${lightThemeColors.surface.primary};
+            --color-surface-secondary: ${lightThemeColors.surface.secondary};
+            --color-surface-hover: ${lightThemeColors.surface.hover};
+            --color-border: ${lightThemeColors.border};
+            --color-subtle: ${lightThemeColors.subtle};
+            --color-text-primary: ${lightThemeColors.text.primary};
+            --color-text-secondary: ${lightThemeColors.text.secondary};
+            --color-text-tertiary: ${lightThemeColors.text.tertiary};
+            --color-text-bright: ${lightThemeColors.text.bright};
           }
 
+          .dark {
+            --color-background: ${darkThemeColors.background};
+            --color-foreground: ${darkThemeColors.foreground};
+            --color-surface-primary: ${darkThemeColors.surface.primary};
+            --color-surface-secondary: ${darkThemeColors.surface.secondary};
+            --color-surface-hover: ${darkThemeColors.surface.hover};
+            --color-border: ${darkThemeColors.border};
+            --color-subtle: ${darkThemeColors.subtle};
+            --color-text-primary: ${darkThemeColors.text.primary};
+            --color-text-secondary: ${darkThemeColors.text.secondary};
+            --color-text-tertiary: ${darkThemeColors.text.tertiary};
+            --color-text-bright: ${darkThemeColors.text.bright};
+          }
+          
           body {
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background);
@@ -93,10 +130,9 @@ export default defineConfig({
             font-family: 'JetBrains Mono', monospace;
           }
 
-          /* Enhanced prose code block styling */
           .prose pre {
-            background-color: ${theme.colors.surface.primary} !important;
-            border: 1px solid ${theme.colors.border};
+            background-color: var(--color-surface-primary) !important;
+            border: 1px solid var(--color-border);
             border-radius: 8px;
             padding: 1.5rem;
             margin: 1.5rem 0;
@@ -110,7 +146,7 @@ export default defineConfig({
             top: 0.5rem;
             right: 0.75rem;
             font-size: 0.75rem;
-            color: ${theme.colors.text.secondary};
+            color: var(--color-text-secondary);
             text-transform: uppercase;
             font-weight: 500;
           }
@@ -127,7 +163,6 @@ export default defineConfig({
     },
   ],
   shortcuts: {
-    // Example shortcut
     'btn': 'px-4 py-2 rounded-lg font-semibold text-white transition-colors duration-200',
     'btn-accent': 'bg-accent hover:bg-accent-hover',
   },

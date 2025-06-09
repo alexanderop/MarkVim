@@ -87,7 +87,7 @@ const maxWidthClasses = {
             </slot>
           </div>
 
-          <div class="text-xs text-gray-400">
+          <div class="text-xs text-text-tertiary">
             <slot name="footer-right">
               {{ footerRight || '' }}
             </slot>
