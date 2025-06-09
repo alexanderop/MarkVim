@@ -6,6 +6,7 @@ export function useTheme() {
     storageKey: 'markvim-theme',
     selector: 'html',
     attribute: 'class',
+    initialValue: 'dark',
   })
 
   const theme = computed({

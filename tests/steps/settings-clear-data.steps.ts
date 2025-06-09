@@ -41,10 +41,6 @@ Given('I have modified settings in localStorage', async function (this: MarkVimW
   })
 })
 
-When('I open the settings modal', async function (this: MarkVimWorld) {
-  await this.page?.locator('[data-testid="settings-button"]').click()
-})
-
 When('I click the {string} button', async function (this: MarkVimWorld, buttonText: string) {
   if (buttonText === 'Clear Local Data') {
     await this.page?.locator('[data-testid="clear-data-button"]').click()
@@ -57,13 +53,6 @@ When('I confirm the clear data action', async function (this: MarkVimWorld) {
 
 When('I cancel the clear data action', async function (this: MarkVimWorld) {
   await this.page?.locator('[data-testid="clear-data-cancel-btn"]').click()
-})
-
-Then('the settings modal should be visible', async function (this: MarkVimWorld) {
-  const modal = this.page?.locator('[data-testid="settings-modal"]')
-  if (modal) {
-    await expect(modal).toBeVisible()
-  }
 })
 
 Then('I should see a {string} button', async function (this: MarkVimWorld, buttonText: string) {
@@ -142,6 +131,11 @@ Then('the editor settings should be reset to defaults', async function (this: Ma
     return stored ? JSON.parse(stored) : null
   })
 
+  // Check theme separately as it's stored in a different key
+  const themeData = await this.page?.evaluate(() => {
+    return localStorage.getItem('markvim-theme')
+  })
+
   // These should match the defaults from DEFAULT_EDITOR_CONFIG
   // If settingsData is null, defaults haven't been initialized yet, so check again
   if (!settingsData) {
@@ -155,15 +149,19 @@ Then('the editor settings should be reset to defaults', async function (this: Ma
       return stored ? JSON.parse(stored) : null
     })
 
+    const retryThemeData = await this.page?.evaluate(() => {
+      return localStorage.getItem('markvim-theme')
+    })
+
     expect(retrySettingsData?.vimMode).toBe(true)
-    expect(retrySettingsData?.theme).toBe('dark')
+    expect(retryThemeData).toBe('dark')
     expect(retrySettingsData?.fontSize).toBe(14)
     expect(retrySettingsData?.lineNumbers).toBe(true)
     expect(retrySettingsData?.previewSync).toBe(true)
   }
   else {
     expect(settingsData.vimMode).toBe(true)
-    expect(settingsData.theme).toBe('dark')
+    expect(themeData).toBe('dark')
     expect(settingsData.fontSize).toBe(14)
     expect(settingsData.lineNumbers).toBe(true)
     expect(settingsData.previewSync).toBe(true)
