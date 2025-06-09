@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { setWorldConstructor } from '@cucumber/cucumber'
 import { type Browser, chromium, type Page } from '@playwright/test'
 
@@ -7,6 +6,7 @@ class CustomWorld {
   page!: Page
 
   async init() {
+    // eslint-disable-next-line node/prefer-global/process -- Need access to environment variables in ESM test context
     const env = process.env || {}
     const isHeaded = env.HEADED === 'true'
 
