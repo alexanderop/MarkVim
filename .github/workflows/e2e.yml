@@ -21,83 +21,70 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        id: node-modules-cache
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            modules-${{ runner.os }}-
+          version: 9
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
+      - name: Setup Node.js with PNPM cache
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
 
-      - name: Get installed Playwright version
+      - name: Get Playwright version
         id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'])")" >> $GITHUB_ENV
+        run: echo "version=$(pnpm list @playwright/test --depth=0 --parseable | head -1 | sed 's/.*@//')" >> $GITHUB_OUTPUT
 
-      - name: Restore Playwright browsers cache
-        uses: actions/cache/restore@v4
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
         id: playwright-cache
         with:
           path: /home/runner/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
         if: steps.playwright-cache.outputs.cache-hit != 'true'
 
-      - name: Install only Playwright deps
+      - name: Install Playwright system dependencies only
         run: pnpm exec playwright install-deps chromium
         if: steps.playwright-cache.outputs.cache-hit == 'true'
 
-      - name: Save Playwright browsers cache
-        if: always() && steps.playwright-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: /home/runner/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-
-      - name: Cache build
+      - name: Cache Nuxt build
         uses: actions/cache@v4
-        id: build-cache
+        id: nuxt-cache
         with:
           path: |
             .nuxt
             .output
-          key: build-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts', 'package.json') }}
+          key: nuxt-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts', 'package.json', 'pnpm-lock.yaml') }}
           restore-keys: |
-            build-${{ runner.os }}-
+            nuxt-${{ runner.os }}-
 
-      - name: Build and lint in parallel
-        run: |
-          if [ "${{ steps.build-cache.outputs.cache-hit }}" != "true" ]; then
-            pnpm run build &
-          fi
-          pnpm lint &
-          wait
+      - name: Build application
+        run: pnpm run build
+        if: steps.nuxt-cache.outputs.cache-hit != 'true'
+
+      - name: Lint code
+        run: pnpm lint
 
       - name: Start preview server
         run: pnpm preview &
 
-      - name: Wait for server to be ready
+      - name: Wait for server readiness
         run: |
           timeout 30 bash -c 'until curl -s http://localhost:3000 > /dev/null; do sleep 1; done'
 
       - name: Run E2E tests
         run: pnpm run test:e2e:ci
 
-      - name: Publish Cucumber Test Results
+      - name: Publish test results
         uses: deblockt/cucumber-report-annotations-action@v1.17
         if: always()
         with:
@@ -107,7 +94,7 @@ jobs:
           show-global-summary-report: true
           show-number-of-error-on-check-title: true
 
-      - name: Create Job Summary
+      - name: Create job summary
         if: always()
         run: |
           echo "## 🎭 E2E Test Results Summary" >> $GITHUB_STEP_SUMMARY
@@ -121,7 +108,8 @@ jobs:
             echo "❌ No test report found" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cucumber-reports
