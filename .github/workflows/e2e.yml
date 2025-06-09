@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
+  PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
 
 jobs:
   e2e:
@@ -29,20 +29,11 @@ jobs:
         uses: ./.github/actions/pnpm-install
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
 
-      - name: Cache build
-        uses: actions/cache@v4
-        id: build-cache
-        with:
-          path: .nuxt
-          key: build-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts') }}
-          restore-keys: |
-            build-${{ runner.os }}-
-
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         id: playwright-cache
         with:
-          path: ~/.cache/ms-playwright
+          path: /home/runner/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Install Playwright browsers
@@ -52,6 +43,17 @@ jobs:
       - name: Install only Playwright deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
+
+      - name: Cache build
+        uses: actions/cache@v4
+        id: build-cache
+        with:
+          path: |
+            .nuxt
+            .output
+          key: build-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts', 'package.json') }}
+          restore-keys: |
+            build-${{ runner.os }}-
 
       - name: Build and lint in parallel
         run: |
@@ -76,8 +78,8 @@ jobs:
         if: always()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "reports/*.json"
-          name: "🥒 E2E Test Results"
+          path: 'reports/*.json'
+          name: 🥒 E2E Test Results
           show-global-summary-report: true
           show-number-of-error-on-check-title: true
 
