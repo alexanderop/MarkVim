@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ViewMode } from '~/composables/useViewMode'
-
 interface Props {
   viewMode: ViewMode
   isMobile: boolean

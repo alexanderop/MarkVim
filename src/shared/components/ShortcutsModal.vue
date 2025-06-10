@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useShortcuts } from '#imports'
 import { onKeyUp } from '@vueuse/core'
 import { computed, onMounted, provide, ref } from 'vue'
 

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useEditorSettings } from '#imports'
-
 const { settings, toggleVimMode } = useEditorSettings()
 </script>
 

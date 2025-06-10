@@ -1,5 +1,5 @@
 import type MarkdownIt from 'markdown-it'
-import { createMarkdownRenderer, generateShikiCSS } from '~/utils/markdown'
+import { createMarkdownRenderer, generateShikiCSS } from '~/shared/utils/markdown'
 
 export function useMarkdown(markdownContent: Ref<string>) {
   let md: MarkdownIt | null = null

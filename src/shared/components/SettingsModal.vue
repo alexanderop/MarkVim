@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import type { EditorSettings } from '#imports'
-import { useEditorSettings, useShortcuts } from '#imports'
-
 const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync, clearAllLocalData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']

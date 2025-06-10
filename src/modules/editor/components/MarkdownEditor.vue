@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { EditorSettings } from '~/composables/useEditorSettings'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
 
 const { settings } = defineProps<{

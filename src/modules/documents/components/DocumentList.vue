@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Document } from '~/composables/useDocuments'
+import type { Document as DocType } from '~/modules/documents/composables/useDocuments'
 
 interface Props {
-  documents: Document[]
+  documents: DocType[]
   activeDocumentId: string
   isVisible: boolean
 }

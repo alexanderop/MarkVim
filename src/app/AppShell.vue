@@ -90,8 +90,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 }
 
 function openCommandPalette(_event?: KeyboardEvent) {
-  // Position the command palette near the center of the screen
-  const centerX = window.innerWidth / 2 - 200 // 200 is half width of palette
+  const centerX = window.innerWidth / 2 - 200
   const centerY = window.innerHeight / 3
 
   commandPalettePosition.value = { x: centerX, y: centerY }
@@ -164,7 +163,6 @@ function handleVimModeChange(mode: string, subMode?: string) {
 }
 
 onMounted(() => {
-  // Add global event listener
   document.addEventListener('keydown', handleGlobalKeydown)
 
   registerShortcuts([
@@ -259,8 +257,6 @@ onMounted(() => {
       category: 'Settings',
     },
   ])
-
-  // All settings actions now have keyboard shortcuts, so no need for separate app commands
 })
 
 onBeforeUnmount(() => {
@@ -305,25 +301,67 @@ useHead({
       />
 
       <div class="bg-gray-900/30 flex flex-1 flex-col overflow-hidden">
-        <MainContent
-          :layout="{
-            isEditorVisible,
-            isPreviewVisible,
-            isSplitView,
-            isMobile,
-            leftPaneWidth,
-            rightPaneWidth,
-            isDragging,
-          }"
-          :content="{
-            markdown: activeMarkdown,
-            settings,
-            renderedMarkdown,
-          }"
-          @update:markdown="activeMarkdown = $event"
-          @start-drag="startDrag"
-          @vim-mode-change="handleVimModeChange"
-        />
+        <div
+          class="flex flex-1 flex-col relative overflow-hidden md:flex-row" :class="[
+            !isSplitView && !isMobile ? 'md:justify-center md:items-center' : '',
+            isDragging ? 'select-none' : '',
+          ]"
+        >
+          <div
+            v-if="isEditorVisible"
+            data-testid="editor-pane"
+            class="w-full transition-all duration-300 ease-in-out" :class="[
+              isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
+              isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+              !isSplitView && !isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
+              isDragging ? 'opacity-90' : '',
+            ]"
+            :style="{
+              transform: isEditorVisible ? 'translateX(0)' : 'translateX(-100%)',
+              width: isSplitView && !isMobile ? `${leftPaneWidth}%` : '100%',
+            }"
+          >
+            <MarkdownEditor
+              :model-value="activeMarkdown"
+              :settings="settings"
+              class="h-full"
+              @update:model-value="activeMarkdown = $event"
+              @vim-mode-change="handleVimModeChange"
+            />
+          </div>
+
+          <ResizableSplitter
+            v-if="isSplitView"
+            :is-dragging="isDragging"
+            data-testid="resize-splitter"
+            class="hidden md:block"
+            @start-drag="startDrag"
+          />
+
+          <div
+            v-if="isPreviewVisible"
+            data-testid="preview-pane"
+            class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
+              isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+              !isSplitView && !isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
+              isDragging ? 'opacity-90' : '',
+            ]"
+            :style="{
+              transform: isPreviewVisible ? 'translateX(0)' : 'translateX(100%)',
+              width: isSplitView && !isMobile ? `${rightPaneWidth}%` : '100%',
+            }"
+          >
+            <MarkdownPreview
+              :rendered-html="renderedMarkdown"
+              class="h-full"
+            />
+          </div>
+
+          <div
+            v-if="isDragging"
+            class="bg-black/5 pointer-events-none transition-opacity duration-200 inset-0 fixed z-10"
+          />
+        </div>
       </div>
     </div>
 
@@ -503,6 +541,6 @@ textarea:focus-visible,
 [role="switch"]:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 4px; /* Optional: adds rounded corners to the outline */
+  border-radius: 4px;
 }
 </style>

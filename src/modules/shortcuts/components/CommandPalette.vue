@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { Document } from '~/composables/useDocuments'
-import type { Command } from '~/composables/useShortcuts'
-import type { ViewMode } from '~/composables/useViewMode'
+import type { Document as DocType } from '~/modules/documents/composables/useDocuments'
 
 const props = withDefaults(defineProps<{
   open?: boolean
   position?: { x: number, y: number }
   viewMode?: ViewMode
   markdown?: string
-  documents?: Document[]
+  documents?: DocType[]
 }>(), {
   open: false,
   position: () => ({ x: 0, y: 0 }),
