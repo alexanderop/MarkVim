@@ -461,12 +461,12 @@ export class MarkVimPage {
 
   async getClipboardContent(): Promise<string> {
     return await this.page.evaluate(async () => {
-          try {
-      return await navigator.clipboard.readText()
-    }
-    catch {
-      throw new Error('Clipboard access failed')
-    }
+      try {
+        return await navigator.clipboard.readText()
+      }
+      catch {
+        throw new Error('Clipboard access failed')
+      }
     })
   }
 
