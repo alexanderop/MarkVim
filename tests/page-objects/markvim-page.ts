@@ -24,6 +24,17 @@ export class MarkVimPage {
   readonly keyboardShortcutsModalTitle: Locator
   readonly settingsButton: Locator
   readonly settingsModal: Locator
+  readonly shareButton: Locator
+  readonly shareDialog: Locator
+  readonly shareLinkInput: Locator
+  readonly copyShareLinkBtn: Locator
+  readonly shareAdvancedToggle: Locator
+  readonly shareAdvancedStats: Locator
+  readonly shareDialogCloseBtn: Locator
+  readonly importDialog: Locator
+  readonly importUrlInput: Locator
+  readonly importConfirmBtn: Locator
+  readonly importCancelBtn: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -48,6 +59,17 @@ export class MarkVimPage {
     this.keyboardShortcutsModalTitle = page.locator('[data-testid="keyboard-shortcuts-modal"] h2')
     this.settingsButton = page.locator('[data-testid="settings-button"]')
     this.settingsModal = page.locator('[data-testid="settings-modal"]')
+    this.shareButton = page.locator('[data-testid="share-button"]')
+    this.shareDialog = page.locator('[data-testid="share-dialog"]')
+    this.shareLinkInput = page.locator('[data-testid="share-link-input"]')
+    this.copyShareLinkBtn = page.locator('[data-testid="copy-share-link-btn"]')
+    this.shareAdvancedToggle = page.locator('[data-testid="share-advanced-toggle"]')
+    this.shareAdvancedStats = page.locator('[data-testid="share-advanced-stats"]')
+    this.shareDialogCloseBtn = page.locator('[data-testid="share-dialog-close-btn"]')
+    this.importDialog = page.locator('[data-testid="import-dialog"]')
+    this.importUrlInput = page.locator('[data-testid="import-url-input"]')
+    this.importConfirmBtn = page.locator('[data-testid="import-confirm-btn"]')
+    this.importCancelBtn = page.locator('[data-testid="import-cancel-btn"]')
   }
 
   async navigate(): Promise<void> {
@@ -304,6 +326,158 @@ export class MarkVimPage {
       // Vim mode was disabled, so no indicator should be present - this is correct behavior
       expect(statusText).not.toMatch(/\b(NORMAL|INSERT|VISUAL|REPLACE)\b/)
     }
+  }
+
+  // Share functionality methods
+  async verifyShareButtonVisible(): Promise<void> {
+    await expect(this.shareButton).toBeVisible()
+  }
+
+  async verifyShareButtonEnabled(): Promise<void> {
+    await expect(this.shareButton).toBeEnabled()
+  }
+
+  async verifyShareButtonDisabled(): Promise<void> {
+    await expect(this.shareButton).toBeDisabled()
+  }
+
+  async clickShareButton(): Promise<void> {
+    await this.shareButton.click()
+  }
+
+  async verifyShareDialogVisible(): Promise<void> {
+    await expect(this.shareDialog).toBeVisible()
+  }
+
+  async verifyShareDialogHidden(): Promise<void> {
+    await expect(this.shareDialog).not.toBeVisible()
+  }
+
+  async verifyShareLinkInputVisible(): Promise<void> {
+    await expect(this.shareLinkInput).toBeVisible()
+  }
+
+  async getShareLinkValue(): Promise<string> {
+    return await this.shareLinkInput.inputValue()
+  }
+
+  async verifyShareLinkContainsFragment(): Promise<void> {
+    const shareLink = await this.getShareLinkValue()
+    expect(shareLink).toContain('#share=')
+  }
+
+  async clickCopyShareLinkButton(): Promise<void> {
+    await this.copyShareLinkBtn.click()
+  }
+
+  async verifyCopyButtonState(expectedText: string): Promise<void> {
+    await expect(this.copyShareLinkBtn).toContainText(expectedText)
+  }
+
+  async clickAdvancedStatsToggle(): Promise<void> {
+    await this.shareAdvancedToggle.click()
+  }
+
+  async verifyAdvancedStatsVisible(): Promise<void> {
+    await expect(this.shareAdvancedStats).toBeVisible()
+  }
+
+  async verifyAdvancedStatsContainData(): Promise<void> {
+    const statsText = await this.shareAdvancedStats.textContent()
+    expect(statsText).toContain('Original size:')
+    expect(statsText).toContain('Compressed size:')
+    expect(statsText).toContain('Compression ratio:')
+    expect(statsText).toContain('URL length:')
+  }
+
+  async clickShareDialogClose(): Promise<void> {
+    await this.shareDialogCloseBtn.click()
+  }
+
+  async verifyImportDialogVisible(): Promise<void> {
+    await expect(this.importDialog).toBeVisible()
+  }
+
+  async verifyImportDialogHidden(): Promise<void> {
+    await expect(this.importDialog).not.toBeVisible()
+  }
+
+  async pasteIntoImportInput(url: string): Promise<void> {
+    await this.importUrlInput.fill(url)
+  }
+
+  async clickImportConfirm(): Promise<void> {
+    await this.importConfirmBtn.click()
+  }
+
+  async clickImportCancel(): Promise<void> {
+    await this.importCancelBtn.click()
+  }
+
+  async verifyImportButtonEnabled(): Promise<void> {
+    await expect(this.importConfirmBtn).toBeEnabled()
+  }
+
+  async verifyImportButtonDisabled(): Promise<void> {
+    await expect(this.importConfirmBtn).toBeDisabled()
+  }
+
+  async createDocumentWithContent(content: string): Promise<void> {
+    await this.createNewDocument()
+    await this.focusEditor()
+    await this.page.keyboard.press('Meta+a')
+    await this.page.keyboard.type(content)
+  }
+
+  async verifyDocumentTitle(expectedTitle: string): Promise<void> {
+    await expect(this.headerTitle).toContainText(expectedTitle)
+  }
+
+  async verifyActiveDocumentContent(expectedContent: string): Promise<void> {
+    const editorContent = await this.editorContent.textContent()
+    expect(editorContent).toContain(expectedContent)
+  }
+
+  async navigateToShareUrl(shareUrl: string): Promise<void> {
+    await this.page.goto(shareUrl)
+    await this.page.waitForLoadState('networkidle')
+  }
+
+  async verifyUrlFragment(expectedFragment: string): Promise<void> {
+    const currentUrl = this.page.url()
+    expect(currentUrl).toContain(expectedFragment)
+  }
+
+  async verifyUrlFragmentCleared(): Promise<void> {
+    const currentUrl = this.page.url()
+    expect(currentUrl).not.toContain('#share=')
+  }
+
+  async generateLargeDocumentContent(): Promise<string> {
+    const baseContent = '# Large Document\n\nThis is a very long document that will exceed the 8KB sharing limit. '
+    const filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(200)
+    return baseContent + filler.repeat(10)
+  }
+
+  async getClipboardContent(): Promise<string> {
+    return await this.page.evaluate(async () => {
+          try {
+      return await navigator.clipboard.readText()
+    }
+    catch {
+      throw new Error('Clipboard access failed')
+    }
+    })
+  }
+
+  async verifyErrorMessageDisplayed(): Promise<void> {
+    const errorElement = this.page.locator('.text-red-300, .text-red-400, .text-red-500')
+    await expect(errorElement).toBeVisible()
+  }
+
+  async verifyDialogFocusManagement(): Promise<void> {
+    const focusedElement = await this.page.locator(':focus')
+    await expect(focusedElement).toBeVisible()
   }
 }
 

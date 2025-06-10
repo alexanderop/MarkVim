@@ -153,6 +153,10 @@ function handleCreateDocument() {
   createDocument()
 }
 
+function handleDocumentImported(document: any) {
+  setActiveDocument(document.id)
+}
+
 function handleVimModeChange(mode: string, subMode?: string) {
   if (subMode) {
     currentVimMode.value = `${mode.toUpperCase()} (${subMode.toUpperCase()})`
@@ -279,6 +283,7 @@ useHead({
       :is-mobile="isMobile"
       :is-sidebar-visible="isSidebarVisible"
       :active-document-title="activeDocumentTitle"
+      :active-document="activeDocument"
       @update:view-mode="setViewMode"
       @toggle-sidebar="handleToggleSidebar"
       @delete-document="handleDeleteDocument"
@@ -424,6 +429,8 @@ useHead({
         </button>
       </div>
     </BaseModal>
+
+    <ShareManager @document-imported="handleDocumentImported" />
   </div>
 </template>
 

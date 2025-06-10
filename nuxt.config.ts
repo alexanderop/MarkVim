@@ -39,6 +39,10 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
     {
+      path: './modules/share/components',
+      pathPrefix: false,
+    },
+    {
       path: './shared/components',
       pathPrefix: false,
     },
@@ -49,6 +53,7 @@ export default defineNuxtConfig({
       'modules/editor/composables',
       'modules/markdown-preview/composables',
       'modules/shortcuts/composables',
+      'modules/share/composables',
       'modules/layout/composables',
       'shared/utils',
     ],

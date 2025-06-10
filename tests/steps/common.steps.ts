@@ -1,5 +1,6 @@
 import type { MarkVimWorld } from '../support/world.js'
 import { Given, Then, When } from '@cucumber/cucumber'
+import { expect } from '@playwright/test'
 
 async function ensurePage(world: MarkVimWorld) {
   if (!world.page) {
@@ -53,6 +54,11 @@ When('I type {string} in element with testid {string}', async function (this: Ma
   await page.locator(`[data-testid="${testid}"]`).fill(text)
 })
 
+When('I type {string}', async function (this: MarkVimWorld, text: string) {
+  const page = await ensurePage(this)
+  await page.keyboard.type(text)
+})
+
 When('I hover over element with testid {string}', async function (this: MarkVimWorld, testid: string) {
   const page = await ensurePage(this)
   await page.locator(`[data-testid="${testid}"]`).hover()
@@ -68,14 +74,30 @@ Then('element with testid {string} should not be visible', async function (this:
   await page.locator(`[data-testid="${testid}"]`).waitFor({ state: 'hidden' })
 })
 
-Then('element with testid {string} should contain text {string}', async function (this: MarkVimWorld, testid: string, expectedText: string) {
+Then('element with testid {string} should be enabled', async function (this: MarkVimWorld, testid: string) {
   const page = await ensurePage(this)
   const element = page.locator(`[data-testid="${testid}"]`)
   await element.waitFor({ state: 'visible' })
-  const text = await element.textContent()
-  if (!text?.includes(expectedText)) {
-    throw new Error(`Element with testid "${testid}" does not contain expected text "${expectedText}". Actual text: "${text}"`)
+  const isEnabled = await element.isEnabled()
+  if (!isEnabled) {
+    throw new Error(`Element with testid "${testid}" is not enabled`)
   }
+})
+
+Then('element with testid {string} should be disabled', async function (this: MarkVimWorld, testid: string) {
+  const page = await ensurePage(this)
+  const element = page.locator(`[data-testid="${testid}"]`)
+  await element.waitFor({ state: 'visible' })
+  const isDisabled = await element.isDisabled()
+  if (!isDisabled) {
+    throw new Error(`Element with testid "${testid}" is not disabled`)
+  }
+})
+
+Then('element with testid {string} should contain text {string}', async function (this: MarkVimWorld, testid: string, expectedText: string) {
+  const page = await ensurePage(this)
+  const element = page.locator(`[data-testid="${testid}"]`)
+  await expect(element).toContainText(expectedText, { timeout: 10000 })
 })
 
 Then('element with testid {string} should be focused', async function (this: MarkVimWorld, testid: string) {
@@ -111,9 +133,4 @@ Then('current URL should contain {string}', async function (this: MarkVimWorld, 
 Then('I should be on the page {string}', async function (this: MarkVimWorld, url: string) {
   const page = await ensurePage(this)
   await page.waitForURL(url)
-})
-
-Then('I wait for {int} seconds', async function (this: MarkVimWorld, seconds: number) {
-  const page = await ensurePage(this)
-  await page?.waitForTimeout(seconds * 1000)
 })

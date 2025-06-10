@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { Document } from '~/modules/documents/composables/useDocuments'
+
 interface Props {
   viewMode: ViewMode
   isMobile: boolean
   isSidebarVisible: boolean
   activeDocumentTitle: string
+  activeDocument: Document | null
 }
 
 interface Emits {
@@ -73,6 +76,10 @@ defineEmits<Emits>()
 
     <!-- Right section -->
     <div class="flex gap-2 items-center">
+      <ShareButton
+        :document="activeDocument"
+      />
+
       <button
         data-testid="delete-document-btn"
         class="group text-gray-400 rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:text-red-400 hover:bg-red-500/10"

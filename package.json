@@ -35,6 +35,7 @@
     "@vueuse/core": "^13.3.0",
     "@vueuse/nuxt": "13.3.0",
     "eslint": "^9.28.0",
+    "lz-string": "^1.5.0",
     "markdown-it": "^14.1.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-github-alerts": "^0.3.2",
