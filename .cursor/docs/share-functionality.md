@@ -20,8 +20,8 @@ The share functionality in MarkVim enables users to share their markdown documen
 - Preview before importing
 
 **Size Management**
-- Intelligent compression using LZ-string algorithm
-- Maximum compressed size limit of 8KB to ensure URL compatibility
+- Advanced compression using fflate GZIP algorithm
+- Maximum compressed size limit of 50KB to support larger documents
 - Real-time feedback on document shareability
 - Technical statistics for advanced users
 
@@ -61,7 +61,7 @@ src/modules/share/
 The main composable that handles all sharing and importing logic:
 
 **Key Constants**:
-- `MAX_COMPRESSED_SIZE = 8000` - Maximum allowed compressed document size in bytes
+- `MAX_COMPRESSED_SIZE = 50_000` - Maximum allowed compressed document size in bytes (50KB)
 
 **Reactive State**:
 - `isSharing` - Boolean indicating active sharing operation
@@ -73,8 +73,8 @@ The main composable that handles all sharing and importing logic:
 **Key Functions**:
 
 #### generateShareLink(document: Document): string | null
-- Compresses document data using LZ-string
-- Creates URL with `#share=` fragment containing compressed data
+- Compresses document data using fflate GZIP compression (level 9)
+- Creates URL with `#share=` fragment containing base64-encoded compressed data
 - Returns null if document too large or compression fails
 - Handles error states and user feedback
 
@@ -209,7 +209,7 @@ In `src/modules/layout/components/HeaderToolbar.vue`:
 ### Dependencies
 
 **External Dependencies**:
-- `lz-string` (^1.5.0) - Document compression/decompression
+- `fflate` (^0.8.2) - High-performance document compression/decompression
 - `@vueuse/core` - Clipboard API integration (`useClipboard`)
 
 **Internal Dependencies**:
@@ -219,10 +219,11 @@ In `src/modules/layout/components/HeaderToolbar.vue`:
 ### Technical Implementation Details
 
 #### Compression Strategy
-- Uses LZ-string's `compressToEncodedURIComponent()` for URL-safe compression
-- Typical compression ratios: 60-80% size reduction
+- Uses fflate's GZIP compression with maximum level (9) for optimal compression ratios
+- Base64 encoding for URL-safe transmission in fragments
+- Typical compression ratios: 70-85% size reduction (better than previous LZ-string)
 - URL fragment storage avoids server round-trips
-- Browser URL length limits naturally constrain document size
+- 50KB compressed size limit accommodates larger documents while maintaining browser compatibility
 
 #### Privacy & Security
 - No server storage - everything client-side
@@ -267,26 +268,30 @@ The share functionality includes comprehensive end-to-end tests in:
 
 #### Debugging Share Issues
 1. Check browser console for compression errors
-2. Verify document size against `MAX_COMPRESSED_SIZE`
+2. Verify document size against `MAX_COMPRESSED_SIZE` (50KB limit)
 3. Test URL parsing with malformed share links
 4. Validate clipboard API availability
+5. Monitor fflate compression performance for very large documents
 
 #### Performance Considerations
-- Compression happens synchronously - consider async for large documents
+- fflate provides faster compression/decompression than previous LZ-string implementation
+- GZIP compression happens synchronously - generally fast enough for documents up to 50KB
 - URL parsing is lightweight but validate input sanitization
 - Component lazy loading already configured via Nuxt
+- Bundle size reduced with fflate's tree-shakable architecture
 
 ### Future Enhancements
 
 **Potential Improvements**:
-- Multiple compression algorithms based on content type
+- Explore even newer compression algorithms (Brotli, ZSTD) as browser support improves
 - Batch sharing of multiple documents
 - Share link expiration or access controls
 - Analytics on share link generation (privacy-preserving)
 - Integration with external sharing platforms
 
 **Technical Debt**:
-- Consider worker threads for large document compression
+- Consider async compression for documents approaching the 50KB limit
 - Improve error recovery for partial share failures
 - Enhanced clipboard integration across browsers
-- Better mobile sharing experience 
+- Better mobile sharing experience
+- Evaluate compression level trade-offs (speed vs. size) for user experience 

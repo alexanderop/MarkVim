@@ -1,5 +1,5 @@
 import type { Document } from '~/modules/documents/composables/useDocuments'
-import LZString from 'lz-string'
+import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 
 export interface ShareableDocument {
   id: string
@@ -16,7 +16,7 @@ export function useDocumentShare() {
   const shareError = ref<string | null>(null)
   const importError = ref<string | null>(null)
 
-  const MAX_COMPRESSED_SIZE = 8000
+  const MAX_COMPRESSED_SIZE = 50_000 // 50KB
 
   function generateShareLink(document: Document): string | null {
     shareError.value = null
@@ -36,20 +36,21 @@ export function useDocumentShare() {
       }
 
       const jsonString = JSON.stringify(shareableDoc)
-      const compressed = LZString.compressToEncodedURIComponent(jsonString)
+      const compressed = gzipSync(strToU8(jsonString), { level: 9 })
+      const encodedData = btoa(String.fromCharCode(...compressed))
 
-      if (!compressed) {
+      if (!encodedData) {
         shareError.value = 'Failed to compress document data'
         return null
       }
 
-      if (compressed.length > MAX_COMPRESSED_SIZE) {
-        shareError.value = `Document is too large to share via link (${Math.round(compressed.length / 1000)}KB compressed). Try sharing a smaller document.`
+      if (encodedData.length > MAX_COMPRESSED_SIZE) {
+        shareError.value = `Document is too large to share via link (${Math.round(encodedData.length / 1000)}KB compressed). Try sharing a smaller document.`
         return null
       }
 
       const baseUrl = window.location.origin + window.location.pathname
-      const shareUrl = `${baseUrl}#share=${compressed}`
+      const shareUrl = `${baseUrl}#share=${encodedData}`
 
       return shareUrl
     }
@@ -111,7 +112,10 @@ export function useDocumentShare() {
         return null
       }
 
-      const jsonString = LZString.decompressFromEncodedURIComponent(encodedData)
+      const compressedData = Uint8Array.from(atob(encodedData), c => c.charCodeAt(0))
+      const decompressed = gunzipSync(compressedData)
+      const jsonString = strFromU8(decompressed)
+
       if (!jsonString) {
         importError.value = 'Failed to decode share data. The link may be corrupted.'
         return null
@@ -197,10 +201,11 @@ export function useDocumentShare() {
     }
 
     const jsonString = JSON.stringify(shareableDoc)
-    const compressed = LZString.compressToEncodedURIComponent(jsonString)
+    const compressed = gzipSync(strToU8(jsonString), { level: 9 })
+    const encodedData = btoa(String.fromCharCode(...compressed))
 
     const originalSize = new TextEncoder().encode(jsonString).length
-    const compressedSize = compressed ? new TextEncoder().encode(compressed).length : 0
+    const compressedSize = encodedData ? new TextEncoder().encode(encodedData).length : 0
     const compressionRatio = originalSize > 0 ? compressedSize / originalSize : 1
     const canShare = compressedSize > 0 && compressedSize <= MAX_COMPRESSED_SIZE
 
