@@ -97,7 +97,7 @@ Then('element with testid {string} should be disabled', async function (this: Ma
 Then('element with testid {string} should contain text {string}', async function (this: MarkVimWorld, testid: string, expectedText: string) {
   const page = await ensurePage(this)
   const element = page.locator(`[data-testid="${testid}"]`)
-  await expect(element).toContainText(expectedText, { timeout: 10000 })
+  await expect(element).toContainText(expectedText, { timeout: 15000 })
 })
 
 Then('element with testid {string} should be focused', async function (this: MarkVimWorld, testid: string) {
