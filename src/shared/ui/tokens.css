@@ -16,6 +16,9 @@
   --color-text-muted:          hsl(240 4% 60%);
   --color-text-bright:         hsl(0 0% 0%);
 
+  --color-selection:           hsl(234 61% 85%);
+  --color-selection-foreground: hsl(240 4% 14%);
+
   --accent-hsl:                234 61% 60%;
   --surface-primary-hsl:       221 25% 96%;
 
@@ -46,6 +49,8 @@
   --color-text-secondary: hsl(216 10% 68%);
   --color-text-muted: hsl(216 8% 52%);
   --color-text-bright: hsl(216 15% 98%);
+  --color-selection: hsl(234 61% 25%);
+  --color-selection-foreground: hsl(216 15% 95%);
   --accent-hsl: 234 61% 60%;
   --surface-primary-hsl: 240 6% 11%;
 } 
