@@ -92,6 +92,7 @@ export class MarkVimPage {
       'p': 'KeyP',
       'v': 'KeyV',
       'Cmd+B': 'Meta+B',
+      'Cmd+I': 'Meta+KeyI',
     }
 
     const mappedKey = keyMap[key] || key
@@ -155,6 +156,10 @@ export class MarkVimPage {
 
   async createNewDocument(): Promise<void> {
     await this.createDocumentBtn.click()
+  }
+
+  async createNewDocumentWithKeyboard(): Promise<void> {
+    await this.pressKey('Cmd+I')
   }
 
   async verifyNewDocumentCreated(): Promise<void> {

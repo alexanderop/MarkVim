@@ -91,3 +91,8 @@ Feature: Keyboard Shortcuts Modal
     Given I am on the MarkVim homepage
     When I open the settings modal with keyboard shortcut
     Then the settings modal should be visible
+
+  Scenario: Create new document via keyboard shortcut
+    Given I am on the MarkVim homepage
+    When I press "Cmd+I"
+    Then a new document should be created automatically

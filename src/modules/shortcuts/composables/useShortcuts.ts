@@ -144,6 +144,11 @@ export function useShortcuts() {
 
   // Register multiple shortcuts at once
   function registerShortcuts(shortcuts: ShortcutAction[]) {
+    // Clear only the shortcuts that are about to be re-registered to prevent duplicates
+    shortcuts.forEach((shortcut) => {
+      registeredShortcuts.value.delete(shortcut.keys)
+    })
+
     const cleanupFunctions = shortcuts.map(registerShortcut)
 
     return () => {

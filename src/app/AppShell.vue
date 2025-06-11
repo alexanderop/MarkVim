@@ -205,7 +205,7 @@ onMounted(() => {
       category: 'File',
     },
     {
-      keys: 'meta+n',
+      keys: 'meta+i',
       description: 'New Document',
       action: () => {
         handleCreateDocument()

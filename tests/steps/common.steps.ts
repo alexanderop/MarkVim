@@ -33,6 +33,7 @@ When('I press the key {string}', async function (this: MarkVimWorld, key: string
     'Escape': 'Escape',
     'Tab': 'Tab',
     'Enter': 'Enter',
+    'Cmd+I': 'Meta+KeyI',
   }
 
   const mappedKey = keyMap[key] || key
