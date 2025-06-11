@@ -186,6 +186,12 @@ You can also reference the same footnote multiple times[^1].
   const documentsStorage = useLocalStorage<Document[]>('markvim-documents', [defaultDocument])
   const activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDocument.id)
 
+  const { onDataReset } = useDataReset()
+  onDataReset(() => {
+    documentsStorage.value = [defaultDocument]
+    activeDocumentId.value = defaultDocument.id
+  })
+
   // Ensure we have at least one document
   if (documentsStorage.value.length === 0) {
     documentsStorage.value = [defaultDocument]

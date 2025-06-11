@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
+import { useMounted } from '@vueuse/core'
 
 const { settings } = defineProps<{
   settings: EditorSettings
@@ -10,9 +11,10 @@ const emit = defineEmits<{
 }>()
 
 const modelValue = defineModel<string>()
+const isMounted = useMounted()
 
 function getCurrentTheme() {
-  if (!import.meta.client) {
+  if (!isMounted.value) {
     return settings.theme === 'auto' ? 'dark' : settings.theme
   }
 

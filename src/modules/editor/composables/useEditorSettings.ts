@@ -69,24 +69,50 @@ export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
 }
 
 export function useEditorSettings() {
-  const settings = useLocalStorage('markvim-settings', DEFAULT_EDITOR_CONFIG)
+  const isMounted = useMounted()
+
+  const settings = useState<EditorSettings>('markvim-settings', () => {
+    if (isMounted.value && typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('markvim-settings')
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          return { ...DEFAULT_EDITOR_CONFIG, ...parsed }
+        }
+        catch {
+          return { ...DEFAULT_EDITOR_CONFIG }
+        }
+      }
+    }
+    return { ...DEFAULT_EDITOR_CONFIG }
+  })
+
+  const saveToLocalStorage = () => {
+    if (isMounted.value && typeof localStorage !== 'undefined') {
+      localStorage.setItem('markvim-settings', JSON.stringify(settings.value))
+    }
+  }
 
   const toggleVimMode = () => {
     settings.value.vimMode = !settings.value.vimMode
+    saveToLocalStorage()
   }
 
   const toggleLineNumbers = () => {
     settings.value.lineNumbers = !settings.value.lineNumbers
+    saveToLocalStorage()
   }
 
   const togglePreviewSync = () => {
     settings.value.previewSync = !settings.value.previewSync
+    saveToLocalStorage()
   }
 
   const updateTheme = (theme: EditorSettings['theme']) => {
     settings.value.theme = theme
+    saveToLocalStorage()
 
-    if (!import.meta.client)
+    if (!isMounted.value)
       return
 
     const htmlElement = document.documentElement
@@ -114,10 +140,12 @@ export function useEditorSettings() {
 
   const updateFontSize = (size: number) => {
     settings.value.fontSize = Math.max(8, Math.min(32, size))
+    saveToLocalStorage()
   }
 
   const resetToDefaults = () => {
     settings.value = { ...DEFAULT_EDITOR_CONFIG }
+    saveToLocalStorage()
   }
 
   const exportSettings = () => {
@@ -128,6 +156,7 @@ export function useEditorSettings() {
     try {
       const imported = JSON.parse(settingsJson)
       settings.value = { ...DEFAULT_EDITOR_CONFIG, ...imported }
+      saveToLocalStorage()
       return true
     }
     catch {
@@ -135,22 +164,19 @@ export function useEditorSettings() {
     }
   }
 
-  const clearAllLocalData = () => {
-    if (import.meta.client) {
-      const keysToRemove = []
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i)
-        if (key?.startsWith('markvim-')) {
-          keysToRemove.push(key)
-        }
-      }
+  const { clearAllData } = useDataReset()
 
-      keysToRemove.forEach(key => localStorage.removeItem(key))
-
-      // Don't reset settings here as it will recreate localStorage entries
-      // The page reload will handle the reset to defaults
+  const { onDataReset } = useDataReset()
+  onDataReset(() => {
+    settings.value = { ...DEFAULT_EDITOR_CONFIG }
+    if (isMounted.value) {
+      updateTheme(settings.value.theme)
     }
-  }
+  })
+
+  onMounted(() => {
+    updateTheme(settings.value.theme)
+  })
 
   return {
     settings,
@@ -162,6 +188,6 @@ export function useEditorSettings() {
     resetToDefaults,
     exportSettings,
     importSettings,
-    clearAllLocalData,
+    clearAllData,
   }
 }

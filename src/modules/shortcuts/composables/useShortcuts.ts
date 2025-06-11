@@ -242,8 +242,9 @@ export function useShortcuts() {
 
   // Utility to format key combination for display
   function formatKeys(keys: string): string {
+    const isMounted = useMounted()
     // Check if we're on client-side and navigator is available
-    const isMac = import.meta.client && typeof navigator !== 'undefined' && navigator?.platform?.includes('Mac')
+    const isMac = isMounted.value && typeof navigator !== 'undefined' && navigator?.platform?.includes('Mac')
 
     return keys
       .split('+')

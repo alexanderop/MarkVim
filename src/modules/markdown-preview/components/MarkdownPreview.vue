@@ -6,18 +6,35 @@ const { renderedHtml } = defineProps<{
 const root = ref<HTMLElement>()
 const scrollContainer = useTemplateRef<HTMLElement>('scrollContainer')
 
+// Get the view mode state to detect when preview becomes visible
+const { viewMode, isPreviewVisible } = useViewMode()
+
 // Use the keyboard scroll composable
 useKeyboardScroll(scrollContainer)
 
-// Auto-focus the scroll container when mounted
-onMounted(() => {
+// Function to focus the scroll container
+function focusScrollContainer() {
   if (scrollContainer.value) {
     scrollContainer.value.focus()
+  }
+}
+
+// Auto-focus the scroll container when mounted
+onMounted(() => {
+  focusScrollContainer()
+})
+
+// Watch for view mode changes and refocus when preview is visible
+watch(viewMode, () => {
+  if (isPreviewVisible.value) {
+    nextTick(() => {
+      focusScrollContainer()
+    })
   }
 })
 
 // Initialize Mermaid only on client side
-if (import.meta.client) {
+onMounted(async () => {
   const mermaid = await import('mermaid')
 
   const isDark = () => document.documentElement.classList.contains('dark')
@@ -84,13 +101,11 @@ if (import.meta.client) {
     nextTick(run)
   })
 
-  onMounted(() => {
-    run()
-    // Watch for changes to the dark class on document.documentElement
-    themeWatcher.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    })
+  run()
+  // Watch for changes to the dark class on document.documentElement
+  themeWatcher.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
   })
 
   onUnmounted(() => {
@@ -98,7 +113,7 @@ if (import.meta.client) {
   })
 
   watch(() => renderedHtml, () => nextTick(run))
-}
+})
 </script>
 
 <template>

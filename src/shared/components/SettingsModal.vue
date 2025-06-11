@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync, clearAllLocalData } = useEditorSettings()
+const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
 
@@ -15,14 +15,9 @@ function useClearDataModal() {
   }
 
   const confirmClearData = () => {
-    clearAllLocalData()
+    clearAllData()
     closeClearDataModal()
     closeSettings()
-
-    // Reload the page to ensure all components reflect the cleared state
-    if (import.meta.client) {
-      window.location.reload()
-    }
   }
 
   return {

@@ -3,6 +3,11 @@ import type { Command } from './useShortcuts'
 export function useCommandHistory() {
   const commandHistory = useLocalStorage<string[]>('markvim-command-history', [])
 
+  const { onDataReset } = useDataReset()
+  onDataReset(() => {
+    commandHistory.value = []
+  })
+
   function trackCommandUsage(commandId: string) {
     const history = [...commandHistory.value]
 

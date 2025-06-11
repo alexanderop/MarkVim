@@ -1,5 +1,10 @@
 <script setup lang="ts">
 const isSidebarVisible = useLocalStorage('markvim-sidebar-visible', true)
+
+const { onDataReset } = useDataReset()
+onDataReset(() => {
+  isSidebarVisible.value = true
+})
 const currentVimMode = ref<string>('NORMAL')
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
@@ -69,7 +74,7 @@ function useDocumentDeletion() {
 
 const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDocument, cancelDeleteDocument } = useDocumentDeletion()
 
-const { registerShortcuts, formatKeys } = useShortcuts()
+const { registerShortcuts, registerAppCommand, formatKeys } = useShortcuts()
 
 const activeDocumentTitle = computed(() => {
   return activeDocument.value
@@ -261,6 +266,18 @@ onMounted(() => {
       category: 'Settings',
     },
   ])
+
+  // Register vim commands for command palette
+  registerAppCommand({
+    id: 'vim-new',
+    keys: ':new',
+    description: 'New Document (Vim)',
+    action: () => {
+      handleCreateDocument()
+    },
+    category: 'File',
+    icon: '📄',
+  })
 })
 
 onBeforeUnmount(() => {
