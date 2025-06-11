@@ -26,6 +26,9 @@ const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = u
 const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
 const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode } = useViewMode()
 
+const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
+const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
+
 const activeMarkdown = computed({
   get: () => activeDocument.value?.content || '',
   set: (value: string) => {
@@ -331,6 +334,7 @@ useHead({
         >
           <div
             v-if="isEditorVisible"
+            ref="editorScrollContainer"
             data-testid="editor-pane"
             class="w-full transition-all duration-300 ease-in-out" :class="[
               isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
@@ -362,6 +366,7 @@ useHead({
 
           <div
             v-if="isPreviewVisible"
+            ref="previewScrollContainer"
             data-testid="preview-pane"
             class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
               isSplitView ? 'h-1/2 md:h-full' : 'h-full',

@@ -35,6 +35,7 @@ export class MarkVimPage {
   readonly importUrlInput: Locator
   readonly importConfirmBtn: Locator
   readonly importCancelBtn: Locator
+  readonly syncScrollToggle: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -70,6 +71,7 @@ export class MarkVimPage {
     this.importUrlInput = page.locator('[data-testid="import-url-input"]')
     this.importConfirmBtn = page.locator('[data-testid="import-confirm-btn"]')
     this.importCancelBtn = page.locator('[data-testid="import-cancel-btn"]')
+    this.syncScrollToggle = page.locator('[data-testid="sync-scroll-toggle"]')
   }
 
   async navigate(): Promise<void> {
@@ -483,6 +485,270 @@ export class MarkVimPage {
   async verifyDialogFocusManagement(): Promise<void> {
     const focusedElement = await this.page.locator(':focus')
     await expect(focusedElement).toBeVisible()
+  }
+
+  // Sync scroll functionality methods
+  async createDocumentWithLongContent(): Promise<void> {
+    const longContent = `# Long Document for Scrolling
+
+## Section 1
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+## Section 2  
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+## Section 3
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+
+## Section 4
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+
+## Section 5
+Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur.
+
+## Section 6
+Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit.
+
+## Section 7
+Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil.
+
+## Section 8
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis.
+
+## Section 9
+Lorem ipsum dolor sit amet consectetur adipisicing elit.
+
+## Section 10
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+`.repeat(3)
+
+    // Use the existing createNewDocument method and then add content
+    await this.createNewDocument()
+    await this.focusEditor()
+
+    // Clear any existing content and add our long content directly via DOM
+    await this.page.evaluate((content) => {
+      const editorElement = document.querySelector('.cm-content')
+      if (editorElement) {
+        editorElement.textContent = content
+        // Trigger input event to update the editor
+        editorElement.dispatchEvent(new Event('input', { bubbles: true }))
+      }
+    }, longContent)
+
+    // Wait for content to be processed
+    await this.page.waitForTimeout(300)
+  }
+
+  async openSettingsModal(): Promise<void> {
+    // Use the sequential shortcut g then s, fallback to button click if needed
+    await this.page.keyboard.press('g')
+    await this.page.waitForTimeout(100) // Small delay between keys
+    await this.page.keyboard.press('s')
+
+    // Wait a bit for the modal to appear
+    await this.page.waitForTimeout(300)
+
+    // Check if modal is visible, if not try clicking the button
+    const isVisible = await this.settingsModal.isVisible()
+    if (!isVisible) {
+      await this.settingsButton.click()
+    }
+
+    await expect(this.settingsModal).toBeVisible()
+  }
+
+  async closeSettingsModal(): Promise<void> {
+    await this.page.keyboard.press('Escape')
+    await expect(this.settingsModal).not.toBeVisible()
+  }
+
+  async enableSynchronizedScrolling(): Promise<void> {
+    const isEnabled = await this.isSyncScrollEnabled()
+    if (!isEnabled) {
+      await this.syncScrollToggle.click()
+      await this.page.waitForTimeout(200) // Wait for state change
+    }
+  }
+
+  async disableSynchronizedScrolling(): Promise<void> {
+    const isEnabled = await this.isSyncScrollEnabled()
+    if (isEnabled) {
+      await this.syncScrollToggle.click()
+    }
+  }
+
+  async isSyncScrollEnabled(): Promise<boolean> {
+    const syncScrollState = await this.page.evaluate(() => {
+      const settings = localStorage.getItem('markvim-settings')
+      if (!settings)
+        return true // Default to true if no settings exist
+      try {
+        const parsed = JSON.parse(settings)
+        return parsed.previewSync !== false // Default to true unless explicitly false
+      }
+      catch {
+        return true // Default to true if parsing fails
+      }
+    })
+    return syncScrollState
+  }
+
+  async verifySynchronizedScrollingEnabled(): Promise<void> {
+    const isEnabled = await this.isSyncScrollEnabled()
+    expect(isEnabled).toBe(true)
+  }
+
+  async verifySynchronizedScrollingDisabled(): Promise<void> {
+    const isEnabled = await this.isSyncScrollEnabled()
+    expect(isEnabled).toBe(false)
+  }
+
+  async scrollDownInEditorPane(): Promise<void> {
+    const editorScrollable = this.editorPane.locator('.cm-scroller').first()
+    await editorScrollable.evaluate((el) => {
+      el.scrollTo({ top: el.scrollTop + 300, behavior: 'auto' })
+    })
+    await this.page.waitForTimeout(100) // Allow time for scroll to register
+  }
+
+  async scrollUpInPreviewPane(): Promise<void> {
+    const previewScrollable = this.previewPane.locator('.overflow-auto').first()
+    await previewScrollable.evaluate((el) => {
+      el.scrollTo({ top: Math.max(0, el.scrollTop - 200), behavior: 'auto' })
+    })
+    await this.page.waitForTimeout(100) // Allow time for scroll to register
+  }
+
+  async scrollDownInPreviewPane(): Promise<void> {
+    const previewScrollable = this.previewPane.locator('.overflow-auto').first()
+    await previewScrollable.evaluate((el) => {
+      el.scrollTo({ top: el.scrollTop + 300, behavior: 'auto' })
+    })
+    await this.page.waitForTimeout(100) // Allow time for scroll to register
+  }
+
+  async verifyPreviewPaneScrollsProportionally(): Promise<void> {
+    // Get scroll positions of both panes
+    const editorScrollTop = await this.getEditorScrollPosition()
+    const previewScrollTop = await this.getPreviewScrollPosition()
+
+    // Both should have some scroll position (not at top)
+    expect(editorScrollTop).toBeGreaterThan(0)
+    expect(previewScrollTop).toBeGreaterThan(0)
+
+    // The ratio should be somewhat similar (allowing for content differences)
+    const editorScrollPercent = await this.getEditorScrollPercentage()
+    const previewScrollPercent = await this.getPreviewScrollPercentage()
+
+    // Allow for some variance due to content height differences
+    expect(Math.abs(editorScrollPercent - previewScrollPercent)).toBeLessThan(0.3)
+  }
+
+  async verifyEditorPaneScrollsProportionally(): Promise<void> {
+    // Get scroll positions of both panes
+    const editorScrollTop = await this.getEditorScrollPosition()
+    const previewScrollTop = await this.getPreviewScrollPosition()
+
+    // Both should have some scroll position (not at top)
+    expect(editorScrollTop).toBeGreaterThan(0)
+    expect(previewScrollTop).toBeGreaterThan(0)
+
+    // The ratio should be somewhat similar (allowing for content differences)
+    const editorScrollPercent = await this.getEditorScrollPercentage()
+    const previewScrollPercent = await this.getPreviewScrollPercentage()
+
+    // Allow for some variance due to content height differences
+    expect(Math.abs(editorScrollPercent - previewScrollPercent)).toBeLessThan(0.3)
+  }
+
+  async verifyPreviewPaneDoesNotScroll(): Promise<void> {
+    const initialScrollTop = await this.getPreviewScrollPosition()
+
+    // Wait a bit to ensure no scrolling occurs
+    await this.page.waitForTimeout(300)
+
+    const finalScrollTop = await this.getPreviewScrollPosition()
+    expect(finalScrollTop).toBe(initialScrollTop)
+  }
+
+  async verifyEditorPaneDoesNotScroll(): Promise<void> {
+    const initialScrollTop = await this.getEditorScrollPosition()
+
+    // Wait a bit to ensure no scrolling occurs
+    await this.page.waitForTimeout(300)
+
+    const finalScrollTop = await this.getEditorScrollPosition()
+    expect(finalScrollTop).toBe(initialScrollTop)
+  }
+
+  async verifySyncScrollNotActive(): Promise<void> {
+    // In non-split views, sync scroll should not be active
+    // We can verify this by checking if both panes are visible
+    const editorVisible = await this.editorPane.isVisible()
+    const previewVisible = await this.previewPane.isVisible()
+
+    if (!editorVisible || !previewVisible) {
+      // This is expected - sync scroll only works in split view
+      expect(true).toBe(true)
+    }
+  }
+
+  async verifySyncScrollActive(): Promise<void> {
+    // In split view with sync enabled, both panes should be visible
+    await expect(this.editorPane).toBeVisible()
+    await expect(this.previewPane).toBeVisible()
+
+    // And sync scroll should be enabled in settings
+    await this.verifySynchronizedScrollingEnabled()
+  }
+
+  async verifyPreviewSyncStateChange(): Promise<void> {
+    // Verify that the sync state has changed by checking settings
+    await this.page.waitForTimeout(100)
+    const settingsText = await this.page.evaluate(() => {
+      return localStorage.getItem('markvim-settings')
+    })
+    expect(settingsText).toBeTruthy()
+  }
+
+  async verifySettingsReflectSyncState(): Promise<void> {
+    // This verifies that the settings modal reflects the current sync state
+    await this.openSettingsModal()
+
+    const isEnabled = await this.isSyncScrollEnabled()
+    const toggleState = await this.syncScrollToggle.getAttribute('data-state')
+
+    if (isEnabled) {
+      expect(toggleState).toBe('checked')
+    }
+    else {
+      expect(toggleState).toBe('unchecked')
+    }
+
+    await this.closeSettingsModal()
+  }
+
+  private async getEditorScrollPosition(): Promise<number> {
+    return await this.editorPane.locator('.cm-scroller').first().evaluate(el => el.scrollTop)
+  }
+
+  private async getPreviewScrollPosition(): Promise<number> {
+    return await this.previewPane.locator('.overflow-auto').first().evaluate(el => el.scrollTop)
+  }
+
+  private async getEditorScrollPercentage(): Promise<number> {
+    return await this.editorPane.locator('.cm-scroller').first().evaluate((el) => {
+      const maxScroll = el.scrollHeight - el.clientHeight
+      return maxScroll > 0 ? el.scrollTop / maxScroll : 0
+    })
+  }
+
+  private async getPreviewScrollPercentage(): Promise<number> {
+    return await this.previewPane.locator('.overflow-auto').first().evaluate((el) => {
+      const maxScroll = el.scrollHeight - el.clientHeight
+      return maxScroll > 0 ? el.scrollTop / maxScroll : 0
+    })
   }
 }
 

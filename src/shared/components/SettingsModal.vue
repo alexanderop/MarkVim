@@ -98,6 +98,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
               class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-surface-primary" :class="[
                 settings.previewSync ? 'bg-accent' : 'bg-surface-hover',
               ]"
+              data-testid="sync-scroll-toggle"
               @update:model-value="togglePreviewSync"
             >
               <SwitchThumb
