@@ -229,7 +229,7 @@ onMounted(() => {
       category: 'File',
     },
     {
-      keys: 'meta+shift+backslash',
+      keys: 'meta+b',
       description: 'Toggle sidebar',
       action: () => {
         handleToggleSidebar()
@@ -277,7 +277,7 @@ useHead({
 </script>
 
 <template>
-  <div ref="containerRef" class="text-gray-100 font-sans bg-gray-950 flex flex-col h-screen overflow-hidden">
+  <div ref="containerRef" class="text-text-primary font-sans bg-background flex flex-col h-screen overflow-hidden">
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
@@ -305,7 +305,7 @@ useHead({
         @delete-document="handleDeleteDocument"
       />
 
-      <div class="bg-gray-900/30 flex flex-1 flex-col overflow-hidden">
+      <div class="bg-surface-secondary/30 flex flex-1 flex-col overflow-hidden">
         <div
           class="flex flex-1 flex-col relative overflow-hidden md:flex-row" :class="[
             !isSplitView && !isMobile ? 'md:justify-center md:items-center' : '',

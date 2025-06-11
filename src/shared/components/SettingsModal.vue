@@ -61,52 +61,52 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     <div class="space-y-4">
       <!-- Editor Behavior Section -->
       <div>
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
           Editor Behavior
         </h3>
         <div class="space-y-2">
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
+          <div class="p-3 border border-border rounded-md bg-surface-secondary flex items-center justify-between">
             <div>
-              <h4 class="text-sm text-gray-100 font-medium">
+              <h4 class="text-sm text-text-primary font-medium">
                 Vim Mode
               </h4>
-              <p class="text-xs text-gray-400">
+              <p class="text-xs text-text-secondary">
                 Enable vim keybindings
               </p>
             </div>
             <SwitchRoot
               :model-value="settings.vimMode"
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
-                settings.vimMode ? 'bg-blue-600' : 'bg-gray-600',
+              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-surface-primary" :class="[
+                settings.vimMode ? 'bg-accent' : 'bg-surface-hover',
               ]"
               @update:model-value="toggleVimMode"
             >
               <SwitchThumb
-                class="rounded-full bg-white h-3 w-3 inline-block transform transition-transform" :class="[
+                class="rounded-full bg-background h-3 w-3 inline-block transform transition-transform" :class="[
                   settings.vimMode ? 'translate-x-5' : 'translate-x-1',
                 ]"
               />
             </SwitchRoot>
           </div>
 
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50 flex items-center justify-between">
+          <div class="p-3 border border-border rounded-md bg-surface-secondary flex items-center justify-between">
             <div>
-              <h4 class="text-sm text-gray-100 font-medium">
+              <h4 class="text-sm text-text-primary font-medium">
                 Synchronized Scrolling
               </h4>
-              <p class="text-xs text-gray-400">
+              <p class="text-xs text-text-secondary">
                 Sync scroll position in split view
               </p>
             </div>
             <SwitchRoot
               :model-value="settings.previewSync"
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:ring-offset-gray-900" :class="[
-                settings.previewSync ? 'bg-blue-600' : 'bg-gray-600',
+              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-surface-primary" :class="[
+                settings.previewSync ? 'bg-accent' : 'bg-surface-hover',
               ]"
               @update:model-value="togglePreviewSync"
             >
               <SwitchThumb
-                class="rounded-full bg-white h-3 w-3 inline-block transform transition-transform" :class="[
+                class="rounded-full bg-background h-3 w-3 inline-block transform transition-transform" :class="[
                   settings.previewSync ? 'translate-x-5' : 'translate-x-1',
                 ]"
               />
@@ -117,15 +117,15 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
 
       <!-- Appearance Section -->
       <div>
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
           Appearance
         </h3>
         <div class="space-y-2">
           <!-- Theme and Font Size in one row -->
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
+          <div class="p-3 border border-border rounded-md bg-surface-secondary">
             <div class="gap-4 grid grid-cols-2">
               <div>
-                <h4 class="text-sm text-gray-100 font-medium mb-1">
+                <h4 class="text-sm text-text-primary font-medium mb-1">
                   Theme
                 </h4>
                 <div class="flex gap-1">
@@ -134,8 +134,8 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                     :key="theme"
                     class="text-xs font-medium px-2 py-1 rounded capitalize transition-colors" :class="[
                       settings.theme === theme
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600',
+                        ? 'bg-accent text-accent-foreground'
+                        : 'bg-surface-hover text-text-secondary hover:bg-surface-primary hover:text-text-primary',
                     ]"
                     @click="updateTheme(theme)"
                   >
@@ -145,19 +145,19 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
               </div>
 
               <div>
-                <h4 class="text-sm text-gray-100 font-medium mb-1">
+                <h4 class="text-sm text-text-primary font-medium mb-1">
                   Font Size
                 </h4>
                 <div class="flex gap-2 items-center">
                   <button
-                    class="p-1 rounded hover:bg-gray-700 text-gray-300"
+                    class="p-1 rounded hover:bg-surface-hover text-text-secondary hover:text-text-primary transition-colors"
                     @click="updateFontSize(settings.fontSize - 1)"
                   >
                     <Icon name="heroicons:minus" class="h-3 w-3" />
                   </button>
-                  <span class="text-sm text-gray-100 font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
+                  <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
                   <button
-                    class="p-1 rounded hover:bg-gray-700 text-gray-300"
+                    class="p-1 rounded hover:bg-surface-hover text-text-secondary hover:text-text-primary transition-colors"
                     @click="updateFontSize(settings.fontSize + 1)"
                   >
                     <Icon name="heroicons:plus" class="h-3 w-3" />
@@ -171,20 +171,20 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
 
       <!-- Advanced Settings -->
       <div>
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium mb-2 uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
           Advanced
         </h3>
         <div class="space-y-2">
           <!-- Line Numbers -->
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
+          <div class="p-3 border border-border rounded-md bg-surface-secondary">
             <div class="space-y-2">
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.lineNumbers"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-sm text-gray-100 font-medium">Show Line Numbers</span>
+                <span class="text-sm text-text-primary font-medium">Show Line Numbers</span>
               </label>
 
               <div v-if="settings.lineNumbers" class="ml-5 space-y-1">
@@ -194,27 +194,27 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="absolute"
-                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
+                      class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-gray-200">Absolute</span>
+                    <span class="text-xs text-text-primary">Absolute</span>
                   </label>
                   <label class="flex gap-1 items-center">
                     <input
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="relative"
-                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
+                      class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-gray-200">Relative</span>
+                    <span class="text-xs text-text-primary">Relative</span>
                   </label>
                   <label class="flex gap-1 items-center">
                     <input
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="both"
-                      class="border-gray-600 h-3 w-3 text-blue-600 focus:ring-blue-500"
+                      class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-gray-200">Hybrid</span>
+                    <span class="text-xs text-text-primary">Hybrid</span>
                   </label>
                 </div>
               </div>
@@ -222,31 +222,31 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           </div>
 
           <!-- Other Settings -->
-          <div class="p-3 border border-gray-700 rounded-md bg-gray-800/50">
+          <div class="p-3 border border-border rounded-md bg-surface-secondary">
             <div class="gap-3 grid grid-cols-3">
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.lineWrapping"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-gray-200">Line Wrapping</span>
+                <span class="text-xs text-text-primary">Line Wrapping</span>
               </label>
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.autoSave"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-gray-200">Auto Save</span>
+                <span class="text-xs text-text-primary">Auto Save</span>
               </label>
               <label class="flex gap-2 items-center">
                 <input
                   v-model="settings.livePreview"
                   type="checkbox"
-                  class="border-gray-600 rounded h-3 w-3 text-blue-600 focus:ring-blue-500"
+                  class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-gray-200">Live Preview</span>
+                <span class="text-xs text-text-primary">Live Preview</span>
               </label>
             </div>
           </div>
@@ -255,7 +255,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     </div>
 
     <template #footer-left>
-      Press <kbd class="text-xs text-gray-200 font-mono px-1 border border-gray-600 rounded bg-gray-700 inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
+      Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-secondary inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
     </template>
 
     <template #footer-right>
@@ -268,7 +268,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           Clear Local Data
         </button>
         <button
-          class="text-xs text-gray-400 font-medium px-3 py-1.5 border border-gray-600 rounded transition-colors hover:text-gray-200 hover:bg-gray-700"
+          class="text-xs text-text-secondary font-medium px-3 py-1.5 border border-border rounded transition-colors hover:text-text-primary hover:bg-surface-hover"
           @click="resetToDefaults"
         >
           Reset to Defaults
@@ -287,10 +287,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     @close="closeClearDataModal"
   >
     <div class="py-4">
-      <p class="text-gray-200 text-sm leading-relaxed">
+      <p class="text-text-primary text-sm leading-relaxed">
         Are you sure you want to clear all local data? This will remove:
       </p>
-      <ul class="text-gray-400 text-sm mt-3 space-y-1 list-disc list-inside">
+      <ul class="text-text-secondary text-sm mt-3 space-y-1 list-disc list-inside">
         <li>All saved documents</li>
         <li>Editor settings and preferences</li>
         <li>View mode preferences</li>
@@ -302,17 +302,17 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
       </p>
     </div>
 
-    <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
+    <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
       <button
         data-testid="clear-data-cancel-btn"
-        class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
+        class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-text-secondary hover:text-text-primary hover:bg-surface-hover border border-border"
         @click="closeClearDataModal"
       >
         Cancel
       </button>
       <button
         data-testid="clear-data-confirm-btn"
-        class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-surface-primary"
         @click="confirmClearData"
       >
         Clear All Data

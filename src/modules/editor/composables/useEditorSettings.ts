@@ -85,7 +85,32 @@ export function useEditorSettings() {
 
   const updateTheme = (theme: EditorSettings['theme']) => {
     settings.value.theme = theme
+
+    if (!import.meta.client)
+      return
+
+    const htmlElement = document.documentElement
+
+    if (theme === 'dark') {
+      htmlElement.classList.add('dark')
+    }
+    else if (theme === 'light') {
+      htmlElement.classList.remove('dark')
+    }
+    else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (prefersDark) {
+        htmlElement.classList.add('dark')
+      }
+      else {
+        htmlElement.classList.remove('dark')
+      }
+    }
   }
+  
+  onMounted(() => {
+    updateTheme(settings.value.theme)
+  })
 
   const updateFontSize = (size: number) => {
     settings.value.fontSize = Math.max(8, Math.min(32, size))

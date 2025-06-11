@@ -53,8 +53,8 @@ const {
 
 const modelValue = defineModel<string>({ default: '' })
 
-// Clean monochromatic theme using hardcoded CSS colors
-const customHighlightStyle = HighlightStyle.define([
+// Theme-aware highlight styles
+const darkHighlightStyle = HighlightStyle.define([
   // Headers - Pure white for maximum contrast and prominence
   { tag: tags.heading1, color: '#ffffff', fontWeight: 'bold', fontSize: '1.2em' },
   { tag: tags.heading2, color: '#ffffff', fontWeight: 'bold', fontSize: '1.1em' },
@@ -98,6 +98,55 @@ const customHighlightStyle = HighlightStyle.define([
   { tag: tags.labelName, color: '#ffffff' },
   { tag: tags.special(tags.string), color: '#ffffff' },
 ])
+
+const lightHighlightStyle = HighlightStyle.define([
+  // Headers - Very dark text for maximum contrast and prominence
+  { tag: tags.heading1, color: '#000000', fontWeight: 'bold', fontSize: '1.2em' },
+  { tag: tags.heading2, color: '#000000', fontWeight: 'bold', fontSize: '1.1em' },
+  { tag: tags.heading3, color: '#000000', fontWeight: 'bold' },
+  { tag: tags.heading4, color: '#000000', fontWeight: 'bold' },
+  { tag: tags.heading5, color: '#000000', fontWeight: 'bold' },
+  { tag: tags.heading6, color: '#000000', fontWeight: 'bold' },
+
+  // Main text - Very dark for readable contrast
+  { tag: tags.content, color: '#111827' },
+
+  // Code elements - Dark colors for hierarchy
+  { tag: tags.keyword, color: '#000000', fontWeight: 'bold' },
+  { tag: tags.string, color: '#1f2937' },
+  { tag: tags.comment, color: '#4b5563', fontStyle: 'italic' },
+  { tag: tags.variableName, color: '#111827' },
+  { tag: tags.function(tags.variableName), color: '#000000' },
+
+  // Numbers and constants
+  { tag: tags.number, color: '#1f2937' },
+  { tag: tags.bool, color: '#000000' },
+  { tag: tags.null, color: '#000000' },
+
+  // Punctuation and operators
+  { tag: tags.operator, color: '#111827' },
+  { tag: tags.punctuation, color: '#111827' },
+  { tag: tags.bracket, color: '#000000' },
+
+  // Special markdown elements
+  { tag: tags.link, color: '#000000', textDecoration: 'underline' },
+  { tag: tags.emphasis, color: '#111827', fontStyle: 'italic' },
+  { tag: tags.strong, color: '#000000', fontWeight: 'bold' },
+  { tag: tags.strikethrough, color: '#4b5563', textDecoration: 'line-through' },
+
+  // Markdown specific elements
+  { tag: tags.quote, color: '#4b5563', fontStyle: 'italic' },
+  { tag: tags.list, color: '#1f2937' },
+  { tag: tags.monospace, color: '#000000', backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '3px' },
+
+  // Vim keys and commands - black for prominence
+  { tag: tags.labelName, color: '#000000' },
+  { tag: tags.special(tags.string), color: '#000000' },
+])
+
+function getCustomHighlightStyle() {
+  return theme.value === 'dark' ? darkHighlightStyle : lightHighlightStyle
+}
 
 const { lineNumberCompartment, getLineNumberExtension, handleLineNumberUpdate } = useLineNumbers()
 const { setupCustomVimKeybindings } = useVimMode()
@@ -175,7 +224,7 @@ function useEditorExtensions() {
       drawSelection(),
       indentOnInput(),
       bracketMatching(),
-      syntaxHighlighting(customHighlightStyle),
+      syntaxHighlighting(getCustomHighlightStyle()),
       syntaxHighlighting(defaultHighlightStyle),
       keymap.of([...defaultKeymap]),
     ]
@@ -343,6 +392,18 @@ watch(() => [extensions, theme, editable, indentWithTab, placeholder, lineNumber
   reconfigureExtensions()
 })
 
+// Watch theme separately for immediate reconfiguration
+watch(theme, () => {
+  if (view.value) {
+    // Force complete reconfiguration on theme change
+    view.value.dispatch({
+      effects: StateEffect.reconfigure.of(getExtensions()),
+    })
+  }
+}, { immediate: false })
+
+
+
 onBeforeUnmount(() => {
   destroyEditor()
 })
@@ -381,5 +442,44 @@ onBeforeUnmount(() => {
 .cm-lineNumbers .cm-gutterElement {
   text-align: right;
   padding-right: 1rem;
+}
+
+/* Light theme specific styles - more specific selectors */
+:root:not(.dark) .cm-editor .cm-content {
+  color: var(--color-text-primary) !important;
+}
+
+:root:not(.dark) .cm-editor .cm-line {
+  color: var(--color-text-primary) !important;
+}
+
+:root:not(.dark) .cm-editor .cm-gutterElement {
+  color: var(--color-text-secondary) !important;
+}
+
+:root:not(.dark) .cm-editor .cm-cursor {
+  border-left-color: var(--color-text-primary) !important;
+}
+
+:root:not(.dark) .cm-editor .cm-activeLine {
+  background-color: var(--color-surface-hover) !important;
+}
+
+:root:not(.dark) .cm-editor .cm-selectionBackground {
+  background-color: var(--color-accent) !important;
+  opacity: 0.3;
+}
+
+/* Dark theme preserves original styling */
+.dark .cm-editor .cm-content,
+.dark .cm-editor .cm-line,
+.dark .cm-editor .cm-gutterElement,
+.dark .cm-editor .cm-cursor,
+.dark .cm-editor .cm-activeLine,
+.dark .cm-editor .cm-selectionBackground {
+  color: inherit !important;
+  border-left-color: inherit !important;
+  background-color: inherit !important;
+  opacity: inherit !important;
 }
 </style>

@@ -46,7 +46,7 @@ tests/
 - ✅ Document creation and vim-based text editing
 - ✅ Markdown preview rendering and synchronization
 - ✅ Keyboard shortcuts for view mode switching (1/2/3 keys)
-- ✅ Sidebar toggle keyboard shortcut (Cmd+Shift+\)
+- ✅ Sidebar toggle keyboard shortcut (Cmd+B)
 - ✅ View mode localStorage persistence across page reloads
 - ✅ Keyboard shortcuts modal functionality and accessibility
 - ✅ Complete shortcut coverage with no duplicates or missing key bindings
@@ -470,7 +470,7 @@ This refactored testing strategy ensures MarkVim maintains high quality while su
   - View modes: `1/2/3`
   - Navigation: `⌘K` (command palette), `G S` (settings)
   - File operations: `⌘S` (save), `⌘N` (new), `⌘⇧S` (download)
-  - UI controls: `⌘⇧\` (sidebar), `?` (shortcuts modal)
+  - UI controls: `⌘B` (sidebar), `?` (shortcuts modal)
   - Settings toggles: `l/p/v` (line numbers/preview sync/vim mode)
 - **Browser conflict resolution**: Single key shortcuts avoid conflicts with browser defaults
 - **Functional verification**: Tests confirm shortcuts actually trigger their intended functions

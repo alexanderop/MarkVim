@@ -91,7 +91,7 @@ export class MarkVimPage {
       'l': 'KeyL',
       'p': 'KeyP',
       'v': 'KeyV',
-      'Cmd+Shift+\\': 'Meta+Shift+Backslash',
+      'Cmd+B': 'Meta+B',
     }
 
     const mappedKey = keyMap[key] || key
@@ -192,7 +192,7 @@ export class MarkVimPage {
   }
 
   async toggleSidebarWithKeyboard(): Promise<void> {
-    await this.page.keyboard.press('Meta+Shift+Backslash')
+    await this.page.keyboard.press('Meta+B')
   }
 
   async toggleSidebarWithButton(): Promise<void> {

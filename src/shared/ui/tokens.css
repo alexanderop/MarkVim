@@ -1,23 +1,24 @@
-/* Design Tokens */
 :root {
-  /* Colors */
-  --color-primary: hsl(222.2 84% 4.9%);
-  --color-primary-foreground: hsl(210 40% 98%);
-  --color-secondary: hsl(210 40% 96%);
-  --color-secondary-foreground: hsl(222.2 84% 4.9%);
-  --color-muted: hsl(210 40% 96%);
-  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
-  --color-accent: hsl(210 40% 96%);
-  --color-accent-foreground: hsl(222.2 84% 4.9%);
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(214.3 31.8% 91.4%);
-  --color-input: hsl(214.3 31.8% 91.4%);
-  --color-ring: hsl(222.2 84% 4.9%);
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
+  --color-background:          hsl(0 0% 100%);
+  --color-foreground:          hsl(210 11% 15%);
 
-  /* Spacing */
+  --color-surface-primary:     hsl(221 25% 96%);
+  --color-surface-secondary:   hsl(221 25% 93%);
+  --color-surface-hover:       hsl(221 25% 89%);
+  --color-border:              hsl(221 25% 85%);
+
+  --color-accent:              hsl(234 61% 60%);
+  --color-accent-hover:        hsl(234 61% 55%);
+  --color-accent-foreground:   hsl(0 0% 100%);
+
+  --color-text-primary:        hsl(240 4% 14%);
+  --color-text-secondary:      hsl(240 4% 45%);
+  --color-text-muted:          hsl(240 4% 60%);
+  --color-text-bright:         hsl(0 0% 0%);
+
+  --accent-hsl:                234 61% 60%;
+  --surface-primary-hsl:       221 25% 96%;
+
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -25,7 +26,6 @@
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
 
-  /* Border Radius */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
@@ -33,19 +33,19 @@
 }
 
 .dark {
-  --color-primary: hsl(210 40% 98%);
-  --color-primary-foreground: hsl(222.2 84% 4.9%);
-  --color-secondary: hsl(217.2 32.6% 17.5%);
-  --color-secondary-foreground: hsl(210 40% 98%);
-  --color-muted: hsl(217.2 32.6% 17.5%);
-  --color-muted-foreground: hsl(215 20.2% 65.1%);
-  --color-accent: hsl(217.2 32.6% 17.5%);
-  --color-accent-foreground: hsl(210 40% 98%);
-  --color-destructive: hsl(0 62.8% 30.6%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(217.2 32.6% 17.5%);
-  --color-input: hsl(217.2 32.6% 17.5%);
-  --color-ring: hsl(212.7 26.8% 83.9%);
-  --color-background: hsl(222.2 84% 4.9%);
-  --color-foreground: hsl(210 40% 98%);
+  --color-background: hsl(240 5% 8%);
+  --color-foreground: hsl(216 15% 95%);
+  --color-surface-primary: hsl(240 6% 11%);
+  --color-surface-secondary: hsl(240 5% 14%);
+  --color-surface-hover: hsl(240 6% 18%);
+  --color-border: hsl(240 5% 20%);
+  --color-accent: hsl(234 61% 60%);
+  --color-accent-hover: hsl(234 61% 65%);
+  --color-accent-foreground: hsl(0 0% 100%);
+  --color-text-primary: hsl(216 15% 90%);
+  --color-text-secondary: hsl(216 10% 68%);
+  --color-text-muted: hsl(216 8% 52%);
+  --color-text-bright: hsl(216 15% 98%);
+  --accent-hsl: 234 61% 60%;
+  --surface-primary-hsl: 240 6% 11%;
 } 

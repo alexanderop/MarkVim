@@ -20,7 +20,7 @@ MarkVim provides several built in shortcuts to speed up common tasks. This list 
 | `1` | Switch to editor only view |
 | `2` | Switch to split view |
 | `3` | Switch to preview only view |
-| `Cmd+Shift+\` | Toggle document sidebar |
+| `Cmd+B` | Toggle document sidebar |
 
 ## Editor Settings
 

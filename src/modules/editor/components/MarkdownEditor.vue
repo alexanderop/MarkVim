@@ -10,19 +10,59 @@ const emit = defineEmits<{
 }>()
 
 const modelValue = defineModel<string>()
+
+function getCurrentTheme() {
+  if (!process.client) {
+    return settings.theme === 'auto' ? 'dark' : settings.theme
+  }
+  
+  if (settings.theme === 'auto') {
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+  }
+  return settings.theme
+}
+
+const currentTheme = ref(getCurrentTheme())
+
+onMounted(() => {
+  currentTheme.value = getCurrentTheme()
+  
+  const themeWatcher = new MutationObserver(() => {
+    const newTheme = getCurrentTheme()
+    if (newTheme !== currentTheme.value) {
+      currentTheme.value = newTheme
+    }
+  })
+  
+  themeWatcher.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  })
+  
+  onUnmounted(() => {
+    themeWatcher.disconnect()
+  })
+})
+
+watch(() => settings.theme, () => {
+  const newTheme = getCurrentTheme()
+  if (newTheme !== currentTheme.value) {
+    currentTheme.value = newTheme
+  }
+}, { immediate: true })
 </script>
 
 <template>
-  <div class="bg-editor-bg flex flex-col h-screen w-full">
+  <div class="bg-surface-primary flex flex-col h-screen w-full">
     <!-- Header -->
-    <div class="px-6 border-b border-border bg-background flex flex-shrink-0 h-10 items-center justify-between">
+    <div class="px-6 border-b border-border bg-surface-primary flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-1.5">
           <div class="rounded-full bg-window-close h-3 w-3 shadow-sm" />
           <div class="rounded-full bg-window-minimize h-3 w-3 shadow-sm" />
           <div class="rounded-full bg-window-maximize h-3 w-3 shadow-sm" />
         </div>
-        <div class="bg-editor-divider h-4 w-px" />
+        <div class="bg-border h-4 w-px" />
         <Icon name="lucide:edit-3" class="text-text-primary h-4 w-4" />
       </div>
       <div class="flex items-center space-x-3" />
@@ -31,11 +71,12 @@ const modelValue = defineModel<string>()
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
       <MyCodeMirror
+        :key="`editor-${currentTheme}`"
         v-model="modelValue"
         :extensions="[markdownLang()]"
-        :theme="settings.theme === 'auto' ? 'dark' : settings.theme"
+        :theme="currentTheme"
         placeholder="# Start writing your story..."
-        class="bg-editor-bg h-full"
+        class="bg-surface-primary h-full"
         :vim-mode="settings.vimMode"
         :line-numbers="settings.lineNumbers"
         :line-number-mode="settings.lineNumberMode"
