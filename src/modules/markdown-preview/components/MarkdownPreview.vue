@@ -8,72 +8,84 @@ const root = ref<HTMLElement>()
 // Initialize Mermaid only on client side
 if (import.meta.client) {
   const mermaid = await import('mermaid')
-  
-  // Function to get current theme
+
   const isDark = () => document.documentElement.classList.contains('dark')
-  
+
+  const getCSSVariable = (name: string) => {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  }
+
   const initializeMermaid = () => {
     const isCurrentlyDark = isDark()
+
     mermaid.default.initialize({
       startOnLoad: false,
       theme: isCurrentlyDark ? 'dark' : 'base',
       darkMode: isCurrentlyDark,
-      themeVariables: isCurrentlyDark ? {
-        // Dark theme
-        primaryColor: '#58a6ff',
-        primaryTextColor: '#e6edf3',
-        primaryBorderColor: '#30363d',
-        lineColor: '#6e7681',
-        sectionBkgColor: '#161b22',
-        altSectionBkgColor: '#0d1117',
-        gridColor: '#30363d',
-        secondaryColor: '#21262d',
-        tertiaryColor: '#8b949e',
-      } : {
-        // Light theme
-        primaryColor: '#0969da',
-        primaryTextColor: '#24292f',
-        primaryBorderColor: '#d0d7de',
-        lineColor: '#656d76',
-        sectionBkgColor: '#ffffff',
-        altSectionBkgColor: '#f6f8fa',
-        gridColor: '#d0d7de',
-        secondaryColor: '#f6f8fa',
-        tertiaryColor: '#656d76',
+      themeVariables: {
+        primaryColor: getCSSVariable('--color-accent'),
+        primaryTextColor: getCSSVariable('--color-text-primary'),
+        primaryBorderColor: getCSSVariable('--color-border'),
+        lineColor: getCSSVariable('--color-text-secondary'),
+        sectionBkgColor: getCSSVariable('--color-surface-primary'),
+        altSectionBkgColor: getCSSVariable('--color-surface-secondary'),
+        gridColor: getCSSVariable('--color-border'),
+        secondaryColor: getCSSVariable('--color-surface-secondary'),
+        tertiaryColor: getCSSVariable('--color-text-muted'),
       },
     })
   }
-  
+
   initializeMermaid()
 
   const run = () => {
     const nodes = root.value?.querySelectorAll('.mermaid') ?? []
     if (nodes.length > 0) {
-      // Re-initialize Mermaid with current theme before running
       initializeMermaid()
+
+      // Clear existing rendered diagrams and restore original content
+      nodes.forEach((node) => {
+        const element = node as HTMLElement
+        // If the node has been processed by Mermaid, it will have data-processed attribute
+        if (element.hasAttribute('data-processed')) {
+          element.removeAttribute('data-processed')
+          // Find the original mermaid source from the element's dataset or textContent
+          const originalContent = element.dataset.mermaidSource || element.textContent
+          if (originalContent) {
+            element.innerHTML = originalContent
+            element.removeAttribute('id') // Remove any auto-generated IDs
+          }
+        }
+        else {
+          // Store original content for future theme changes
+          element.dataset.mermaidSource = element.textContent || ''
+        }
+      })
+
+      // Re-render with new theme
       mermaid.default.run({ nodes: Array.from(nodes) as HTMLElement[] })
     }
   }
-  
+
   // Watch for theme changes
   const themeWatcher = new MutationObserver(() => {
     // Re-run diagrams when theme changes
     nextTick(run)
   })
-  
+
   onMounted(() => {
     run()
     // Watch for changes to the dark class on document.documentElement
     themeWatcher.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ['class'],
     })
   })
-  
+
   onUnmounted(() => {
     themeWatcher.disconnect()
   })
-  
+
   watch(() => renderedHtml, () => nextTick(run))
 }
 </script>

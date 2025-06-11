@@ -20,7 +20,7 @@ export default defineConfig({
       // Theme-aware colors using CSS variables (these will change with light/dark mode)
       'background': 'var(--color-background)',
       'foreground': 'var(--color-foreground)',
-      
+
       // Surfaces
       'surface': {
         primary: 'var(--color-surface-primary)',
@@ -120,17 +120,17 @@ export default defineConfig({
     [/^bg-gray-900$/, () => ({ 'background-color': 'var(--color-surface-primary)' })],
     [/^bg-gray-800$/, () => ({ 'background-color': 'var(--color-surface-secondary)' })],
     [/^bg-gray-700$/, () => ({ 'background-color': 'var(--color-surface-hover)' })],
-    [/^text-gray-100$/, () => ({ 'color': 'var(--color-text-bright)' })],
-    [/^text-gray-200$/, () => ({ 'color': 'var(--color-text-primary)' })],
-    [/^text-gray-300$/, () => ({ 'color': 'var(--color-text-primary)' })],
-    [/^text-gray-400$/, () => ({ 'color': 'var(--color-text-secondary)' })],
-    [/^text-gray-500$/, () => ({ 'color': 'var(--color-text-secondary)' })],
+    [/^text-gray-100$/, () => ({ color: 'var(--color-text-bright)' })],
+    [/^text-gray-200$/, () => ({ color: 'var(--color-text-primary)' })],
+    [/^text-gray-300$/, () => ({ color: 'var(--color-text-primary)' })],
+    [/^text-gray-400$/, () => ({ color: 'var(--color-text-secondary)' })],
+    [/^text-gray-500$/, () => ({ color: 'var(--color-text-secondary)' })],
     [/^border-gray-600$/, () => ({ 'border-color': 'var(--color-border)' })],
     [/^border-gray-700$/, () => ({ 'border-color': 'var(--color-border)' })],
     [/^border-gray-800$/, () => ({ 'border-color': 'var(--color-border)' })],
     [/^hover:bg-gray-700$/, () => ({ '&:hover': { 'background-color': 'var(--color-surface-hover)' } })],
     [/^hover:bg-gray-800$/, () => ({ '&:hover': { 'background-color': 'var(--color-surface-hover)' } })],
-    [/^hover:text-gray-200$/, () => ({ '&:hover': { 'color': 'var(--color-text-bright)' } })],
-    [/^hover:text-gray-300$/, () => ({ '&:hover': { 'color': 'var(--color-text-bright)' } })],
+    [/^hover:text-gray-200$/, () => ({ '&:hover': { color: 'var(--color-text-bright)' } })],
+    [/^hover:text-gray-300$/, () => ({ '&:hover': { color: 'var(--color-text-bright)' } })],
   ],
 })

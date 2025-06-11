@@ -402,8 +402,6 @@ watch(theme, () => {
   }
 }, { immediate: false })
 
-
-
 onBeforeUnmount(() => {
   destroyEditor()
 })

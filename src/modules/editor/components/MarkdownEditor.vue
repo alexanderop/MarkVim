@@ -12,10 +12,10 @@ const emit = defineEmits<{
 const modelValue = defineModel<string>()
 
 function getCurrentTheme() {
-  if (!process.client) {
+  if (!import.meta.client) {
     return settings.theme === 'auto' ? 'dark' : settings.theme
   }
-  
+
   if (settings.theme === 'auto') {
     return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
   }
@@ -26,19 +26,19 @@ const currentTheme = ref(getCurrentTheme())
 
 onMounted(() => {
   currentTheme.value = getCurrentTheme()
-  
+
   const themeWatcher = new MutationObserver(() => {
     const newTheme = getCurrentTheme()
     if (newTheme !== currentTheme.value) {
       currentTheme.value = newTheme
     }
   })
-  
+
   themeWatcher.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['class']
+    attributeFilter: ['class'],
   })
-  
+
   onUnmounted(() => {
     themeWatcher.disconnect()
   })
