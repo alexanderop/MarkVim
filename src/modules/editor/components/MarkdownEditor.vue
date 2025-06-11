@@ -114,4 +114,20 @@ watch(() => settings.theme, () => {
 :deep(.cm-focused) {
   outline: none;
 }
+
+:deep(.cm-selectionBackground) {
+  background-color: var(--color-selection) !important;
+}
+
+:deep(.cm-focused .cm-selectionBackground) {
+  background-color: var(--color-selection) !important;
+}
+
+:deep(.cm-editor.cm-focused .cm-selectionLayer .cm-selectionBackground) {
+  background: var(--color-selection) !important;
+}
+
+:deep(.cm-selectionMatch) {
+  background-color: var(--color-selection) !important;
+}
 </style>
