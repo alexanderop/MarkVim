@@ -87,4 +87,4 @@ Given('synchronized scrolling is enabled', async function (this: MarkVimWorld) {
   await markVimPage.openSettingsModal()
   await markVimPage.enableSynchronizedScrolling()
   await markVimPage.closeSettingsModal()
-}) 
+})

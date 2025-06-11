@@ -7,7 +7,7 @@ The Cucumber step definitions have been restructured to eliminate duplication an
 
 ### Before (7 separate files):
 - `common.steps.ts` - Generic reusable steps
-- `keyboard-shortcuts.steps.ts` - Keyboard shortcuts specific steps  
+- `keyboard-shortcuts.steps.ts` - Keyboard shortcuts specific steps
 - `markvim-ui.steps.ts` - UI interaction steps
 - `settings-clear-data.steps.ts` - Settings and data clearing steps
 - `sync-scroll.steps.ts` - Synchronized scrolling steps
@@ -16,7 +16,7 @@ The Cucumber step definitions have been restructured to eliminate duplication an
 
 ### After (3 consolidated files):
 - `01-given.steps.ts` - All Given step definitions
-- `02-when.steps.ts` - All When step definitions  
+- `02-when.steps.ts` - All When step definitions
 - `03-then.steps.ts` - All Then step definitions
 
 ## Benefits
@@ -57,7 +57,7 @@ Then element with testid "element-id" should contain text "expected"
 ### Keyboard and UI Actions (now in When file)
 ```gherkin
 When I press "Escape"
-When I press "Cmd+K"  
+When I press "Cmd+K"
 When I open the command palette
 When I open the settings modal
 ```
@@ -83,4 +83,4 @@ All 43 scenarios with 303 steps continue to pass after the consolidation, confir
 1. **Check existing step files first** - Before creating new step definitions, search the consolidated files for similar functionality
 2. **Use consistent patterns** - Follow the established patterns for element interactions and assertions
 3. **Prefer generic over specific** - Create reusable step definitions that can work across multiple features
-4. **Maintain the structure** - Continue adding new steps to the appropriate Given/When/Then file based on their function 
+4. **Maintain the structure** - Continue adding new steps to the appropriate Given/When/Then file based on their function

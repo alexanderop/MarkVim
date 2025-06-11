@@ -509,4 +509,4 @@ Then('element with testid {string} should contain value {string}', async functio
 
   const value = await element.inputValue()
   expect(value).toContain(expectedValue)
-}) 
+})
