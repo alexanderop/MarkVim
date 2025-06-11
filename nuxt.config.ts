@@ -55,6 +55,7 @@ export default defineNuxtConfig({
       'modules/shortcuts/composables',
       'modules/share/composables',
       'modules/layout/composables',
+      'shared/composables',
       'shared/utils',
     ],
   },
