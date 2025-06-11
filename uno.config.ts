@@ -17,32 +17,32 @@ export default defineConfig({
   ],
   theme: {
     colors: {
-      // Base colors
-      'background': 'hsl(224 71.4% 4.1%)', // #020817
-      'foreground': 'hsl(210 20% 98%)', // #fafafa
+      // Theme-aware colors using CSS variables (these will change with light/dark mode)
+      'background': 'var(--color-background)',
+      'foreground': 'var(--color-foreground)',
 
       // Surfaces
       'surface': {
-        primary: 'hsl(220 26% 8%)', // #111317
-        secondary: 'hsl(220 26% 12%)', // #181a20
-        hover: 'hsl(220 26% 16%)', // #21242b
+        primary: 'var(--color-surface-primary)',
+        secondary: 'var(--color-surface-secondary)',
+        hover: 'var(--color-surface-hover)',
       },
 
       // Borders
-      'border': 'hsl(215 18% 20%)', // #2c303a
-      'subtle': 'hsl(215 18% 15%)', // #21252e
+      'border': 'var(--color-border)',
+      'subtle': 'var(--color-border)', // Use same as border for now
 
       // Accent colors
-      'accent': 'hsl(250 84% 60%)', // #5D37F0
+      'accent': 'var(--color-accent)',
       'accent-hover': 'hsl(250 84% 65%)',
       'accent-brighter': 'hsl(250 84% 70%)',
 
       // Text colors
       'text': {
-        primary: 'hsl(215 15% 75%)', // #b8bcc4
-        secondary: 'hsl(215 12% 55%)', // #838996
-        tertiary: 'hsl(215 10% 40%)', // #606572
-        bright: 'hsl(210 20% 98%)', // #fafafa
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
+        tertiary: 'var(--color-text-secondary)', // Use same as secondary for now
+        bright: 'var(--color-text-bright)',
       },
 
       // Window decoration (for fake window UI)
@@ -62,25 +62,8 @@ export default defineConfig({
   },
   preflights: [
     {
-      getCSS: ({ theme }) => {
-        // Extracting HSL variables for use in CSS
-        const accentHsl = (theme.vars as any)?.['accent-hsl'] || '250 84% 60%'
-
+      getCSS: () => {
         return `
-          :root {
-            --color-background: ${theme.colors.background};
-            --color-foreground: ${theme.colors.foreground};
-            --color-surface-primary: ${theme.colors.surface.primary};
-            --color-surface-secondary: ${theme.colors.surface.secondary};
-            --color-surface-hover: ${theme.colors.surface.hover};
-            --color-border: ${theme.colors.border};
-            --color-accent: ${theme.colors.accent};
-            --color-text-primary: ${theme.colors.text.primary};
-            --color-text-secondary: ${theme.colors.text.secondary};
-            --color-text-bright: ${theme.colors.text.bright};
-            --accent-hsl: ${accentHsl};
-          }
-
           body {
             font-family: 'Inter', sans-serif;
             background-color: var(--color-background);
@@ -95,8 +78,8 @@ export default defineConfig({
 
           /* Enhanced prose code block styling */
           .prose pre {
-            background-color: ${theme.colors.surface.primary} !important;
-            border: 1px solid ${theme.colors.border};
+            background-color: var(--color-surface-primary) !important;
+            border: 1px solid var(--color-border);
             border-radius: 8px;
             padding: 1.5rem;
             margin: 1.5rem 0;
@@ -110,14 +93,14 @@ export default defineConfig({
             top: 0.5rem;
             right: 0.75rem;
             font-size: 0.75rem;
-            color: ${theme.colors.text.secondary};
+            color: var(--color-text-secondary);
             text-transform: uppercase;
             font-weight: 500;
           }
 
           .prose :not(pre) > code {
-            background: hsl(${accentHsl} / 0.15) !important;
-            color: hsl(${accentHsl} / 0.9) !important;
+            background: hsl(var(--accent-hsl) / 0.15) !important;
+            color: hsl(var(--accent-hsl) / 0.9) !important;
             padding: 0.125rem 0.375rem !important;
             border-radius: 0.25rem !important;
             font-size: 0.875em;
@@ -131,4 +114,23 @@ export default defineConfig({
     'btn': 'px-4 py-2 rounded-lg font-semibold text-white transition-colors duration-200',
     'btn-accent': 'bg-accent hover:bg-accent-hover',
   },
+  rules: [
+    // Override gray classes with theme-aware versions
+    [/^bg-gray-950$/, () => ({ 'background-color': 'var(--color-background)' })],
+    [/^bg-gray-900$/, () => ({ 'background-color': 'var(--color-surface-primary)' })],
+    [/^bg-gray-800$/, () => ({ 'background-color': 'var(--color-surface-secondary)' })],
+    [/^bg-gray-700$/, () => ({ 'background-color': 'var(--color-surface-hover)' })],
+    [/^text-gray-100$/, () => ({ color: 'var(--color-text-bright)' })],
+    [/^text-gray-200$/, () => ({ color: 'var(--color-text-primary)' })],
+    [/^text-gray-300$/, () => ({ color: 'var(--color-text-primary)' })],
+    [/^text-gray-400$/, () => ({ color: 'var(--color-text-secondary)' })],
+    [/^text-gray-500$/, () => ({ color: 'var(--color-text-secondary)' })],
+    [/^border-gray-600$/, () => ({ 'border-color': 'var(--color-border)' })],
+    [/^border-gray-700$/, () => ({ 'border-color': 'var(--color-border)' })],
+    [/^border-gray-800$/, () => ({ 'border-color': 'var(--color-border)' })],
+    [/^hover:bg-gray-700$/, () => ({ '&:hover': { 'background-color': 'var(--color-surface-hover)' } })],
+    [/^hover:bg-gray-800$/, () => ({ '&:hover': { 'background-color': 'var(--color-surface-hover)' } })],
+    [/^hover:text-gray-200$/, () => ({ '&:hover': { color: 'var(--color-text-bright)' } })],
+    [/^hover:text-gray-300$/, () => ({ '&:hover': { color: 'var(--color-text-bright)' } })],
+  ],
 })

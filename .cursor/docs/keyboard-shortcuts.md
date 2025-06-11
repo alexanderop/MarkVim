@@ -11,7 +11,7 @@ MarkVim provides several built in shortcuts to speed up common tasks. This list 
 | `g` then `s` | Open settings modal |
 | `Cmd+S` | Save current document |
 | `Cmd+Shift+S` | Download document as Markdown |
-| `Cmd+N` | Create a new document |
+| `Cmd+I` | Create a new document |
 
 ## View Controls
 
@@ -20,7 +20,7 @@ MarkVim provides several built in shortcuts to speed up common tasks. This list 
 | `1` | Switch to editor only view |
 | `2` | Switch to split view |
 | `3` | Switch to preview only view |
-| `Cmd+Shift+\` | Toggle document sidebar |
+| `Cmd+B` | Toggle document sidebar |
 
 ## Editor Settings
 
