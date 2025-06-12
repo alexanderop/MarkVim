@@ -123,7 +123,7 @@ function formatDate(timestamp: number): string {
                       :class="[
                         document.id === activeDocumentId
                           ? 'bg-accent/20 text-accent-brighter'
-                          : 'bg-surface-secondary text-text-tertiary group-hover:bg-surface-hover group-hover:text-text-secondary',
+                          : 'bg-surface-primary text-text-tertiary group-hover:bg-surface-hover group-hover:text-text-secondary',
                       ]"
                     >
                       <Icon

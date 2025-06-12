@@ -56,9 +56,9 @@ onMounted(async () => {
         primaryBorderColor: getCSSVariable('--color-border'),
         lineColor: getCSSVariable('--color-text-secondary'),
         sectionBkgColor: getCSSVariable('--color-surface-primary'),
-        altSectionBkgColor: getCSSVariable('--color-surface-secondary'),
+        altSectionBkgColor: getCSSVariable('--color-surface-primary'),
         gridColor: getCSSVariable('--color-border'),
-        secondaryColor: getCSSVariable('--color-surface-secondary'),
+        secondaryColor: getCSSVariable('--color-surface-primary'),
         tertiaryColor: getCSSVariable('--color-text-muted'),
       },
     })
@@ -162,9 +162,9 @@ onMounted(async () => {
 .mermaid .node circle,
 .mermaid .node ellipse,
 .mermaid .node polygon {
-  fill: var(--color-surface-secondary) !important;
-  stroke: var(--color-accent) !important;
-  stroke-width: 2px !important;
+  fill: var(--color-surface-primary) !important;
+  stroke: var(--color-border) !important;
+  stroke-width: 1px !important;
 }
 
 .mermaid .node .label {
@@ -183,7 +183,7 @@ onMounted(async () => {
 }
 
 .mermaid .actor {
-  fill: var(--color-surface-secondary) !important;
+  fill: var(--color-surface-primary) !important;
   stroke: var(--color-accent) !important;
   stroke-width: 2px !important;
 }
@@ -219,7 +219,7 @@ onMounted(async () => {
   margin: 1.5rem 0;
   border-left: 4px solid;
   border-radius: 0.5rem;
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-primary);
   border-color: var(--color-border);
   transition: all 0.2s ease-in-out;
   position: relative;
@@ -351,5 +351,17 @@ onMounted(async () => {
 .prose sup[id^='fnref'] a:hover {
   background-color: hsl(var(--accent-hsl) / 0.2);
   color: var(--color-accent-hover);
+}
+
+.mermaid .cluster rect {
+  fill: var(--color-surface-primary) !important;
+  stroke: var(--color-border) !important;
+  stroke-width: 1px !important;
+}
+
+.mermaid .statediagram-state .state-note {
+  background: var(--color-surface-primary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary) !important;
 }
 </style>

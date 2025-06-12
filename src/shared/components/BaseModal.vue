@@ -51,7 +51,7 @@ const maxWidthClasses = {
 
       <DialogContent
         :data-testid="props.dataTestid"
-        class="bg-surface-secondary border border-subtle flex flex-col gap-3 w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
+        class="bg-surface-primary border border-subtle flex flex-col gap-3 w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
         :class="[maxWidthClasses[props.maxWidth]]"
         :style="{ maxHeight: props.maxHeight }"
       >

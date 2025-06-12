@@ -33,7 +33,7 @@ const buttonClasses = computed(() => {
   const variants = {
     default: 'text-text-secondary hover:text-text-primary hover:bg-surface-hover border border-border',
     primary: 'bg-accent text-accent-foreground hover:bg-accent/90',
-    secondary: 'bg-surface-secondary text-text-primary hover:bg-surface-hover border border-border',
+    secondary: 'bg-surface-primary text-text-primary hover:bg-surface-hover border border-border',
     destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 focus:ring-offset-surface-primary',
     ghost: 'text-text-secondary hover:text-text-primary hover:bg-surface-hover',
     icon: 'text-text-secondary hover:text-text-primary hover:bg-surface-hover rounded-lg',

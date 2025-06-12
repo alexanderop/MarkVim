@@ -254,7 +254,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
       <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
       <DialogContent
         data-testid="command-palette"
-        class="border border-subtle rounded-lg bg-surface-secondary w-[550px] shadow-2xl shadow-black/40 ring-1 ring-white/10 left-1/2 top-1/3 fixed z-50 overflow-hidden -translate-x-1/2 -translate-y-1/2"
+        class="border border-subtle rounded-lg bg-surface-primary w-[550px] shadow-2xl shadow-black/40 ring-1 ring-white/10 left-1/2 top-1/3 fixed z-50 overflow-hidden -translate-x-1/2 -translate-y-1/2"
       >
         <!-- Search Input -->
         <div class="px-4 py-3 border-b border-gray-700">

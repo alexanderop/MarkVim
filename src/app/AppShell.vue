@@ -325,7 +325,7 @@ useHead({
         @delete-document="handleDeleteDocument"
       />
 
-      <div class="bg-surface-secondary/30 flex flex-1 flex-col overflow-hidden">
+      <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
         <div
           class="flex flex-1 flex-col relative overflow-hidden md:flex-row" :class="[
             !isSplitView && !isMobile ? 'md:justify-center md:items-center' : '',

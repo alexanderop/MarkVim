@@ -30,26 +30,26 @@ defineProps<Props>()
 
     <div class="text-xs text-text-secondary gap-4 hidden items-center md:flex">
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-secondary">
+        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
           {{ formatKeys('1') }}
         </kbd>
         <span>Editor</span>
       </div>
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-secondary">
+        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
           {{ formatKeys('2') }}
         </kbd>
         <span>Split</span>
       </div>
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-secondary">
+        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
           {{ formatKeys('3') }}
         </kbd>
         <span>Preview</span>
       </div>
       <div class="bg-border h-3 w-px" />
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-secondary">
+        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
           {{ formatKeys('⌘K') }}
         </kbd>
         <span>Commands</span>

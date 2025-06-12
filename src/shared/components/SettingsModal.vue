@@ -60,7 +60,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           Editor Behavior
         </h3>
         <div class="space-y-2">
-          <div class="p-3 border border-border rounded-md bg-surface-secondary flex items-center justify-between">
+          <div class="p-3 border border-border rounded-md bg-surface-primary flex items-center justify-between">
             <div>
               <h4 class="text-sm text-text-primary font-medium">
                 Vim Mode
@@ -84,7 +84,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
             </SwitchRoot>
           </div>
 
-          <div class="p-3 border border-border rounded-md bg-surface-secondary flex items-center justify-between">
+          <div class="p-3 border border-border rounded-md bg-surface-primary flex items-center justify-between">
             <div>
               <h4 class="text-sm text-text-primary font-medium">
                 Synchronized Scrolling
@@ -118,7 +118,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
         </h3>
         <div class="space-y-2">
           <!-- Theme and Font Size in one row -->
-          <div class="p-3 border border-border rounded-md bg-surface-secondary">
+          <div class="p-3 border border-border rounded-md bg-surface-primary">
             <div class="gap-4 grid grid-cols-2">
               <div>
                 <h4 class="text-sm text-text-primary font-medium mb-1">
@@ -172,7 +172,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
         </h3>
         <div class="space-y-2">
           <!-- Line Numbers -->
-          <div class="p-3 border border-border rounded-md bg-surface-secondary">
+          <div class="p-3 border border-border rounded-md bg-surface-primary">
             <div class="space-y-2">
               <label class="flex gap-2 items-center">
                 <input
@@ -218,7 +218,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           </div>
 
           <!-- Other Settings -->
-          <div class="p-3 border border-border rounded-md bg-surface-secondary">
+          <div class="p-3 border border-border rounded-md bg-surface-primary">
             <div class="gap-3 grid grid-cols-3">
               <label class="flex gap-2 items-center">
                 <input
@@ -251,7 +251,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     </div>
 
     <template #footer-left>
-      Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-secondary inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
+      Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-primary inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
     </template>
 
     <template #footer-right>
