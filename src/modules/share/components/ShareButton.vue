@@ -28,29 +28,17 @@ const canShare = computed(() => {
 
 <template>
   <div>
-    <button
-      data-testid="share-button"
-      class="group text-gray-400 rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-      :class="[
-        disabled || !canShare
-          ? 'hover:text-gray-300 hover:bg-gray-800/50'
-          : 'hover:text-blue-400 hover:bg-blue-500/10',
-      ]"
+    <BaseButton
+      variant="icon"
+      size="icon"
+      :icon="isSharing ? 'lucide:loader-2' : 'lucide:share'"
       :title="canShare ? 'Share document' : 'Document too large to share'"
       :disabled="disabled || !document || isSharing || !canShare"
+      data-testid="share-button"
+      icon-only
+      :class="{ 'animate-spin': isSharing }"
       @click="handleShareClick"
-    >
-      <Icon
-        v-if="!isSharing"
-        name="lucide:share"
-        class="h-4 w-4 transition-colors duration-200"
-      />
-      <Icon
-        v-else
-        name="lucide:loader-2"
-        class="h-4 w-4 transition-colors duration-200 animate-spin"
-      />
-    </button>
+    />
 
     <ShareDialog
       v-model:open="showShareDialog"

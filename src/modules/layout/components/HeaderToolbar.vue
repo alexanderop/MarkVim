@@ -42,16 +42,18 @@ defineEmits<Emits>()
 
     <!-- Center section - View mode toggle -->
     <div data-testid="view-mode-toggle" class="p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
-      <button
+      <BaseButton
         v-for="mode in [
           { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
           { key: 'split', icon: 'lucide:columns-2', label: 'Split', shortcut: '⌘2' },
           { key: 'preview', icon: 'lucide:eye', label: 'Preview', shortcut: '⌘3' },
         ]"
         :key="mode.key"
+        variant="ghost"
+        size="sm"
+        :icon="mode.icon"
         :data-testid="`view-mode-${mode.key}`"
-        class="group text-xs font-medium px-3 py-1.5 rounded-md flex gap-1.5 transition-all duration-200 items-center relative"
-        :class="[
+        class="relative" :class="[
           viewMode === mode.key
             ? 'text-text-bright'
             : 'text-text-secondary hover:text-text-primary',
@@ -59,10 +61,6 @@ defineEmits<Emits>()
         :title="`${mode.label} (${mode.shortcut})`"
         @click="$emit('update:viewMode', mode.key as 'split' | 'editor' | 'preview')"
       >
-        <Icon
-          :name="mode.icon"
-          class="h-3.5 w-3.5 transition-colors duration-200"
-        />
         <span class="hidden sm:inline">{{ mode.label }}</span>
 
         <!-- Active indicator -->
@@ -71,7 +69,7 @@ defineEmits<Emits>()
           :data-testid="`view-mode-${mode.key}-active`"
           class="rounded-md ring-1 ring-white/10 inset-0 absolute bg-white/5"
         />
-      </button>
+      </BaseButton>
     </div>
 
     <!-- Right section -->
@@ -80,17 +78,16 @@ defineEmits<Emits>()
         :document="activeDocument"
       />
 
-      <button
-        data-testid="delete-document-btn"
-        class="group text-gray-400 rounded-lg flex h-8 w-8 transition-all duration-200 items-center justify-center hover:text-red-400 hover:bg-red-500/10"
+      <BaseButton
+        variant="icon"
+        size="icon"
+        icon="lucide:trash-2"
         title="Delete note"
+        data-testid="delete-document-btn"
+        class="hover:text-red-400 hover:bg-red-500/10"
+        icon-only
         @click="$emit('deleteDocument')"
-      >
-        <Icon
-          name="lucide:trash-2"
-          class="h-4 w-4 transition-colors duration-200"
-        />
-      </button>
+      />
 
       <div class="bg-gray-700/50 h-4 w-px" />
 

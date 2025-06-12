@@ -34,20 +34,20 @@ defineEmits<Emits>()
     </div>
 
     <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
-      <button
+      <BaseButton
+        variant="default"
         data-testid="delete-cancel-btn"
-        class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
         @click="$emit('cancel')"
       >
         Cancel
-      </button>
-      <button
+      </BaseButton>
+      <BaseButton
+        variant="destructive"
         data-testid="delete-confirm-btn"
-        class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
         @click="$emit('confirm')"
       >
         Delete
-      </button>
+      </BaseButton>
     </div>
   </BaseModal>
 </template>

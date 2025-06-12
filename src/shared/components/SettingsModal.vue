@@ -125,18 +125,16 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   Theme
                 </h4>
                 <div class="flex gap-1">
-                  <button
+                  <BaseButton
                     v-for="theme in themes"
                     :key="theme"
-                    class="text-xs font-medium px-2 py-1 rounded capitalize transition-colors" :class="[
-                      settings.theme === theme
-                        ? 'bg-accent text-accent-foreground'
-                        : 'bg-surface-hover text-text-secondary hover:bg-surface-primary hover:text-text-primary',
-                    ]"
+                    :variant="settings.theme === theme ? 'primary' : 'ghost'"
+                    size="sm"
+                    class="capitalize"
                     @click="updateTheme(theme)"
                   >
                     {{ theme }}
-                  </button>
+                  </BaseButton>
                 </div>
               </div>
 
@@ -145,19 +143,21 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   Font Size
                 </h4>
                 <div class="flex gap-2 items-center">
-                  <button
-                    class="p-1 rounded hover:bg-surface-hover text-text-secondary hover:text-text-primary transition-colors"
+                  <BaseButton
+                    variant="ghost"
+                    size="sm"
+                    icon="heroicons:minus"
+                    icon-only
                     @click="updateFontSize(settings.fontSize - 1)"
-                  >
-                    <Icon name="heroicons:minus" class="h-3 w-3" />
-                  </button>
+                  />
                   <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
-                  <button
-                    class="p-1 rounded hover:bg-surface-hover text-text-secondary hover:text-text-primary transition-colors"
+                  <BaseButton
+                    variant="ghost"
+                    size="sm"
+                    icon="heroicons:plus"
+                    icon-only
                     @click="updateFontSize(settings.fontSize + 1)"
-                  >
-                    <Icon name="heroicons:plus" class="h-3 w-3" />
-                  </button>
+                  />
                 </div>
               </div>
             </div>
@@ -256,19 +256,22 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
 
     <template #footer-right>
       <div class="flex gap-2 items-center">
-        <button
-          class="text-xs text-red-400 font-medium px-3 py-1.5 border border-red-600/50 rounded transition-colors hover:text-red-300 hover:bg-red-600/10"
+        <BaseButton
+          variant="destructive"
+          size="sm"
+          class="text-red-400 border-red-600/50 bg-transparent hover:text-red-300 hover:bg-red-600/10"
           data-testid="clear-data-button"
           @click="openClearDataModal"
         >
           Clear Local Data
-        </button>
-        <button
-          class="text-xs text-text-secondary font-medium px-3 py-1.5 border border-border rounded transition-colors hover:text-text-primary hover:bg-surface-hover"
+        </BaseButton>
+        <BaseButton
+          variant="default"
+          size="sm"
           @click="resetToDefaults"
         >
           Reset to Defaults
-        </button>
+        </BaseButton>
       </div>
     </template>
   </BaseModal>
@@ -299,20 +302,20 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     </div>
 
     <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
-      <button
+      <BaseButton
+        variant="default"
         data-testid="clear-data-cancel-btn"
-        class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-text-secondary hover:text-text-primary hover:bg-surface-hover border border-border"
         @click="closeClearDataModal"
       >
         Cancel
-      </button>
-      <button
+      </BaseButton>
+      <BaseButton
+        variant="destructive"
         data-testid="clear-data-confirm-btn"
-        class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-surface-primary"
         @click="confirmClearData"
       >
         Clear All Data
-      </button>
+      </BaseButton>
     </div>
   </BaseModal>
 </template>

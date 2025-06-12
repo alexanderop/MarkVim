@@ -7,3 +7,50 @@ alwaysApply: false
 
 <script setup lang='ts'></script>
 <template></template>
+
+## Vue 3.5 Props Pattern
+
+Use destructuring props with inline types and defaults instead of interfaces and withDefaults:
+
+**✅ Preferred (Vue 3.5+):**
+```vue
+<script setup lang="ts">
+const {
+  variant = 'default',
+  size = 'md',
+  disabled = false,
+  class: className,
+} = defineProps<{
+  variant?: 'default' | 'primary' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
+  disabled?: boolean
+  class?: string
+}>()
+
+defineEmits<{
+  click: [event: MouseEvent]
+}>()
+</script>
+```
+
+**❌ Avoid (Old pattern):**
+```vue
+<script setup lang="ts">
+interface Props {
+  variant?: 'default' | 'primary'
+  size?: 'sm' | 'md'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  variant: 'default',
+  size: 'md',
+})
+</script>
+```
+
+## Key Benefits
+- No separate interface needed
+- Default values inline with destructuring
+- Direct variable access (no `props.` prefix)
+- More concise and readable
+- Better TypeScript inference
