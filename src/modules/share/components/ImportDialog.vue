@@ -179,8 +179,8 @@ function handleCancel() {
             class="p-3 bg-red-500/10 border border-red-500/20 rounded-md"
           >
             <div class="flex items-start gap-2">
-              <Icon name="lucide:alert-circle" class="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
-              <div class="text-sm text-red-300">
+                          <Icon name="lucide:alert-circle" class="h-4 w-4 text-error mt-0.5 flex-shrink-0" />
+            <div class="text-sm text-error">
                 {{ importError }}
               </div>
             </div>

@@ -66,13 +66,14 @@ const maxWidthClasses = {
           </div>
 
           <DialogClose v-if="showCloseButton" as-child>
-            <button
-              class="text-text-secondary hover:text-text-primary hover:bg-surface-hover rounded-md p-1.5 transition-all duration-200"
+            <BaseButton
+              variant="icon"
+              size="icon"
+              icon="lucide:x"
+              icon-only
+              title="Close"
               @click="handleClose"
-            >
-              <Icon name="lucide:x" class="h-4 w-4" />
-              <span class="sr-only">Close</span>
-            </button>
+            />
           </DialogClose>
         </div>
 
@@ -87,7 +88,7 @@ const maxWidthClasses = {
             </slot>
           </div>
 
-          <div class="text-xs text-gray-400">
+          <div class="text-xs text-text-tertiary">
             <slot name="footer-right">
               {{ footerRight || '' }}
             </slot>
@@ -109,11 +110,11 @@ const maxWidthClasses = {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: var(--color-border);
   border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: var(--color-border-hover);
 }
 </style>

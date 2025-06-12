@@ -33,7 +33,6 @@ defineEmits<Emits>()
       />
 
       <div class="flex gap-2 items-center">
-        <div class="rounded-full bg-emerald-400 h-2 w-2 shadow-emerald-400/30 shadow-lg" />
         <h1 class="text-sm text-gray-100 tracking-tight font-medium w-48 truncate">
           {{ activeDocumentTitle }}
         </h1>
@@ -56,7 +55,7 @@ defineEmits<Emits>()
         class="relative" :class="[
           viewMode === mode.key
             ? 'text-text-bright'
-            : 'text-text-secondary hover:text-text-primary',
+            : 'text-text-tertiary opacity-60 hover:text-text-secondary hover:opacity-80',
         ]"
         :title="`${mode.label} (${mode.shortcut})`"
         @click="$emit('update:viewMode', mode.key as 'split' | 'editor' | 'preview')"
@@ -67,7 +66,7 @@ defineEmits<Emits>()
         <div
           v-if="viewMode === mode.key"
           :data-testid="`view-mode-${mode.key}-active`"
-          class="rounded-md ring-1 ring-white/10 inset-0 absolute bg-white/5"
+          class="rounded-md inset-0 absolute bg-white/5"
         />
       </BaseButton>
     </div>
@@ -84,7 +83,7 @@ defineEmits<Emits>()
         icon="lucide:trash-2"
         title="Delete note"
         data-testid="delete-document-btn"
-        class="hover:text-red-400 hover:bg-red-500/10"
+        class="hover:text-error hover:bg-error/10"
         icon-only
         @click="$emit('deleteDocument')"
       />

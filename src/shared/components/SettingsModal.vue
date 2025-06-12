@@ -257,9 +257,9 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     <template #footer-right>
       <div class="flex gap-2 items-center">
         <BaseButton
-          variant="destructive"
+          variant="default"
           size="sm"
-          class="text-red-400 border-red-600/50 bg-transparent hover:text-red-300 hover:bg-red-600/10"
+          icon="lucide:trash-2"
           data-testid="clear-data-button"
           @click="openClearDataModal"
         >
@@ -268,6 +268,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
         <BaseButton
           variant="default"
           size="sm"
+          icon="lucide:rotate-ccw"
           @click="resetToDefaults"
         >
           Reset to Defaults
@@ -296,7 +297,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
         <li>Command history</li>
         <li>Sidebar and pane layout settings</li>
       </ul>
-      <p class="text-red-400 text-sm mt-3 font-medium">
+      <p class="text-error text-sm mt-3 font-medium">
         This action cannot be undone.
       </p>
     </div>

@@ -72,7 +72,7 @@ const totalShortcuts = computed(() =>
         :key="category.name"
         class="space-y-3"
       >
-        <h3 class="text-xs text-gray-400 tracking-wider font-medium uppercase">
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium uppercase">
           {{ category.name }}
         </h3>
 
@@ -80,9 +80,9 @@ const totalShortcuts = computed(() =>
           <div
             v-for="shortcut in category.shortcuts"
             :key="shortcut.keys"
-            class="px-3 py-2 rounded-md flex transition-colors items-center justify-between hover:bg-gray-800/50"
+            class="px-3 py-2 rounded-md flex transition-colors items-center justify-between hover:bg-surface-hover"
           >
-            <span class="text-sm text-gray-200">
+            <span class="text-sm text-text-primary">
               {{ shortcut.description }}
             </span>
 
@@ -90,7 +90,7 @@ const totalShortcuts = computed(() =>
               <kbd
                 v-for="(key, index) in formatKeys(shortcut.keys).split(/(?=[⌘⌃⌥⇧])|(?<=\w)(?=[⌘⌃⌥⇧])/)"
                 :key="index"
-                class="text-xs text-gray-200 font-mono px-1.5 border border-gray-600 rounded bg-gray-700 inline-flex h-6 min-w-[1.5rem] shadow-sm items-center justify-center" :class="[
+                class="text-xs text-text-primary font-mono px-1.5 border border-border rounded bg-surface-primary inline-flex h-6 min-w-[1.5rem] shadow-sm items-center justify-center" :class="[
                   key.match(/[⌘⌃⌥⇧]/) ? 'min-w-[1.25rem] px-1' : '',
                 ]"
               >
@@ -103,7 +103,7 @@ const totalShortcuts = computed(() =>
     </div>
 
     <template #footer-left>
-      Press <kbd class="text-xs text-gray-200 font-mono px-1 border border-gray-600 rounded bg-gray-700 inline-flex h-5 min-w-[1.5rem] items-center justify-center">⎋</kbd> to close
+      Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-primary inline-flex h-5 min-w-[1.5rem] items-center justify-center">⎋</kbd> to close
     </template>
 
     <template #footer-right>

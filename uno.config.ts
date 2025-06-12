@@ -33,8 +33,17 @@ export default defineConfig({
 
       // Accent colors
       'accent': 'var(--color-accent)',
-      'accent-hover': 'hsl(250 84% 65%)',
+      'accent-foreground': 'var(--color-accent-foreground)',
+      'accent-hover': 'var(--color-accent-hover)',
       'accent-brighter': 'hsl(250 84% 70%)',
+
+      // Status colors
+      'success': 'var(--color-success)',
+      'success-hover': 'var(--color-success-hover)',
+      'warning': 'var(--color-warning)',
+      'warning-hover': 'var(--color-warning-hover)',
+      'error': 'var(--color-error)',
+      'error-hover': 'var(--color-error-hover)',
 
       // Text colors
       'text': {

@@ -426,29 +426,29 @@ useHead({
       @close="cancelDeleteDocument"
     >
       <div class="py-4">
-        <p class="text-gray-200 text-sm leading-relaxed">
-          Are you sure you want to delete <span class="font-semibold text-white">"{{ documentToDelete?.title }}"</span>?
+        <p class="text-text-primary text-sm leading-relaxed">
+          Are you sure you want to delete <span class="font-semibold text-text-bright">"{{ documentToDelete?.title }}"</span>?
         </p>
-        <p class="text-gray-400 text-sm mt-2">
+        <p class="text-text-secondary text-sm mt-2">
           This action cannot be undone.
         </p>
       </div>
 
-      <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
-        <button
+      <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
+        <BaseButton
+          variant="default"
           data-testid="delete-cancel-btn"
-          class="text-sm font-medium px-4 py-2 rounded-md transition-colors text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
           @click="cancelDeleteDocument"
         >
           Cancel
-        </button>
-        <button
+        </BaseButton>
+        <BaseButton
+          variant="destructive"
           data-testid="delete-confirm-btn"
-          class="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
           @click="confirmDeleteDocument"
         >
           Delete
-        </button>
+        </BaseButton>
       </div>
     </BaseModal>
 
