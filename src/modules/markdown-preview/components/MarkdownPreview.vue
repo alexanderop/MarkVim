@@ -34,86 +34,17 @@ watch(viewMode, () => {
 })
 
 // Initialize Mermaid only on client side
+const { setupMermaid, renderDiagrams, cleanup } = useMermaid(root)
+
 onMounted(async () => {
-  const mermaid = await import('mermaid')
-
-  const isDark = () => document.documentElement.classList.contains('dark')
-
-  const getCSSVariable = (name: string) => {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-  }
-
-  const initializeMermaid = () => {
-    const isCurrentlyDark = isDark()
-
-    mermaid.default.initialize({
-      startOnLoad: false,
-      theme: isCurrentlyDark ? 'dark' : 'base',
-      darkMode: isCurrentlyDark,
-      themeVariables: {
-        primaryColor: getCSSVariable('--color-accent'),
-        primaryTextColor: getCSSVariable('--color-text-primary'),
-        primaryBorderColor: getCSSVariable('--color-border'),
-        lineColor: getCSSVariable('--color-text-secondary'),
-        sectionBkgColor: getCSSVariable('--color-surface-primary'),
-        altSectionBkgColor: getCSSVariable('--color-surface-primary'),
-        gridColor: getCSSVariable('--color-border'),
-        secondaryColor: getCSSVariable('--color-surface-primary'),
-        tertiaryColor: getCSSVariable('--color-text-muted'),
-      },
-    })
-  }
-
-  initializeMermaid()
-
-  const run = () => {
-    const nodes = root.value?.querySelectorAll('.mermaid') ?? []
-    if (nodes.length > 0) {
-      initializeMermaid()
-
-      // Clear existing rendered diagrams and restore original content
-      nodes.forEach((node) => {
-        const element = node as HTMLElement
-        // If the node has been processed by Mermaid, it will have data-processed attribute
-        if (element.hasAttribute('data-processed')) {
-          element.removeAttribute('data-processed')
-          // Find the original mermaid source from the element's dataset or textContent
-          const originalContent = element.dataset.mermaidSource || element.textContent
-          if (originalContent) {
-            element.innerHTML = originalContent
-            element.removeAttribute('id') // Remove any auto-generated IDs
-          }
-        }
-        else {
-          // Store original content for future theme changes
-          element.dataset.mermaidSource = element.textContent || ''
-        }
-      })
-
-      // Re-render with new theme
-      mermaid.default.run({ nodes: Array.from(nodes) as HTMLElement[] })
-    }
-  }
-
-  // Watch for theme changes
-  const themeWatcher = new MutationObserver(() => {
-    // Re-run diagrams when theme changes
-    nextTick(run)
-  })
-
-  run()
-  // Watch for changes to the dark class on document.documentElement
-  themeWatcher.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['class'],
-  })
-
-  onUnmounted(() => {
-    themeWatcher.disconnect()
-  })
-
-  watch(() => renderedHtml, () => nextTick(run))
+  await setupMermaid()
 })
+
+onUnmounted(() => {
+  cleanup()
+})
+
+watch(() => renderedHtml, () => nextTick(renderDiagrams))
 </script>
 
 <template>
@@ -228,7 +159,7 @@ onMounted(async () => {
 
 .prose .markdown-alert:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px var(--color-shadow-md);
 }
 
 .prose .markdown-alert > .markdown-alert-title {
@@ -241,53 +172,53 @@ onMounted(async () => {
 
 .prose .markdown-alert > .markdown-alert-title svg,
 .prose .markdown-alert > .markdown-alert-title .icon {
-  color: var(--color-text-bright) !important;
-  fill: var(--color-text-bright) !important;
+  color: var(--color-text-primary) !important;
+  fill: var(--color-text-primary) !important;
 }
 
 .prose .markdown-alert-note {
-  border-color: #0969da;
-  background: hsla(212, 89%, 44%, 0.1);
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
 }
 
 .prose .markdown-alert-note > .markdown-alert-title {
-  color: #409cff;
+  color: var(--color-accent);
 }
 
 .prose .markdown-alert-tip {
-  border-color: #2ea043;
-  background: hsla(134, 61%, 45%, 0.1);
+  border-color: var(--color-success);
+  background: color-mix(in oklch, var(--color-success) 10%, transparent);
 }
 
 .prose .markdown-alert-tip > .markdown-alert-title {
-  color: #3fb950;
+  color: var(--color-success);
 }
 
 .prose .markdown-alert-important {
-  border-color: #8957e5;
-  background: hsla(259, 68%, 62%, 0.1);
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
 }
 
 .prose .markdown-alert-important > .markdown-alert-title {
-  color: #a475f9;
+  color: var(--color-accent);
 }
 
 .prose .markdown-alert-warning {
-  border-color: #d29922;
-  background: hsla(37, 66%, 47%, 0.1);
+  border-color: var(--color-warning);
+  background: color-mix(in oklch, var(--color-warning) 10%, transparent);
 }
 
 .prose .markdown-alert-warning > .markdown-alert-title {
-  color: #e3b341;
+  color: var(--color-warning);
 }
 
 .prose .markdown-alert-caution {
-  border-color: #da3633;
-  background: hsla(1, 68%, 52%, 0.1);
+  border-color: var(--color-error);
+  background: color-mix(in oklch, var(--color-error) 10%, transparent);
 }
 
 .prose .markdown-alert-caution > .markdown-alert-title {
-  color: #f85149;
+  color: var(--color-error);
 }
 
 /* Special styling for collapsible alerts if implemented with Reka UI */
@@ -342,14 +273,14 @@ onMounted(async () => {
   padding: 0.1rem 0.3rem;
   text-decoration: none;
   color: var(--color-accent);
-  background-color: hsl(var(--accent-hsl) / 0.1);
+  background-color: var(--color-accent-subtle);
   border-radius: 5px;
   font-weight: 500;
   transition: all 150ms ease-in-out;
 }
 
 .prose sup[id^='fnref'] a:hover {
-  background-color: hsl(var(--accent-hsl) / 0.2);
+  background-color: var(--color-accent-muted);
   color: var(--color-accent-hover);
 }
 
