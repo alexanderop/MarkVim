@@ -117,7 +117,7 @@ export default defineConfig({
     // Override gray classes with theme-aware versions
     [/^bg-gray-950$/, () => ({ 'background-color': 'var(--color-background)' })],
     [/^bg-gray-900$/, () => ({ 'background-color': 'var(--color-surface-primary)' })],
-            [/^bg-gray-800$/, () => ({ 'background-color': 'var(--color-surface-primary)' })],
+    [/^bg-gray-800$/, () => ({ 'background-color': 'var(--color-surface-primary)' })],
     [/^bg-gray-700$/, () => ({ 'background-color': 'var(--color-surface-hover)' })],
     [/^text-gray-100$/, () => ({ color: 'var(--color-text-bright)' })],
     [/^text-gray-200$/, () => ({ color: 'var(--color-text-primary)' })],

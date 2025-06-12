@@ -3,7 +3,7 @@ const { settings, toggleVimMode } = useEditorSettings()
 </script>
 
 <template>
-      <div class="p-4 border border-editor-border rounded-lg bg-surface-primary flex items-center justify-between">
+  <div class="p-4 border border-editor-border rounded-lg bg-surface-primary flex items-center justify-between">
     <div class="flex flex-col">
       <h3 class="text-text-primary font-medium">
         Vim Mode
