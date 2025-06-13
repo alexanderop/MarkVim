@@ -9,12 +9,13 @@ const emit = defineEmits<Emits>()
 
 const { parseShareUrl, clearShareFromUrl } = useDocumentShare()
 const { setActiveDocument } = useDocuments()
+const { setViewMode } = useViewMode()
 
 const showImportDialog = ref(false)
 const autoImportDocument = ref<Document | null>(null)
 
 function useAutoImportDetection() {
-  function detectShareInUrl(): void {
+  async function detectShareInUrl(): Promise<void> {
     if (!window.location.hash.startsWith('#share=')) {
       return
     }
@@ -32,8 +33,8 @@ function useAutoImportDetection() {
       updatedAt: Date.now(),
     }
 
-    autoImportDocument.value = importedDoc
-    showImportDialog.value = true
+    // Auto-import without dialog
+    await handleAutoImport(importedDoc)
   }
 
   return {
@@ -42,6 +43,24 @@ function useAutoImportDetection() {
 }
 
 const { detectShareInUrl } = useAutoImportDetection()
+
+async function handleAutoImport(document: Document) {
+  const documentStorage = useLocalStorage<Document[]>('markvim-documents', [])
+
+  // Add the document to storage
+  documentStorage.value.unshift(document)
+
+  // Use nextTick to ensure the reactive update happens before setting active
+  await nextTick()
+  setActiveDocument(document.id)
+
+  // Switch to preview mode
+  setViewMode('preview')
+
+  emit('documentImported', document)
+
+  clearShareFromUrl()
+}
 
 async function handleImportConfirm(document: Document) {
   const documentStorage = useLocalStorage<Document[]>('markvim-documents', [])

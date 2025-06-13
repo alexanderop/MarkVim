@@ -284,6 +284,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
       <BaseButton
         variant="default"
+        icon="lucide:x"
         data-testid="clear-data-cancel-btn"
         @click="closeClearDataModal"
       >
@@ -291,6 +292,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
       </BaseButton>
       <BaseButton
         variant="destructive"
+        icon="lucide:trash-2"
         data-testid="clear-data-confirm-btn"
         @click="confirmClearData"
       >

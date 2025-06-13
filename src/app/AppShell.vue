@@ -437,6 +437,7 @@ useHead({
       <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
         <BaseButton
           variant="default"
+          icon="lucide:x"
           data-testid="delete-cancel-btn"
           @click="cancelDeleteDocument"
         >
@@ -444,6 +445,7 @@ useHead({
         </BaseButton>
         <BaseButton
           variant="destructive"
+          icon="lucide:trash-2"
           data-testid="delete-confirm-btn"
           @click="confirmDeleteDocument"
         >

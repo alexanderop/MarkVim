@@ -36,6 +36,7 @@ defineEmits<Emits>()
     <div class="flex gap-3 items-center justify-end pt-4 border-t border-gray-700">
       <BaseButton
         variant="default"
+        icon="lucide:x"
         data-testid="delete-cancel-btn"
         @click="$emit('cancel')"
       >
@@ -43,6 +44,7 @@ defineEmits<Emits>()
       </BaseButton>
       <BaseButton
         variant="destructive"
+        icon="lucide:trash-2"
         data-testid="delete-confirm-btn"
         @click="$emit('confirm')"
       >

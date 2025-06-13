@@ -34,7 +34,7 @@ The share functionality in MarkVim enables users to share their markdown documen
    - Optional technical details show compression stats
 
 2. **Importing a Document**
-   - Automatic: User opens a MarkVim URL with `#share=` fragment
+   - Automatic: User opens a MarkVim URL with `#share=` fragment - document is immediately imported and opened in preview mode
    - Manual: User pastes a share link into the import dialog
    - System validates and previews the document
    - User confirms import to add to their document collection
@@ -152,13 +152,15 @@ interface Document {
 
 #### ShareManager.vue
 - Handles automatic share link detection on page load
-- Manages import workflow for shared documents
+- Automatically imports shared documents without user confirmation
+- Switches to preview mode after auto-import
 - Integrates with document storage system
 - URL cleanup after successful imports
 
 **Key Functions**:
-- `detectShareInUrl()` - Automatic detection of share fragments
-- `handleImportConfirm()` - Processes confirmed imports
+- `detectShareInUrl()` - Automatic detection of share fragments and immediate import
+- `handleAutoImport()` - Processes automatic imports and switches to preview mode
+- `handleImportConfirm()` - Processes confirmed manual imports
 - `openManualImport()` - Exposes manual import functionality
 
 #### ImportDialog.vue
