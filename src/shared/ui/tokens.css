@@ -93,6 +93,8 @@
   --color-alert-caution:       var(--color-error);
   --color-alert-caution-bg:    oklch(from var(--color-error) calc(l + 0.32) calc(c * 0.15) h);
 
+
+
   /* Selection */
   --color-selection:           color-mix(in oklch, var(--accent-200) 60%, transparent);
   --color-selection-foreground:var(--color-text-primary);
@@ -151,7 +153,11 @@
   --color-alert-caution:       var(--color-error);
   --color-alert-caution-bg:    oklch(from var(--color-error) calc(l - 0.28) calc(c * 0.2) h);
 
+
+
   --color-selection:           color-mix(in oklch, var(--accent-700) 40%, transparent);
   --color-selection-foreground:var(--color-text-primary);
 }
+
+
 
