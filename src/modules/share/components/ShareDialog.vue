@@ -190,7 +190,7 @@ function handleClose() {
               </div>
               <div class="pt-2 border-t border-gray-700">
                 <p class="text-xs text-gray-500">
-                  The document is compressed using LZ-string and embedded in the URL fragment for privacy.
+                  The document is compressed using GZIP compression and embedded in the URL fragment for privacy.
                   No server storage is used.
                 </p>
               </div>
