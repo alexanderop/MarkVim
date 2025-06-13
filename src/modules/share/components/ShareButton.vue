@@ -36,7 +36,6 @@ const canShare = computed(() => {
       :disabled="disabled || !document || isSharing || !canShare"
       data-testid="share-button"
       icon-only
-      class="text-accent hover:text-accent/80"
       :class="{ 'animate-spin': isSharing }"
       @click="handleShareClick"
     />

@@ -52,11 +52,8 @@ defineEmits<Emits>()
         size="sm"
         :icon="mode.icon"
         :data-testid="`view-mode-${mode.key}`"
-        class="relative" :class="[
-          viewMode === mode.key
-            ? 'text-accent'
-            : 'text-foreground opacity-60 hover:opacity-80',
-        ]"
+        class="relative"
+        :class="viewMode === mode.key ? 'text-accent' : 'text-foreground opacity-60 hover:opacity-80'"
         :title="`${mode.label} (${mode.shortcut})`"
         @click="$emit('update:viewMode', mode.key as 'split' | 'editor' | 'preview')"
       >
