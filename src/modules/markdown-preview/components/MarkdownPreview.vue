@@ -68,231 +68,248 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
   </div>
 </template>
 
-<style>
-/* Mermaid diagram styling - theme aware */
-.mermaid {
-  background: transparent !important;
-  color: var(--color-text-primary) !important;
-  text-align: center !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  width: 100% !important;
-  margin: 2rem 0 !important;
+<style scoped>
+.prose {
+  max-width: none;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--foreground);
+  font-family: 'Geist', sans-serif;
 }
 
-.mermaid svg {
+.prose-container {
+  color: var(--foreground);
+}
+
+/* Mermaid styling */
+:deep(.mermaid) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+:deep(.mermaid svg) {
   max-width: 100%;
   height: auto;
-  background: transparent !important;
-  margin: 0 auto !important;
+  background: transparent;
 }
 
-/* Override Mermaid's default colors - theme aware */
-.mermaid .node rect,
-.mermaid .node circle,
-.mermaid .node ellipse,
-.mermaid .node polygon {
-  fill: var(--color-surface-primary) !important;
-  stroke: var(--color-border) !important;
-  stroke-width: 1px !important;
+/* Mermaid text elements */
+:deep(.mermaid .node-label),
+:deep(.mermaid text) {
+  color: var(--foreground) !important;
+  fill: var(--foreground) !important;
 }
 
-.mermaid .node .label {
-  color: var(--color-text-primary) !important;
-  fill: var(--color-text-primary) !important;
+/* Mermaid shape styling */
+:deep(.mermaid .node rect),
+:deep(.mermaid .node circle) {
+  stroke: var(--border) !important;
 }
 
-.mermaid .edgePath .path {
-  stroke: var(--color-text-secondary) !important;
-  stroke-width: 2px !important;
+/* Background elements */
+:deep(.mermaid .cluster rect),
+:deep(.mermaid .section) {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
 }
 
-.mermaid .edgeLabel {
-  background-color: var(--color-surface-primary) !important;
-  color: var(--color-text-primary) !important;
+/* Links and paths */
+:deep(.mermaid path.link),
+:deep(.mermaid .actor-man) {
+  fill: var(--background) !important;
+  stroke: var(--accent) !important;
 }
 
-.mermaid .actor {
-  fill: var(--color-surface-primary) !important;
-  stroke: var(--color-accent) !important;
-  stroke-width: 2px !important;
+/* Activity elements */
+:deep(.mermaid .activity) {
+  stroke: var(--foreground) !important;
 }
 
-.mermaid .actor-line {
-  stroke: var(--color-text-secondary) !important;
-  stroke-width: 1px !important;
+/* Flowchart elements */
+:deep(.mermaid .flowchart-link) {
+  stroke: var(--accent) !important;
 }
 
-.mermaid .messageLine0,
-.mermaid .messageLine1 {
-  stroke: var(--color-accent) !important;
-  stroke-width: 2px !important;
+/* Labels and text */
+:deep(.mermaid .messageText),
+:deep(.mermaid .labelText) {
+  fill: var(--foreground) !important;
 }
 
-.mermaid .messageText {
-  fill: var(--color-text-primary) !important;
-  font-size: 14px !important;
+/* Activity labels */
+:deep(.mermaid .actor .actor-label) {
+  fill: var(--foreground) !important;
 }
 
-.mermaid .loopText {
-  fill: var(--color-text-primary) !important;
+/* Lines */
+:deep(.mermaid .actor-line) {
+  stroke: var(--foreground) !important;
+  opacity: 0.6;
 }
 
-.mermaid .loopLine {
-  stroke: var(--color-text-secondary) !important;
-  stroke-width: 1px !important;
+/* Synchronized scrolling */
+.preview-sync {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
-/* GitHub-style Alert Styling - theme aware */
-.prose .markdown-alert {
+/* Mermaid diagram container */
+:deep(.mermaid) {
+  background: var(--background);
+  border-color: var(--border);
+  border-radius: 8px;
   padding: 1rem;
-  margin: 1.5rem 0;
+  color: var(--foreground);
+}
+
+/* GitHub Alert styling - using correct markdown-it-github-alerts class names */
+.prose :deep(.markdown-alert) {
+  border-radius: 6px;
   border-left: 4px solid;
-  border-radius: 0.5rem;
-  background: var(--color-surface-primary);
-  border-color: var(--color-border);
-  transition: all 0.2s ease-in-out;
+  margin: 16px 0;
+  padding: 12px 16px;
   position: relative;
-  color: var(--color-text-primary);
 }
 
-.prose .markdown-alert:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--color-shadow-md);
+/* Note (blue) */
+.prose :deep(.markdown-alert-note) {
+  border-color: var(--accent);
+  background: color-mix(in oklch, var(--accent) 10%, var(--background));
 }
 
-.prose .markdown-alert > .markdown-alert-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+.prose :deep(.markdown-alert-note .markdown-alert-title) {
+  color: var(--accent);
+}
+
+/* Tip (green) */
+.prose :deep(.markdown-alert-tip) {
+  border-color: oklch(from var(--accent) l c 140);
+  background: color-mix(in oklch, oklch(from var(--accent) l c 140) 10%, var(--background));
+}
+
+.prose :deep(.markdown-alert-tip .markdown-alert-title) {
+  color: oklch(from var(--accent) l c 140);
+}
+
+/* Important (purple) */
+.prose :deep(.markdown-alert-important) {
+  border-color: oklch(from var(--accent) l c 280);
+  background: color-mix(in oklch, oklch(from var(--accent) l c 280) 10%, var(--background));
+}
+
+.prose :deep(.markdown-alert-important .markdown-alert-title) {
+  color: oklch(from var(--accent) l c 280);
+}
+
+/* Warning (orange) */
+.prose :deep(.markdown-alert-warning) {
+  border-color: oklch(from var(--accent) l c 80);
+  background: color-mix(in oklch, oklch(from var(--accent) l c 80) 10%, var(--background));
+}
+
+.prose :deep(.markdown-alert-warning .markdown-alert-title) {
+  color: oklch(from var(--accent) l c 80);
+}
+
+/* Caution (red) */
+.prose :deep(.markdown-alert-caution) {
+  border-color: oklch(from var(--accent) l c 20);
+  background: color-mix(in oklch, oklch(from var(--accent) l c 20) 10%, var(--background));
+}
+
+.prose :deep(.markdown-alert-caution .markdown-alert-title) {
+  color: oklch(from var(--accent) l c 20);
+}
+
+/* Tables */
+.prose :deep(table) {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
+.prose :deep(table tbody) {
+  display: table;
+  width: 100%;
+}
+
+.prose :deep(table thead),
+.prose :deep(table tr) {
+  display: table-row;
+}
+
+.prose :deep(table th),
+.prose :deep(table td) {
+  display: table-cell;
+  border-color: var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.prose :deep(table thead th) {
   font-weight: 600;
+  color: var(--foreground);
+  opacity: 0.8;
 }
 
-.prose .markdown-alert > .markdown-alert-title svg,
-.prose .markdown-alert > .markdown-alert-title .icon {
-  color: var(--color-text-primary) !important;
-  fill: var(--color-text-primary) !important;
+.prose :deep(table tbody tr:nth-child(even)) {
+  background-color: var(--muted);
 }
 
-.prose .markdown-alert-note {
-  border-color: var(--color-alert-note);
-  background: var(--color-alert-note-bg);
-}
-
-.prose .markdown-alert-note > .markdown-alert-title {
-  color: var(--color-alert-note);
-}
-
-.prose .markdown-alert-tip {
-  border-color: var(--color-alert-tip);
-  background: var(--color-alert-tip-bg);
-}
-
-.prose .markdown-alert-tip > .markdown-alert-title {
-  color: var(--color-alert-tip);
-}
-
-.prose .markdown-alert-important {
-  border-color: var(--color-alert-important);
-  background: var(--color-alert-important-bg);
-}
-
-.prose .markdown-alert-important > .markdown-alert-title {
-  color: var(--color-alert-important);
-}
-
-.prose .markdown-alert-warning {
-  border-color: var(--color-alert-warning);
-  background: var(--color-alert-warning-bg);
-}
-
-.prose .markdown-alert-warning > .markdown-alert-title {
-  color: var(--color-alert-warning);
-}
-
-.prose .markdown-alert-caution {
-  border-color: var(--color-alert-caution);
-  background: var(--color-alert-caution-bg);
-}
-
-.prose .markdown-alert-caution > .markdown-alert-title {
-  color: var(--color-alert-caution);
-}
-
-/* Special styling for collapsible alerts if implemented with Reka UI */
-.prose .markdown-alert[data-collapsible] {
-  cursor: pointer;
-}
-
-.prose .markdown-alert[data-collapsible] > .markdown-alert-title::after {
-  content: '▼';
-  margin-left: auto;
-  font-size: 0.75rem;
-  transition: transform 0.2s ease-in-out;
-  color: inherit;
-}
-
-.prose .markdown-alert[data-collapsible][data-state="closed"] > .markdown-alert-title::after {
-  transform: rotate(-90deg);
-}
-
-/* Footnotes Styling - theme aware */
-.prose hr.footnotes-sep {
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  border-color: var(--color-border);
-}
-
-.prose .footnotes-list {
-  padding-left: 1.25rem;
-  font-size: 0.9em;
-  color: var(--color-text-secondary);
-}
-
-.prose .footnote-item p {
-  display: inline;
-}
-
-.prose .footnote-backref {
-  margin-left: 0.5rem;
+/* Links */
+.prose :deep(a) {
+  color: var(--accent);
   text-decoration: none;
-  color: var(--color-accent);
 }
 
-.prose .footnote-backref:hover {
+.prose :deep(a:hover) {
+  color: var(--accent);
   text-decoration: underline;
 }
 
-.prose sup[id^='fnref'] {
-  line-height: 0;
+/* Inline code */
+.prose :deep(code) {
+  color: var(--accent);
+  background-color: color-mix(in oklch, var(--accent) 15%, var(--background));
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: 'Fira Code', monospace;
 }
 
-.prose sup[id^='fnref'] a {
-  padding: 0.1rem 0.3rem;
-  text-decoration: none;
-  color: var(--color-accent);
-  background-color: var(--color-accent-subtle);
-  border-radius: 5px;
-  font-weight: 500;
-  transition: all 150ms ease-in-out;
+/* Code blocks */
+.prose :deep(pre code) {
+  background-color: var(--muted);
+  color: var(--foreground);
 }
 
-.prose sup[id^='fnref'] a:hover {
-  background-color: var(--color-accent-muted);
-  color: var(--color-accent-hover);
+/* Fix for nested code in pre */
+.prose :deep(pre) {
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  color: var(--foreground) !important;
 }
 
-.mermaid .cluster rect {
-  fill: var(--color-surface-primary) !important;
-  stroke: var(--color-border) !important;
-  stroke-width: 1px !important;
+/* Mermaid specific fixes */
+:deep(.mermaid svg) {
+  fill: var(--background) !important;
+  stroke: var(--border) !important;
 }
 
-.mermaid .statediagram-state .state-note {
-  background: var(--color-surface-primary);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary) !important;
+/* Node content and text */
+:deep(.mermaid .nodes),
+:deep(.mermaid .node) {
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground) !important;
 }
 </style>

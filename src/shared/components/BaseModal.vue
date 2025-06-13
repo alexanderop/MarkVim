@@ -110,11 +110,55 @@ const maxWidthClasses = {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--border);
   border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-hover);
+  background: var(--accent);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+.glass-modal {
+  background: var(--background);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 10px 10px -5px rgb(0 0 0 / 0.04);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.divider:hover,
+.divider.hover {
+  background: var(--accent);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+}
+
+.backdrop-enter-active,
+.backdrop-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.backdrop-enter-from,
+.backdrop-leave-to {
+  opacity: 0;
 }
 </style>

@@ -442,42 +442,30 @@ onBeforeUnmount(() => {
   padding-right: 1rem;
 }
 
-/* Light theme specific styles - more specific selectors */
-:root:not(.dark) .cm-editor .cm-content {
-  color: var(--color-text-primary) !important;
+/* CodeMirror simplified color system */
+.cm-editor .cm-content {
+  color: var(--foreground) !important;
 }
 
-:root:not(.dark) .cm-editor .cm-line {
-  color: var(--color-text-primary) !important;
+.cm-editor .cm-line {
+  color: var(--foreground) !important;
 }
 
-:root:not(.dark) .cm-editor .cm-gutterElement {
-  color: var(--color-text-secondary) !important;
+.cm-editor .cm-gutterElement {
+  color: var(--foreground) !important;
+  opacity: 0.5;
 }
 
-:root:not(.dark) .cm-editor .cm-cursor {
-  border-left-color: var(--color-text-primary) !important;
+.cm-editor .cm-cursor {
+  border-left-color: var(--foreground) !important;
 }
 
-:root:not(.dark) .cm-editor .cm-activeLine {
-  background-color: var(--color-surface-hover) !important;
+.cm-editor .cm-activeLine {
+  background-color: var(--muted) !important;
 }
 
-:root:not(.dark) .cm-editor .cm-selectionBackground {
-  background-color: var(--color-accent) !important;
+.cm-editor .cm-selectionBackground {
+  background-color: var(--accent) !important;
   opacity: 0.3;
-}
-
-/* Dark theme preserves original styling */
-.dark .cm-editor .cm-content,
-.dark .cm-editor .cm-line,
-.dark .cm-editor .cm-gutterElement,
-.dark .cm-editor .cm-cursor,
-.dark .cm-editor .cm-activeLine,
-.dark .cm-editor .cm-selectionBackground {
-  color: inherit !important;
-  border-left-color: inherit !important;
-  background-color: inherit !important;
-  opacity: inherit !important;
 }
 </style>
