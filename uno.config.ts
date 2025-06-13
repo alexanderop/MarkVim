@@ -17,14 +17,14 @@ export default defineConfig({
   ],
   theme: {
     colors: {
-      'background': 'var(--background)',
-      'foreground': 'var(--foreground)',
-      'accent': 'var(--accent)',
-      'muted': 'var(--muted)',
-      'border': 'var(--border)',
+      background: 'var(--background)',
+      foreground: 'var(--foreground)',
+      accent: 'var(--accent)',
+      muted: 'var(--muted)',
+      border: 'var(--border)',
 
       // Window decoration (for fake window UI)
-      'window': {
+      window: {
         close: '#ff5f57',
         minimize: '#ffbd2e',
         maximize: '#28ca42',
