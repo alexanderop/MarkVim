@@ -1,18 +1,10 @@
 /* =============================================
-   Modern Linear‑style Color Tokens (OKLCH)
-   ---------------------------------------------
-   • One "seed" brand color + contrast tune
-   • All other values are algorithmically derived
-   • Works in every evergreen browser (2023+)
-   • Improved hover states & accessibility
-   ============================================= */
-
 /* ──────────────────────────
    1. Primitive palette seeds
    ──────────────────────────*/
    :root {
   /* Brand (accent) hue, chroma & lightness */
-  --seed: oklch(60% 0.20 254);          /* Linear blue */
+  --seed: oklch(60% 0.20 254);          
 
   /* Control global contrast – tweak from 0.04 ↔ 0.12 */
   --contrast-step: 0.08;
@@ -163,99 +155,3 @@
   --color-selection-foreground:var(--color-text-primary);
 }
 
-/* ──────────────────────────
-   4. Component examples
-   (optional – remove if you only
-    want the tokens themselves)
-   ──────────────────────────*/
-.button {
-  background: var(--color-accent);
-  color: var(--color-accent-foreground);
-  border: 1px solid transparent;
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  transition: all 120ms ease;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
-.button:hover {
-  background: var(--color-accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px var(--color-shadow-md);
-}
-
-.button:active {
-  background: var(--color-accent-active);
-  transform: translateY(0);
-  box-shadow: 0 2px 4px var(--color-shadow-sm);
-}
-
-.button:focus-visible {
-  outline-color: var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
-.button:disabled {
-  background: var(--color-accent-disabled);
-  color: var(--color-text-disabled);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Button variants */
-.button.secondary {
-  background: var(--color-surface-secondary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-}
-
-.button.secondary:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-}
-
-.button.ghost {
-  background: transparent;
-  color: var(--color-text-accent);
-  border-color: transparent;
-}
-
-.button.ghost:hover {
-  background: var(--color-accent-subtle);
-  color: var(--color-text-accent-hover);
-}
-
-.card {
-  background: var(--color-surface-primary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 2px 4px var(--color-shadow-sm);
-  transition: all 120ms ease;
-}
-
-.card:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-  box-shadow: 0 4px 12px var(--color-shadow-md);
-  transform: translateY(-2px);
-}
-
-/* Enhanced interactive states for better UX */
-.card.interactive {
-  cursor: pointer;
-}
-
-.card.interactive:active {
-  background: var(--color-surface-active);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px var(--color-shadow-sm);
-}
-
-/* Focus states for accessibility */
-.card:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
