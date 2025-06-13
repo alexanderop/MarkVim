@@ -133,6 +133,12 @@ export default defineConfig({
             font-variant-ligatures: contextual;
           }
 
+          /* Ensure Shiki has proper line wrapping structure */
+          .shiki .line {
+            display: block;
+            min-height: 1.25em;
+          }
+
           /* CodeMirror editor */
           .cm-editor,
           .cm-editor .cm-content,

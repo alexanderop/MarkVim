@@ -159,5 +159,51 @@
   --color-selection-foreground:var(--color-text-primary);
 }
 
+/* ──────────────────────────
+   4. Shiki Line Numbers
+   ──────────────────────────*/
+/* Enable line numbers for Shiki code blocks using CSS counters */
+.shiki {
+  counter-reset: shiki-line-number;
+  position: relative;
+  overflow-x: auto;
+}
+
+.shiki .line {
+  counter-increment: shiki-line-number;
+  display: block;
+  position: relative;
+  padding-left: 3.5em;
+}
+
+.shiki .line::before {
+  content: counter(shiki-line-number);
+  position: absolute;
+  left: 0;
+  width: 2.5em;
+  text-align: right;
+  padding-right: 1em;
+  color: var(--color-text-secondary);
+  user-select: none;
+  font-size: 0.875em;
+  line-height: inherit;
+}
+
+/* Hide line numbers for the last empty line if it exists */
+.shiki .line:last-child:empty::before {
+  content: none;
+  counter-increment: none;
+}
+
+/* Dark mode adjustments */
+.dark .shiki .line::before {
+  color: var(--color-text-secondary);
+}
+
+/* Light mode adjustments */
+:root:not(.dark) .shiki .line::before {
+  color: var(--color-text-secondary);
+}
+
 
 
