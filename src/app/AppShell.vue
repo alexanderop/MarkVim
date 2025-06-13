@@ -18,7 +18,6 @@ const {
   createDocument,
   setActiveDocument,
   updateDocument,
-  deleteDocument,
   getDocumentTitle,
 } = useDocuments()
 
@@ -40,42 +39,14 @@ const activeMarkdown = computed({
 
 const { renderedMarkdown, shikiCSS } = useMarkdown(activeMarkdown)
 
-function useDocumentDeletion() {
-  const deleteModalOpen = ref(false)
-  const documentToDelete = ref<{ id: string, title: string } | null>(null)
-
-  const handleDeleteDocument = () => {
-    if (!activeDocument.value)
-      return
-
-    const title = getDocumentTitle(activeDocument.value.content)
-    documentToDelete.value = { id: activeDocument.value.id, title }
-    deleteModalOpen.value = true
-  }
-
-  const confirmDeleteDocument = () => {
-    if (documentToDelete.value) {
-      deleteDocument(documentToDelete.value.id)
-      deleteModalOpen.value = false
-      documentToDelete.value = null
-    }
-  }
-
-  const cancelDeleteDocument = () => {
-    deleteModalOpen.value = false
-    documentToDelete.value = null
-  }
-
-  return {
-    deleteModalOpen,
-    documentToDelete,
-    handleDeleteDocument,
-    confirmDeleteDocument,
-    cancelDeleteDocument,
-  }
-}
-
 const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDocument, cancelDeleteDocument } = useDocumentDeletion()
+
+function handleDeleteActiveDocument() {
+  if (!activeDocument.value)
+    return
+
+  handleDeleteDocument(activeDocument.value.id, activeDocument.value.content)
+}
 
 const { registerShortcuts, registerAppCommand, formatKeys } = useShortcuts()
 
@@ -306,7 +277,7 @@ useHead({
       :active-document="activeDocument"
       @update:view-mode="setViewMode"
       @toggle-sidebar="handleToggleSidebar"
-      @delete-document="handleDeleteDocument"
+      @delete-document="handleDeleteActiveDocument"
     />
 
     <div class="flex flex-1 relative overflow-hidden">
@@ -322,7 +293,7 @@ useHead({
         ]"
         @select-document="handleDocumentSelect"
         @create-document="handleCreateDocument"
-        @delete-document="handleDeleteDocument"
+        @delete-document="handleDeleteActiveDocument"
       />
 
       <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
@@ -417,42 +388,13 @@ useHead({
       @select-document="handleDocumentSelectFromPalette"
     />
 
-    <BaseModal
-      :open="deleteModalOpen"
-      title="Delete Document"
-      max-width="md"
-      data-testid="delete-confirm-modal"
-      @update:open="deleteModalOpen = $event"
+    <DocumentDeleteModal
+      v-model:open="deleteModalOpen"
+      :document-title="documentToDelete?.title || ''"
+      @confirm="confirmDeleteDocument"
+      @cancel="cancelDeleteDocument"
       @close="cancelDeleteDocument"
-    >
-      <div class="py-4">
-        <p class="text-text-primary text-sm leading-relaxed">
-          Are you sure you want to delete <span class="font-semibold text-text-bright">"{{ documentToDelete?.title }}"</span>?
-        </p>
-        <p class="text-text-secondary text-sm mt-2">
-          This action cannot be undone.
-        </p>
-      </div>
-
-      <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
-        <BaseButton
-          variant="default"
-          icon="lucide:x"
-          data-testid="delete-cancel-btn"
-          @click="cancelDeleteDocument"
-        >
-          Cancel
-        </BaseButton>
-        <BaseButton
-          variant="destructive"
-          icon="lucide:trash-2"
-          data-testid="delete-confirm-btn"
-          @click="confirmDeleteDocument"
-        >
-          Delete
-        </BaseButton>
-      </div>
-    </BaseModal>
+    />
 
     <ShareManager @document-imported="handleDocumentImported" />
   </div>
