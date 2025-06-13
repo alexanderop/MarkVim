@@ -1,7 +1,6 @@
 <script setup lang="ts">
-const { settings, toggleVimMode, updateFontSize, resetToDefaults, updateTheme, togglePreviewSync, clearAllData } = useEditorSettings()
+const { settings, toggleVimMode, updateFontSize, resetToDefaults, togglePreviewSync, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
-const themes: EditorSettings['theme'][] = ['dark', 'light', 'auto']
 
 function useClearDataModal() {
   const showClearDataModal = ref(false)
@@ -117,48 +116,28 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           Appearance
         </h3>
         <div class="space-y-2">
-          <!-- Theme and Font Size in one row -->
+          <!-- Font Size -->
           <div class="p-3 border border-border rounded-md bg-surface-primary">
-            <div class="gap-4 grid grid-cols-2">
-              <div>
-                <h4 class="text-sm text-text-primary font-medium mb-1">
-                  Theme
-                </h4>
-                <div class="flex gap-1">
-                  <BaseButton
-                    v-for="theme in themes"
-                    :key="theme"
-                    :variant="settings.theme === theme ? 'primary' : 'ghost'"
-                    size="sm"
-                    class="capitalize"
-                    @click="updateTheme(theme)"
-                  >
-                    {{ theme }}
-                  </BaseButton>
-                </div>
-              </div>
-
-              <div>
-                <h4 class="text-sm text-text-primary font-medium mb-1">
-                  Font Size
-                </h4>
-                <div class="flex gap-2 items-center">
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="heroicons:minus"
-                    icon-only
-                    @click="updateFontSize(settings.fontSize - 1)"
-                  />
-                  <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
-                  <BaseButton
-                    variant="ghost"
-                    size="sm"
-                    icon="heroicons:plus"
-                    icon-only
-                    @click="updateFontSize(settings.fontSize + 1)"
-                  />
-                </div>
+            <div>
+              <h4 class="text-sm text-text-primary font-medium mb-1">
+                Font Size
+              </h4>
+              <div class="flex gap-2 items-center">
+                <BaseButton
+                  variant="ghost"
+                  size="sm"
+                  icon="heroicons:minus"
+                  icon-only
+                  @click="updateFontSize(settings.fontSize - 1)"
+                />
+                <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
+                <BaseButton
+                  variant="ghost"
+                  size="sm"
+                  icon="heroicons:plus"
+                  icon-only
+                  @click="updateFontSize(settings.fontSize + 1)"
+                />
               </div>
             </div>
           </div>
