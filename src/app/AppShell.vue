@@ -478,83 +478,43 @@ useHead({
 }
 
 .cm-editor {
-  background-color: var(--color-surface-primary) !important;
-  color: var(--color-text-primary) !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
   border: none !important;
-  border-radius: 0 !important;
-}
-
-.cm-focused {
   outline: none !important;
+  font-family: 'Fira Code', monospace !important;
+  font-feature-settings: 'liga' 1, 'calt' 1 !important;
+  font-variant-ligatures: contextual !important;
 }
 
-.cm-content {
-  padding: 32px !important;
-  font-size: 15px !important;
-  line-height: 1.7 !important;
-  font-family: var(--font-sans) !important;
+.cm-editor .cm-scroller {
+  color: var(--foreground) !important;
 }
 
-.cm-placeholder {
-  color: var(--color-text-secondary) !important;
+.cm-editor.cm-focused {
+  outline: none !important;
+  border-left-color: var(--accent) !important;
 }
-
-.cm-cursor {
-  border-left-color: var(--color-accent) !important;
-  border-left-width: 2px !important;
-}
-
-.cm-selectionBackground {
-  background-color: hsl(var(--accent-hsl) / 0.15) !important;
-}
-
-.cm-header { font-weight: 600 !important; }
-.cm-header-1 { font-size: 1.25em !important; color: var(--color-text-bright) !important; }
-.cm-header-2 { font-size: 1.15em !important; color: var(--color-text-bright) !important; }
-.cm-header-3 { font-size: 1.1em !important; }
-.cm-strong { font-weight: 600 !important; color: var(--color-text-bright) !important; }
-.cm-emphasis { font-style: italic !important; }
-.cm-strikethrough { color: var(--color-text-secondary) !important; text-decoration: line-through !important; }
-
-.cm-code {
-  background: hsl(var(--accent-hsl) / 0.1) !important;
-  color: hsl(var(--accent-hsl) / 0.8) !important;
-  padding: 0.125rem 0.25rem !important;
-  border-radius: 0.25rem !important;
-  font-family: var(--font-mono) !important;
-}
-
-.cm-link, .cm-url { color: var(--color-accent) !important; text-decoration: none !important; }
-
-.cm-quote {
-  color: var(--color-text-secondary) !important;
-  font-style: italic !important;
-  border-left: 3px solid hsl(var(--accent-hsl) / 0.3) !important;
-  padding-left: 1rem !important;
-  margin-left: -1rem !important;
-}
-
-.cm-meta { color: var(--color-text-secondary) !important; }
-.cm-hr { color: var(--color-border) !important; }
 
 .cm-activeLine {
-  background-color: hsl(var(--surface-primary-hsl) / 0.5) !important;
+  background-color: color-mix(in oklch, var(--accent) 15%, var(--background)) !important;
 }
 
 .cm-gutters {
-  background-color: var(--color-surface-primary) !important;
-  border-right: 1px solid var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
+  background-color: var(--background) !important;
+  border-right: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
+  opacity: 0.5;
 }
 
 .cm-lineNumbers .cm-gutterElement {
-  color: var(--color-text-secondary) !important;
-  font-size: 12px !important;
+  color: var(--foreground) !important;
+  opacity: 0.5;
 }
 
 .cm-activeLineGutter {
-  background-color: transparent !important;
-  color: var(--color-text-primary) !important;
+  color: var(--foreground) !important;
+  opacity: 0.8;
 }
 
 button, a {
@@ -568,8 +528,43 @@ input:focus-visible,
 textarea:focus-visible,
 [role="button"]:focus-visible,
 [role="switch"]:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Enhanced markdown styling */
+:deep(.cm-header-1) { font-size: 1.25em !important; color: var(--foreground) !important; font-weight: 600 !important; }
+:deep(.cm-header-2) { font-size: 1.15em !important; color: var(--foreground) !important; font-weight: 600 !important; }
+
+:deep(.cm-strong) { font-weight: 600 !important; color: var(--foreground) !important; }
+
+:deep(.cm-strikethrough) { color: var(--foreground) !important; opacity: 0.6; text-decoration: line-through !important; }
+
+:deep(.cm-inline-code) {
+  background: color-mix(in oklch, var(--accent) 10%, var(--background)) !important;
+  color: var(--accent) !important;
+  padding: 0.125rem 0.25rem !important;
+  border-radius: 0.25rem !important;
+  font-family: 'Fira Code', monospace !important;
+}
+
+:deep(.cm-link), :deep(.cm-url) { color: var(--accent) !important; text-decoration: none !important; }
+
+:deep(.cm-blockquote) {
+  color: var(--foreground) !important;
+  opacity: 0.8;
+  border-left: 3px solid color-mix(in oklch, var(--accent) 30%, transparent) !important;
+  padding-left: 1rem !important;
+  margin-left: 0 !important;
+}
+
+:deep(.cm-meta) { color: var(--foreground) !important; opacity: 0.6; }
+:deep(.cm-hr) { color: var(--border) !important; }
+
+/* Focus styles */
+:deep(.cm-focused) {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 </style>

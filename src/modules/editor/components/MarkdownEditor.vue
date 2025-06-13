@@ -74,18 +74,18 @@ const modelValue = defineModel<string>()
 }
 
 :deep(.cm-selectionBackground) {
-  background-color: var(--color-selection) !important;
+  background-color: color-mix(in oklch, var(--accent) 30%, transparent) !important;
 }
 
 :deep(.cm-focused .cm-selectionBackground) {
-  background-color: var(--color-selection) !important;
+  background-color: color-mix(in oklch, var(--accent) 30%, transparent) !important;
 }
 
 :deep(.cm-editor.cm-focused .cm-selectionLayer .cm-selectionBackground) {
-  background: var(--color-selection) !important;
+  background: color-mix(in oklch, var(--accent) 30%, transparent) !important;
 }
 
 :deep(.cm-selectionMatch) {
-  background-color: var(--color-selection) !important;
+  background-color: color-mix(in oklch, var(--accent) 30%, transparent) !important;
 }
 </style>

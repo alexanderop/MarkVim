@@ -17,7 +17,7 @@ defineEmits<Emits>()
     :class="{
       'bg-accent w-1.5 shadow-lg z-20': props.isDragging,
     }"
-    :style="props.isDragging ? `box-shadow: 0 0 12px hsl(var(--accent-hsl) / 0.4), 0 0 4px hsl(var(--accent-hsl) / 0.6)` : ''"
+    :style="props.isDragging ? `box-shadow: 0 0 12px color-mix(in oklch, var(--accent) 40%, transparent), 0 0 4px color-mix(in oklch, var(--accent) 60%, transparent)` : ''"
     @pointerdown="$emit('startDrag', $event)"
     @touchstart.prevent
   >
