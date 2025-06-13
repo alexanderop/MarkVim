@@ -105,7 +105,8 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 /* Mermaid shape styling */
 :deep(.mermaid .node rect),
 :deep(.mermaid .node circle) {
-  stroke: var(--border) !important;
+  stroke: var(--accent) !important;
+  stroke-width: 2px !important;
 }
 
 /* Background elements */
@@ -115,21 +116,53 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
   color: var(--foreground) !important;
 }
 
-/* Links and paths */
+/* Links and paths - Enhanced arrow styling */
 :deep(.mermaid path.link),
 :deep(.mermaid .actor-man) {
   fill: var(--background) !important;
   stroke: var(--accent) !important;
+  stroke-width: 2px !important;
 }
 
 /* Activity elements */
 :deep(.mermaid .activity) {
-  stroke: var(--foreground) !important;
+  stroke: var(--accent) !important;
+  stroke-width: 2px !important;
 }
 
-/* Flowchart elements */
+/* Flowchart elements - Enhanced arrow styling */
 :deep(.mermaid .flowchart-link) {
   stroke: var(--accent) !important;
+  stroke-width: 2px !important;
+}
+
+/* Enhanced arrow heads and markers */
+:deep(.mermaid .arrowhead),
+:deep(.mermaid .arrowheadPath),
+:deep(.mermaid marker path) {
+  fill: var(--accent) !important;
+  stroke: var(--accent) !important;
+}
+
+/* Edge paths and arrows */
+:deep(.mermaid .edgePath path),
+:deep(.mermaid .path) {
+  stroke: var(--accent) !important;
+  stroke-width: 2px !important;
+}
+
+/* Sequence diagram arrows */
+:deep(.mermaid .messageLine0),
+:deep(.mermaid .messageLine1) {
+  stroke: var(--accent) !important;
+  stroke-width: 2px !important;
+}
+
+/* Git graph arrows and paths */
+:deep(.mermaid .commit-arrow),
+:deep(.mermaid .branch-arrow) {
+  stroke: var(--accent) !important;
+  fill: var(--accent) !important;
 }
 
 /* Labels and text */
@@ -266,11 +299,83 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 .prose :deep(a) {
   color: var(--accent);
   text-decoration: none;
+  font-weight: 500;
 }
 
 .prose :deep(a:hover) {
   color: var(--accent);
   text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+/* Enhanced emphasis elements */
+.prose :deep(strong) {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.prose :deep(em) {
+  color: var(--accent);
+  font-style: italic;
+}
+
+/* Headers with accent highlights */
+.prose :deep(h1),
+.prose :deep(h2),
+.prose :deep(h3),
+.prose :deep(h4),
+.prose :deep(h5),
+.prose :deep(h6) {
+  color: var(--foreground);
+  position: relative;
+}
+
+.prose :deep(h1::after),
+.prose :deep(h2::after) {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 3rem;
+  height: 2px;
+  background-color: var(--accent);
+  border-radius: 1px;
+}
+
+/* Blockquotes with accent border */
+.prose :deep(blockquote) {
+  border-left: 4px solid var(--accent);
+  background: color-mix(in oklch, var(--accent) 5%, var(--background));
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  font-style: italic;
+}
+
+.prose :deep(blockquote p) {
+  color: var(--foreground);
+  opacity: 0.9;
+}
+
+/* List markers with accent color */
+.prose :deep(ul li::marker) {
+  color: var(--accent);
+}
+
+.prose :deep(ol li::marker) {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Enhanced task list checkboxes */
+.prose :deep(input[type="checkbox"]) {
+  accent-color: var(--accent);
+  transform: scale(1.1);
+}
+
+.prose :deep(input[type="checkbox"]:checked) {
+  background-color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* Inline code */
