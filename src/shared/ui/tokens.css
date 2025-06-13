@@ -89,6 +89,18 @@
   --color-error:               oklch(from var(--seed) l c 20);   /* Red */
   --color-error-hover:         oklch(from var(--color-error) calc(l + var(--hover-lightness-shift)) c h);
 
+  /* GitHub Alert colors */
+  --color-alert-note:          var(--color-accent);
+  --color-alert-note-bg:       var(--color-accent-subtle);
+  --color-alert-tip:           var(--color-success);
+  --color-alert-tip-bg:        oklch(from var(--color-success) calc(l + 0.32) calc(c * 0.15) h);
+  --color-alert-important:     var(--color-accent);
+  --color-alert-important-bg:  var(--color-accent-subtle);
+  --color-alert-warning:       var(--color-warning);
+  --color-alert-warning-bg:    oklch(from var(--color-warning) calc(l + 0.32) calc(c * 0.15) h);
+  --color-alert-caution:       var(--color-error);
+  --color-alert-caution-bg:    oklch(from var(--color-error) calc(l + 0.32) calc(c * 0.15) h);
+
   /* Selection */
   --color-selection:           color-mix(in oklch, var(--accent-200) 60%, transparent);
   --color-selection-foreground:var(--color-text-primary);
@@ -134,6 +146,18 @@
   --color-success-hover:       oklch(from var(--color-success) calc(l - var(--hover-lightness-shift)) c h);
   --color-warning-hover:       oklch(from var(--color-warning) calc(l - var(--hover-lightness-shift)) c h);
   --color-error-hover:         oklch(from var(--color-error) calc(l - var(--hover-lightness-shift)) c h);
+
+  /* GitHub Alert colors for dark mode */
+  --color-alert-note:          var(--color-accent);
+  --color-alert-note-bg:       oklch(from var(--color-accent) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-tip:           var(--color-success);
+  --color-alert-tip-bg:        oklch(from var(--color-success) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-important:     var(--color-accent);
+  --color-alert-important-bg:  oklch(from var(--color-accent) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-warning:       var(--color-warning);
+  --color-alert-warning-bg:    oklch(from var(--color-warning) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-caution:       var(--color-error);
+  --color-alert-caution-bg:    oklch(from var(--color-error) calc(l - 0.28) calc(c * 0.2) h);
 
   --color-selection:           color-mix(in oklch, var(--accent-700) 40%, transparent);
   --color-selection-foreground:var(--color-text-primary);

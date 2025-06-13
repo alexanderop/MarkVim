@@ -177,48 +177,48 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 }
 
 .prose .markdown-alert-note {
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
+  border-color: var(--color-alert-note);
+  background: var(--color-alert-note-bg);
 }
 
 .prose .markdown-alert-note > .markdown-alert-title {
-  color: var(--color-accent);
+  color: var(--color-alert-note);
 }
 
 .prose .markdown-alert-tip {
-  border-color: var(--color-success);
-  background: color-mix(in oklch, var(--color-success) 10%, transparent);
+  border-color: var(--color-alert-tip);
+  background: var(--color-alert-tip-bg);
 }
 
 .prose .markdown-alert-tip > .markdown-alert-title {
-  color: var(--color-success);
+  color: var(--color-alert-tip);
 }
 
 .prose .markdown-alert-important {
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
+  border-color: var(--color-alert-important);
+  background: var(--color-alert-important-bg);
 }
 
 .prose .markdown-alert-important > .markdown-alert-title {
-  color: var(--color-accent);
+  color: var(--color-alert-important);
 }
 
 .prose .markdown-alert-warning {
-  border-color: var(--color-warning);
-  background: color-mix(in oklch, var(--color-warning) 10%, transparent);
+  border-color: var(--color-alert-warning);
+  background: var(--color-alert-warning-bg);
 }
 
 .prose .markdown-alert-warning > .markdown-alert-title {
-  color: var(--color-warning);
+  color: var(--color-alert-warning);
 }
 
 .prose .markdown-alert-caution {
-  border-color: var(--color-error);
-  background: color-mix(in oklch, var(--color-error) 10%, transparent);
+  border-color: var(--color-alert-caution);
+  background: var(--color-alert-caution-bg);
 }
 
 .prose .markdown-alert-caution > .markdown-alert-title {
-  color: var(--color-error);
+  color: var(--color-alert-caution);
 }
 
 /* Special styling for collapsible alerts if implemented with Reka UI */
