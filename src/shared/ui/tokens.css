@@ -1,18 +1,10 @@
 /* =============================================
-   Modern Linear‑style Color Tokens (OKLCH)
-   ---------------------------------------------
-   • One "seed" brand color + contrast tune
-   • All other values are algorithmically derived
-   • Works in every evergreen browser (2023+)
-   • Improved hover states & accessibility
-   ============================================= */
-
 /* ──────────────────────────
    1. Primitive palette seeds
    ──────────────────────────*/
    :root {
   /* Brand (accent) hue, chroma & lightness */
-  --seed: oklch(60% 0.20 254);          /* Linear blue */
+  --seed: oklch(60% 0.20 254);          
 
   /* Control global contrast – tweak from 0.04 ↔ 0.12 */
   --contrast-step: 0.08;
@@ -89,6 +81,20 @@
   --color-error:               oklch(from var(--seed) l c 20);   /* Red */
   --color-error-hover:         oklch(from var(--color-error) calc(l + var(--hover-lightness-shift)) c h);
 
+  /* GitHub Alert colors */
+  --color-alert-note:          var(--color-accent);
+  --color-alert-note-bg:       var(--color-accent-subtle);
+  --color-alert-tip:           var(--color-success);
+  --color-alert-tip-bg:        oklch(from var(--color-success) calc(l + 0.32) calc(c * 0.15) h);
+  --color-alert-important:     var(--color-accent);
+  --color-alert-important-bg:  var(--color-accent-subtle);
+  --color-alert-warning:       var(--color-warning);
+  --color-alert-warning-bg:    oklch(from var(--color-warning) calc(l + 0.32) calc(c * 0.15) h);
+  --color-alert-caution:       var(--color-error);
+  --color-alert-caution-bg:    oklch(from var(--color-error) calc(l + 0.32) calc(c * 0.15) h);
+
+
+
   /* Selection */
   --color-selection:           color-mix(in oklch, var(--accent-200) 60%, transparent);
   --color-selection-foreground:var(--color-text-primary);
@@ -135,103 +141,69 @@
   --color-warning-hover:       oklch(from var(--color-warning) calc(l - var(--hover-lightness-shift)) c h);
   --color-error-hover:         oklch(from var(--color-error) calc(l - var(--hover-lightness-shift)) c h);
 
+  /* GitHub Alert colors for dark mode */
+  --color-alert-note:          var(--color-accent);
+  --color-alert-note-bg:       oklch(from var(--color-accent) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-tip:           var(--color-success);
+  --color-alert-tip-bg:        oklch(from var(--color-success) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-important:     var(--color-accent);
+  --color-alert-important-bg:  oklch(from var(--color-accent) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-warning:       var(--color-warning);
+  --color-alert-warning-bg:    oklch(from var(--color-warning) calc(l - 0.28) calc(c * 0.2) h);
+  --color-alert-caution:       var(--color-error);
+  --color-alert-caution-bg:    oklch(from var(--color-error) calc(l - 0.28) calc(c * 0.2) h);
+
+
+
   --color-selection:           color-mix(in oklch, var(--accent-700) 40%, transparent);
   --color-selection-foreground:var(--color-text-primary);
 }
 
 /* ──────────────────────────
-   4. Component examples
-   (optional – remove if you only
-    want the tokens themselves)
+   4. Shiki Line Numbers
    ──────────────────────────*/
-.button {
-  background: var(--color-accent);
-  color: var(--color-accent-foreground);
-  border: 1px solid transparent;
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  transition: all 120ms ease;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
+/* Enable line numbers for Shiki code blocks using CSS counters */
+.shiki {
+  counter-reset: shiki-line-number;
+  position: relative;
+  overflow-x: auto;
 }
 
-.button:hover {
-  background: var(--color-accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px var(--color-shadow-md);
+.shiki .line {
+  counter-increment: shiki-line-number;
+  display: block;
+  position: relative;
+  padding-left: 3.5em;
 }
 
-.button:active {
-  background: var(--color-accent-active);
-  transform: translateY(0);
-  box-shadow: 0 2px 4px var(--color-shadow-sm);
+.shiki .line::before {
+  content: counter(shiki-line-number);
+  position: absolute;
+  left: 0;
+  width: 2.5em;
+  text-align: right;
+  padding-right: 1em;
+  color: var(--color-text-secondary);
+  user-select: none;
+  font-size: 0.875em;
+  line-height: inherit;
 }
 
-.button:focus-visible {
-  outline-color: var(--color-focus-ring);
-  outline-offset: 2px;
+/* Hide line numbers for the last empty line if it exists */
+.shiki .line:last-child:empty::before {
+  content: none;
+  counter-increment: none;
 }
 
-.button:disabled {
-  background: var(--color-accent-disabled);
-  color: var(--color-text-disabled);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+/* Dark mode adjustments */
+.dark .shiki .line::before {
+  color: var(--color-text-secondary);
 }
 
-/* Button variants */
-.button.secondary {
-  background: var(--color-surface-secondary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
+/* Light mode adjustments */
+:root:not(.dark) .shiki .line::before {
+  color: var(--color-text-secondary);
 }
 
-.button.secondary:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-}
 
-.button.ghost {
-  background: transparent;
-  color: var(--color-text-accent);
-  border-color: transparent;
-}
 
-.button.ghost:hover {
-  background: var(--color-accent-subtle);
-  color: var(--color-text-accent-hover);
-}
-
-.card {
-  background: var(--color-surface-primary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 2px 4px var(--color-shadow-sm);
-  transition: all 120ms ease;
-}
-
-.card:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-  box-shadow: 0 4px 12px var(--color-shadow-md);
-  transform: translateY(-2px);
-}
-
-/* Enhanced interactive states for better UX */
-.card.interactive {
-  cursor: pointer;
-}
-
-.card.interactive:active {
-  background: var(--color-surface-active);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px var(--color-shadow-sm);
-}
-
-/* Focus states for accessibility */
-.card:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}

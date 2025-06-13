@@ -7,12 +7,12 @@ export default defineConfig({
     presetWind4(),
     presetTypography(),
     presetWebFonts({
-      provider: 'google', // default provider
+      provider: 'google',
       fonts: {
-        sans: 'Inter:400,500,600,700',
-        mono: 'JetBrains Mono:400,500',
+        sans: 'Geist:400,500,600,700',
+        mono: 'Fira Code:300,400,450,500,600,700',
       },
-      themeKey: 'font', // Use 'font' instead of 'fontFamily' for Wind4 compatibility
+      themeKey: 'font',
     }),
   ],
   theme: {
@@ -73,7 +73,7 @@ export default defineConfig({
       getCSS: () => {
         return `
           body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist', sans-serif;
             background-color: var(--color-background);
             color: var(--color-text-primary);
             -webkit-font-smoothing: antialiased;
@@ -81,7 +81,9 @@ export default defineConfig({
           }
           
           code, pre, kbd, samp {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Fira Code', monospace;
+            font-feature-settings: 'liga' 1, 'calt' 1;
+            font-variant-ligatures: contextual;
           }
 
           /* Enhanced prose code block styling */
@@ -93,6 +95,9 @@ export default defineConfig({
             margin: 1.5rem 0;
             overflow-x: auto;
             position: relative;
+            font-family: 'Fira Code', monospace !important;
+            font-feature-settings: 'liga' 1, 'calt' 1;
+            font-variant-ligatures: contextual;
           }
 
           .prose pre[data-language]::before {
@@ -112,6 +117,35 @@ export default defineConfig({
             padding: 0.125rem 0.375rem !important;
             border-radius: 0.25rem !important;
             font-size: 0.875em;
+            font-family: 'Fira Code', monospace !important;
+            font-feature-settings: 'liga' 1, 'calt' 1;
+            font-variant-ligatures: contextual;
+          }
+
+          /* Shiki code blocks */
+          .shiki,
+          .shiki code,
+          .shiki pre,
+          [class*="shiki-"],
+          pre[data-language] code {
+            font-family: 'Fira Code', monospace !important;
+            font-feature-settings: 'liga' 1, 'calt' 1;
+            font-variant-ligatures: contextual;
+          }
+
+          /* Ensure Shiki has proper line wrapping structure */
+          .shiki .line {
+            display: block;
+            min-height: 1.25em;
+          }
+
+          /* CodeMirror editor */
+          .cm-editor,
+          .cm-editor .cm-content,
+          .cm-editor .cm-line {
+            font-family: 'Fira Code', monospace !important;
+            font-feature-settings: 'liga' 1, 'calt' 1;
+            font-variant-ligatures: contextual;
           }
         `
       },

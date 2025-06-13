@@ -26,7 +26,7 @@ function stripInlineStyles(html: string): string {
 async function getShikiHighlighter() {
   if (!shikiHighlighter) {
     shikiHighlighter = await createHighlighter({
-      themes: ['dracula-soft', 'github-light'],
+      themes: ['night-owl'],
       langs: [
         'javascript',
         'typescript',
@@ -74,20 +74,14 @@ export async function createMarkdownRenderer() {
 
     markdownInstance.use(
       fromHighlighter(highlighter, {
-        theme: 'dracula-soft',
+        theme: 'night-owl',
       }),
     )
 
-    // Add Mermaid support
     markdownInstance.use(markdownItMermaid)
-
-    // Add footnote support
     markdownInstance.use(markdownItFootnote)
-
-    // Add GitHub alerts support
     markdownInstance.use(markdownItGitHubAlerts)
 
-    // Override the default fence renderer to strip inline styles and add language data attribute
     const originalFence = markdownInstance.renderer.rules.fence || function () {
       return ''
     }
@@ -95,7 +89,6 @@ export async function createMarkdownRenderer() {
       const token = tokens[idx]
       const langName = token.info.trim().split(/\s+/g)[0] || 'plaintext'
 
-      // Skip Shiki processing for Mermaid blocks to avoid double processing
       if (langName === 'mermaid') {
         return `<div class="mermaid">\n${token.content}\n</div>`
       }
@@ -103,7 +96,6 @@ export async function createMarkdownRenderer() {
       const result = originalFence.call(this, tokens, idx, options, env, slf)
       const stripped = stripInlineStyles(result)
 
-      // Add data-language attribute to the pre element
       return stripped.replace('<pre', `<pre data-language="${langName}"`)
     }
 
@@ -111,7 +103,6 @@ export async function createMarkdownRenderer() {
   }
   catch (error) {
     console.error('Failed to initialize markdown renderer:', error)
-    // Fallback to basic markdown-it
     markdownInstance = new MarkdownIt({
       html: true,
       linkify: true,

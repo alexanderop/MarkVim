@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
-import { useMounted } from '@vueuse/core'
 
 const { settings } = defineProps<{
   settings: EditorSettings
@@ -11,47 +10,6 @@ const emit = defineEmits<{
 }>()
 
 const modelValue = defineModel<string>()
-const isMounted = useMounted()
-
-function getCurrentTheme() {
-  if (!isMounted.value) {
-    return settings.theme === 'auto' ? 'dark' : settings.theme
-  }
-
-  if (settings.theme === 'auto') {
-    return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-  }
-  return settings.theme
-}
-
-const currentTheme = ref(getCurrentTheme())
-
-onMounted(() => {
-  currentTheme.value = getCurrentTheme()
-
-  const themeWatcher = new MutationObserver(() => {
-    const newTheme = getCurrentTheme()
-    if (newTheme !== currentTheme.value) {
-      currentTheme.value = newTheme
-    }
-  })
-
-  themeWatcher.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['class'],
-  })
-
-  onUnmounted(() => {
-    themeWatcher.disconnect()
-  })
-})
-
-watch(() => settings.theme, () => {
-  const newTheme = getCurrentTheme()
-  if (newTheme !== currentTheme.value) {
-    currentTheme.value = newTheme
-  }
-}, { immediate: true })
 </script>
 
 <template>
@@ -73,10 +31,10 @@ watch(() => settings.theme, () => {
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
       <MyCodeMirror
-        :key="`editor-${currentTheme}`"
+        :key="`editor-${'dark'}`"
         v-model="modelValue"
         :extensions="[markdownLang()]"
-        :theme="currentTheme"
+        theme="dark"
         placeholder="# Start writing your story..."
         class="bg-surface-primary h-full"
         :vim-mode="settings.vimMode"

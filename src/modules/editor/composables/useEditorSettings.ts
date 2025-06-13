@@ -4,7 +4,6 @@ export interface EditorSettings {
   vimKeymap: 'vim' | 'emacs' | 'sublime' | 'vscode'
 
   // Editor appearance
-  theme: 'dark' | 'light' | 'auto'
   fontSize: number
   fontFamily: 'mono' | 'sans'
   lineNumbers: boolean
@@ -39,7 +38,6 @@ export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   vimKeymap: 'vim',
 
   // Editor appearance
-  theme: 'dark',
   fontSize: 14,
   fontFamily: 'mono',
   lineNumbers: true,
@@ -108,36 +106,6 @@ export function useEditorSettings() {
     saveToLocalStorage()
   }
 
-  const updateTheme = (theme: EditorSettings['theme']) => {
-    settings.value.theme = theme
-    saveToLocalStorage()
-
-    if (!isMounted.value)
-      return
-
-    const htmlElement = document.documentElement
-
-    if (theme === 'dark') {
-      htmlElement.classList.add('dark')
-    }
-    else if (theme === 'light') {
-      htmlElement.classList.remove('dark')
-    }
-    else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      if (prefersDark) {
-        htmlElement.classList.add('dark')
-      }
-      else {
-        htmlElement.classList.remove('dark')
-      }
-    }
-  }
-
-  onMounted(() => {
-    updateTheme(settings.value.theme)
-  })
-
   const updateFontSize = (size: number) => {
     settings.value.fontSize = Math.max(8, Math.min(32, size))
     saveToLocalStorage()
@@ -169,13 +137,6 @@ export function useEditorSettings() {
   const { onDataReset } = useDataReset()
   onDataReset(() => {
     settings.value = { ...DEFAULT_EDITOR_CONFIG }
-    if (isMounted.value) {
-      updateTheme(settings.value.theme)
-    }
-  })
-
-  onMounted(() => {
-    updateTheme(settings.value.theme)
   })
 
   return {
@@ -183,7 +144,6 @@ export function useEditorSettings() {
     toggleVimMode,
     toggleLineNumbers,
     togglePreviewSync,
-    updateTheme,
     updateFontSize,
     resetToDefaults,
     exportSettings,
