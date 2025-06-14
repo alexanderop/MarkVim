@@ -64,7 +64,45 @@ You have access to comprehensive Nuxt documentation including:
 - `/app.vue` - Main application component
 - Standard Nuxt 3 auto-imports for components, composables, and utilities
 
+## Modular Monolith Architecture
+
+This project follows a **modular monolith** approach where functionality is organized into self-contained modules under `src/modules/`. Each module encapsulates its own components, composables, and business logic.
+
+### Module Structure Pattern
+```
+src/modules/{module-name}/
+├── components/          # Vue components specific to this module
+│   ├── ModuleModal.vue
+│   ├── ModuleForm.vue
+│   └── ModuleButton.vue
+└── composables/         # Business logic and state management
+    └── useModuleName.ts
+```
+
+### Existing Modules
+- **`color-theme/`** - OKLCH color picker and theme management
+- **`documents/`** - Document management and persistence
+- **`editor/`** - Code editor functionality and vim mode
+- **`layout/`** - Application layout and header toolbar
+- **`markdown-preview/`** - Markdown rendering and preview
+- **`shortcuts/`** - Keyboard shortcuts and modal
+- **`share/`** - Document sharing functionality
+
+### Module Guidelines
+- **Self-contained**: Each module should contain all its related functionality
+- **Auto-imported**: Components and composables are automatically available via Nuxt config
+- **Cross-module communication**: Use shared composables or props/events for module interaction
+- **Consistent naming**: Use kebab-case for module names and PascalCase for components
+
+### Adding New Modules
+1. Create module directory: `src/modules/{module-name}/`
+2. Add components and composables subdirectories
+3. Update `nuxt.config.ts` to include new paths in `components` and `imports.dirs`
+4. Follow existing patterns for component and composable structure
+
 ## Coding Guidelines
+- **NEVER use else statements** - Always use early returns or ternary operators instead
+- **Avoid comments** - Only add comments when absolutely necessary
 - Use TypeScript for all new code
 - Follow Vue 3 Composition API patterns
 - Leverage Nuxt 3 auto-imports (no need to import ref, computed, etc.)

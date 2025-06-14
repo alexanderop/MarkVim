@@ -1,5 +1,8 @@
+/// <reference types="node" />
+
 import type { IWorldOptions } from '@cucumber/cucumber'
 import type { Browser, Page } from '@playwright/test'
+import process from 'node:process'
 import { After, Before, setWorldConstructor, World } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
 
@@ -22,7 +25,7 @@ class CustomWorld extends World implements MarkVimWorld {
     try {
       if (!this.browser) {
         this.browser = await chromium.launch({
-          headless: true,
+          headless: !process.env.HEADED,
         })
       }
       if (!this.page) {

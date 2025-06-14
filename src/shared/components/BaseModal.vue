@@ -51,48 +51,63 @@ const maxWidthClasses = {
 
       <DialogContent
         :data-testid="props.dataTestid"
-        class="bg-surface-primary border border-subtle flex flex-col gap-3 w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
+        class="bg-surface-primary border border-subtle flex flex-col w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
         :class="[maxWidthClasses[props.maxWidth]]"
         :style="{ maxHeight: props.maxHeight }"
       >
-        <div class="p-4 border-b border-subtle flex items-center justify-between">
-          <div>
-            <DialogTitle class="text-lg font-semibold text-text-bright">
-              {{ title }}
-            </DialogTitle>
-            <DialogDescription v-if="description" class="text-text-secondary text-sm mt-1">
-              {{ description }}
-            </DialogDescription>
-          </div>
+        <!-- Header Section -->
+        <div v-if="$slots.head || title" class="flex-shrink-0 border-b border-subtle bg-surface-primary">
+          <slot name="head">
+            <!-- Default header content -->
+            <div class="p-4 flex items-center justify-between">
+              <div>
+                <DialogTitle class="text-lg font-semibold text-text-bright">
+                  {{ title }}
+                </DialogTitle>
+                <DialogDescription v-if="description" class="text-text-secondary text-sm mt-1">
+                  {{ description }}
+                </DialogDescription>
+              </div>
 
-          <DialogClose v-if="showCloseButton" as-child>
-            <BaseButton
-              variant="icon"
-              size="icon"
-              icon="lucide:x"
-              icon-only
-              title="Close"
-              @click="handleClose"
-            />
-          </DialogClose>
+              <DialogClose v-if="showCloseButton" as-child>
+                <BaseButton
+                  variant="icon"
+                  size="icon"
+                  icon="lucide:x"
+                  icon-only
+                  title="Close"
+                  @click="handleClose"
+                />
+              </DialogClose>
+            </div>
+          </slot>
         </div>
 
-        <div class="px-4 py-2 flex-1 overflow-y-auto">
-          <slot />
+        <!-- Main Content - Scrollable -->
+        <div class="flex-1 min-h-0 overflow-y-auto">
+          <div class="p-4">
+            <slot />
+          </div>
         </div>
 
-        <div v-if="footerLeft || footerRight || $slots.footer || $slots['footer-left'] || $slots['footer-right']" class="p-3 bg-surface-primary/60 border-t border-subtle flex items-center justify-between">
-          <div class="text-xs text-text-tertiary">
-            <slot name="footer-left">
-              {{ footerLeft || '' }}
-            </slot>
-          </div>
+        <!-- Footer Section -->
+        <div v-if="$slots.footer || footerLeft || footerRight || $slots['footer-left'] || $slots['footer-right']" class="flex-shrink-0 border-t border-subtle bg-surface-primary/60">
+          <slot name="footer">
+            <!-- Default footer content -->
+            <div class="p-3 flex items-center justify-between">
+              <div class="text-xs text-text-tertiary">
+                <slot name="footer-left">
+                  {{ footerLeft || '' }}
+                </slot>
+              </div>
 
-          <div class="text-xs text-text-tertiary">
-            <slot name="footer-right">
-              {{ footerRight || '' }}
-            </slot>
-          </div>
+              <div class="text-xs text-text-tertiary">
+                <slot name="footer-right">
+                  {{ footerRight || '' }}
+                </slot>
+              </div>
+            </div>
+          </slot>
         </div>
       </DialogContent>
     </DialogPortal>

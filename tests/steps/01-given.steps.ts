@@ -19,20 +19,10 @@ Given('I navigate to {string}', async function (this: MarkVimWorld, url: string)
   await page.waitForLoadState('networkidle')
 })
 
-Given('I navigate to the application', async function (this: MarkVimWorld) {
+Given('I navigate to the App', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
-})
-
-Given('I open the MarkVim homepage', async function (this: MarkVimWorld) {
-  const markVimPage = await getMarkVimPage(this)
-  await markVimPage.navigate()
-})
-
-Given('I am on the MarkVim homepage', async function (this: MarkVimWorld) {
-  const markVimPage = await getMarkVimPage(this)
-  await markVimPage.navigate()
 })
 
 Given('the keyboard shortcuts modal is open', async function (this: MarkVimWorld) {

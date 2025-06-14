@@ -48,7 +48,7 @@ function handleDeleteActiveDocument() {
   handleDeleteDocument(activeDocument.value.id, activeDocument.value.content)
 }
 
-const { registerShortcuts, registerAppCommand, formatKeys } = useShortcuts()
+const { registerShortcuts, registerAppCommand, formatKeys, setNewDocumentAction } = useShortcuts()
 
 const activeDocumentTitle = computed(() => {
   return activeDocument.value
@@ -148,6 +148,9 @@ function handleVimModeChange(mode: string, subMode?: string) {
 onMounted(() => {
   document.addEventListener('keydown', handleGlobalKeydown)
 
+  // Register the create document action with the shortcuts system
+  setNewDocumentAction(handleCreateDocument)
+
   registerShortcuts([
     {
       keys: '1',
@@ -183,14 +186,7 @@ onMounted(() => {
       },
       category: 'File',
     },
-    {
-      keys: 'meta+i',
-      description: 'New Document',
-      action: () => {
-        handleCreateDocument()
-      },
-      category: 'File',
-    },
+
     {
       keys: 'meta+shift+s',
       description: 'Download as Markdown',
@@ -208,7 +204,7 @@ onMounted(() => {
       category: 'File',
     },
     {
-      keys: 'meta+b',
+      keys: 'g+t',
       description: 'Toggle sidebar',
       action: () => {
         handleToggleSidebar()
