@@ -878,9 +878,9 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   // Generic element state verification
   async verifyElementVisibility(elementName: string, shouldBeVisible: boolean): Promise<void> {
     const elementMap: Record<string, () => Promise<void>> = {
-      sidebar: shouldBeVisible ? () => this.verifySidebarVisible() : () => this.verifySidebarHidden(),
-      editor: shouldBeVisible ? () => expect(this.editorPane).toBeVisible() : () => expect(this.editorPane).not.toBeVisible(),
-      preview: shouldBeVisible ? () => expect(this.previewPane).toBeVisible() : () => expect(this.previewPane).not.toBeVisible(),
+      'sidebar': shouldBeVisible ? () => this.verifySidebarVisible() : () => this.verifySidebarHidden(),
+      'editor': shouldBeVisible ? () => expect(this.editorPane).toBeVisible() : () => expect(this.editorPane).not.toBeVisible(),
+      'preview': shouldBeVisible ? () => expect(this.previewPane).toBeVisible() : () => expect(this.previewPane).not.toBeVisible(),
       'delete-modal': shouldBeVisible ? () => this.verifyDeleteModalVisible() : () => this.verifyDeleteModalHidden(),
     }
 
