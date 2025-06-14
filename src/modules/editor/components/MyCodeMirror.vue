@@ -90,7 +90,7 @@ const customHighlightStyle = HighlightStyle.define([
   { tag: tags.strong, color: 'var(--foreground)', fontWeight: 'bold' },
   { tag: tags.strikethrough, color: 'var(--foreground)', textDecoration: 'line-through', opacity: '0.7' },
 
-  // Markdown specific elements  
+  // Markdown specific elements
   { tag: tags.quote, color: 'var(--foreground)', fontStyle: 'italic', opacity: '0.7' },
   { tag: tags.list, color: 'var(--foreground)' },
   { tag: tags.monospace, color: 'var(--foreground)', backgroundColor: 'color-mix(in oklch, var(--muted) 50%, var(--background))', padding: '2px 4px', borderRadius: '3px' },
