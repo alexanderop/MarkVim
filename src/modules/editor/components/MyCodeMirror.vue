@@ -53,99 +53,55 @@ const {
 
 const modelValue = defineModel<string>({ default: '' })
 
-// Theme-aware highlight styles
-const darkHighlightStyle = HighlightStyle.define([
-  // Headers - Pure white for maximum contrast and prominence
-  { tag: tags.heading1, color: '#ffffff', fontWeight: 'bold', fontSize: '1.2em' },
-  { tag: tags.heading2, color: '#ffffff', fontWeight: 'bold', fontSize: '1.1em' },
-  { tag: tags.heading3, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.heading4, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.heading5, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.heading6, color: '#ffffff', fontWeight: 'bold' },
+// Dynamic highlight style that uses CSS custom properties
+// This is the key - we need to define colors using var() in the HighlightStyle
+const customHighlightStyle = HighlightStyle.define([
+  // Headers - Use CSS custom properties directly in color field
+  { tag: tags.heading1, color: 'var(--foreground)', fontWeight: 'bold', fontSize: '1.2em' },
+  { tag: tags.heading2, color: 'var(--foreground)', fontWeight: 'bold', fontSize: '1.1em' },
+  { tag: tags.heading3, color: 'var(--foreground)', fontWeight: 'bold' },
+  { tag: tags.heading4, color: 'var(--foreground)', fontWeight: 'bold' },
+  { tag: tags.heading5, color: 'var(--foreground)', fontWeight: 'bold' },
+  { tag: tags.heading6, color: 'var(--foreground)', fontWeight: 'bold' },
 
-  // Main text - Light gray for comfortable reading
-  { tag: tags.content, color: '#d1d5db' },
+  // Main text - uses CSS custom properties
+  { tag: tags.content, color: 'var(--foreground)' },
 
-  // Code elements - Different shades of gray for hierarchy
-  { tag: tags.keyword, color: '#f3f4f6', fontWeight: 'bold' },
-  { tag: tags.string, color: '#e5e7eb' },
-  { tag: tags.comment, color: '#9ca3af', fontStyle: 'italic' },
-  { tag: tags.variableName, color: '#d1d5db' },
-  { tag: tags.function(tags.variableName), color: '#f9fafb' },
-
-  // Numbers and constants
-  { tag: tags.number, color: '#e5e7eb' },
-  { tag: tags.bool, color: '#f3f4f6' },
-  { tag: tags.null, color: '#f3f4f6' },
-
-  // Punctuation and operators
-  { tag: tags.operator, color: '#d1d5db' },
-  { tag: tags.punctuation, color: '#d1d5db' },
-  { tag: tags.bracket, color: '#f3f4f6' },
-
-  // Special markdown elements
-  { tag: tags.link, color: '#ffffff', textDecoration: 'underline' },
-  { tag: tags.emphasis, color: '#d1d5db', fontStyle: 'italic' },
-  { tag: tags.strong, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.strikethrough, color: '#9ca3af', textDecoration: 'line-through' },
-
-  // Markdown specific elements
-  { tag: tags.quote, color: '#9ca3af', fontStyle: 'italic' },
-  { tag: tags.list, color: '#e5e7eb' },
-  { tag: tags.monospace, color: '#f3f4f6', backgroundColor: '#374151', padding: '2px 4px', borderRadius: '3px' },
-
-  // Vim keys and commands - pure white for prominence
-  { tag: tags.labelName, color: '#ffffff' },
-  { tag: tags.special(tags.string), color: '#ffffff' },
-])
-
-const lightHighlightStyle = HighlightStyle.define([
-  // Headers - Very dark text for maximum contrast and prominence
-  { tag: tags.heading1, color: '#000000', fontWeight: 'bold', fontSize: '1.2em' },
-  { tag: tags.heading2, color: '#000000', fontWeight: 'bold', fontSize: '1.1em' },
-  { tag: tags.heading3, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.heading4, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.heading5, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.heading6, color: '#000000', fontWeight: 'bold' },
-
-  // Main text - Very dark for readable contrast
-  { tag: tags.content, color: '#111827' },
-
-  // Code elements - Dark colors for hierarchy
-  { tag: tags.keyword, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.string, color: '#1f2937' },
-  { tag: tags.comment, color: '#4b5563', fontStyle: 'italic' },
-  { tag: tags.variableName, color: '#111827' },
-  { tag: tags.function(tags.variableName), color: '#000000' },
+  // Code elements with CSS variables
+  { tag: tags.keyword, color: 'var(--foreground)', fontWeight: 'bold' },
+  { tag: tags.string, color: 'var(--foreground)' },
+  { tag: tags.comment, color: 'var(--foreground)', fontStyle: 'italic', opacity: '0.6' },
+  { tag: tags.variableName, color: 'var(--foreground)' },
+  { tag: tags.function(tags.variableName), color: 'var(--foreground)' },
 
   // Numbers and constants
-  { tag: tags.number, color: '#1f2937' },
-  { tag: tags.bool, color: '#000000' },
-  { tag: tags.null, color: '#000000' },
+  { tag: tags.number, color: 'var(--foreground)' },
+  { tag: tags.bool, color: 'var(--foreground)' },
+  { tag: tags.null, color: 'var(--foreground)' },
 
   // Punctuation and operators
-  { tag: tags.operator, color: '#111827' },
-  { tag: tags.punctuation, color: '#111827' },
-  { tag: tags.bracket, color: '#000000' },
+  { tag: tags.operator, color: 'var(--foreground)' },
+  { tag: tags.punctuation, color: 'var(--foreground)' },
+  { tag: tags.bracket, color: 'var(--foreground)' },
 
   // Special markdown elements
-  { tag: tags.link, color: '#000000', textDecoration: 'underline' },
-  { tag: tags.emphasis, color: '#111827', fontStyle: 'italic' },
-  { tag: tags.strong, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.strikethrough, color: '#4b5563', textDecoration: 'line-through' },
+  { tag: tags.link, color: 'var(--accent)', textDecoration: 'underline' },
+  { tag: tags.emphasis, color: 'var(--foreground)', fontStyle: 'italic' },
+  { tag: tags.strong, color: 'var(--foreground)', fontWeight: 'bold' },
+  { tag: tags.strikethrough, color: 'var(--foreground)', textDecoration: 'line-through', opacity: '0.7' },
 
-  // Markdown specific elements
-  { tag: tags.quote, color: '#4b5563', fontStyle: 'italic' },
-  { tag: tags.list, color: '#1f2937' },
-  { tag: tags.monospace, color: '#000000', backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '3px' },
+  // Markdown specific elements  
+  { tag: tags.quote, color: 'var(--foreground)', fontStyle: 'italic', opacity: '0.7' },
+  { tag: tags.list, color: 'var(--foreground)' },
+  { tag: tags.monospace, color: 'var(--foreground)', backgroundColor: 'color-mix(in oklch, var(--muted) 50%, var(--background))', padding: '2px 4px', borderRadius: '3px' },
 
-  // Vim keys and commands - black for prominence
-  { tag: tags.labelName, color: '#000000' },
-  { tag: tags.special(tags.string), color: '#000000' },
+  // Vim keys and commands
+  { tag: tags.labelName, color: 'var(--foreground)' },
+  { tag: tags.special(tags.string), color: 'var(--foreground)' },
 ])
 
 function getCustomHighlightStyle() {
-  return theme.value === 'dark' ? darkHighlightStyle : lightHighlightStyle
+  return customHighlightStyle
 }
 
 const { lineNumberCompartment, getLineNumberExtension, handleLineNumberUpdate } = useLineNumbers()
@@ -442,7 +398,12 @@ onBeforeUnmount(() => {
   padding-right: 1rem;
 }
 
-/* CodeMirror simplified color system */
+/* CodeMirror comprehensive color system using CSS custom properties */
+.cm-editor {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
 .cm-editor .cm-content {
   color: var(--foreground) !important;
 }
@@ -461,11 +422,83 @@ onBeforeUnmount(() => {
 }
 
 .cm-editor .cm-activeLine {
-  background-color: var(--muted) !important;
+  background-color: color-mix(in oklch, var(--muted) 50%, var(--background)) !important;
 }
 
 .cm-editor .cm-selectionBackground {
-  background-color: var(--accent) !important;
-  opacity: 0.3;
+  background-color: color-mix(in oklch, var(--accent) 25%, transparent) !important;
+}
+
+/* Markdown syntax highlighting using CSS custom properties */
+.cm-editor .cm-header {
+  color: var(--foreground) !important;
+  font-weight: bold;
+}
+
+.cm-editor .cm-strong {
+  color: var(--foreground) !important;
+  font-weight: bold;
+}
+
+.cm-editor .cm-emphasis {
+  color: var(--foreground) !important;
+  font-style: italic;
+}
+
+.cm-editor .cm-strikethrough {
+  color: var(--foreground) !important;
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.cm-editor .cm-link,
+.cm-editor .cm-url {
+  color: var(--accent) !important;
+  text-decoration: underline;
+}
+
+.cm-editor .cm-quote {
+  color: var(--foreground) !important;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.cm-editor .cm-keyword {
+  color: var(--foreground) !important;
+  font-weight: bold;
+}
+
+.cm-editor .cm-string {
+  color: var(--foreground) !important;
+}
+
+.cm-editor .cm-comment {
+  color: var(--foreground) !important;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.cm-editor .cm-variableName {
+  color: var(--foreground) !important;
+}
+
+.cm-editor .cm-number {
+  color: var(--foreground) !important;
+}
+
+.cm-editor .cm-operator,
+.cm-editor .cm-punctuation {
+  color: var(--foreground) !important;
+}
+
+.cm-editor .cm-bracket {
+  color: var(--foreground) !important;
+}
+
+.cm-editor .cm-monospace {
+  color: var(--foreground) !important;
+  background-color: color-mix(in oklch, var(--muted) 50%, var(--background)) !important;
+  padding: 2px 4px;
+  border-radius: 3px;
 }
 </style>

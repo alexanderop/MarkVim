@@ -11,6 +11,42 @@ export default defineNuxtConfig({
         {
           innerHTML: `
             document.documentElement.classList.add('dark');
+            
+            // Inject color theme from localStorage before rendering to prevent SSR hydration mismatches
+            (function() {
+              try {
+                const storedTheme = localStorage.getItem('markvim-color-theme');
+                if (storedTheme) {
+                  const theme = JSON.parse(storedTheme);
+                  
+                  function oklchToString(color) {
+                    const alpha = color.a !== undefined ? ' / ' + color.a.toFixed(3) : '';
+                    return 'oklch(' + (color.l * 100).toFixed(1) + '% ' + color.c.toFixed(3) + ' ' + color.h.toFixed(0) + alpha + ')';
+                  }
+                  
+                  const styleEl = document.createElement('style');
+                  styleEl.id = 'markvim-theme-preload';
+                  styleEl.textContent = \`
+                    :root {
+                      --background: \${oklchToString(theme.background)};
+                      --foreground: \${oklchToString(theme.foreground)};
+                      --accent: \${oklchToString(theme.accent)};
+                      --muted: \${oklchToString(theme.muted)};
+                      --border: \${oklchToString(theme.border)};
+                      --alert-note: \${oklchToString(theme.alertNote)};
+                      --alert-tip: \${oklchToString(theme.alertTip)};
+                      --alert-important: \${oklchToString(theme.alertImportant)};
+                      --alert-warning: \${oklchToString(theme.alertWarning)};
+                      --alert-caution: \${oklchToString(theme.alertCaution)};
+                    }
+                  \`;
+                  
+                  document.head.appendChild(styleEl);
+                }
+              } catch (e) {
+                console.warn('Failed to preload color theme:', e);
+              }
+            })();
           `,
           type: 'text/javascript',
         },
