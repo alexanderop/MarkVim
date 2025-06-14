@@ -41,6 +41,10 @@ export class MarkVimPage {
   readonly importConfirmBtn: Locator
   readonly importCancelBtn: Locator
   readonly syncScrollToggle: Locator
+  readonly deleteDocumentBtn: Locator
+  readonly deleteConfirmModal: Locator
+  readonly deleteConfirmBtn: Locator
+  readonly deleteCancelBtn: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -82,6 +86,10 @@ export class MarkVimPage {
     this.importConfirmBtn = page.locator('[data-testid="import-confirm-btn"]')
     this.importCancelBtn = page.locator('[data-testid="import-cancel-btn"]')
     this.syncScrollToggle = page.locator('[data-testid="sync-scroll-toggle"]')
+    this.deleteDocumentBtn = page.locator('[data-testid="delete-document-btn"]')
+    this.deleteConfirmModal = page.locator('[data-testid="delete-confirm-modal"]')
+    this.deleteConfirmBtn = page.locator('[data-testid="delete-confirm-btn"]')
+    this.deleteCancelBtn = page.locator('[data-testid="delete-cancel-btn"]')
   }
 
   async navigate(): Promise<void> {
@@ -873,6 +881,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       sidebar: shouldBeVisible ? () => this.verifySidebarVisible() : () => this.verifySidebarHidden(),
       editor: shouldBeVisible ? () => expect(this.editorPane).toBeVisible() : () => expect(this.editorPane).not.toBeVisible(),
       preview: shouldBeVisible ? () => expect(this.previewPane).toBeVisible() : () => expect(this.previewPane).not.toBeVisible(),
+      'delete-modal': shouldBeVisible ? () => this.verifyDeleteModalVisible() : () => this.verifyDeleteModalHidden(),
     }
 
     const verifyMethod = elementMap[elementName]
@@ -881,6 +890,39 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     }
 
     await verifyMethod()
+  }
+
+  // Delete functionality methods
+  async clickDeleteDocumentButton(): Promise<void> {
+    await this.deleteDocumentBtn.click()
+  }
+
+  async verifyDeleteModalVisible(): Promise<void> {
+    await expect(this.deleteConfirmModal).toBeVisible()
+  }
+
+  async verifyDeleteModalHidden(): Promise<void> {
+    await expect(this.deleteConfirmModal).not.toBeVisible()
+  }
+
+  async clickDeleteConfirm(): Promise<void> {
+    await this.deleteConfirmBtn.click()
+  }
+
+  async clickDeleteCancel(): Promise<void> {
+    await this.deleteCancelBtn.click()
+  }
+
+  async verifyDeleteModalContainsDocumentTitle(title: string): Promise<void> {
+    await expect(this.deleteConfirmModal).toContainText(title)
+  }
+
+  async deleteDocumentAndVerify(expectedDocumentCount: number): Promise<void> {
+    await this.clickDeleteDocumentButton()
+    await this.verifyDeleteModalVisible()
+    await this.clickDeleteConfirm()
+    await this.verifyDeleteModalHidden()
+    await this.verifyDocumentCount(expectedDocumentCount)
   }
 }
 

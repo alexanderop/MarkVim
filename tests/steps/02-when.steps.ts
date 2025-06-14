@@ -60,6 +60,9 @@ When('I click the {word} button', async function (this: MarkVimWorld, buttonName
   const buttonMap: Record<string, () => Promise<void>> = {
     'sidebar-toggle': () => markVimPage.toggleSidebarWithButton(),
     'create-document': () => markVimPage.createDocumentBtn.click(),
+    'delete-document': () => markVimPage.clickDeleteDocumentButton(),
+    'delete-confirm': () => markVimPage.clickDeleteConfirm(),
+    'delete-cancel': () => markVimPage.clickDeleteCancel(),
   }
 
   const clickMethod = buttonMap[buttonName]
@@ -117,4 +120,19 @@ When('I toggle the sidebar with {word} and verify the change', async function (t
   const markVimPage = await getMarkVimPage(this)
   const toggleMethod = method === 'keyboard' ? 'keyboard' : 'button'
   await markVimPage.toggleSidebarAndVerify(toggleMethod)
+})
+
+When('I delete the active document', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.clickDeleteDocumentButton()
+})
+
+When('I confirm the deletion', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.clickDeleteConfirm()
+})
+
+When('I cancel the deletion', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.clickDeleteCancel()
 })

@@ -95,6 +95,7 @@ Then('the {word} should be visible', async function (this: MarkVimWorld, element
     'document-list': () => markVimPage.verifySidebarVisible(),
     'editor': () => expect(markVimPage.editorPane).toBeVisible(),
     'preview': () => expect(markVimPage.previewPane).toBeVisible(),
+    'delete-modal': () => markVimPage.verifyDeleteModalVisible(),
   }
 
   const verifyMethod = elementMap[elementName]
@@ -113,6 +114,7 @@ Then('the {word} should be hidden', async function (this: MarkVimWorld, elementN
     'document-list': () => markVimPage.verifySidebarHidden(),
     'editor': () => expect(markVimPage.editorPane).not.toBeVisible(),
     'preview': () => expect(markVimPage.previewPane).not.toBeVisible(),
+    'delete-modal': () => markVimPage.verifyDeleteModalHidden(),
   }
 
   const verifyMethod = elementMap[elementName]
@@ -199,4 +201,15 @@ Then('a new {word} should be created', async function (this: MarkVimWorld, itemT
   }
 
   await verifyMethod()
+})
+
+// Delete-specific verification steps
+Then('the delete modal should contain the document title {string}', async function (this: MarkVimWorld, expectedTitle: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyDeleteModalContainsDocumentTitle(expectedTitle)
+})
+
+Then('the document should be deleted', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyDeleteModalHidden()
 })

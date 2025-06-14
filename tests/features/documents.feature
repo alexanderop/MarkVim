@@ -46,4 +46,41 @@ Feature: Documents Management
     Then the sidebar should be hidden
     When I toggle the sidebar  
     Then the sidebar should be visible
+    And the document-list should contain 1 document
+
+  Scenario: Delete document confirmation modal
+    Given the sidebar is visible
+    And the document-list should contain 1 document
+    When I click the delete-document button
+    Then the delete-modal should be visible
+    And the delete modal should contain the document title "Welcome to MarkVim"
+
+  Scenario: Cancel document deletion
+    Given the sidebar is visible
+    And the document-list should contain 1 document
+    When I click the delete-document button
+    Then the delete-modal should be visible
+    When I click the delete-cancel button
+    Then the delete-modal should be hidden
+    And the document-list should contain 1 document
+
+  Scenario: Confirm document deletion
+    Given the sidebar is visible
+    When I create a new document
+    Then the document-list should contain 2 documents
+    When I click the delete-document button
+    Then the delete-modal should be visible
+    When I click the delete-confirm button
+    Then the delete-modal should be hidden
+    And the document-list should contain 1 document
+    And I should see "Welcome to MarkVim" in the document-list
+
+  Scenario: Delete document workflow using steps
+    Given the sidebar is visible
+    When I create a new document
+    Then the document-list should contain 2 documents
+    When I delete the active document
+    Then the delete-modal should be visible
+    When I confirm the deletion
+    Then the document should be deleted
     And the document-list should contain 1 document 
