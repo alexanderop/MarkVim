@@ -451,6 +451,9 @@ export function useShortcuts() {
     setNewDocumentAction,
     createNewDocument,
 
+    // Sequential shortcuts
+    createSequentialShortcut,
+
     // Direct access to magic keys for advanced usage
     keys: readonly(keys),
 
