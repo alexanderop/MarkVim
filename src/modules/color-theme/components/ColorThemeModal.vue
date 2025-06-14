@@ -116,7 +116,7 @@ const colorDefinitions = [
   {
     key: 'muted' as const,
     label: 'Muted',
-    description: 'Subtle backgrounds and secondary surfaces',
+    description: 'Subtle backgrounds and secondary surfaces hover for example',
     icon: 'lucide:layers',
     category: 'core',
   },

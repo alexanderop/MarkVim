@@ -11,6 +11,9 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
     throttle: 16,
   })
 
+  // Store cleanup functions
+  let cleanupFunctions: (() => void)[] = []
+
   // Throttled function to prevent infinite scroll loops
   const throttledSync = useThrottleFn((sourceElement: HTMLElement, targetElement: HTMLElement) => {
     if (isSyncing.value || !previewSyncEnabled.value)
@@ -43,49 +46,59 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
   // Helper to get scrollable element from container
   const getScrollableElement = (container: HTMLElement, type: 'editor' | 'preview'): HTMLElement | null => {
     if (type === 'editor') {
-      // Try CodeMirror specific selectors first
-      let element = container.querySelector('.cm-scroller') as HTMLElement
-      if (element && element.scrollHeight > element.clientHeight) {
-        return element
+      // Try CodeMirror specific selectors in order of preference
+      const selectors = [
+        '.cm-scroller',
+        '.cm-editor .cm-scroller',
+        '.cm-editor',
+        '.cm-content',
+      ]
+
+      for (const selector of selectors) {
+        const element = container.querySelector(selector) as HTMLElement
+        if (element && element.scrollHeight > element.clientHeight) {
+          const styles = getComputedStyle(element)
+          if (styles.overflowY === 'auto' || styles.overflowY === 'scroll' || styles.overflowY === 'hidden') {
+            return element
+          }
+        }
       }
 
-      element = container.querySelector('.cm-editor .cm-scroller') as HTMLElement
-      if (element && element.scrollHeight > element.clientHeight) {
-        return element
-      }
-
-      element = container.querySelector('.cm-editor') as HTMLElement
-      if (element && element.scrollHeight > element.clientHeight) {
-        return element
-      }
-
-      // Check all child elements that might be scrollable
-      const scrollableChildren = container.querySelectorAll('*')
-      for (const child of scrollableChildren) {
+      // Fallback: check all child elements that might be scrollable
+      const allElements = container.querySelectorAll('*')
+      for (const child of allElements) {
         const htmlChild = child as HTMLElement
-        if (htmlChild.scrollHeight > htmlChild.clientHeight
-          && getComputedStyle(htmlChild).overflowY !== 'visible') {
-          return htmlChild
+        if (htmlChild.scrollHeight > htmlChild.clientHeight) {
+          const styles = getComputedStyle(htmlChild)
+          if (styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
+            return htmlChild
+          }
         }
       }
 
       return null
     }
     else {
-      // Try preview specific selectors
-      let element = container.querySelector('.overflow-auto') as HTMLElement
-      if (element && element.scrollHeight > element.clientHeight) {
-        return element
-      }
+      // Try preview specific selectors in order of preference
+      const selectors = [
+        '.overflow-auto',
+        '[ref="scrollContainer"]',
+        '[data-testid="preview-scroll-container"]',
+      ]
 
-      element = container.querySelector('[ref="root"]') as HTMLElement
-      if (element && element.scrollHeight > element.clientHeight) {
-        return element
+      for (const selector of selectors) {
+        const element = container.querySelector(selector) as HTMLElement
+        if (element && element.scrollHeight > element.clientHeight) {
+          return element
+        }
       }
 
       // Check if container itself is scrollable
       if (container.scrollHeight > container.clientHeight) {
-        return container
+        const styles = getComputedStyle(container)
+        if (styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
+          return container
+        }
       }
     }
 
@@ -93,7 +106,7 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
   }
 
   // Helper function to find scrollable elements with retries
-  const findScrollableElements = async (retries = 5): Promise<{ editorScroller: HTMLElement, previewScroller: HTMLElement } | null> => {
+  const findScrollableElements = async (retries = 10): Promise<{ editorScroller: HTMLElement, previewScroller: HTMLElement } | null> => {
     if (!editorScrollContainer.value || !previewScrollContainer.value || !previewSyncEnabled.value)
       return null
 
@@ -102,7 +115,7 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
 
     if (!editorScroller || !previewScroller) {
       if (retries > 0) {
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 300))
         return findScrollableElements(retries - 1)
       }
       return null
@@ -111,15 +124,24 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
     return { editorScroller, previewScroller }
   }
 
-  // Setup bidirectional scroll sync with proper async handling
-  watchEffect(async () => {
+  // Function to cleanup all event listeners
+  const cleanupEventListeners = () => {
+    cleanupFunctions.forEach(cleanup => cleanup())
+    cleanupFunctions = []
+  }
+
+  // Setup scroll synchronization
+  const setupScrollSync = async () => {
+    // Clean up any existing listeners first
+    cleanupEventListeners()
+
     if (!previewSyncEnabled.value) {
       return
     }
 
-    // Wait a bit for DOM to be ready
+    // Wait for DOM to be ready with longer delay to ensure CodeMirror is fully initialized
     await nextTick()
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     const elements = await findScrollableElements()
     if (!elements)
@@ -139,17 +161,41 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
       throttledSync(previewScroller, editorScroller)
     }
 
+    // Add event listeners
     editorScroller.addEventListener('scroll', handleEditorScroll, { passive: true })
     previewScroller.addEventListener('scroll', handlePreviewScroll, { passive: true })
 
-    return () => {
+    // Store cleanup functions
+    cleanupFunctions.push(() => {
       editorScroller.removeEventListener('scroll', handleEditorScroll)
       previewScroller.removeEventListener('scroll', handlePreviewScroll)
+    })
+  }
+
+  // Watch for changes and setup sync
+  watchEffect(() => {
+    setupScrollSync()
+  })
+
+  // Watch for container changes and re-setup
+  watch([editorScrollContainer, previewScrollContainer], () => {
+    if (previewSyncEnabled.value) {
+      setupScrollSync()
+    }
+  })
+
+  // Watch for sync enabled state changes
+  watch(previewSyncEnabled, (enabled) => {
+    if (enabled) {
+      setupScrollSync()
+    }
+    else {
+      cleanupEventListeners()
     }
   })
 
   onUnmounted(() => {
-    // Cleanup code if needed
+    cleanupEventListeners()
   })
 
   return {
