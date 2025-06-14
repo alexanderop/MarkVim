@@ -5,7 +5,80 @@ import { defineConfig, presetTypography } from 'unocss'
 export default defineConfig({
   presets: [
     presetWind4(),
-    presetTypography(),
+    presetTypography({
+      cssExtend: {
+        '.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6': {
+          color: 'var(--accent)',
+        },
+        '.prose .shiki, .prose .shiki code, .prose .shiki pre, .prose [class*="shiki-"], .prose pre[data-language] code': {
+          border: '1px solid var(--muted)',
+        },
+        '.prose .mermaid': {
+          'display': 'flex',
+          'justify-content': 'center',
+          'margin': '1rem 0',
+        },
+        '.prose .markdown-alert': {
+          'border-left-width': '4px',
+          'border-left-style': 'solid',
+          'padding-left': '1rem',
+          'margin': '1rem 0',
+          'background-color': 'color-mix(in oklch, var(--background) 90%, transparent)',
+          'border-radius': '0.375rem',
+          'padding': '1rem',
+        },
+        '.prose .markdown-alert-note': {
+          'border-left-color': 'var(--alert-note)',
+          'background-color': 'color-mix(in oklch, var(--alert-note) 5%, var(--background))',
+        },
+        '.prose .markdown-alert-note .markdown-alert-title': {
+          color: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-note .markdown-alert-title svg': {
+          fill: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-tip': {
+          'border-left-color': 'var(--alert-tip)',
+          'background-color': 'color-mix(in oklch, var(--alert-tip) 5%, var(--background))',
+        },
+        '.prose .markdown-alert-tip .markdown-alert-title': {
+          color: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-tip .markdown-alert-title svg': {
+          fill: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-important': {
+          'border-left-color': 'var(--alert-important)',
+          'background-color': 'color-mix(in oklch, var(--alert-important) 5%, var(--background))',
+        },
+        '.prose .markdown-alert-important .markdown-alert-title': {
+          color: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-important .markdown-alert-title svg': {
+          fill: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-warning': {
+          'border-left-color': 'var(--alert-warning)',
+          'background-color': 'color-mix(in oklch, var(--alert-warning) 5%, var(--background))',
+        },
+        '.prose .markdown-alert-warning .markdown-alert-title': {
+          color: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-warning .markdown-alert-title svg': {
+          fill: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-caution': {
+          'border-left-color': 'var(--alert-caution)',
+          'background-color': 'color-mix(in oklch, var(--alert-caution) 5%, var(--background))',
+        },
+        '.prose .markdown-alert-caution .markdown-alert-title': {
+          color: 'var(--foreground)',
+        },
+        '.prose .markdown-alert-caution .markdown-alert-title svg': {
+          fill: 'var(--foreground)',
+        },
+      },
+    }),
     presetWebFonts({
       provider: 'google',
       fonts: {
@@ -45,43 +118,6 @@ export default defineConfig({
           
           code, pre, kbd, samp {
             font-family: 'Fira Code', monospace;
-            font-feature-settings: 'liga' 1, 'calt' 1;
-            font-variant-ligatures: contextual;
-          }
-
-          /* Enhanced prose code block styling */
-          .prose pre {
-            background-color: var(--muted) !important;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            overflow-x: auto;
-            position: relative;
-            font-family: 'Fira Code', monospace !important;
-            font-feature-settings: 'liga' 1, 'calt' 1;
-            font-variant-ligatures: contextual;
-          }
-
-          .prose pre[data-language]::before {
-            content: attr(data-language);
-            position: absolute;
-            top: 0.5rem;
-            right: 0.75rem;
-            font-size: 0.75rem;
-            color: var(--foreground);
-            opacity: 0.6;
-            text-transform: uppercase;
-            font-weight: 500;
-          }
-
-          .prose :not(pre) > code {
-            background: color-mix(in oklch, var(--accent) 15%, transparent) !important;
-            color: var(--accent) !important;
-            padding: 0.125rem 0.375rem !important;
-            border-radius: 0.25rem !important;
-            font-size: 0.875em;
-            font-family: 'Fira Code', monospace !important;
             font-feature-settings: 'liga' 1, 'calt' 1;
             font-variant-ligatures: contextual;
           }
@@ -133,10 +169,6 @@ export default defineConfig({
     [/^border-gray-600$/, () => ({ 'border-color': 'var(--border)' })],
     [/^border-gray-700$/, () => ({ 'border-color': 'var(--border)' })],
     [/^border-gray-800$/, () => ({ 'border-color': 'var(--border)' })],
-    [/^hover:bg-gray-700$/, () => ({ '&:hover': { 'background-color': 'var(--muted)' } })],
-    [/^hover:bg-gray-800$/, () => ({ '&:hover': { 'background-color': 'var(--muted)' } })],
-    [/^hover:text-gray-200$/, () => ({ '&:hover': { color: 'var(--foreground)' } })],
-    [/^hover:text-gray-300$/, () => ({ '&:hover': { color: 'var(--foreground)' } })],
 
     // Map old theme class names to new simplified tokens
     [/^bg-background$/, () => ({ 'background-color': 'var(--background)' })],
@@ -151,11 +183,6 @@ export default defineConfig({
     [/^border-border$/, () => ({ 'border-color': 'var(--border)' })],
     [/^border-subtle$/, () => ({ 'border-color': 'var(--border)' })],
     [/^border-editor-border$/, () => ({ 'border-color': 'var(--border)' })],
-
-    // Hover states
-    [/^hover:bg-surface-hover$/, () => ({ '&:hover': { 'background-color': 'var(--muted)' } })],
-    [/^hover:text-text-primary$/, () => ({ '&:hover': { color: 'var(--foreground)' } })],
-    [/^hover:text-text-secondary$/, () => ({ '&:hover': { color: 'var(--foreground)', opacity: '0.8' } })],
 
     // New simplified token classes
     [/^text-foreground$/, () => ({ color: 'var(--foreground)' })],

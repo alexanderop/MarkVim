@@ -11,6 +11,11 @@ export interface ColorTheme {
   accent: OklchColor
   muted: OklchColor
   border: OklchColor
+  alertNote: OklchColor
+  alertTip: OklchColor
+  alertImportant: OklchColor
+  alertWarning: OklchColor
+  alertCaution: OklchColor
 }
 
 // Default dark mode colors
@@ -20,6 +25,11 @@ export const DEFAULT_COLOR_THEME: ColorTheme = {
   accent: { l: 0.60, c: 0.18, h: 240 }, // oklch(60% 0.18 240) - Brighter blue for dark mode
   muted: { l: 0.20, c: 0.002, h: 0 }, // oklch(20% 0.002 0) - Dark muted surfaces
   border: { l: 0.25, c: 0.003, h: 20 }, // oklch(25% 0.003 20) - Subtle dark borders
+  alertNote: { l: 0.60, c: 0.18, h: 240 }, // Blue - Note/Info
+  alertTip: { l: 0.65, c: 0.18, h: 140 }, // Green - Tips/Success
+  alertImportant: { l: 0.65, c: 0.18, h: 280 }, // Purple - Important
+  alertWarning: { l: 0.65, c: 0.18, h: 80 }, // Orange - Warning
+  alertCaution: { l: 0.65, c: 0.18, h: 20 }, // Red - Danger/Caution
 }
 
 function oklchToString(color: OklchColor): string {
@@ -39,6 +49,11 @@ export function useColorTheme() {
   const accentVar = useCssVar('--accent')
   const mutedVar = useCssVar('--muted')
   const borderVar = useCssVar('--border')
+  const alertNoteVar = useCssVar('--alert-note')
+  const alertTipVar = useCssVar('--alert-tip')
+  const alertImportantVar = useCssVar('--alert-important')
+  const alertWarningVar = useCssVar('--alert-warning')
+  const alertCautionVar = useCssVar('--alert-caution')
 
   // Update CSS custom properties when theme changes
   watchEffect(() => {
@@ -47,6 +62,11 @@ export function useColorTheme() {
     accentVar.value = oklchToString(theme.value.accent)
     mutedVar.value = oklchToString(theme.value.muted)
     borderVar.value = oklchToString(theme.value.border)
+    alertNoteVar.value = oklchToString(theme.value.alertNote)
+    alertTipVar.value = oklchToString(theme.value.alertTip)
+    alertImportantVar.value = oklchToString(theme.value.alertImportant)
+    alertWarningVar.value = oklchToString(theme.value.alertWarning)
+    alertCautionVar.value = oklchToString(theme.value.alertCaution)
   })
 
   // Update a specific color in the theme
@@ -73,7 +93,7 @@ export function useColorTheme() {
       const parsedTheme = JSON.parse(themeJson) as ColorTheme
 
       // Validate the theme structure
-      const requiredKeys: (keyof ColorTheme)[] = ['background', 'foreground', 'accent', 'muted', 'border']
+      const requiredKeys: (keyof ColorTheme)[] = ['background', 'foreground', 'accent', 'muted', 'border', 'alertNote', 'alertTip', 'alertImportant', 'alertWarning', 'alertCaution']
       const isValid = requiredKeys.every(key =>
         parsedTheme[key]
         && typeof parsedTheme[key].l === 'number'

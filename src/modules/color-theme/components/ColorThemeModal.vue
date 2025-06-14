@@ -97,32 +97,75 @@ const colorDefinitions = [
     label: 'Background',
     description: 'Main application background color',
     icon: 'lucide:layout',
+    category: 'core',
   },
   {
     key: 'foreground' as const,
     label: 'Foreground',
     description: 'Primary text and content color',
     icon: 'lucide:type',
+    category: 'core',
   },
   {
     key: 'accent' as const,
     label: 'Accent',
     description: 'Interactive elements, links, and highlights',
     icon: 'lucide:zap',
+    category: 'core',
   },
   {
     key: 'muted' as const,
     label: 'Muted',
     description: 'Subtle backgrounds and secondary surfaces',
     icon: 'lucide:layers',
+    category: 'core',
   },
   {
     key: 'border' as const,
     label: 'Border',
     description: 'Separators, input borders, and dividers',
     icon: 'lucide:minus',
+    category: 'core',
+  },
+  {
+    key: 'alertNote' as const,
+    label: 'Alert Note',
+    description: 'Note/info alert color (blue)',
+    icon: 'lucide:info',
+    category: 'alerts',
+  },
+  {
+    key: 'alertTip' as const,
+    label: 'Alert Tip',
+    description: 'Tip/success alert color (green)',
+    icon: 'lucide:lightbulb',
+    category: 'alerts',
+  },
+  {
+    key: 'alertImportant' as const,
+    label: 'Alert Important',
+    description: 'Important alert color (purple)',
+    icon: 'lucide:alert-triangle',
+    category: 'alerts',
+  },
+  {
+    key: 'alertWarning' as const,
+    label: 'Alert Warning',
+    description: 'Warning alert color (orange)',
+    icon: 'lucide:alert-circle',
+    category: 'alerts',
+  },
+  {
+    key: 'alertCaution' as const,
+    label: 'Alert Caution',
+    description: 'Caution/danger alert color (red)',
+    icon: 'lucide:octagon-x',
+    category: 'alerts',
   },
 ]
+
+const coreColors = colorDefinitions.filter(def => def.category === 'core')
+const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
 </script>
 
 <template>
@@ -147,42 +190,43 @@ const colorDefinitions = [
       />
     </template>
 
-    <div class="max-h-[80vh] overflow-y-auto">
-      <div class="space-y-6">
-        <!-- Current Theme Overview -->
-        <div>
-          <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
-            Current Theme
-          </h3>
+    <!-- Current Theme Overview - Always visible -->
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
+          Current Theme
+        </h3>
 
-          <!-- Color Palette Preview -->
-          <div class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md">
+        <!-- Color Palette Preview -->
+        <div class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md">
+          <div
+            v-for="colorDef in colorDefinitions"
+            :key="colorDef.key"
+            class="flex flex-col items-center gap-1"
+          >
             <div
-              v-for="colorDef in colorDefinitions"
-              :key="colorDef.key"
-              class="flex flex-col items-center gap-1"
-            >
-              <div
-                class="w-8 h-8 rounded-md border border-border shadow-sm"
-                :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
-                :title="`${colorDef.label}: ${oklchToString(theme[colorDef.key])}`"
-              />
-              <span class="text-xs text-text-secondary font-medium">
-                {{ colorDef.label }}
-              </span>
-            </div>
+              class="w-8 h-8 rounded-md border border-border shadow-sm"
+              :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
+              :title="`${colorDef.label}: ${oklchToString(theme[colorDef.key])}`"
+            />
+            <span class="text-xs text-text-secondary font-medium">
+              {{ colorDef.label }}
+            </span>
           </div>
         </div>
+      </div>
 
-        <!-- Color Selection Grid -->
+      <!-- Scrollable color sections -->
+      <div class="max-h-[50vh] overflow-y-auto space-y-6">
+        <!-- Core Colors -->
         <div>
           <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
-            Customize Colors
+            Core Colors
           </h3>
 
           <div class="grid gap-3">
             <button
-              v-for="colorDef in colorDefinitions"
+              v-for="colorDef in coreColors"
               :key="colorDef.key"
               class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
               @click="openColorPicker(colorDef)"
@@ -217,28 +261,73 @@ const colorDefinitions = [
           </div>
         </div>
 
-        <!-- Theme Actions -->
-        <div class="flex gap-2 pt-3 border-t border-border">
-          <BaseButton
-            variant="ghost"
-            size="sm"
-            icon="lucide:rotate-ccw"
-            @click="resetThemeToDefaults"
-          >
-            Reset Colors
-          </BaseButton>
-          <BaseButton
-            variant="ghost"
-            size="sm"
-            icon="lucide:download"
-            data-testid="export-theme-button"
-            @click="handleExportTheme"
-          >
-            Export Theme
-          </BaseButton>
+        <!-- Alert Colors -->
+        <div>
+          <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
+            Alert Colors
+          </h3>
+
+          <div class="grid gap-3">
+            <button
+              v-for="colorDef in alertColors"
+              :key="colorDef.key"
+              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
+              @click="openColorPicker(colorDef)"
+            >
+              <div class="flex items-center gap-3">
+                <div class="text-left">
+                  <div class="font-medium text-sm text-text-primary">
+                    {{ colorDef.label }}
+                  </div>
+                  <div class="text-xs text-text-secondary">
+                    {{ colorDef.description }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <!-- Color Preview & Value -->
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-6 h-6 rounded border border-border"
+                    :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
+                  />
+                  <code class="text-xs text-text-secondary font-mono">
+                    {{ oklchToString(theme[colorDef.key]) }}
+                  </code>
+                </div>
+
+                <!-- Arrow -->
+                <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Footer slot for theme actions -->
+    <template #footer>
+      <div class="flex gap-2 w-full">
+        <BaseButton
+          variant="ghost"
+          size="sm"
+          icon="lucide:rotate-ccw"
+          @click="resetThemeToDefaults"
+        >
+          Reset Colors
+        </BaseButton>
+        <BaseButton
+          variant="ghost"
+          size="sm"
+          icon="lucide:download"
+          data-testid="export-theme-button"
+          @click="handleExportTheme"
+        >
+          Export Theme
+        </BaseButton>
+      </div>
+    </template>
   </BaseModal>
 
   <!-- Color Picker Modal -->

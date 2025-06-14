@@ -8,6 +8,8 @@
   --accent: oklch(60% 0.18 240);         /* Brighter blue for dark mode */
   --muted: oklch(20% 0.002 0);           /* Dark muted surfaces */
   --border: oklch(25% 0.003 20);         /* Subtle dark borders */
+
+
 }
 
 /* ──────────────────────────
