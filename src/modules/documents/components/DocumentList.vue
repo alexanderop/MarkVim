@@ -96,6 +96,7 @@ function formatDate(timestamp: number): string {
           v-for="(document, index) in documents"
           :key="document.id"
           class="group mb-1 relative last:mb-0"
+          :data-testid="`document-item-${index}`"
         >
           <ContextMenuRoot>
             <!-- Main document item -->
@@ -107,6 +108,7 @@ function formatDate(timestamp: number): string {
                     ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-30 shadow-lg'
                     : 'border-transparent hover:bg-[var(--muted)] hover:border-[var(--border)]',
                 ]"
+                :data-testid="document.id === activeDocumentId ? `document-item-active-${index}` : `document-item-inactive-${index}`"
                 @click="handleDocumentClick(document.id)"
               >
                 <!-- Active indicator line -->
@@ -143,6 +145,7 @@ function formatDate(timestamp: number): string {
                             ? 'text-[var(--foreground)]'
                             : 'text-[var(--foreground)] opacity-90 group-hover:opacity-100',
                         ]"
+                        :data-testid="`document-title-${index}`"
                       >
                         {{ getDocumentTitle(document.content) }}
                       </h3>
@@ -153,6 +156,7 @@ function formatDate(timestamp: number): string {
                             ? 'text-[var(--accent)]'
                             : 'text-[var(--foreground)] opacity-50 group-hover:opacity-60',
                         ]"
+                        :data-testid="`document-timestamp-${index}`"
                       >
                         {{ formatDate(document.updatedAt) }}
                       </span>
@@ -165,6 +169,7 @@ function formatDate(timestamp: number): string {
                           ? 'text-[var(--foreground)] opacity-60'
                           : 'text-[var(--foreground)] opacity-50 group-hover:opacity-60',
                       ]"
+                      :data-testid="`document-preview-${index}`"
                     >
                       {{ getDocumentPreview(document.content) }}
                     </p>

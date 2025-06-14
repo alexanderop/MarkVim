@@ -78,3 +78,23 @@ Given('synchronized scrolling is enabled', async function (this: MarkVimWorld) {
   await markVimPage.enableSynchronizedScrolling()
   await markVimPage.closeSettingsModal()
 })
+
+Given('the sidebar is visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  // Check if sidebar is currently visible, if not make it visible
+  const isVisible = await markVimPage.documentList.isVisible()
+  if (!isVisible) {
+    await markVimPage.toggleSidebarWithButton()
+  }
+  await markVimPage.verifySidebarVisible()
+})
+
+Given('the sidebar is hidden', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  // Check if sidebar is currently hidden, if not hide it
+  const isVisible = await markVimPage.documentList.isVisible()
+  if (isVisible) {
+    await markVimPage.toggleSidebarWithButton()
+  }
+  await markVimPage.verifySidebarHidden()
+})

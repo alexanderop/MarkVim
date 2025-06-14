@@ -151,6 +151,21 @@ onMounted(() => {
   // Register the create document action with the shortcuts system
   setNewDocumentAction(handleCreateDocument)
 
+  // Register sequential shortcuts using createSequentialShortcut
+  const { createSequentialShortcut, registeredShortcuts } = useShortcuts()
+
+  // Create g->t sequence shortcut for toggling sidebar
+  createSequentialShortcut(['g', 't'], handleToggleSidebar)
+
+  // Also register it in the shortcuts list for help display
+  registeredShortcuts.value.set('g t', {
+    keys: 'g t',
+    description: 'Toggle sidebar',
+    action: handleToggleSidebar,
+    category: 'View',
+    icon: 'lucide:panel-left',
+  })
+
   registerShortcuts([
     {
       keys: '1',
@@ -202,14 +217,6 @@ onMounted(() => {
         URL.revokeObjectURL(url)
       },
       category: 'File',
-    },
-    {
-      keys: 'g+t',
-      description: 'Toggle sidebar',
-      action: () => {
-        handleToggleSidebar()
-      },
-      category: 'View',
     },
     {
       keys: 'v',
