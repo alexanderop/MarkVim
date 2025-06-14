@@ -65,6 +65,8 @@ You have access to comprehensive Nuxt documentation including:
 - Standard Nuxt 3 auto-imports for components, composables, and utilities
 
 ## Coding Guidelines
+- **NEVER use else statements** - Always use early returns or ternary operators instead
+- **Avoid comments** - Only add comments when absolutely necessary
 - Use TypeScript for all new code
 - Follow Vue 3 Composition API patterns
 - Leverage Nuxt 3 auto-imports (no need to import ref, computed, etc.)
