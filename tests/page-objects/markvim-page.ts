@@ -814,12 +814,12 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   // Comprehensive document verification methods
   async verifyDocumentDetails(index: number, expectedTitle: string, hasPreview: boolean = true, hasTimestamp: boolean = true): Promise<void> {
     await this.verifyDocumentAtIndex(index, expectedTitle)
-    
+
     if (hasPreview) {
       const preview = this.documentList.locator(`[data-testid="document-preview-${index}"]`)
       await expect(preview).toBeVisible()
     }
-    
+
     if (hasTimestamp) {
       const timestamp = this.documentList.locator(`[data-testid="document-timestamp-${index}"]`)
       await expect(timestamp).toBeVisible()
@@ -833,7 +833,8 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       if (expectedDocumentCount !== undefined) {
         await this.verifyDocumentCount(expectedDocumentCount)
       }
-    } else {
+    }
+    else {
       await this.verifySidebarHidden()
     }
   }
@@ -849,17 +850,19 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   // Sidebar toggle workflow with verification
   async toggleSidebarAndVerify(method: 'keyboard' | 'button' = 'button'): Promise<void> {
     const wasVisible = await this.documentList.isVisible()
-    
+
     if (method === 'keyboard') {
       await this.toggleSidebarWithKeyboard()
-    } else {
+    }
+    else {
       await this.toggleSidebarWithButton()
     }
-    
+
     // Verify the state changed
     if (wasVisible) {
       await this.verifySidebarHidden()
-    } else {
+    }
+    else {
       await this.verifySidebarVisible()
     }
   }
@@ -876,7 +879,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     if (!verifyMethod) {
       throw new Error(`Unknown element: ${elementName}. Available elements: ${Object.keys(elementMap).join(', ')}`)
     }
-    
+
     await verifyMethod()
   }
 }
