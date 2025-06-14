@@ -152,13 +152,13 @@ onMounted(() => {
   setNewDocumentAction(handleCreateDocument)
 
   // Register sequential shortcuts using createSequentialShortcut
-  const { createSequentialShortcut, registeredShortcuts } = useShortcuts()
+  const { createSequentialShortcut, registerShortcut } = useShortcuts()
 
   // Create g->t sequence shortcut for toggling sidebar
   createSequentialShortcut(['g', 't'], handleToggleSidebar)
 
-  // Also register it in the shortcuts list for help display
-  registeredShortcuts.value.set('g t', {
+  // Register it in the shortcuts list for help display
+  registerShortcut({
     keys: 'g t',
     description: 'Toggle sidebar',
     action: handleToggleSidebar,
@@ -322,10 +322,9 @@ useHead({
             }"
           >
             <MarkdownEditor
-              :model-value="activeMarkdown"
+              v-model="activeMarkdown"
               :settings="settings"
               class="h-full"
-              @update:model-value="activeMarkdown = $event"
               @vim-mode-change="handleVimModeChange"
             />
           </div>
