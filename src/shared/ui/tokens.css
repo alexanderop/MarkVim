@@ -3,15 +3,6 @@
    =============================================*/
 :root {
   /* Core 5 tokens - everything you need */
-  --background: oklch(99% 0 0);          /* #fdfdfd → Very light, clean white */
-  --foreground: oklch(18% 0.002 0);      /* #282728 → Deep charcoal for text */
-  --accent: oklch(45% 0.15 240);         /* #006cac → Professional blue */
-  --muted: oklch(92% 0 0);               /* #e6e6e6 → Subtle gray for backgrounds */
-  --border: oklch(94% 0.003 20);         /* #ece9e9 → Warm light gray for dividers */
-}
-
-/* Dark mode - inverted + adjusted for readability */
-.dark {
   --background: oklch(12% 0.002 0);      /* Deep dark background */
   --foreground: oklch(96% 0 0);          /* Light text */
   --accent: oklch(60% 0.18 240);         /* Brighter blue for dark mode */
@@ -20,8 +11,8 @@
 }
 
 /* ──────────────────────────
+──────────────────────────*/
    4. Shiki Line Numbers
-   ──────────────────────────*/
 /* Enable line numbers for Shiki code blocks using CSS counters */
 .shiki {
   counter-reset: shiki-line-number;

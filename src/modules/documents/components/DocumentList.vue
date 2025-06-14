@@ -63,22 +63,22 @@ function formatDate(timestamp: number): string {
   <aside
     v-if="isVisible"
     data-testid="document-list"
-    class="border-r border-subtle bg-background flex flex-col h-full w-72"
+    class="border-r border-[var(--border)] bg-[var(--background)] flex flex-col h-full w-72"
   >
     <!-- Header -->
-    <div class="px-4 border-b border-gray-200/10 flex h-14 items-center justify-between">
+    <div class="px-4 border-b border-[var(--border)] flex h-14 items-center justify-between">
       <div class="flex gap-3 items-center">
-        <h2 class="text-sm text-gray-100 font-medium">
+        <h2 class="text-sm text-[var(--foreground)] font-medium">
           Notes
         </h2>
-        <div class="rounded-full bg-gray-800/60 flex h-5 w-5 items-center justify-center">
-          <span class="text-xs text-gray-400 font-medium">{{ documents.length }}</span>
+        <div class="rounded-full bg-[var(--muted)] flex h-5 w-5 items-center justify-center">
+          <span class="text-xs text-[var(--foreground)] opacity-70 font-medium">{{ documents.length }}</span>
         </div>
       </div>
 
       <button
         data-testid="create-document-btn"
-        class="group text-white rounded-md bg-accent flex h-7 w-7 shadow-accent/20 shadow-lg transition-all duration-200 items-center justify-center hover:bg-accent-hover"
+        class="group text-[var(--background)] rounded-md bg-[var(--accent)] flex h-7 w-7 shadow-lg transition-all duration-200 items-center justify-center hover:opacity-90"
         title="New note"
         @click="handleCreateDocument"
       >
@@ -104,15 +104,15 @@ function formatDate(timestamp: number): string {
                 class="px-3 py-3 border rounded-lg cursor-pointer transition-all duration-200 relative"
                 :class="[
                   document.id === activeDocumentId
-                    ? 'bg-accent/10 border-accent/30 shadow-lg shadow-accent/5'
-                    : 'border-transparent hover:bg-surface-hover hover:border-border',
+                    ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-30 shadow-lg'
+                    : 'border-transparent hover:bg-[var(--muted)] hover:border-[var(--border)]',
                 ]"
                 @click="handleDocumentClick(document.id)"
               >
                 <!-- Active indicator line -->
                 <div
                   v-if="document.id === activeDocumentId"
-                  class="rounded-full bg-accent h-6 w-1 left-0 top-1/2 absolute -translate-y-1/2"
+                  class="rounded-full bg-[var(--accent)] h-6 w-1 left-0 top-1/2 absolute -translate-y-1/2"
                 />
 
                 <div class="flex gap-3 items-start">
@@ -122,8 +122,8 @@ function formatDate(timestamp: number): string {
                       class="rounded-md flex h-6 w-6 transition-all duration-200 items-center justify-center"
                       :class="[
                         document.id === activeDocumentId
-                          ? 'bg-accent/20 text-accent-brighter'
-                          : 'bg-surface-primary text-text-tertiary group-hover:bg-surface-hover group-hover:text-text-secondary',
+                          ? 'bg-[var(--accent)] bg-opacity-20 text-[var(--accent)]'
+                          : 'bg-[var(--muted)] text-[var(--foreground)] opacity-60 group-hover:bg-[var(--muted)] group-hover:opacity-80',
                       ]"
                     >
                       <Icon
@@ -140,8 +140,8 @@ function formatDate(timestamp: number): string {
                         class="text-sm leading-tight font-medium truncate"
                         :class="[
                           document.id === activeDocumentId
-                            ? 'text-gray-100'
-                            : 'text-gray-300 group-hover:text-gray-200',
+                            ? 'text-[var(--foreground)]'
+                            : 'text-[var(--foreground)] opacity-90 group-hover:opacity-100',
                         ]"
                       >
                         {{ getDocumentTitle(document.content) }}
@@ -150,8 +150,8 @@ function formatDate(timestamp: number): string {
                         class="text-xs flex-shrink-0 tabular-nums"
                         :class="[
                           document.id === activeDocumentId
-                            ? 'text-blue-400'
-                            : 'text-gray-500 group-hover:text-gray-400',
+                            ? 'text-[var(--accent)]'
+                            : 'text-[var(--foreground)] opacity-50 group-hover:opacity-60',
                         ]"
                       >
                         {{ formatDate(document.updatedAt) }}
@@ -162,8 +162,8 @@ function formatDate(timestamp: number): string {
                       class="text-xs leading-relaxed truncate"
                       :class="[
                         document.id === activeDocumentId
-                          ? 'text-gray-400'
-                          : 'text-gray-500 group-hover:text-gray-400',
+                          ? 'text-[var(--foreground)] opacity-60'
+                          : 'text-[var(--foreground)] opacity-50 group-hover:opacity-60',
                       ]"
                     >
                       {{ getDocumentPreview(document.content) }}
@@ -175,19 +175,19 @@ function formatDate(timestamp: number): string {
 
             <!-- Context Menu -->
             <ContextMenuPortal>
-              <ContextMenuContent class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-1 min-w-[160px] z-50">
+              <ContextMenuContent class="bg-[var(--muted)] border border-[var(--border)] rounded-lg shadow-xl p-1 min-w-[160px] z-50">
                 <ContextMenuItem
-                  class="flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer transition-colors"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--background)] rounded-md cursor-pointer transition-colors"
                   @click="handleSelectDocument(document.id)"
                 >
                   <Icon name="lucide:mouse-pointer-click" class="h-4 w-4" />
                   Select
                 </ContextMenuItem>
 
-                <ContextMenuSeparator class="h-px bg-gray-700 my-1" />
+                <ContextMenuSeparator class="h-px bg-[var(--border)] my-1" />
 
                 <ContextMenuItem
-                  class="flex items-center gap-2 px-3 py-2 text-sm text-error hover:bg-error/10 hover:text-error-hover rounded-md cursor-pointer transition-colors"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-400 hover:bg-opacity-10 rounded-md cursor-pointer transition-colors"
                   @click="handleDeleteDocument(document.id)"
                 >
                   <Icon name="lucide:trash-2" class="h-4 w-4" />
@@ -200,7 +200,7 @@ function formatDate(timestamp: number): string {
           <!-- Separator line (except for last item) -->
           <div
             v-if="index < documents.length - 1"
-            class="mx-3 mt-1 bg-gray-800/30 h-px"
+            class="mx-3 mt-1 bg-[var(--border)] h-px"
           />
         </div>
 
@@ -209,13 +209,13 @@ function formatDate(timestamp: number): string {
           v-if="documents.length === 0"
           class="py-12 text-center flex flex-col items-center justify-center"
         >
-          <div class="mb-3 rounded-lg bg-gray-800/40 flex h-12 w-12 items-center justify-center">
-            <Icon name="lucide:file-plus" class="text-gray-500 h-6 w-6" />
+          <div class="mb-3 rounded-lg bg-[var(--muted)] flex h-12 w-12 items-center justify-center">
+            <Icon name="lucide:file-plus" class="text-[var(--foreground)] opacity-50 h-6 w-6" />
           </div>
-          <p class="text-sm text-gray-400 mb-1">
+          <p class="text-sm text-[var(--foreground)] opacity-70 mb-1">
             No notes yet
           </p>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-[var(--foreground)] opacity-50">
             Create your first note to get started
           </p>
         </div>

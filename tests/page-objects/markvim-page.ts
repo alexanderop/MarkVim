@@ -93,8 +93,7 @@ export class MarkVimPage {
       'l': 'KeyL',
       'p': 'KeyP',
       'v': 'KeyV',
-      'Cmd+B': 'Meta+B',
-      'Cmd+I': 'Meta+KeyI',
+      'G+N': 'KeyG',
     }
 
     const mappedKey = keyMap[key] || key
@@ -161,7 +160,9 @@ export class MarkVimPage {
   }
 
   async createNewDocumentWithKeyboard(): Promise<void> {
-    await this.pressKey('Cmd+I')
+    await this.page.keyboard.press('KeyG')
+    await this.page.waitForTimeout(100) // Small delay between keys
+    await this.page.keyboard.press('KeyN')
   }
 
   async verifyNewDocumentCreated(): Promise<void> {
@@ -199,7 +200,9 @@ export class MarkVimPage {
   }
 
   async toggleSidebarWithKeyboard(): Promise<void> {
-    await this.page.keyboard.press('Meta+B')
+    await this.page.keyboard.press('KeyG')
+    await this.page.waitForTimeout(100) // Small delay between keys
+    await this.page.keyboard.press('KeyT')
   }
 
   async toggleSidebarWithButton(): Promise<void> {

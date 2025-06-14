@@ -48,17 +48,17 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 </script>
 
 <template>
-  <div class="bg-surface-primary flex flex-col h-full w-full">
-    <div class="px-6 border-b border-border bg-surface-primary flex flex-shrink-0 h-10 items-center justify-between">
+  <div class="bg-[var(--background)] flex flex-col h-full w-full">
+    <div class="px-6 border-b border-[var(--border)] bg-[var(--background)] flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
-        <Icon name="lucide:eye" class="text-text-primary h-4 w-4" />
-        <span class="text-xs text-text-secondary">Use ↑↓ or j/k to scroll</span>
+        <Icon name="lucide:eye" class="text-[var(--foreground)] h-4 w-4" />
+        <span class="text-xs text-[var(--foreground)] opacity-70">Use ↑↓ or j/k to scroll</span>
       </div>
     </div>
 
     <div
       ref="scrollContainer"
-      class="bg-surface-primary flex-1 min-h-0 overflow-auto focus:outline-none focus:ring-2 focus:ring-accent/20 focus:ring-inset transition-all"
+      class="bg-[var(--background)] flex-1 min-h-0 overflow-auto focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-opacity-20 focus:ring-inset transition-all"
       tabindex="0"
     >
       <div ref="root" class="mx-auto px-12 py-12 max-w-none">
@@ -75,10 +75,6 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
   line-height: 1.7;
   color: var(--foreground);
   font-family: 'Geist', sans-serif;
-}
-
-.prose-container {
-  color: var(--foreground);
 }
 
 /* Mermaid styling */
@@ -112,14 +108,14 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 /* Background elements */
 :deep(.mermaid .cluster rect),
 :deep(.mermaid .section) {
-  background-color: var(--background) !important;
+  fill: var(--muted) !important;
   color: var(--foreground) !important;
 }
 
 /* Links and paths - Enhanced arrow styling */
 :deep(.mermaid path.link),
 :deep(.mermaid .actor-man) {
-  fill: var(--background) !important;
+  fill: var(--muted) !important;
   stroke: var(--accent) !important;
   stroke-width: 2px !important;
 }
@@ -178,8 +174,7 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 
 /* Lines */
 :deep(.mermaid .actor-line) {
-  stroke: var(--foreground) !important;
-  opacity: 0.6;
+  stroke: var(--border) !important;
 }
 
 /* Synchronized scrolling */
@@ -406,15 +401,15 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
 
 /* Mermaid specific fixes */
 :deep(.mermaid svg) {
-  fill: var(--background) !important;
+  fill: var(--muted) !important;
   stroke: var(--border) !important;
 }
 
 /* Node content and text */
 :deep(.mermaid .nodes),
 :deep(.mermaid .node) {
-  background: var(--background);
-  border: 1px solid var(--border);
+  fill: var(--muted) !important;
+  stroke: var(--border) !important;
   color: var(--foreground) !important;
 }
 </style>

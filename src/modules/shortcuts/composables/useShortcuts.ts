@@ -295,6 +295,21 @@ export function useShortcuts() {
     showSettings.value = !showSettings.value
   }
 
+  // Color theme shortcut functionality
+  const showColorTheme = useState<boolean>('showColorTheme', () => false)
+
+  function openColorTheme() {
+    showColorTheme.value = true
+  }
+
+  function closeColorTheme() {
+    showColorTheme.value = false
+  }
+
+  function toggleColorTheme() {
+    showColorTheme.value = !showColorTheme.value
+  }
+
   // Sequential key support for g+s (like Linear)
   function createSequentialShortcut(sequence: string[], action: () => void, timeout = 1000) {
     const sequenceProgress = ref(0)
@@ -352,17 +367,52 @@ export function useShortcuts() {
     return resetSequence
   }
 
+  // New document shortcut functionality
+  const newDocumentAction = ref<(() => void) | null>(null)
+
+  function setNewDocumentAction(action: () => void) {
+    newDocumentAction.value = action
+  }
+
+  function createNewDocument() {
+    if (newDocumentAction.value) {
+      newDocumentAction.value()
+    }
+  }
+
   // Pre-register settings shortcut (Linear style: g then s)
   onMounted(() => {
     // Create g->s sequence shortcut
     createSequentialShortcut(['g', 's'], openSettings)
 
-    // Also register it in the shortcuts list for help display
+    // Create g->c sequence shortcut for color theme
+    createSequentialShortcut(['g', 'c'], openColorTheme)
+
+    // Create g->n sequence shortcut for new document
+    createSequentialShortcut(['g', 'n'], createNewDocument)
+
+    // Also register them in the shortcuts list for help display
     registeredShortcuts.value.set('g s', {
       keys: 'g s',
       description: 'Open settings',
       action: openSettings,
       category: 'Navigation',
+    })
+
+    registeredShortcuts.value.set('g c', {
+      keys: 'g c',
+      description: 'Open color theme',
+      action: openColorTheme,
+      category: 'Navigation',
+      icon: 'lucide:palette',
+    })
+
+    registeredShortcuts.value.set('g n', {
+      keys: 'g n',
+      description: 'New document',
+      action: createNewDocument,
+      category: 'File',
+      icon: 'lucide:file-plus',
     })
   })
 
@@ -380,6 +430,7 @@ export function useShortcuts() {
     appCommands: readonly(appCommands),
     notUsingInput: readonly(notUsingInput),
     showSettings: readonly(showSettings),
+    showColorTheme: readonly(showColorTheme),
 
     // Utilities
     formatKeys,
@@ -390,6 +441,15 @@ export function useShortcuts() {
     openSettings,
     closeSettings,
     toggleSettings,
+
+    // Color theme functions
+    openColorTheme,
+    closeColorTheme,
+    toggleColorTheme,
+
+    // New document functions
+    setNewDocumentAction,
+    createNewDocument,
 
     // Direct access to magic keys for advanced usage
     keys: readonly(keys),

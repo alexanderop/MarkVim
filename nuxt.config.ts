@@ -31,6 +31,10 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
     {
+      path: './modules/color-theme/components',
+      pathPrefix: false,
+    },
+    {
       path: './modules/documents/components',
       pathPrefix: false,
     },
@@ -61,6 +65,7 @@ export default defineNuxtConfig({
   ],
   imports: {
     dirs: [
+      'modules/color-theme/composables',
       'modules/documents/composables',
       'modules/editor/composables',
       'modules/markdown-preview/composables',
