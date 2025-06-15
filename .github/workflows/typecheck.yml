@@ -1,0 +1,61 @@
+name: TypeScript Check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: typecheck-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    name: TypeScript Check
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js with PNPM cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Nuxt build
+        uses: actions/cache@v4
+        id: nuxt-cache
+        with:
+          path: |
+            .nuxt
+            .output
+          key: nuxt-typecheck-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts', 'package.json', 'pnpm-lock.yaml') }}
+          restore-keys: |
+            nuxt-typecheck-${{ runner.os }}-
+
+      - name: Run TypeScript check
+        run: pnpm run typecheck
+
+      - name: Create job summary
+        if: always()
+        run: |
+          echo "## 🔍 TypeScript Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ $? -eq 0 ]; then
+            echo "✅ **Status:** All TypeScript checks passed" >> $GITHUB_STEP_SUMMARY
+            echo "🎯 **Result:** No type errors found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Status:** TypeScript errors found" >> $GITHUB_STEP_SUMMARY
+            echo "🚨 **Action Required:** Please fix the type errors above" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📦 **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "⏰ **Checked at:** $(date -u)" >> $GITHUB_STEP_SUMMARY
