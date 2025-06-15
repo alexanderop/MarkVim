@@ -85,8 +85,13 @@ jobs:
       - name: Build application for testing
         run: pnpm run build
 
-      - name: Run E2E tests
-        run: pnpm exec playwright test
+      - name: Start server and run E2E tests
+        run: |
+          pnpm run preview &
+          SERVER_PID=$!
+          sleep 5
+          pnpm run test:e2e:ci
+          kill $SERVER_PID
 
       - name: Upload test results
         if: always()
