@@ -248,3 +248,42 @@ Then('the color theme modal should show the default colors', async function (thi
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.verifyColorThemeModalDefaultColors()
 })
+
+Then('the preview pane should show a level 2 heading with the text {string}', async function (this: MarkVimWorld, expectedText: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Wait for the content to be processed and rendered
+  await markVimPage.page.waitForTimeout(1000)
+
+  const heading = markVimPage.previewContent.locator('h2')
+
+  await expect(heading).toBeVisible({ timeout: 3000 })
+  await expect(heading).toHaveText(expectedText)
+})
+
+Then('the preview pane should display a rendered SVG flowchart', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Wait for mermaid processing
+  await markVimPage.page.waitForTimeout(2000)
+
+  const mermaidContainer = markVimPage.previewContent.locator('.mermaid')
+  const mermaidSvg = markVimPage.previewContent.locator('.mermaid svg')
+
+  // Verify mermaid container and SVG are visible
+  await expect(mermaidContainer).toBeVisible({ timeout: 3000 })
+  await expect(mermaidSvg).toBeVisible({ timeout: 3000 })
+})
+
+Then('the preview pane should display a styled {string} alert box', async function (this: MarkVimWorld, alertType: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Wait for alert processing
+  await markVimPage.page.waitForTimeout(1000)
+
+  const alertSelector = `.markdown-alert.markdown-alert-${alertType.toLowerCase()}`
+  const alertBox = markVimPage.previewContent.locator(alertSelector)
+
+  await expect(alertBox).toBeVisible({ timeout: 3000 })
+  await expect(alertBox).toContainText(`This is a test ${alertType.toLowerCase()}.`)
+})
