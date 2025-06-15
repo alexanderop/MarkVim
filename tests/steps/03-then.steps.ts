@@ -106,6 +106,21 @@ Then('the {word} should be visible', async function (this: MarkVimWorld, element
   await verifyMethod()
 })
 
+Then('the {string} should be visible', async function (this: MarkVimWorld, elementName: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  const elementMap: Record<string, () => Promise<void>> = {
+    'color theme modal': () => markVimPage.verifyColorThemeModalVisible(),
+  }
+
+  const verifyMethod = elementMap[elementName]
+  if (!verifyMethod) {
+    throw new Error(`Unknown element: ${elementName}. Available elements: ${Object.keys(elementMap).join(', ')}`)
+  }
+
+  await verifyMethod()
+})
+
 Then('the {word} should be hidden', async function (this: MarkVimWorld, elementName: string) {
   const markVimPage = await getMarkVimPage(this)
 
@@ -115,6 +130,21 @@ Then('the {word} should be hidden', async function (this: MarkVimWorld, elementN
     'editor': () => expect(markVimPage.editorPane).not.toBeVisible(),
     'preview': () => expect(markVimPage.previewPane).not.toBeVisible(),
     'delete-modal': () => markVimPage.verifyDeleteModalHidden(),
+  }
+
+  const verifyMethod = elementMap[elementName]
+  if (!verifyMethod) {
+    throw new Error(`Unknown element: ${elementName}. Available elements: ${Object.keys(elementMap).join(', ')}`)
+  }
+
+  await verifyMethod()
+})
+
+Then('the {string} should be hidden', async function (this: MarkVimWorld, elementName: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  const elementMap: Record<string, () => Promise<void>> = {
+    'color theme modal': () => markVimPage.verifyColorThemeModalHidden(),
   }
 
   const verifyMethod = elementMap[elementName]
@@ -212,4 +242,9 @@ Then('the delete modal should contain the document title {string}', async functi
 Then('the document should be deleted', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.verifyDeleteModalHidden()
+})
+
+Then('the color theme modal should show the default colors', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyColorThemeModalDefaultColors()
 })

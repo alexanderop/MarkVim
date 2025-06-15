@@ -45,6 +45,11 @@ export class MarkVimPage {
   readonly deleteConfirmModal: Locator
   readonly deleteConfirmBtn: Locator
   readonly deleteCancelBtn: Locator
+  readonly colorThemeModal: Locator
+  readonly colorThemeButton: Locator
+  readonly colorPalettePreview: Locator
+  readonly coreColorsSection: Locator
+  readonly alertColorsSection: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -90,6 +95,11 @@ export class MarkVimPage {
     this.deleteConfirmModal = page.locator('[data-testid="delete-confirm-modal"]')
     this.deleteConfirmBtn = page.locator('[data-testid="delete-confirm-btn"]')
     this.deleteCancelBtn = page.locator('[data-testid="delete-cancel-btn"]')
+    this.colorThemeModal = page.locator('[data-testid="color-theme-modal"]')
+    this.colorThemeButton = page.locator('[data-testid="color-theme-button"]')
+    this.colorPalettePreview = page.locator('[data-testid="color-palette-preview"]')
+    this.coreColorsSection = page.locator('[data-testid="core-colors-section"]')
+    this.alertColorsSection = page.locator('[data-testid="alert-colors-section"]')
   }
 
   async navigate(): Promise<void> {
@@ -254,6 +264,11 @@ export class MarkVimPage {
   async openSettingsWithKeyboard(): Promise<void> {
     await this.page.keyboard.press('KeyG')
     await this.page.keyboard.press('KeyS')
+  }
+
+  async openColorThemeWithKeyboard(): Promise<void> {
+    await this.page.keyboard.press('KeyG')
+    await this.page.keyboard.press('KeyC')
   }
 
   async verifySettingsModalVisible(): Promise<void> {
@@ -923,6 +938,52 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     await this.clickDeleteConfirm()
     await this.verifyDeleteModalHidden()
     await this.verifyDocumentCount(expectedDocumentCount)
+  }
+
+  async verifyColorThemeModalVisible(): Promise<void> {
+    await expect(this.colorThemeModal).toBeVisible({ timeout: 5000 })
+  }
+
+  async verifyColorThemeModalHidden(): Promise<void> {
+    await expect(this.colorThemeModal).not.toBeVisible()
+  }
+
+  async verifyColorThemeModalDefaultColors(): Promise<void> {
+    await this.verifyColorThemeModalVisible()
+    
+    // Default colors from useColorTheme.ts
+    const expectedColors = {
+      background: 'oklch(12.0% 0.002 0)',
+      foreground: 'oklch(96.0% 0.000 0)', 
+      accent: 'oklch(60.0% 0.180 240)',
+      muted: 'oklch(20.0% 0.002 0)',
+      border: 'oklch(25.0% 0.003 20)',
+      alertNote: 'oklch(60.0% 0.180 240)',
+      alertTip: 'oklch(65.0% 0.180 140)',
+      alertImportant: 'oklch(65.0% 0.180 280)',
+      alertWarning: 'oklch(65.0% 0.180 80)',
+      alertCaution: 'oklch(65.0% 0.180 20)'
+    }
+
+    // Verify core colors section is visible
+    await expect(this.coreColorsSection).toBeVisible()
+    
+    // Verify alert colors section is visible
+    await expect(this.alertColorsSection).toBeVisible()
+
+    // Verify specific colors by their data-testid attributes instead of OKLCH values
+    // This avoids strict mode violations when multiple colors have the same OKLCH value
+    for (const [colorName, expectedValue] of Object.entries(expectedColors)) {
+      const colorButton = this.page.locator(`[data-testid="color-button-${colorName}"]`)
+      await expect(colorButton).toBeVisible({ timeout: 3000 })
+      
+      // Verify the OKLCH value is displayed within this specific color button
+      const codeElement = colorButton.locator('code')
+      await expect(codeElement).toContainText(expectedValue)
+    }
+
+    // Verify color palette preview is visible
+    await expect(this.colorPalettePreview).toBeVisible()
   }
 }
 

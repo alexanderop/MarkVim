@@ -198,11 +198,12 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
         </h3>
 
         <!-- Color Palette Preview -->
-        <div class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md">
+        <div class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md" data-testid="color-palette-preview">
           <div
             v-for="colorDef in colorDefinitions"
             :key="colorDef.key"
             class="flex flex-col items-center gap-1"
+            :data-testid="`color-preview-${colorDef.key}`"
           >
             <div
               class="w-8 h-8 rounded-md border border-border shadow-sm"
@@ -219,7 +220,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
       <!-- Scrollable color sections -->
       <div class="max-h-[50vh] overflow-y-auto space-y-6">
         <!-- Core Colors -->
-        <div>
+        <div data-testid="core-colors-section">
           <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
             Core Colors
           </h3>
@@ -229,6 +230,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
               v-for="colorDef in coreColors"
               :key="colorDef.key"
               class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
+              :data-testid="`color-button-${colorDef.key}`"
               @click="openColorPicker(colorDef)"
             >
               <div class="flex items-center gap-3">
@@ -262,7 +264,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
         </div>
 
         <!-- Alert Colors -->
-        <div>
+        <div data-testid="alert-colors-section">
           <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
             Alert Colors
           </h3>
@@ -272,6 +274,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
               v-for="colorDef in alertColors"
               :key="colorDef.key"
               class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
+              :data-testid="`color-button-${colorDef.key}`"
               @click="openColorPicker(colorDef)"
             >
               <div class="flex items-center gap-3">

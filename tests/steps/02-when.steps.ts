@@ -43,6 +43,7 @@ When('I press the {string} keyboard shortcut', async function (this: MarkVimWorl
   const shortcutMap: Record<string, () => Promise<void>> = {
     'g+t': () => markVimPage.toggleSidebarWithKeyboard(),
     'g+s': () => markVimPage.openSettingsWithKeyboard(),
+    'gc': () => markVimPage.openColorThemeWithKeyboard(),
   }
 
   const shortcutMethod = shortcutMap[shortcut]
