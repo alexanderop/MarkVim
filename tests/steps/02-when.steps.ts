@@ -64,6 +64,7 @@ When('I click the {word} button', async function (this: MarkVimWorld, buttonName
     'delete-document': () => markVimPage.clickDeleteDocumentButton(),
     'delete-confirm': () => markVimPage.clickDeleteConfirm(),
     'delete-cancel': () => markVimPage.clickDeleteCancel(),
+    'share': () => markVimPage.clickShareButton(),
   }
 
   const clickMethod = buttonMap[buttonName]
@@ -288,4 +289,17 @@ When('I enter vim visual mode', async function (this: MarkVimWorld) {
 When('I select {int} lines down in visual mode', async function (this: MarkVimWorld, lines: number) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.selectTextInVimVisualMode('down', lines)
+})
+
+When('I copy the share link', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.clickCopyShareLinkButton()
+})
+
+When('I navigate to the copied share link in the browser', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  const copiedLink = await markVimPage.getClipboardText()
+  // Store the link in the world context to use it in a Then step if needed
+  this.sharedLink = copiedLink
+  await markVimPage.navigateToUrl(copiedLink)
 })

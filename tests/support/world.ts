@@ -12,6 +12,7 @@ setDefaultTimeout(10 * 1000)
 export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
+  sharedLink?: string
   init: () => Promise<void>
   cleanup: () => Promise<void>
 }
