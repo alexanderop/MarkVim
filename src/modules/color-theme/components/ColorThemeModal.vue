@@ -355,6 +355,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
             class="field__input"
             spellcheck="false"
             autocomplete="off"
+            data-testid="oklch-string-input"
             @input="(e) => {
               const target = e.target as HTMLInputElement
               const parsed = parseOklch(target.value)
@@ -431,6 +432,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
           <BaseButton
             variant="default"
             size="sm"
+            data-testid="accept-color-change-button"
             @click="acceptColorChange"
           >
             OK

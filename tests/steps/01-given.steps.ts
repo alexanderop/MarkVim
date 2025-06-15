@@ -25,6 +25,12 @@ Given('I navigate to the App', async function (this: MarkVimWorld) {
   await page.waitForLoadState('networkidle')
 })
 
+Given('I am on the application page', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.goto('http://localhost:3000')
+  await page.waitForLoadState('networkidle')
+})
+
 Given('the keyboard shortcuts modal is open', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.clickKeyboardShortcutsButton()

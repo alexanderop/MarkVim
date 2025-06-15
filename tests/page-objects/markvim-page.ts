@@ -50,6 +50,11 @@ export class MarkVimPage {
   readonly colorPalettePreview: Locator
   readonly coreColorsSection: Locator
   readonly alertColorsSection: Locator
+  readonly oklchStringInput: Locator
+  readonly acceptColorChangeButton: Locator
+
+  // Preview
+  readonly renderedMarkdownArticle: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -100,6 +105,9 @@ export class MarkVimPage {
     this.colorPalettePreview = page.locator('[data-testid="color-palette-preview"]')
     this.coreColorsSection = page.locator('[data-testid="core-colors-section"]')
     this.alertColorsSection = page.locator('[data-testid="alert-colors-section"]')
+    this.oklchStringInput = page.locator('[data-testid="oklch-string-input"]')
+    this.acceptColorChangeButton = page.locator('[data-testid="accept-color-change-button"]')
+    this.renderedMarkdownArticle = page.locator('[data-testid="rendered-markdown-article"]')
   }
 
   async navigate(): Promise<void> {
@@ -416,6 +424,77 @@ export class MarkVimPage {
       // Vim mode was disabled, so no indicator should be present - this is correct behavior
       expect(statusText).not.toMatch(/\b(NORMAL|INSERT|VISUAL|REPLACE)\b/)
     }
+  }
+
+  async enableVimMode(): Promise<void> {
+    // Check if vim mode is already enabled by looking for vim indicator
+    const vimModeElement = this.statusBar.locator('span.text-accent.font-medium.font-mono')
+    const vimModeCount = await vimModeElement.count()
+
+    if (vimModeCount === 0) {
+      // Vim mode is not enabled, enable it by pressing 'v' shortcut
+      await this.pressKey('v')
+      await this.page.waitForTimeout(500) // Wait for vim mode to initialize
+    }
+
+    // Ensure we're in normal mode by pressing Escape
+    await this.focusEditor()
+    await this.pressKey('Escape')
+    await this.page.waitForTimeout(200)
+  }
+
+  async enterVimVisualMode(): Promise<void> {
+    // First make sure we're in normal mode and vim is enabled
+    await this.focusEditor()
+    await this.page.waitForTimeout(100)
+
+    // Press 'V' to enter visual line mode in vim
+    await this.pressKey('V')
+    await this.page.waitForTimeout(200) // Wait for visual mode to activate
+  }
+
+  async selectTextInVimVisualMode(direction: 'down' | 'up' = 'down', lines: number = 2): Promise<void> {
+    // Use arrow keys or j/k to select text in visual mode
+    const key = direction === 'down' ? 'ArrowDown' : 'ArrowUp'
+    const vimKey = direction === 'down' ? 'j' : 'k'
+
+    for (let i = 0; i < lines; i++) {
+      // Try vim key first, fallback to arrow key
+      try {
+        await this.pressKey(vimKey)
+      }
+      catch {
+        await this.pressKey(key)
+      }
+      await this.page.waitForTimeout(100)
+    }
+  }
+
+  async verifyVimModeStatus(expectedMode: string): Promise<void> {
+    // Wait a bit for vim mode to update in the UI
+    await this.page.waitForTimeout(500)
+
+    const vimModeElement = this.statusBar.locator('span.text-accent.font-medium.font-mono')
+    await expect(vimModeElement).toBeVisible({ timeout: 3000 })
+    await expect(vimModeElement).toHaveText(expectedMode.toUpperCase())
+  }
+
+  async verifySelectionColor(expectedColor: string): Promise<void> {
+    // Wait for selection to be rendered
+    await this.page.waitForTimeout(300)
+
+    // Check the selection background color
+    const selectionColor = await this.page.evaluate(() => {
+      const selection = document.querySelector('.cm-editor .cm-selectionBackground')
+      return selection ? getComputedStyle(selection).backgroundColor : null
+    })
+
+    // Accept either OKLCH or RGB format
+    const oklchPattern = new RegExp(expectedColor.replace(/[()]/g, '\\$&').replace(/\s+/g, '\\s*'), 'i')
+    const rgbPattern = /rgb\(\d+(?:,\s*\d+){2}\)/i
+
+    expect(selectionColor).toBeTruthy()
+    expect(selectionColor).toMatch(new RegExp(`(${oklchPattern.source})|(${rgbPattern.source})`, 'i'))
   }
 
   // Share functionality methods

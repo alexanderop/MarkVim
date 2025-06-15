@@ -2,9 +2,8 @@
 import type { Extension } from '@codemirror/state'
 import type { ViewUpdate } from '@codemirror/view'
 import { indentWithTab as cmIndentWithTab, defaultKeymap, history } from '@codemirror/commands'
-import { bracketMatching, defaultHighlightStyle, HighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
+import { bracketMatching, HighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { EditorState as CMEditorState, Compartment, StateEffect } from '@codemirror/state'
-import { oneDark } from '@codemirror/theme-one-dark'
 import { lineNumbers as cmLineNumbers, placeholder as cmPlaceholder, drawSelection, EditorView, keymap } from '@codemirror/view'
 import { tags } from '@lezer/highlight'
 import { getCM, vim, Vim } from '@replit/codemirror-vim'
@@ -53,99 +52,17 @@ const {
 
 const modelValue = defineModel<string>({ default: '' })
 
-// Theme-aware highlight styles
-const darkHighlightStyle = HighlightStyle.define([
-  // Headers - Pure white for maximum contrast and prominence
-  { tag: tags.heading1, color: '#ffffff', fontWeight: 'bold', fontSize: '1.2em' },
-  { tag: tags.heading2, color: '#ffffff', fontWeight: 'bold', fontSize: '1.1em' },
-  { tag: tags.heading3, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.heading4, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.heading5, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.heading6, color: '#ffffff', fontWeight: 'bold' },
-
-  // Main text - Light gray for comfortable reading
-  { tag: tags.content, color: '#d1d5db' },
-
-  // Code elements - Different shades of gray for hierarchy
-  { tag: tags.keyword, color: '#f3f4f6', fontWeight: 'bold' },
-  { tag: tags.string, color: '#e5e7eb' },
-  { tag: tags.comment, color: '#9ca3af', fontStyle: 'italic' },
-  { tag: tags.variableName, color: '#d1d5db' },
-  { tag: tags.function(tags.variableName), color: '#f9fafb' },
-
-  // Numbers and constants
-  { tag: tags.number, color: '#e5e7eb' },
-  { tag: tags.bool, color: '#f3f4f6' },
-  { tag: tags.null, color: '#f3f4f6' },
-
-  // Punctuation and operators
-  { tag: tags.operator, color: '#d1d5db' },
-  { tag: tags.punctuation, color: '#d1d5db' },
-  { tag: tags.bracket, color: '#f3f4f6' },
-
-  // Special markdown elements
-  { tag: tags.link, color: '#ffffff', textDecoration: 'underline' },
-  { tag: tags.emphasis, color: '#d1d5db', fontStyle: 'italic' },
-  { tag: tags.strong, color: '#ffffff', fontWeight: 'bold' },
-  { tag: tags.strikethrough, color: '#9ca3af', textDecoration: 'line-through' },
-
-  // Markdown specific elements
-  { tag: tags.quote, color: '#9ca3af', fontStyle: 'italic' },
-  { tag: tags.list, color: '#e5e7eb' },
-  { tag: tags.monospace, color: '#f3f4f6', backgroundColor: '#374151', padding: '2px 4px', borderRadius: '3px' },
-
-  // Vim keys and commands - pure white for prominence
-  { tag: tags.labelName, color: '#ffffff' },
-  { tag: tags.special(tags.string), color: '#ffffff' },
-])
-
-const lightHighlightStyle = HighlightStyle.define([
-  // Headers - Very dark text for maximum contrast and prominence
-  { tag: tags.heading1, color: '#000000', fontWeight: 'bold', fontSize: '1.2em' },
-  { tag: tags.heading2, color: '#000000', fontWeight: 'bold', fontSize: '1.1em' },
-  { tag: tags.heading3, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.heading4, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.heading5, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.heading6, color: '#000000', fontWeight: 'bold' },
-
-  // Main text - Very dark for readable contrast
-  { tag: tags.content, color: '#111827' },
-
-  // Code elements - Dark colors for hierarchy
-  { tag: tags.keyword, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.string, color: '#1f2937' },
-  { tag: tags.comment, color: '#4b5563', fontStyle: 'italic' },
-  { tag: tags.variableName, color: '#111827' },
-  { tag: tags.function(tags.variableName), color: '#000000' },
-
-  // Numbers and constants
-  { tag: tags.number, color: '#1f2937' },
-  { tag: tags.bool, color: '#000000' },
-  { tag: tags.null, color: '#000000' },
-
-  // Punctuation and operators
-  { tag: tags.operator, color: '#111827' },
-  { tag: tags.punctuation, color: '#111827' },
-  { tag: tags.bracket, color: '#000000' },
-
-  // Special markdown elements
-  { tag: tags.link, color: '#000000', textDecoration: 'underline' },
-  { tag: tags.emphasis, color: '#111827', fontStyle: 'italic' },
-  { tag: tags.strong, color: '#000000', fontWeight: 'bold' },
-  { tag: tags.strikethrough, color: '#4b5563', textDecoration: 'line-through' },
-
-  // Markdown specific elements
-  { tag: tags.quote, color: '#4b5563', fontStyle: 'italic' },
-  { tag: tags.list, color: '#1f2937' },
-  { tag: tags.monospace, color: '#000000', backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '3px' },
-
-  // Vim keys and commands - black for prominence
-  { tag: tags.labelName, color: '#000000' },
-  { tag: tags.special(tags.string), color: '#000000' },
-])
+// Dynamic highlight style using CSS custom properties
+// This creates a CSS custom property for each syntax tag, enabling dynamic theming
+const customHighlightStyle = HighlightStyle.define(
+  Object.keys(tags).map(name => ({
+    tag: (tags as any)[name],
+    color: `var(--cm-${name}, var(--foreground))`,
+  })),
+)
 
 function getCustomHighlightStyle() {
-  return theme.value === 'dark' ? darkHighlightStyle : lightHighlightStyle
+  return customHighlightStyle
 }
 
 const { lineNumberCompartment, getLineNumberExtension, handleLineNumberUpdate } = useLineNumbers()
@@ -224,9 +141,15 @@ function useEditorExtensions() {
       drawSelection(),
       indentOnInput(),
       bracketMatching(),
+      // Only use our custom highlight style - remove defaultHighlightStyle to avoid conflicts
       syntaxHighlighting(getCustomHighlightStyle()),
-      syntaxHighlighting(defaultHighlightStyle),
       keymap.of([...defaultKeymap]),
+      // Custom theme for selection background using CSS custom properties
+      EditorView.theme({
+        '&.cm-focused .cm-selectionBackground': {
+          backgroundColor: 'var(--cm-selection-background)',
+        },
+      }),
     ]
 
     if (vimMode.value) {
@@ -247,9 +170,8 @@ function useEditorExtensions() {
       extensionsList.push(EditorView.lineWrapping)
     }
 
-    if (theme.value === 'dark') {
-      extensionsList.push(oneDark)
-    }
+    // Remove oneDark theme to avoid color conflicts with CSS custom properties
+    // Our CSS custom properties will handle all theming
 
     if (!editable.value) {
       extensionsList.push(EditorView.editable.of(false))
@@ -470,7 +392,6 @@ onBeforeUnmount(() => {
 }
 
 .cm-editor .cm-selectionBackground {
-  background-color: var(--accent) !important;
-  opacity: 0.3;
+  background-color: var(--cm-selection-background) !important;
 }
 </style>
