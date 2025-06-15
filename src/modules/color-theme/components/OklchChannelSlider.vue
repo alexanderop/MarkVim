@@ -1,51 +1,23 @@
 <script setup lang="ts">
+import type { OklchColor } from '../composables/useColorTheme'
+import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
+import { computed, ref } from 'vue'
+
 interface Props {
   modelValue: number
-  channel: 'l' | 'c' | 'h'
-  min?: number
-  max?: number
-  step?: number
+  channel: 'l' | 'c' | 'h' | 'a'
+  fullColor: OklchColor
+  min: number
+  max: number
+  step: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  min: 0,
-  max: 1,
-  step: 0.01,
-})
-
+const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:modelValue': [value: number]
 }>()
 
-// For hue, we use a different approach to handle unlimited values
-const sliderValue = computed({
-  get: () => {
-    if (props.channel === 'h') {
-      // Show the normalized value (0-360) for the slider display
-      return props.modelValue % 360
-    }
-    return props.modelValue
-  },
-  set: (value: number) => {
-    if (props.channel === 'h') {
-      // For hue, calculate the difference and add it to the current value
-      // This preserves values beyond 360° while allowing smooth slider interaction
-      const currentNormalized = props.modelValue % 360
-      const diff = value - currentNormalized
-
-      // Handle wrap-around cases (e.g., going from 359° to 1°)
-      let adjustedDiff = diff
-      if (Math.abs(diff) > 180) {
-        adjustedDiff = diff > 0 ? diff - 360 : diff + 360
-      }
-
-      emit('update:modelValue', props.modelValue + adjustedDiff)
-    }
-    else {
-      emit('update:modelValue', value)
-    }
-  },
-})
+const showTooltip = ref(false)
 
 const channelInfo = computed(() => {
   switch (props.channel) {
@@ -53,227 +25,155 @@ const channelInfo = computed(() => {
       return {
         label: 'Lightness',
         unit: '%',
-        description: 'Controls how bright the color appears',
-        displayValue: (props.modelValue * 100).toFixed(1),
       }
     case 'c':
       return {
         label: 'Chroma',
         unit: '',
-        description: 'Controls how vivid/saturated the color is',
-        displayValue: props.modelValue.toFixed(3),
       }
     case 'h':
       return {
         label: 'Hue',
         unit: '°',
-        description: 'Circular color wheel - values beyond 360° wrap around',
-        displayValue: Math.round(props.modelValue).toString(),
-        normalizedValue: Math.round(props.modelValue % 360).toString(),
       }
-    default:
+    case 'a':
       return {
-        label: 'Unknown',
-        unit: '',
-        description: '',
-        displayValue: props.modelValue.toString(),
+        label: 'Alpha',
+        unit: '%',
       }
-  }
-})
-
-const sliderBackground = computed(() => {
-  switch (props.channel) {
-    case 'l':
-      return 'linear-gradient(to right, oklch(0% 0 0), oklch(100% 0 0))'
-    case 'c':
-      return 'linear-gradient(to right, oklch(70% 0 0), oklch(70% 0.4 0))'
-    case 'h':
-      return `linear-gradient(to right, 
-        oklch(70% 0.15 0), 
-        oklch(70% 0.15 60), 
-        oklch(70% 0.15 120), 
-        oklch(70% 0.15 180), 
-        oklch(70% 0.15 240), 
-        oklch(70% 0.15 300), 
-        oklch(70% 0.15 360)
-      )`
     default:
-      return 'transparent'
+      return { label: '', unit: '' }
   }
 })
 
-// Special handling for hue input
-const hueInputValue = ref('')
-const isEditingHue = ref(false)
-
-// Update hue input when model value changes (but not when editing)
-watch(() => props.modelValue, (newValue) => {
-  if (props.channel === 'h' && !isEditingHue.value) {
-    hueInputValue.value = Math.round(newValue).toString()
+const displayValue = computed(() => {
+  if (props.channel === 'l' || props.channel === 'a') {
+    return Math.round(props.modelValue * 100)
   }
-}, { immediate: true })
+  if (props.channel === 'h') {
+    return Math.round(props.modelValue)
+  }
+  return props.modelValue.toFixed(2)
+})
 
-function handleHueInputChange(event: Event) {
-  if (props.channel !== 'h')
-    return
+const trackGradient = computed(() => {
+  const { l, c, h } = props.fullColor
 
+  if (props.channel === 'h') {
+    return 'linear-gradient(to right, oklch(0.7 0.15 0), oklch(0.7 0.15 60), oklch(0.7 0.15 120), oklch(0.7 0.15 180), oklch(0.7 0.15 240), oklch(0.7 0.15 300), oklch(0.7 0.15 360))'
+  }
+
+  if (props.channel === 'l') {
+    return `linear-gradient(to right, oklch(0 ${c} ${h}), oklch(1 ${c} ${h}))`
+  }
+
+  if (props.channel === 'c') {
+    return `linear-gradient(to right, oklch(${l} 0 ${h}), oklch(${l} 0.4 ${h}))`
+  }
+
+  if (props.channel === 'a') {
+    return `linear-gradient(to right, oklch(${l} ${c} ${h} / 0), oklch(${l} ${c} ${h} / 1))`
+  }
+
+  return 'linear-gradient(to right, #000, #fff)'
+})
+
+const tooltipPosition = computed(() => {
+  return ((props.modelValue - props.min) / (props.max - props.min)) * 100
+})
+
+function handleSliderChange(value: number[]) {
+  emit('update:modelValue', value[0])
+}
+
+function handleInputChange(event: Event) {
   const target = event.target as HTMLInputElement
-  const value = target.value
-  hueInputValue.value = value
+  let value = Number.parseFloat(target.value)
 
-  const numValue = Number.parseFloat(value)
-  if (!Number.isNaN(numValue)) {
-    emit('update:modelValue', numValue)
+  if (props.channel === 'l' || props.channel === 'a') {
+    value = value / 100
   }
-}
 
-function handleHueInputFocus() {
-  if (props.channel === 'h') {
-    isEditingHue.value = true
-  }
-}
-
-function handleHueInputBlur() {
-  if (props.channel === 'h') {
-    isEditingHue.value = false
-    // Ensure the display value is updated
-    hueInputValue.value = Math.round(props.modelValue).toString()
+  if (!Number.isNaN(value)) {
+    emit('update:modelValue', Math.max(props.min, Math.min(props.max, value)))
   }
 }
 </script>
 
 <template>
   <div class="space-y-2">
-    <!-- Channel Label and Value -->
+    <!-- Compact Channel Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
+        <div
+          class="w-2 h-2 rounded-full"
+          :class="{
+            'bg-yellow-400': channel === 'l',
+            'bg-purple-400': channel === 'c',
+            'bg-blue-400': channel === 'h',
+            'bg-gray-400': channel === 'a',
+          }"
+        />
         <label class="text-xs font-medium text-text-primary">
           {{ channelInfo.label }}
         </label>
-        <span class="text-xs text-text-secondary opacity-70" :title="channelInfo.description">
-          {{ channelInfo.description }}
-        </span>
       </div>
 
-      <!-- Special display for hue with editable input -->
-      <div v-if="channel === 'h'" class="flex items-center gap-2">
+      <div class="flex items-center gap-2">
         <input
-          :value="hueInputValue"
+          :value="displayValue"
           type="number"
-          class="w-16 px-1 py-0.5 text-xs font-mono text-text-secondary bg-surface-secondary border border-border rounded focus:border-accent focus:outline-none"
-          data-testid="hue-input"
-          @input="handleHueInputChange"
-          @focus="handleHueInputFocus"
-          @blur="handleHueInputBlur"
+          :min="min"
+          :max="max"
+          :step="channel === 'l' || channel === 'a' ? 1 : channel === 'h' ? 1 : 0.001"
+          class="w-12 px-1 py-0.5 text-xs font-mono border border-border rounded bg-surface-primary text-text-primary focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent transition-all duration-200"
+          @input="handleInputChange"
         >
         <span class="text-xs text-text-secondary">
-          °
-        </span>
-        <span
-          v-if="Math.abs(modelValue) >= 360 || modelValue < 0"
-          class="text-xs text-text-tertiary opacity-60"
-          :title="`Normalized: ${channelInfo.normalizedValue}°`"
-        >
-          (≡{{ channelInfo.normalizedValue }}°)
+          {{ channelInfo.unit }}
         </span>
       </div>
-
-      <!-- Standard display for lightness and chroma -->
-      <span v-else class="text-xs font-mono text-text-secondary bg-surface-secondary px-2 py-0.5 rounded">
-        {{ channelInfo.displayValue }}{{ channelInfo.unit }}
-      </span>
     </div>
 
-    <!-- Slider Container -->
-    <div class="relative">
-      <!-- Background Gradient -->
-      <div
-        class="absolute inset-0 h-3 rounded-full border border-border shadow-inner"
-        :style="{ background: sliderBackground }"
-      />
-
-      <!-- Range Input -->
-      <input
-        v-model.number="sliderValue"
-        type="range"
-        :min="channel === 'h' ? 0 : min"
-        :max="channel === 'h' ? 360 : max"
-        :step="channel === 'h' ? 1 : step"
-        class="oklch-slider"
-        :data-testid="`oklch-slider-${channel}`"
+    <!-- Compact Slider -->
+    <div class="relative group">
+      <SliderRoot
+        :model-value="[modelValue]"
+        :min="min"
+        :max="max"
+        :step="step"
+        class="relative flex items-center select-none touch-none w-full h-5"
+        @update:model-value="handleSliderChange"
       >
-    </div>
+        <SliderTrack class="bg-border relative grow rounded-full h-2 overflow-hidden">
+          <div
+            class="absolute inset-0 rounded-full"
+            :style="{ background: trackGradient }"
+          />
+          <SliderRange class="absolute h-full bg-transparent" />
+        </SliderTrack>
+        <SliderThumb
+          class="block w-4 h-4 bg-white border-2 border-accent rounded-full shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 cursor-grab active:cursor-grabbing"
+          :style="{ transform: 'translateX(-50%)' }"
+        />
+      </SliderRoot>
 
-    <!-- Special note for hue -->
-    <div v-if="channel === 'h'" class="text-xs text-text-tertiary opacity-60">
-      <BaseIcon name="lucide:rotate-cw" class="w-3 h-3 inline mr-1" />
-      Hue is circular - values beyond 360° wrap around
+      <!-- Compact tooltip -->
+      <div
+        v-if="showTooltip"
+        class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-10"
+        :style="{ left: `${tooltipPosition}%` }"
+      >
+        {{ displayValue }}{{ channelInfo.unit }}
+        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-gray-900" />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.oklch-slider {
-  @apply relative w-full h-3 bg-transparent appearance-none cursor-pointer;
-}
-
-/* WebKit/Blink browsers (Chrome, Safari, Edge) */
-.oklch-slider::-webkit-slider-thumb {
-  @apply appearance-none;
-  width: 18px;
-  height: 18px;
-  background: var(--accent);
-  border-radius: 50%;
-  border: 2px solid var(--background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.oklch-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--accent);
-}
-
-.oklch-slider::-webkit-slider-thumb:active {
-  transform: scale(1.05);
-}
-
-.oklch-slider::-webkit-slider-track {
-  @apply bg-transparent;
-}
-
-/* Firefox */
-.oklch-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  background: var(--accent);
-  border-radius: 50%;
-  border: 2px solid var(--background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.oklch-slider::-moz-range-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--accent);
-}
-
-.oklch-slider::-moz-range-track {
-  @apply bg-transparent;
-}
-
-/* Focus states */
-.oklch-slider:focus-visible {
-  outline: none;
-}
-
-.oklch-slider:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--accent);
-}
-
-.oklch-slider:focus-visible::-moz-range-thumb {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--accent);
+/* Additional styling for better visual feedback */
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
 }
 </style>

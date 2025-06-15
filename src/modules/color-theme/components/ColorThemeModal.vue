@@ -297,7 +297,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     :open="showColorPickerModal"
     :title="`Choose ${selectedColorData.label} Color`"
     :description="selectedColorData.description"
-    max-width="md"
+    max-width="2xl"
     @update:open="(open) => !open && cancelColorChange()"
     @close="cancelColorChange"
   >
