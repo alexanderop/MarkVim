@@ -110,7 +110,7 @@ Given('I have an empty document', async function (this: MarkVimWorld) {
 
   // Focus the editor and select all content, then delete it
   await markVimPage.focusEditor()
-  await markVimPage.page.keyboard.press('Meta+a')
+  await markVimPage.page.keyboard.press('ControlOrMeta+a')
   await markVimPage.page.keyboard.press('Backspace')
 
   // Wait a moment for the editor to update
