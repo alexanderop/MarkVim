@@ -950,11 +950,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
   async verifyColorThemeModalDefaultColors(): Promise<void> {
     await this.verifyColorThemeModalVisible()
-    
+
     // Default colors from useColorTheme.ts
     const expectedColors = {
       background: 'oklch(12.0% 0.002 0)',
-      foreground: 'oklch(96.0% 0.000 0)', 
+      foreground: 'oklch(96.0% 0.000 0)',
       accent: 'oklch(60.0% 0.180 240)',
       muted: 'oklch(20.0% 0.002 0)',
       border: 'oklch(25.0% 0.003 20)',
@@ -962,12 +962,12 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       alertTip: 'oklch(65.0% 0.180 140)',
       alertImportant: 'oklch(65.0% 0.180 280)',
       alertWarning: 'oklch(65.0% 0.180 80)',
-      alertCaution: 'oklch(65.0% 0.180 20)'
+      alertCaution: 'oklch(65.0% 0.180 20)',
     }
 
     // Verify core colors section is visible
     await expect(this.coreColorsSection).toBeVisible()
-    
+
     // Verify alert colors section is visible
     await expect(this.alertColorsSection).toBeVisible()
 
@@ -976,7 +976,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     for (const [colorName, expectedValue] of Object.entries(expectedColors)) {
       const colorButton = this.page.locator(`[data-testid="color-button-${colorName}"]`)
       await expect(colorButton).toBeVisible({ timeout: 3000 })
-      
+
       // Verify the OKLCH value is displayed within this specific color button
       const codeElement = colorButton.locator('code')
       await expect(codeElement).toContainText(expectedValue)
