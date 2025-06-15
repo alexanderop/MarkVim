@@ -341,43 +341,5 @@ async function copyToClipboard() {
         @update:model-value="updateAlpha"
       />
     </div>
-
-    <!-- Compact Color Values -->
-    <div class="bg-surface-secondary rounded-lg p-3 border border-border">
-      <div class="grid grid-cols-4 gap-3 text-xs">
-        <div class="text-center">
-          <div class="text-text-secondary">
-            L
-          </div>
-          <div class="font-mono text-text-primary">
-            {{ (currentColor.l * 100).toFixed(0) }}%
-          </div>
-        </div>
-        <div class="text-center">
-          <div class="text-text-secondary">
-            C
-          </div>
-          <div class="font-mono text-text-primary">
-            {{ currentColor.c.toFixed(2) }}
-          </div>
-        </div>
-        <div class="text-center">
-          <div class="text-text-secondary">
-            H
-          </div>
-          <div class="font-mono text-text-primary">
-            {{ currentColor.h.toFixed(0) }}°
-          </div>
-        </div>
-        <div class="text-center">
-          <div class="text-text-secondary">
-            A
-          </div>
-          <div class="font-mono text-text-primary">
-            {{ ((currentColor.a ?? 1) * 100).toFixed(0) }}%
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
