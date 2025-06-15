@@ -136,3 +136,57 @@ When('I cancel the deletion', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.clickDeleteCancel()
 })
+
+When('I change the font size to {int}', async function (this: MarkVimWorld, targetSize: number) {
+  const markVimPage = await getMarkVimPage(this)
+  
+  // Open settings modal if not already open
+  await markVimPage.openSettingsWithKeyboard()
+  
+  // Get current font size
+  const fontSizeDisplay = markVimPage.page.locator('[data-testid="font-size-display"]')
+  await expect(fontSizeDisplay).toBeVisible()
+  
+  const currentSizeText = await fontSizeDisplay.textContent()
+  const currentSize = parseInt(currentSizeText?.replace('px', '') || '14')
+  
+  // Calculate how many clicks are needed
+  const difference = targetSize - currentSize
+  
+  if (difference > 0) {
+    // Need to increase font size
+    const increaseButton = markVimPage.page.locator('[data-testid="font-size-increase"]')
+    for (let i = 0; i < difference; i++) {
+      await increaseButton.click()
+      await markVimPage.page.waitForTimeout(100) // Small delay for UI updates
+    }
+  } else if (difference < 0) {
+    // Need to decrease font size
+    const decreaseButton = markVimPage.page.locator('[data-testid="font-size-decrease"]')
+    for (let i = 0; i < Math.abs(difference); i++) {
+      await decreaseButton.click()
+      await markVimPage.page.waitForTimeout(100) // Small delay for UI updates
+    }
+  }
+  
+  // Verify the font size changed
+  await expect(fontSizeDisplay).toHaveText(`${targetSize}px`)
+})
+
+When('I verify the editor font size is {int}px', async function (this: MarkVimWorld, expectedSize: number) {
+  const markVimPage = await getMarkVimPage(this)
+  
+  // Check that the CSS custom property is set correctly
+  const rootFontSize = await markVimPage.page.evaluate(() => {
+    return getComputedStyle(document.documentElement).getPropertyValue('--font-size-base')
+  })
+  
+  expect(rootFontSize.trim()).toBe(`${expectedSize}px`)
+  
+  // Check that CodeMirror editor is using the correct font size
+  const editorFontSize = await markVimPage.page.locator('.cm-editor').evaluate((element) => {
+    return getComputedStyle(element).fontSize
+  })
+  
+  expect(editorFontSize).toBe(`${expectedSize}px`)
+})

@@ -1,3 +1,6 @@
+import { useCssVar, useMounted } from '@vueuse/core'
+import { watchEffect } from 'vue'
+
 export interface EditorSettings {
   // Vim configuration
   vimMode: boolean
@@ -83,6 +86,14 @@ export function useEditorSettings() {
       }
     }
     return { ...DEFAULT_EDITOR_CONFIG }
+  })
+
+  // CSS custom property for font size
+  const fontSizeVar = useCssVar('--font-size-base')
+
+  // Update CSS custom property when font size changes
+  watchEffect(() => {
+    fontSizeVar.value = `${settings.value.fontSize}px`
   })
 
   const saveToLocalStorage = () => {
