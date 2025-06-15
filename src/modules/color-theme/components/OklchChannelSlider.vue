@@ -82,8 +82,10 @@ const tooltipPosition = computed(() => {
   return ((props.modelValue - props.min) / (props.max - props.min)) * 100
 })
 
-function handleSliderChange(value: number[]) {
-  emit('update:modelValue', value[0])
+function handleSliderChange(value: number[] | undefined) {
+  if (value && value.length > 0) {
+    emit('update:modelValue', value[0])
+  }
 }
 
 function handleInputChange(event: Event) {
