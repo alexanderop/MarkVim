@@ -1064,6 +1064,46 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     // Verify color palette preview is visible
     await expect(this.colorPalettePreview).toBeVisible()
   }
+
+  async openColorThemeModal(): Promise<void> {
+    await this.colorThemeButton.click()
+    await this.verifyColorThemeModalVisible()
+  }
+
+  async setColorPickerValue(colorName: string, colorValue: string): Promise<void> {
+    const colorButton = this.page.locator(`[data-testid="color-button-${colorName.toLowerCase()}"]`)
+    await colorButton.click()
+    await expect(this.oklchStringInput).toBeVisible()
+    await this.oklchStringInput.fill(colorValue)
+  }
+
+  async confirmColorChange(): Promise<void> {
+    await this.acceptColorChangeButton.click()
+    await this.page.waitForTimeout(500) // Wait for color propagation
+  }
+
+  async cancelColorChange(): Promise<void> {
+    const cancelButton = this.page.locator('[data-testid="cancel-color-change-button"]').or(
+      this.page.locator('button:has-text("Cancel")'),
+    )
+    await cancelButton.click()
+  }
+
+  async adjustColorSlider(channel: 'l' | 'c' | 'h', value: number): Promise<void> {
+    const slider = this.page.locator(`[data-testid="oklch-slider-${channel}"]`)
+    await slider.fill(value.toString())
+  }
+
+  async verifyColorPickerModalVisible(): Promise<void> {
+    // The color picker is now in a second modal
+    const colorPickerModal = this.page.locator('[role="dialog"]:has([data-testid="oklch-string-input"])')
+    await expect(colorPickerModal).toBeVisible()
+  }
+
+  async verifyColorPickerModalHidden(): Promise<void> {
+    const colorPickerModal = this.page.locator('[role="dialog"]:has([data-testid="oklch-string-input"])')
+    await expect(colorPickerModal).not.toBeVisible()
+  }
 }
 
 // Helper function to get MarkVimPage instance

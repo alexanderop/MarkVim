@@ -23,10 +23,6 @@ async function handleExportTheme() {
     const themeData = exportTheme()
     await navigator.clipboard.writeText(themeData)
 
-    // Show success feedback (you can replace this with your notification system)
-    // Theme exported to clipboard successfully
-
-    // Optional: Show visual feedback
     const button = document.querySelector('[data-testid="export-theme-button"]')
     if (button) {
       const originalText = button.textContent
@@ -39,7 +35,6 @@ async function handleExportTheme() {
   catch (error) {
     console.error('Failed to copy theme to clipboard:', error)
 
-    // Fallback: Create a downloadable file
     const themeData = exportTheme()
     const blob = new Blob([themeData], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -61,14 +56,6 @@ function openColorPicker(colorDef: typeof colorDefinitions[0]) {
   showColorPickerModal.value = true
 }
 
-function _closeColorPicker() {
-  showColorPickerModal.value = false
-}
-
-function updateTempColor(color: typeof theme.value.background) {
-  tempColor.value = { ...color, a: color.a ?? 1 }
-}
-
 function acceptColorChange() {
   updateColor(selectedColorKey.value, tempColor.value)
   showColorPickerModal.value = false
@@ -76,19 +63,6 @@ function acceptColorChange() {
 
 function cancelColorChange() {
   showColorPickerModal.value = false
-}
-
-function parseOklch(str: string) {
-  const re = /oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/i
-  const m = re.exec(str)
-  if (!m)
-    return null
-  return {
-    l: Number(m[1]) / (str.includes('%') ? 100 : 1),
-    c: Number(m[2]),
-    h: Number(m[3]),
-    a: m[4] ? Number(m[4]) : 1,
-  }
 }
 
 const colorDefinitions = [
@@ -190,14 +164,12 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
       />
     </template>
 
-    <!-- Current Theme Overview - Always visible -->
     <div class="space-y-6">
       <div>
         <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
           Current Theme
         </h3>
 
-        <!-- Color Palette Preview -->
         <div class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md" data-testid="color-palette-preview">
           <div
             v-for="colorDef in colorDefinitions"
@@ -217,14 +189,11 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
         </div>
       </div>
 
-      <!-- Scrollable color sections -->
       <div class="max-h-[50vh] overflow-y-auto space-y-6">
-        <!-- Core Colors -->
         <div data-testid="core-colors-section">
           <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
             Core Colors
           </h3>
-
           <div class="grid gap-3">
             <button
               v-for="colorDef in coreColors"
@@ -245,7 +214,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
               </div>
 
               <div class="flex items-center gap-3">
-                <!-- Color Preview & Value -->
                 <div class="flex items-center gap-2">
                   <div
                     class="w-6 h-6 rounded border border-border"
@@ -255,20 +223,16 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
                     {{ oklchToString(theme[colorDef.key]) }}
                   </code>
                 </div>
-
-                <!-- Arrow -->
                 <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
               </div>
             </button>
           </div>
         </div>
 
-        <!-- Alert Colors -->
         <div data-testid="alert-colors-section">
           <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
             Alert Colors
           </h3>
-
           <div class="grid gap-3">
             <button
               v-for="colorDef in alertColors"
@@ -289,7 +253,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
               </div>
 
               <div class="flex items-center gap-3">
-                <!-- Color Preview & Value -->
                 <div class="flex items-center gap-2">
                   <div
                     class="w-6 h-6 rounded border border-border"
@@ -299,8 +262,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
                     {{ oklchToString(theme[colorDef.key]) }}
                   </code>
                 </div>
-
-                <!-- Arrow -->
                 <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
               </div>
             </button>
@@ -309,7 +270,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
       </div>
     </div>
 
-    <!-- Footer slot for theme actions -->
     <template #footer>
       <div class="flex gap-2 w-full">
         <BaseButton
@@ -333,7 +293,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     </template>
   </BaseModal>
 
-  <!-- Color Picker Modal -->
   <BaseModal
     :open="showColorPickerModal"
     :title="`Choose ${selectedColorData.label} Color`"
@@ -342,232 +301,31 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     @update:open="(open) => !open && cancelColorChange()"
     @close="cancelColorChange"
   >
-    <div class="p-2">
-      <div class="oklch-picker" :style="{ '--current-color': oklchToString(tempColor) }">
-        <!-- live preview -->
-        <div class="preview" :style="{ background: oklchToString(tempColor) }" />
-
-        <!-- editable OKLCH string -->
-        <label class="field">
-          <span class="field__label">OKLCH string</span>
-          <input
-            :value="oklchToString(tempColor)"
-            class="field__input"
-            spellcheck="false"
-            autocomplete="off"
-            data-testid="oklch-string-input"
-            @input="(e) => {
-              const target = e.target as HTMLInputElement
-              const parsed = parseOklch(target.value)
-              if (parsed) updateTempColor(parsed)
-            }"
-          >
-        </label>
-
-        <!-- lightness slider -->
-        <div class="slider">
-          <span class="slider__label">Lightness {{ (tempColor.l * 100).toFixed(0) }}%</span>
-          <input
-            class="range range--lightness"
-            type="range"
-            min="0"
-            max="1"
-            step="0.001"
-            :value="tempColor.l"
-            @input="(e) => updateTempColor({ ...tempColor, l: Number((e.target as HTMLInputElement).value) })"
-          >
-        </div>
-
-        <!-- chroma slider -->
-        <div class="slider">
-          <span class="slider__label">Chroma {{ tempColor.c.toFixed(3) }}</span>
-          <input
-            class="range range--chroma"
-            type="range"
-            min="0"
-            max="0.4"
-            step="0.001"
-            :value="tempColor.c"
-            @input="(e) => updateTempColor({ ...tempColor, c: Number((e.target as HTMLInputElement).value) })"
-          >
-        </div>
-
-        <!-- hue slider -->
-        <div class="slider">
-          <span class="slider__label">Hue {{ tempColor.h.toFixed(0) }}°</span>
-          <input
-            class="range range--hue"
-            type="range"
-            min="0"
-            max="360"
-            step="1"
-            :value="tempColor.h"
-            @input="(e) => updateTempColor({ ...tempColor, h: Number((e.target as HTMLInputElement).value) })"
-          >
-        </div>
-
-        <!-- alpha slider -->
-        <div class="slider">
-          <span class="slider__label">Alpha {{ (tempColor.a * 100).toFixed(0) }}%</span>
-          <input
-            class="range range--alpha"
-            type="range"
-            min="0"
-            max="1"
-            step="0.001"
-            :value="tempColor.a"
-            @input="(e) => updateTempColor({ ...tempColor, a: Number((e.target as HTMLInputElement).value) })"
-          >
-        </div>
-
-        <!-- Action buttons -->
-        <div class="flex gap-2 pt-3 border-t">
-          <BaseButton
-            variant="ghost"
-            size="sm"
-            @click="cancelColorChange"
-          >
-            Cancel
-          </BaseButton>
-          <BaseButton
-            variant="default"
-            size="sm"
-            data-testid="accept-color-change-button"
-            @click="acceptColorChange"
-          >
-            OK
-          </BaseButton>
-        </div>
-      </div>
+    <div class="p-4 border-t border-b border-border">
+      <OklchColorPicker
+        v-model="tempColor"
+        :label="selectedColorData.label"
+        :description="selectedColorData.description"
+      />
     </div>
+    <template #footer>
+      <div class="flex justify-end gap-2 w-full">
+        <BaseButton
+          variant="ghost"
+          size="sm"
+          @click="cancelColorChange"
+        >
+          Cancel
+        </BaseButton>
+        <BaseButton
+          variant="default"
+          size="sm"
+          data-testid="accept-color-change-button"
+          @click="acceptColorChange"
+        >
+          OK
+        </BaseButton>
+      </div>
+    </template>
   </BaseModal>
 </template>
-
-<style scoped>
-/* Color picker styles using design tokens */
-.oklch-picker {
-  display: grid;
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  background: var(--background);
-  font-family: system-ui, sans-serif;
-}
-
-.preview {
-  height: 3rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 0 0 1px var(--border) inset;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.field__label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--foreground);
-  opacity: 0.7;
-}
-
-.field__input {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  font-family: ui-monospace, monospace;
-  font-size: 0.875rem;
-  background: var(--background);
-  color: var(--foreground);
-}
-
-.field__input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-}
-
-.slider {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.slider__label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--foreground);
-  opacity: 0.7;
-}
-
-.range {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 0.5rem;
-  border-radius: 0.25rem;
-  background: var(--muted);
-  outline: none;
-}
-
-.range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background: var(--background);
-  border: 2px solid var(--foreground);
-  cursor: pointer;
-  margin-top: -4px;
-}
-
-.range::-moz-range-thumb {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background: var(--background);
-  border: 2px solid var(--foreground);
-  cursor: pointer;
-}
-
-.range--hue {
-  background: linear-gradient(
-    to right,
-    #f00 0%,
-    #ff0 17%,
-    #0f0 33%,
-    #0ff 50%,
-    #00f 67%,
-    #f0f 83%,
-    #f00 100%
-  );
-}
-
-.range--lightness {
-  background: linear-gradient(to right, oklch(0% 0 0), oklch(100% 0 0));
-}
-
-.range--chroma {
-  background: linear-gradient(to right, oklch(from var(--current-color) l 0 h), var(--current-color));
-}
-
-.range--alpha {
-  background: linear-gradient(
-    to right,
-    transparent,
-    oklch(from var(--current-color) l c h)
-  );
-  background-image:
-    linear-gradient(to right, transparent, oklch(from var(--current-color) l c h)),
-    conic-gradient(#fff 0deg 90deg, #ccc 90deg 180deg, #fff 180deg 270deg, #ccc 270deg);
-  background-size: 100% 100%, 10px 10px;
-}
-
-.border-t {
-  border-top: 1px solid var(--border);
-}
-</style>
