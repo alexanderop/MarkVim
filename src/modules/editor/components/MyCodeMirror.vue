@@ -53,13 +53,57 @@ const {
 const modelValue = defineModel<string>({ default: '' })
 
 // Dynamic highlight style using CSS custom properties
-// This creates a CSS custom property for each syntax tag, enabling dynamic theming
-const customHighlightStyle = HighlightStyle.define(
-  Object.keys(tags).map(name => ({
-    tag: (tags as any)[name],
-    color: `var(--cm-${name}, var(--foreground))`,
-  })),
-)
+// Define explicit tag mappings with proper styling preserved
+const customHighlightStyle = HighlightStyle.define([
+  { tag: tags.comment, color: 'var(--cm-comment, var(--muted-foreground))', fontStyle: 'italic' },
+  { tag: tags.lineComment, color: 'var(--cm-lineComment, var(--muted-foreground))', fontStyle: 'italic' },
+  { tag: tags.blockComment, color: 'var(--cm-blockComment, var(--muted-foreground))', fontStyle: 'italic' },
+  { tag: tags.docComment, color: 'var(--cm-docComment, var(--muted-foreground))', fontStyle: 'italic' },
+  { tag: tags.string, color: 'var(--cm-string, var(--foreground))' },
+  { tag: tags.character, color: 'var(--cm-character, var(--foreground))' },
+  { tag: tags.number, color: 'var(--cm-number, var(--foreground))' },
+  { tag: tags.bool, color: 'var(--cm-bool, var(--foreground))' },
+  { tag: tags.variableName, color: 'var(--cm-variableName, var(--foreground))' },
+  { tag: tags.definition(tags.variableName), color: 'var(--cm-definition, var(--foreground))' },
+  { tag: tags.function(tags.variableName), color: 'var(--cm-function, var(--foreground))' },
+  { tag: tags.function(tags.definition(tags.variableName)), color: 'var(--cm-functionDef, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.typeName, color: 'var(--cm-typeName, var(--foreground))' },
+  { tag: tags.className, color: 'var(--cm-className, var(--foreground))' },
+  { tag: tags.propertyName, color: 'var(--cm-propertyName, var(--foreground))' },
+  { tag: tags.operator, color: 'var(--cm-operator, var(--foreground))' },
+  { tag: tags.keyword, color: 'var(--cm-keyword, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.modifier, color: 'var(--cm-modifier, var(--foreground))' },
+  { tag: tags.controlKeyword, color: 'var(--cm-controlKeyword, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.operatorKeyword, color: 'var(--cm-operatorKeyword, var(--foreground))' },
+  { tag: tags.moduleKeyword, color: 'var(--cm-moduleKeyword, var(--foreground))' },
+  { tag: tags.definitionKeyword, color: 'var(--cm-definitionKeyword, var(--foreground))' },
+  { tag: tags.heading, color: 'var(--cm-heading, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.heading1, color: 'var(--cm-heading1, var(--foreground))', fontWeight: 'bold', fontSize: '1.2em' },
+  { tag: tags.heading2, color: 'var(--cm-heading2, var(--foreground))', fontWeight: 'bold', fontSize: '1.1em' },
+  { tag: tags.heading3, color: 'var(--cm-heading3, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.heading4, color: 'var(--cm-heading4, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.heading5, color: 'var(--cm-heading5, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.heading6, color: 'var(--cm-heading6, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.link, color: 'var(--cm-link, var(--foreground))', textDecoration: 'underline' },
+  { tag: tags.url, color: 'var(--cm-url, var(--foreground))' },
+  { tag: tags.emphasis, color: 'var(--cm-emphasis, var(--foreground))', fontStyle: 'italic' },
+  { tag: tags.strong, color: 'var(--cm-strong, var(--foreground))', fontWeight: 'bold' },
+  { tag: tags.strikethrough, color: 'var(--cm-strikethrough, var(--foreground))', textDecoration: 'line-through' },
+  { tag: tags.inserted, color: 'var(--cm-inserted, var(--foreground))' },
+  { tag: tags.deleted, color: 'var(--cm-deleted, var(--foreground))' },
+  { tag: tags.changed, color: 'var(--cm-changed, var(--foreground))' },
+  { tag: tags.invalid, color: 'var(--cm-invalid, var(--destructive))' },
+  { tag: tags.meta, color: 'var(--cm-meta, var(--muted-foreground))' },
+  { tag: tags.punctuation, color: 'var(--cm-punctuation, var(--foreground))' },
+  { tag: tags.bracket, color: 'var(--cm-bracket, var(--foreground))' },
+  { tag: tags.squareBracket, color: 'var(--cm-squareBracket, var(--foreground))' },
+  { tag: tags.paren, color: 'var(--cm-paren, var(--foreground))' },
+  { tag: tags.brace, color: 'var(--cm-brace, var(--foreground))' },
+  { tag: tags.content, color: 'var(--cm-content, var(--foreground))' },
+  { tag: tags.tagName, color: 'var(--cm-tagName, var(--foreground))' },
+  { tag: tags.attributeName, color: 'var(--cm-attributeName, var(--foreground))' },
+  { tag: tags.attributeValue, color: 'var(--cm-attributeValue, var(--foreground))' },
+])
 
 function getCustomHighlightStyle() {
   return customHighlightStyle
