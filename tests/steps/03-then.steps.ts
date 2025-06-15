@@ -484,11 +484,6 @@ Then('the page should display the content of the shared note', async function (t
   await markVimPage.verifyActiveDocumentContains('This is a test.')
 })
 
-Then('the URL should not contain the share fragment anymore', async function (this: MarkVimWorld) {
-  const markVimPage = await getMarkVimPage(this)
-  await markVimPage.verifyUrlFragmentCleared()
-})
-
 Then('the document list should contain {int} documents', async function (this: MarkVimWorld, expectedCount: number) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.verifyDocumentCount(expectedCount)

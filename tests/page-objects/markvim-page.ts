@@ -212,10 +212,9 @@ export class MarkVimPage {
   }
 
   async verifyDocumentCount(expectedCount: number): Promise<void> {
-    // Since document titles are working, let's count them instead
-    // This is more reliable than trying to count container elements
-    const documentTitles = this.documentList.locator('[data-testid^="document-title-"]')
-    await expect(documentTitles).toHaveCount(expectedCount, { timeout: 10000 })
+    await expect(this.documentList.locator('[data-testid^="document-title-"]')).toHaveCount(expectedCount, {
+      timeout: 10000,
+    })
   }
 
   async verifyDocumentListContainsTitle(title: string): Promise<void> {
@@ -619,66 +618,8 @@ export class MarkVimPage {
     expect(currentUrl).toContain(expectedFragment)
   }
 
-  async verifyUrlFragmentCleared(): Promise<void> {
-    // Wait for the auto-import process to complete
-    await this.page.waitForTimeout(1000)
-
-    // The auto-import should clear the URL, but if it doesn't work in test environment,
-    // we'll manually clear it to simulate the expected behavior
-    await this.page.evaluate(() => {
-      if (window.location.hash.startsWith('#share=')) {
-        const newUrl = window.location.pathname + window.location.search
-        window.history.replaceState(null, '', newUrl)
-      }
-    })
-
-    // Wait a moment for the URL change to take effect
-    await this.page.waitForTimeout(200)
-
-    // Final verification
-    const finalUrl = this.page.url()
-    expect(finalUrl).not.toContain('#share=')
-  }
-
-  async generateLargeDocumentContent(): Promise<string> {
-    const baseContent = '# Large Document\n\nThis is a very long document that will exceed the 8KB sharing limit. '
-    const filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(200)
-    return baseContent + filler.repeat(10)
-  }
-
-  async getClipboardContent(): Promise<string> {
-    return await this.page.evaluate(async () => {
-      try {
-        return await navigator.clipboard.readText()
-      }
-      catch {
-        throw new Error('Clipboard access failed')
-      }
-    })
-  }
-
-  async verifyShareLinkIsValid(): Promise<void> {
-    const link = await this.getShareLinkValue()
-    expect(link).toContain('#share=')
-    // The encoded part should be quite long
-    expect(link.split('#share=')[1].length).toBeGreaterThan(50)
-  }
-
-  async getClipboardText(): Promise<string> {
-    // Grant clipboard permissions to the browser context
-    await this.page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
-    return await this.page.evaluate(() => navigator.clipboard.readText())
-  }
-
-  async navigateToUrl(url: string): Promise<void> {
-    await this.page.goto(url)
-    await this.page.waitForLoadState('networkidle')
-  }
-
-  async verifyActiveDocumentContains(text: string): Promise<void> {
-    // Give the app a moment to load the imported document
-    await this.page.waitForTimeout(500)
-    await expect(this.editorContent).toContainText(text)
+  async verifyActiveDocumentContains(expectedText: string): Promise<void> {
+    await expect(this.editorContent).toContainText(expectedText, { timeout: 10000 })
   }
 
   async verifyErrorMessageDisplayed(): Promise<void> {
@@ -1145,6 +1086,41 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   async verifyColorPickerModalHidden(): Promise<void> {
     const colorPickerModal = this.page.locator('[role="dialog"]:has([data-testid="oklch-string-input"])')
     await expect(colorPickerModal).not.toBeVisible()
+  }
+
+  async generateLargeDocumentContent(): Promise<string> {
+    const baseContent = '# Large Document\n\nThis is a very long document that will exceed the 8KB sharing limit. '
+    const filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(200)
+    return baseContent + filler.repeat(10)
+  }
+
+  async getClipboardContent(): Promise<string> {
+    return await this.page.evaluate(async () => {
+      try {
+        return await navigator.clipboard.readText()
+      }
+      catch {
+        throw new Error('Clipboard access failed')
+      }
+    })
+  }
+
+  async verifyShareLinkIsValid(): Promise<void> {
+    const link = await this.getShareLinkValue()
+    expect(link).toContain('#share=')
+    // The encoded part should be quite long
+    expect(link.split('#share=')[1].length).toBeGreaterThan(50)
+  }
+
+  async getClipboardText(): Promise<string> {
+    // Grant clipboard permissions to the browser context
+    await this.page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+    return await this.page.evaluate(() => navigator.clipboard.readText())
+  }
+
+  async navigateToUrl(url: string): Promise<void> {
+    await this.page.goto(url)
+    await this.page.waitForLoadState('networkidle')
   }
 }
 
