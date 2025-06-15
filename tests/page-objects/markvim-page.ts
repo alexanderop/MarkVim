@@ -212,10 +212,9 @@ export class MarkVimPage {
   }
 
   async verifyDocumentCount(expectedCount: number): Promise<void> {
-    // Since document titles are working, let's count them instead
-    // This is more reliable than trying to count container elements
-    const documentTitles = this.documentList.locator('[data-testid^="document-title-"]')
-    await expect(documentTitles).toHaveCount(expectedCount, { timeout: 10000 })
+    await expect(this.documentList.locator('[data-testid^="document-title-"]')).toHaveCount(expectedCount, {
+      timeout: 10000,
+    })
   }
 
   async verifyDocumentListContainsTitle(title: string): Promise<void> {
@@ -536,6 +535,8 @@ export class MarkVimPage {
   }
 
   async clickCopyShareLinkButton(): Promise<void> {
+    // Grant clipboard permissions before clicking
+    await this.page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
     await this.copyShareLinkBtn.click()
   }
 
@@ -617,26 +618,8 @@ export class MarkVimPage {
     expect(currentUrl).toContain(expectedFragment)
   }
 
-  async verifyUrlFragmentCleared(): Promise<void> {
-    const currentUrl = this.page.url()
-    expect(currentUrl).not.toContain('#share=')
-  }
-
-  async generateLargeDocumentContent(): Promise<string> {
-    const baseContent = '# Large Document\n\nThis is a very long document that will exceed the 8KB sharing limit. '
-    const filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(200)
-    return baseContent + filler.repeat(10)
-  }
-
-  async getClipboardContent(): Promise<string> {
-    return await this.page.evaluate(async () => {
-      try {
-        return await navigator.clipboard.readText()
-      }
-      catch {
-        throw new Error('Clipboard access failed')
-      }
-    })
+  async verifyActiveDocumentContains(expectedText: string): Promise<void> {
+    await expect(this.editorContent).toContainText(expectedText, { timeout: 10000 })
   }
 
   async verifyErrorMessageDisplayed(): Promise<void> {
@@ -1103,6 +1086,41 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   async verifyColorPickerModalHidden(): Promise<void> {
     const colorPickerModal = this.page.locator('[role="dialog"]:has([data-testid="oklch-string-input"])')
     await expect(colorPickerModal).not.toBeVisible()
+  }
+
+  async generateLargeDocumentContent(): Promise<string> {
+    const baseContent = '# Large Document\n\nThis is a very long document that will exceed the 8KB sharing limit. '
+    const filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(200)
+    return baseContent + filler.repeat(10)
+  }
+
+  async getClipboardContent(): Promise<string> {
+    return await this.page.evaluate(async () => {
+      try {
+        return await navigator.clipboard.readText()
+      }
+      catch {
+        throw new Error('Clipboard access failed')
+      }
+    })
+  }
+
+  async verifyShareLinkIsValid(): Promise<void> {
+    const link = await this.getShareLinkValue()
+    expect(link).toContain('#share=')
+    // The encoded part should be quite long
+    expect(link.split('#share=')[1].length).toBeGreaterThan(50)
+  }
+
+  async getClipboardText(): Promise<string> {
+    // Grant clipboard permissions to the browser context
+    await this.page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
+    return await this.page.evaluate(() => navigator.clipboard.readText())
+  }
+
+  async navigateToUrl(url: string): Promise<void> {
+    await this.page.goto(url)
+    await this.page.waitForLoadState('networkidle')
   }
 }
 

@@ -467,3 +467,24 @@ Then('the selection background color should use the muted theme color', async fu
   const expectedPattern = /oklch\((0\.2|20\.0%) 0\.002 0 \/ 0\.3(00)?\)/i
   expect(selectionBgColor).toMatch(expectedPattern)
 })
+
+Then('the share dialog should be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyShareDialogVisible()
+})
+
+Then('the share link input should contain a valid share link', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyShareLinkIsValid()
+})
+
+Then('the page should display the content of the shared note', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  // Check for the unique content from our shared note
+  await markVimPage.verifyActiveDocumentContains('This is a test.')
+})
+
+Then('the document list should contain {int} documents', async function (this: MarkVimWorld, expectedCount: number) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyDocumentCount(expectedCount)
+})

@@ -122,3 +122,8 @@ Given('I have an empty document', async function (this: MarkVimWorld) {
   // Wait a moment for the editor to update
   await markVimPage.page.waitForTimeout(200)
 })
+
+Given('I create a document with the content {string}', async function (this: MarkVimWorld, content: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.createDocumentWithContent(content)
+})
