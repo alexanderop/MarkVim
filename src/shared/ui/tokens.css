@@ -9,7 +9,29 @@
   --muted: oklch(20% 0.002 0);           /* Dark muted surfaces */
   --border: oklch(25% 0.003 20);         /* Subtle dark borders */
 
-
+  /* =============================================
+     ✨ FONT SYSTEM TOKENS
+     =============================================*/
+  
+  /* Base font size - adjustable via settings */
+  --font-size-base: 14px;
+  
+  /* Font families */
+  --font-family-sans: 'Geist', sans-serif;
+  --font-family-mono: 'Fira Code', monospace;
+  
+  /* Font size scale based on base size */
+  --font-size-xs: calc(var(--font-size-base) * 0.75);    /* 12px when base is 16px */
+  --font-size-sm: calc(var(--font-size-base) * 0.875);   /* 14px when base is 16px */
+  --font-size-md: var(--font-size-base);                 /* 16px when base is 16px */
+  --font-size-lg: calc(var(--font-size-base) * 1.125);   /* 18px when base is 16px */
+  --font-size-xl: calc(var(--font-size-base) * 1.25);    /* 20px when base is 16px */
+  --font-size-2xl: calc(var(--font-size-base) * 1.5);    /* 24px when base is 16px */
+  
+  /* Line height scale */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
 }
 
 /* ──────────────────────────

@@ -128,14 +128,16 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   size="sm"
                   icon="heroicons:minus"
                   icon-only
+                  data-testid="font-size-decrease"
                   @click="updateFontSize(settings.fontSize - 1)"
                 />
-                <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
+                <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]" data-testid="font-size-display">{{ settings.fontSize }}px</span>
                 <BaseButton
                   variant="ghost"
                   size="sm"
                   icon="heroicons:plus"
                   icon-only
+                  data-testid="font-size-increase"
                   @click="updateFontSize(settings.fontSize + 1)"
                 />
               </div>

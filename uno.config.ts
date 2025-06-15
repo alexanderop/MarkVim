@@ -109,7 +109,8 @@ export default defineConfig({
       getCSS: () => {
         return `
           body {
-            font-family: 'Geist', sans-serif;
+            font-family: var(--font-family-sans);
+            font-size: var(--font-size-base);
             background-color: var(--background);
             color: var(--foreground);
             -webkit-font-smoothing: antialiased;
@@ -117,7 +118,7 @@ export default defineConfig({
           }
           
           code, pre, kbd, samp {
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-family-mono);
             font-feature-settings: 'liga' 1, 'calt' 1;
             font-variant-ligatures: contextual;
           }
@@ -128,7 +129,8 @@ export default defineConfig({
           .shiki pre,
           [class*="shiki-"],
           pre[data-language] code {
-            font-family: 'Fira Code', monospace !important;
+            font-family: var(--font-family-mono) !important;
+            font-size: var(--font-size-base) !important;
             font-feature-settings: 'liga' 1, 'calt' 1;
             font-variant-ligatures: contextual;
           }
@@ -143,7 +145,8 @@ export default defineConfig({
           .cm-editor,
           .cm-editor .cm-content,
           .cm-editor .cm-line {
-            font-family: 'Fira Code', monospace !important;
+            font-family: var(--font-family-mono) !important;
+            font-size: var(--font-size-base) !important;
             font-feature-settings: 'liga' 1, 'calt' 1;
             font-variant-ligatures: contextual;
           }

@@ -25,3 +25,11 @@ Feature: Application Smoke Test
     Then the selected mode should be "preview"
     And I should not see the headline "Welcome to MarkVim" in the editor
     And I should see the headline "Welcome to MarkVim" in the preview
+
+  Scenario: Font size adjustment works correctly
+    Given I navigate to the App
+    When the page is loaded
+    And I change the font size to 18
+    Then I verify the editor font size is 18px
+    When I change the font size to 12
+    Then I verify the editor font size is 12px
