@@ -98,3 +98,21 @@ Given('the sidebar is hidden', async function (this: MarkVimWorld) {
   }
   await markVimPage.verifySidebarHidden()
 })
+
+Given('I have an empty document', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Create a new document using the existing method
+  await markVimPage.createNewDocument()
+
+  // Wait for the new document to become active and ready
+  await markVimPage.page.waitForTimeout(500)
+
+  // Focus the editor and select all content, then delete it
+  await markVimPage.focusEditor()
+  await markVimPage.page.keyboard.press('Meta+a')
+  await markVimPage.page.keyboard.press('Backspace')
+
+  // Wait a moment for the editor to update
+  await markVimPage.page.waitForTimeout(200)
+})

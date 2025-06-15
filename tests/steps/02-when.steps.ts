@@ -137,3 +137,37 @@ When('I cancel the deletion', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.clickDeleteCancel()
 })
+
+When('I type {string} into the editor', async function (this: MarkVimWorld, text: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Focus the editor and use fill method for reliability
+  await markVimPage.focusEditor()
+  await markVimPage.editorContent.fill(text)
+
+  // Wait for the content to be processed
+  await markVimPage.page.waitForTimeout(300)
+})
+
+When('I paste the following {word} code into the editor:', async function (this: MarkVimWorld, _type: string, docString: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Focus the editor and set the content
+  await markVimPage.focusEditor()
+  await markVimPage.editorContent.fill(docString)
+
+  // Wait for the content to be processed
+  await markVimPage.page.waitForTimeout(300)
+})
+
+// Add this step as well, which is a variation of the one above
+When('I paste the following {word} markdown into the editor:', async function (this: MarkVimWorld, _type: string, docString: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Focus the editor and set the content
+  await markVimPage.focusEditor()
+  await markVimPage.editorContent.fill(docString)
+
+  // Wait for the content to be processed
+  await markVimPage.page.waitForTimeout(300)
+})
