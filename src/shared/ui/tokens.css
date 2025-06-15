@@ -9,7 +9,9 @@
   --muted: oklch(20% 0.002 0);           /* Dark muted surfaces */
   --border: oklch(25% 0.003 20);         /* Subtle dark borders */
 
-
+  /* Base font size tokens */
+  --font-size-base: 14px;                /* Base editor font size */
+  --font-size-ui: 13px;                  /* UI elements font size */
 }
 
 /* ──────────────────────────

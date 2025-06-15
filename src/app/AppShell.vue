@@ -432,10 +432,12 @@ useHead({
   font-family: 'Fira Code', monospace !important;
   font-feature-settings: 'liga' 1, 'calt' 1 !important;
   font-variant-ligatures: contextual !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor .cm-scroller {
   color: var(--foreground) !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor.cm-focused {
@@ -462,6 +464,18 @@ useHead({
 .cm-activeLineGutter {
   color: var(--foreground) !important;
   opacity: 0.8;
+}
+
+/* Ensure all CodeMirror content respects font size */
+.cm-editor,
+.cm-editor .cm-content,
+.cm-editor .cm-line,
+.cm-editor .cm-scroller,
+.cm-content {
+  font-size: var(--font-size-base) !important;
+  font-family: 'Fira Code', monospace !important;
+  font-feature-settings: 'liga' 1, 'calt' 1 !important;
+  font-variant-ligatures: contextual !important;
 }
 
 button, a {

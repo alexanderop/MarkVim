@@ -408,7 +408,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="editor" class="cm-theme" :style="{ fontSize: `${fontSize}px` }" />
+  <div ref="editor" class="cm-theme" />
 </template>
 
 <style>
@@ -422,6 +422,7 @@ onBeforeUnmount(() => {
   width: 100%;
   border: none;
   background: transparent;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor.cm-focused {
@@ -445,10 +446,12 @@ onBeforeUnmount(() => {
 /* CodeMirror simplified color system */
 .cm-editor .cm-content {
   color: var(--foreground) !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor .cm-line {
   color: var(--foreground) !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor .cm-gutterElement {
@@ -467,5 +470,16 @@ onBeforeUnmount(() => {
 .cm-editor .cm-selectionBackground {
   background-color: var(--accent) !important;
   opacity: 0.3;
+}
+
+/* Ensure all CodeMirror text uses the base font size */
+.cm-editor,
+.cm-editor .cm-content,
+.cm-editor .cm-line,
+.cm-editor .cm-scroller {
+  font-size: var(--font-size-base) !important;
+  font-family: 'Fira Code', monospace !important;
+  font-feature-settings: 'liga' 1, 'calt' 1 !important;
+  font-variant-ligatures: contextual !important;
 }
 </style>

@@ -1,10 +1,14 @@
+import { onMounted } from 'vue'
+import { useMounted } from '@vueuse/core'
+import { useFontTheme } from './useFontTheme'
+
 export interface EditorSettings {
   // Vim configuration
   vimMode: boolean
   vimKeymap: 'vim' | 'emacs' | 'sublime' | 'vscode'
 
   // Editor appearance
-  fontSize: number
+  fontSize: number // Kept for backward compatibility
   fontFamily: 'mono' | 'sans'
   lineNumbers: boolean
   lineNumberMode: 'absolute' | 'relative' | 'both'
@@ -85,6 +89,9 @@ export function useEditorSettings() {
     return { ...DEFAULT_EDITOR_CONFIG }
   })
 
+  // Use the new font theme system
+  const { theme: fontTheme, updateBaseFontSize, resetToDefaults: resetFontToDefaults } = useFontTheme()
+
   const saveToLocalStorage = () => {
     if (isMounted.value && typeof localStorage !== 'undefined') {
       localStorage.setItem('markvim-settings', JSON.stringify(settings.value))
@@ -107,12 +114,15 @@ export function useEditorSettings() {
   }
 
   const updateFontSize = (size: number) => {
+    // Update both the old system (for backward compatibility) and new system
     settings.value.fontSize = Math.max(8, Math.min(32, size))
+    updateBaseFontSize(size)
     saveToLocalStorage()
   }
 
   const resetToDefaults = () => {
     settings.value = { ...DEFAULT_EDITOR_CONFIG }
+    resetFontToDefaults()
     saveToLocalStorage()
   }
 
@@ -124,6 +134,10 @@ export function useEditorSettings() {
     try {
       const imported = JSON.parse(settingsJson)
       settings.value = { ...DEFAULT_EDITOR_CONFIG, ...imported }
+      // Sync font size to the new font theme system
+      if (imported.fontSize) {
+        updateBaseFontSize(imported.fontSize)
+      }
       saveToLocalStorage()
       return true
     }
@@ -137,10 +151,19 @@ export function useEditorSettings() {
   const { onDataReset } = useDataReset()
   onDataReset(() => {
     settings.value = { ...DEFAULT_EDITOR_CONFIG }
+    resetFontToDefaults()
+  })
+
+  // Sync legacy fontSize with new font theme system on mount
+  onMounted(() => {
+    if (settings.value.fontSize !== fontTheme.value.baseFontSize) {
+      updateBaseFontSize(settings.value.fontSize)
+    }
   })
 
   return {
     settings,
+    fontTheme, // Expose font theme for components that need it
     toggleVimMode,
     toggleLineNumbers,
     togglePreviewSync,

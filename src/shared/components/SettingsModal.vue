@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { settings, toggleVimMode, updateFontSize, resetToDefaults, togglePreviewSync, clearAllData } = useEditorSettings()
+const { settings, fontTheme, toggleVimMode, updateFontSize, resetToDefaults, togglePreviewSync, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 
 function useClearDataModal() {
@@ -122,22 +122,30 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
               <h4 class="text-sm text-text-primary font-medium mb-1">
                 Font Size
               </h4>
+              <p class="text-xs text-text-secondary mb-2">
+                Editor font size (affects all text)
+              </p>
               <div class="flex gap-2 items-center">
                 <BaseButton
                   variant="ghost"
                   size="sm"
                   icon="heroicons:minus"
                   icon-only
-                  @click="updateFontSize(settings.fontSize - 1)"
+                  data-testid="decrease-font-size"
+                  @click="updateFontSize(fontTheme.baseFontSize - 1)"
                 />
-                <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ settings.fontSize }}px</span>
+                <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]">{{ fontTheme.baseFontSize }}px</span>
                 <BaseButton
                   variant="ghost"
                   size="sm"
                   icon="heroicons:plus"
                   icon-only
-                  @click="updateFontSize(settings.fontSize + 1)"
+                  data-testid="increase-font-size"
+                  @click="updateFontSize(fontTheme.baseFontSize + 1)"
                 />
+              </div>
+              <div class="mt-2 text-xs text-text-secondary">
+                Range: 8px - 32px
               </div>
             </div>
           </div>

@@ -146,6 +146,7 @@ export default defineConfig({
             font-family: 'Fira Code', monospace !important;
             font-feature-settings: 'liga' 1, 'calt' 1;
             font-variant-ligatures: contextual;
+            font-size: var(--font-size-base) !important;
           }
         `
       },

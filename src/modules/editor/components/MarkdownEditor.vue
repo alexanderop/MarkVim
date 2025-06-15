@@ -41,11 +41,6 @@ const modelValue = defineModel<string>()
         :line-numbers="settings.lineNumbers"
         :line-number-mode="settings.lineNumberMode"
         :line-wrapping="settings.lineWrapping"
-        :font-size="settings.fontSize"
-        :style="{
-          fontSize: `${settings.fontSize}px`,
-          fontFamily: settings.fontFamily === 'mono' ? 'var(--font-mono)' : 'var(--font-sans)',
-        }"
         @vim-mode-change="(mode, subMode) => emit('vimModeChange', mode, subMode)"
       />
     </div>
