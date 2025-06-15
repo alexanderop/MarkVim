@@ -152,7 +152,7 @@ onMounted(() => {
   setNewDocumentAction(handleCreateDocument)
 
   // Register sequential shortcuts using createSequentialShortcut
-  const { createSequentialShortcut, registeredShortcuts } = useShortcuts()
+  const { createSequentialShortcut } = useShortcuts()
 
   // Create g->t sequence shortcut for toggling sidebar
   createSequentialShortcut(['g', 't'], handleToggleSidebar)
