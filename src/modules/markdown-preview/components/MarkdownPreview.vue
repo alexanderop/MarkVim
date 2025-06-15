@@ -62,7 +62,11 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
       tabindex="0"
     >
       <div ref="root" class="mx-auto px-12 py-12 max-w-none">
-        <article class="prose-lg max-w-none prose" v-html="renderedHtml" />
+        <article
+          class="prose-lg max-w-none prose"
+          data-testid="rendered-markdown-article"
+          v-html="renderedHtml"
+        />
       </div>
     </div>
   </div>

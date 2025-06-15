@@ -58,6 +58,14 @@ async function getShikiHighlighter() {
   return shikiHighlighter
 }
 
+export function addDataTestIdToAlerts(html: string): string {
+  // Add data-testid attributes to GitHub alert elements
+  return html.replace(
+    /<div class="markdown-alert markdown-alert-(\w+)"/g,
+    '<div class="markdown-alert markdown-alert-$1" data-testid="github-alert-$1"',
+  )
+}
+
 export async function createMarkdownRenderer() {
   if (markdownInstance) {
     return markdownInstance

@@ -3,8 +3,11 @@
 import type { IWorldOptions } from '@cucumber/cucumber'
 import type { Browser, Page } from '@playwright/test'
 import process from 'node:process'
-import { After, Before, setWorldConstructor, World } from '@cucumber/cucumber'
+import { After, Before, setDefaultTimeout, setWorldConstructor, World } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
+
+// Set default timeout to 10 seconds for all Cucumber steps
+setDefaultTimeout(10 * 1000)
 
 export interface MarkVimWorld extends World {
   browser?: Browser

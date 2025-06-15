@@ -55,6 +55,30 @@ export function useColorTheme() {
   const alertWarningVar = useCssVar('--alert-warning')
   const alertCautionVar = useCssVar('--alert-caution')
 
+  // CodeMirror syntax highlighting CSS custom properties
+  const cmContentVar = useCssVar('--cm-content')
+  const cmHeading1Var = useCssVar('--cm-heading1')
+  const cmHeading2Var = useCssVar('--cm-heading2')
+  const cmHeading3Var = useCssVar('--cm-heading3')
+  const cmHeading4Var = useCssVar('--cm-heading4')
+  const cmHeading5Var = useCssVar('--cm-heading5')
+  const cmHeading6Var = useCssVar('--cm-heading6')
+  const cmKeywordVar = useCssVar('--cm-keyword')
+  const cmStringVar = useCssVar('--cm-string')
+  const cmCommentVar = useCssVar('--cm-comment')
+  const cmNumberVar = useCssVar('--cm-number')
+  const cmOperatorVar = useCssVar('--cm-operator')
+  const cmVariableNameVar = useCssVar('--cm-variableName')
+  const cmPunctuationVar = useCssVar('--cm-punctuation')
+  const cmBracketVar = useCssVar('--cm-bracket')
+  const cmLinkVar = useCssVar('--cm-link')
+  const cmEmphasisVar = useCssVar('--cm-emphasis')
+  const cmStrongVar = useCssVar('--cm-strong')
+  const cmStrikethroughVar = useCssVar('--cm-strikethrough')
+
+  // CodeMirror selection background - use muted color for vim visual mode
+  const cmSelectionBackgroundVar = useCssVar('--cm-selection-background')
+
   // Update CSS custom properties when theme changes
   watchEffect(() => {
     backgroundVar.value = oklchToString(theme.value.background)
@@ -67,6 +91,30 @@ export function useColorTheme() {
     alertImportantVar.value = oklchToString(theme.value.alertImportant)
     alertWarningVar.value = oklchToString(theme.value.alertWarning)
     alertCautionVar.value = oklchToString(theme.value.alertCaution)
+
+    // CodeMirror syntax highlighting colors - accent for headings, foreground for regular text
+    cmContentVar.value = oklchToString(theme.value.foreground)
+    cmHeading1Var.value = oklchToString(theme.value.accent)
+    cmHeading2Var.value = oklchToString(theme.value.accent)
+    cmHeading3Var.value = oklchToString(theme.value.accent)
+    cmHeading4Var.value = oklchToString(theme.value.accent)
+    cmHeading5Var.value = oklchToString(theme.value.accent)
+    cmHeading6Var.value = oklchToString(theme.value.accent)
+    cmKeywordVar.value = oklchToString(theme.value.accent)
+    cmStringVar.value = oklchToString(theme.value.foreground)
+    cmCommentVar.value = oklchToString(theme.value.foreground)
+    cmNumberVar.value = oklchToString(theme.value.accent)
+    cmOperatorVar.value = oklchToString(theme.value.foreground)
+    cmVariableNameVar.value = oklchToString(theme.value.foreground)
+    cmPunctuationVar.value = oklchToString(theme.value.foreground)
+    cmBracketVar.value = oklchToString(theme.value.foreground)
+    cmLinkVar.value = oklchToString(theme.value.accent)
+    cmEmphasisVar.value = oklchToString(theme.value.foreground)
+    cmStrongVar.value = oklchToString(theme.value.foreground)
+    cmStrikethroughVar.value = oklchToString(theme.value.foreground)
+
+    // CodeMirror selection background - use muted color with some transparency for vim visual mode
+    cmSelectionBackgroundVar.value = oklchToString({ ...theme.value.muted, a: 0.3 })
   })
 
   // Update a specific color in the theme

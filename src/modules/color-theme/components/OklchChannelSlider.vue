@@ -161,6 +161,7 @@ function handleHueInputBlur() {
           :value="hueInputValue"
           type="number"
           class="w-16 px-1 py-0.5 text-xs font-mono text-text-secondary bg-surface-secondary border border-border rounded focus:border-accent focus:outline-none"
+          data-testid="hue-input"
           @input="handleHueInputChange"
           @focus="handleHueInputFocus"
           @blur="handleHueInputBlur"
@@ -199,6 +200,7 @@ function handleHueInputBlur() {
         :max="channel === 'h' ? 360 : max"
         :step="channel === 'h' ? 1 : step"
         class="oklch-slider"
+        :data-testid="`oklch-slider-${channel}`"
       >
     </div>
 

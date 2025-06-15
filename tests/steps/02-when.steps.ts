@@ -172,6 +172,36 @@ When('I paste the following {word} markdown into the editor:', async function (t
   await markVimPage.page.waitForTimeout(300)
 })
 
+When('I type the following text into the editor:', async function (this: MarkVimWorld, docString: string) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Focus the editor and set the content
+  await markVimPage.focusEditor()
+  await markVimPage.editorContent.fill(docString)
+
+  // Wait for the content to be processed
+  await markVimPage.page.waitForTimeout(300)
+})
+
+When('I press {string} to ensure normal mode', async function (this: MarkVimWorld, key: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.pressKey(key)
+  await markVimPage.page.waitForTimeout(300)
+})
+
+When('I press {string} to enter vim visual mode', async function (this: MarkVimWorld, key: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.focusEditor()
+  await markVimPage.pressKey(key)
+  await markVimPage.page.waitForTimeout(500) // Wait for visual mode to activate
+})
+
+When('I press {string} to select down one line', async function (this: MarkVimWorld, key: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.pressKey(key)
+  await markVimPage.page.waitForTimeout(300) // Wait for selection to update
+})
+
 When('I change the font size to {int}', async function (this: MarkVimWorld, targetSize: number) {
   const markVimPage = await getMarkVimPage(this)
 
@@ -207,4 +237,55 @@ When('I change the font size to {int}', async function (this: MarkVimWorld, targ
 
   // Verify the font size changed
   await expect(fontSizeDisplay).toHaveText(`${targetSize}px`)
+})
+
+When('I open the color theme modal', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.colorThemeButton.click()
+  await expect(markVimPage.colorThemeModal).toBeVisible()
+})
+
+When('I click the {string} color setting to open the picker', async function (this: MarkVimWorld, colorName: string) {
+  const markVimPage = await getMarkVimPage(this)
+  const colorButton = markVimPage.page.locator(`[data-testid="color-button-${colorName.toLowerCase()}"]`)
+  await colorButton.click()
+})
+
+When('I set the color picker value to {string} which is a vibrant red', async function (this: MarkVimWorld, colorValue: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await expect(markVimPage.oklchStringInput).toBeVisible()
+  await markVimPage.oklchStringInput.fill(colorValue)
+})
+
+When('I set the color picker value to {string} which is a vibrant green', async function (this: MarkVimWorld, colorValue: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await expect(markVimPage.oklchStringInput).toBeVisible()
+  await markVimPage.oklchStringInput.fill(colorValue)
+})
+
+When('I set the color picker value to {string} which is a muted blue', async function (this: MarkVimWorld, colorValue: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await expect(markVimPage.oklchStringInput).toBeVisible()
+  await markVimPage.oklchStringInput.fill(colorValue)
+})
+
+When('I confirm the new color selection', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.acceptColorChangeButton.click()
+  await markVimPage.page.waitForTimeout(1000) // Wait for color changes to apply
+})
+
+When('I enable vim mode', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.enableVimMode()
+})
+
+When('I enter vim visual mode', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.enterVimVisualMode()
+})
+
+When('I select {int} lines down in visual mode', async function (this: MarkVimWorld, lines: number) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.selectTextInVimVisualMode('down', lines)
 })

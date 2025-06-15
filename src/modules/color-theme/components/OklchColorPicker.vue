@@ -138,6 +138,7 @@ function handleInputBlur() {
               ? 'border-border focus:border-accent focus:ring-1 focus:ring-accent'
               : 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500',
           ]"
+          data-testid="oklch-string-input"
           @input="handleOklchInput"
           @blur="handleInputBlur"
         >
