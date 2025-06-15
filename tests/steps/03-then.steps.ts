@@ -287,3 +287,21 @@ Then('the preview pane should display a styled {string} alert box', async functi
   await expect(alertBox).toBeVisible({ timeout: 3000 })
   await expect(alertBox).toContainText(`This is a test ${alertType.toLowerCase()}.`)
 })
+
+Then('I verify the editor font size is {int}px', async function (this: MarkVimWorld, expectedSize: number) {
+  const markVimPage = await getMarkVimPage(this)
+
+  // Check that the CSS custom property is set correctly
+  const rootFontSize = await markVimPage.page.evaluate(() => {
+    return getComputedStyle(document.documentElement).getPropertyValue('--font-size-base')
+  })
+
+  expect(rootFontSize.trim()).toBe(`${expectedSize}px`)
+
+  // Check that CodeMirror editor is using the correct font size
+  const editorFontSize = await markVimPage.page.locator('.cm-editor').evaluate((element) => {
+    return getComputedStyle(element).fontSize
+  })
+
+  expect(editorFontSize).toBe(`${expectedSize}px`)
+})

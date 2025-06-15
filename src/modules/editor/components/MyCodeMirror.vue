@@ -388,7 +388,7 @@ watch(vimMode, (newVimMode) => {
   }
 }, { immediate: false })
 
-watch(() => [extensions, theme, editable, indentWithTab, placeholder, lineNumbers, lineNumberMode, lineWrapping], () => {
+watch(() => [extensions, theme, editable, indentWithTab, placeholder, lineNumbers, lineNumberMode, lineWrapping, fontSize], () => {
   reconfigureExtensions()
 })
 
@@ -408,13 +408,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="editor" class="cm-theme" :style="{ fontSize: `${fontSize}px` }" />
+  <div ref="editor" class="cm-theme" />
 </template>
 
 <style>
 .cm-editor {
   height: 100%;
   border: none !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-theme {
@@ -422,6 +423,7 @@ onBeforeUnmount(() => {
   width: 100%;
   border: none;
   background: transparent;
+  font-size: var(--font-size-base);
 }
 
 .cm-editor.cm-focused {
@@ -445,15 +447,18 @@ onBeforeUnmount(() => {
 /* CodeMirror simplified color system */
 .cm-editor .cm-content {
   color: var(--foreground) !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor .cm-line {
   color: var(--foreground) !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor .cm-gutterElement {
   color: var(--foreground) !important;
   opacity: 0.5;
+  font-size: var(--font-size-sm) !important;
 }
 
 .cm-editor .cm-cursor {

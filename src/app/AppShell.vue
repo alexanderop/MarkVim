@@ -429,13 +429,15 @@ useHead({
   color: var(--foreground) !important;
   border: none !important;
   outline: none !important;
-  font-family: 'Fira Code', monospace !important;
+  font-family: var(--font-family-mono) !important;
+  font-size: var(--font-size-base) !important;
   font-feature-settings: 'liga' 1, 'calt' 1 !important;
   font-variant-ligatures: contextual !important;
 }
 
 .cm-editor .cm-scroller {
   color: var(--foreground) !important;
+  font-size: var(--font-size-base) !important;
 }
 
 .cm-editor.cm-focused {
@@ -457,6 +459,7 @@ useHead({
 .cm-lineNumbers .cm-gutterElement {
   color: var(--foreground) !important;
   opacity: 0.5;
+  font-size: var(--font-size-sm) !important;
 }
 
 .cm-activeLineGutter {
