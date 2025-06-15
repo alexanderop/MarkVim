@@ -1,4 +1,33 @@
 <script setup lang="ts">
+/*
+ * OKLCH Color Picker with sRGB Gamut Detection
+ *
+ * WHAT IS sRGB GAMUT?
+ * - sRGB is the standard color space used by most monitors, web browsers, and digital devices
+ * - It can only display a limited range of colors compared to what human eyes can see
+ * - Colors outside this range are "out of gamut" and will be automatically adjusted (clamped)
+ *
+ * WHY DOES OKLCH EXCEED sRGB?
+ * - OKLCH is a perceptually uniform color space that can represent ALL visible colors
+ * - It's designed for color science and can describe colors that don't exist in sRGB
+ * - High chroma (saturation) values often exceed what sRGB monitors can display
+ *
+ * WHAT HAPPENS TO OUT-OF-GAMUT COLORS?
+ * - Browsers automatically "clamp" them to the nearest displayable sRGB color
+ * - This usually means reducing the chroma (making them less saturated)
+ * - The color you see may be duller than what you specified
+ *
+ * WHEN ARE COLORS MOST LIKELY OUT OF GAMUT?
+ * - Very high chroma values (> 0.3-0.4)
+ * - Extreme lightness (very dark < 20% or very bright > 95%) with high chroma
+ * - Certain hue ranges (especially blues and cyans) have lower chroma limits
+ *
+ * HOW TO STAY IN GAMUT:
+ * - Keep chroma values moderate (< 0.25 for most cases)
+ * - Be extra careful with blues, cyans, and extreme lightness values
+ * - Use the warning indicator to know when you're pushing boundaries
+ */
+
 import type { OklchColor } from '../composables/useColorTheme'
 
 interface Props {
@@ -111,14 +140,74 @@ function handleInputBlur() {
 }
 
 const isOutOfGamut = computed(() => {
-  const { l, c } = currentColor.value
-  // Heuristic for sRGB gamut check without a full library.
-  // High chroma is the main cause, especially at lightness extremes.
-  if (c > 0.33)
+  const { l, c, h } = currentColor.value
+
+  // More accurate sRGB gamut boundary detection
+  // OKLCH can represent colors outside the sRGB gamut, especially at high chroma values
+
+  // Very high chroma values are almost always out of gamut
+  if (c > 0.37)
     return true
-  if (c > 0.25 && (l < 0.3 || l > 0.85))
+
+  // Chroma limits vary by lightness and hue
+  // These are approximate boundaries based on sRGB color space limits
+
+  // Very dark colors (L < 20%) have limited chroma range
+  if (l < 0.2 && c > 0.15)
     return true
+
+  // Very light colors (L > 95%) have limited chroma range
+  if (l > 0.95 && c > 0.15)
+    return true
+
+  // Mid-range lightness but high chroma
+  if (l >= 0.2 && l <= 0.95) {
+    // Hue-dependent chroma limits (approximate)
+    const normalizedHue = ((h % 360) + 360) % 360 // Normalize to 0-360
+
+    // Red/Orange hues (0-60°) can handle higher chroma
+    if (normalizedHue <= 60 && c > 0.35)
+      return true
+
+    // Yellow hues (60-120°) have good chroma range
+    if (normalizedHue > 60 && normalizedHue <= 120 && c > 0.32)
+      return true
+
+    // Green hues (120-180°) have moderate chroma limits
+    if (normalizedHue > 120 && normalizedHue <= 180 && c > 0.28)
+      return true
+
+    // Cyan hues (180-240°) have lower chroma limits
+    if (normalizedHue > 180 && normalizedHue <= 240 && c > 0.25)
+      return true
+
+    // Blue hues (240-300°) have very limited chroma
+    if (normalizedHue > 240 && normalizedHue <= 300 && c > 0.22)
+      return true
+
+    // Purple/Magenta hues (300-360°) can handle higher chroma
+    if (normalizedHue > 300 && c > 0.30)
+      return true
+  }
+
   return false
+})
+
+const gamutWarningText = computed(() => {
+  if (!isOutOfGamut.value)
+    return ''
+
+  const { l, c } = currentColor.value
+
+  if (c > 0.37) {
+    return 'Extremely high chroma - will be clamped to sRGB limits'
+  }
+
+  if (l < 0.2 || l > 0.95) {
+    return 'High chroma at extreme lightness - may appear desaturated'
+  }
+
+  return 'Color exceeds sRGB gamut - may appear different on some displays'
 })
 
 async function copyToClipboard() {
@@ -159,7 +248,7 @@ async function copyToClipboard() {
         </div>
 
         <!-- Compact out of gamut indicator -->
-        <div v-if="isOutOfGamut" class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center" title="Out of sRGB gamut">
+        <div v-if="isOutOfGamut" class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center" :title="gamutWarningText">
           <BaseIcon name="lucide:alert-triangle" class="w-2 h-2 text-white" />
         </div>
       </div>
@@ -198,7 +287,7 @@ async function copyToClipboard() {
         Invalid format. Use: oklch(lightness% chroma hue)
       </p>
       <p v-else-if="isOutOfGamut" class="text-xs text-yellow-600 dark:text-yellow-400">
-        Out of sRGB gamut
+        {{ gamutWarningText }}
       </p>
     </div>
 
