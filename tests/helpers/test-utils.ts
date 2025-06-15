@@ -71,7 +71,7 @@ export class TestUtils {
   static async highlightElement(page: Page, selector: string): Promise<void> {
     await page.evaluate((selector) => {
       const element = document.querySelector(selector)
-      if (element) {
+      if (element instanceof HTMLElement) {
         element.style.border = '3px solid red'
         element.style.backgroundColor = 'yellow'
       }
@@ -81,7 +81,7 @@ export class TestUtils {
   static async removeHighlight(page: Page, selector: string): Promise<void> {
     await page.evaluate((selector) => {
       const element = document.querySelector(selector)
-      if (element) {
+      if (element instanceof HTMLElement) {
         element.style.border = ''
         element.style.backgroundColor = ''
       }

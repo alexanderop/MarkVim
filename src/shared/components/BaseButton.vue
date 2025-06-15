@@ -18,7 +18,7 @@ const {
   title?: string
   icon?: string
   iconOnly?: boolean
-  class?: string
+  class?: any
 }>()
 
 defineEmits<Emits>()
