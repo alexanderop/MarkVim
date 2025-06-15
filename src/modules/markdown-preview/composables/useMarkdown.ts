@@ -1,5 +1,5 @@
 import type MarkdownIt from 'markdown-it'
-import { createMarkdownRenderer, generateShikiCSS } from '~/shared/utils/markdown'
+import { addDataTestIdToAlerts, createMarkdownRenderer, generateShikiCSS } from '~/shared/utils/markdown'
 
 export function useMarkdown(markdownContent: Ref<string>) {
   let md: MarkdownIt | null = null
@@ -12,7 +12,8 @@ export function useMarkdown(markdownContent: Ref<string>) {
       if (!md) {
         md = await createMarkdownRenderer()
       }
-      renderedMarkdown.value = md.render(markdownContent.value)
+      const rawHtml = md.render(markdownContent.value)
+      renderedMarkdown.value = addDataTestIdToAlerts(rawHtml)
       shikiCSS.value = generateShikiCSS()
     }
     catch (error) {

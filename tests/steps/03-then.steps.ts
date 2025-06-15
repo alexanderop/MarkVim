@@ -351,13 +351,16 @@ Then('the text color of the status bar should be {string}', async function (this
 Then('the preview pane should display a styled {string} alert box', async function (this: MarkVimWorld, alertType: string) {
   const markVimPage = await getMarkVimPage(this)
 
-  // Wait for alert processing
-  await markVimPage.page.waitForTimeout(1000)
+  // Wait for markdown processing to complete by checking for content
+  await expect(markVimPage.previewContent).toContainText(`This is a test ${alertType.toLowerCase()}.`)
 
+  // Use both CSS class selector and data-testid for more robust selection
   const alertSelector = `.markdown-alert.markdown-alert-${alertType.toLowerCase()}`
-  const alertBox = markVimPage.previewContent.locator(alertSelector)
+  const alertBox = markVimPage.previewContent.locator(alertSelector).or(
+    markVimPage.previewContent.locator(`[data-testid="github-alert-${alertType.toLowerCase()}"]`),
+  )
 
-  await expect(alertBox).toBeVisible({ timeout: 3000 })
+  await expect(alertBox).toBeVisible()
   await expect(alertBox).toContainText(`This is a test ${alertType.toLowerCase()}.`)
 })
 
