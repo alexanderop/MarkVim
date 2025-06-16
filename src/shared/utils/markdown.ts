@@ -97,12 +97,21 @@ export async function createMarkdownRenderer() {
       const token = tokens[idx]
       const langName = token.info.trim().split(/\s+/g)[0] || 'plaintext'
 
+      // Determine if the code block is executable (JS or TS)
+      const isExecutable = ['javascript', 'js', 'typescript', 'ts'].includes(langName)
+
       if (langName === 'mermaid') {
         return `<div class="mermaid">\n${token.content}\n</div>`
       }
 
       const result = originalFence.call(this, tokens, idx, options, env, slf)
       const stripped = stripInlineStyles(result)
+
+      if (isExecutable) {
+        // If it's an executable block, add custom data attributes
+        const blockId = `code-block-${crypto.randomUUID()}`
+        return stripped.replace('<pre', `<pre data-language="${langName}" data-lang-execute="${langName}" data-code-block-id="${blockId}"`)
+      }
 
       return stripped.replace('<pre', `<pre data-language="${langName}"`)
     }
