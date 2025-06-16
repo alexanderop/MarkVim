@@ -57,7 +57,7 @@ const trackGradient = computed(() => {
   const { l, c, h } = props.fullColor
 
   if (props.channel === 'h') {
-    return 'linear-gradient(to right, oklch(0.7 0.15 0), oklch(0.7 0.15 60), oklch(0.7 0.15 120), oklch(0.7 0.15 180), oklch(0.7 0.15 240), oklch(0.7 0.15 300), oklch(0.7 0.15 360))'
+    return `linear-gradient(to right, oklch(${l} ${c} 0), oklch(${l} ${c} 60), oklch(${l} ${c} 120), oklch(${l} ${c} 180), oklch(${l} ${c} 240), oklch(${l} ${c} 300), oklch(${l} ${c} 360))`
   }
 
   if (props.channel === 'l') {

@@ -2,7 +2,7 @@
 import { onKeyUp } from '@vueuse/core'
 import { computed, onMounted, provide, ref } from 'vue'
 
-const { shortcutsByCategory, formatKeys, registerShortcut } = useShortcuts()
+const { shortcutsByCategory, formatKeys, registerShortcut, getDefaultIconForCategory } = useShortcuts()
 
 const isOpen = ref(false)
 
@@ -24,6 +24,7 @@ onMounted(() => {
     description: 'Show keyboard shortcuts',
     action: openModal,
     category: 'Help',
+    icon: 'lucide:help-circle',
   })
 })
 
@@ -80,13 +81,26 @@ const totalShortcuts = computed(() =>
           <div
             v-for="shortcut in category.shortcuts"
             :key="shortcut.keys"
-            class="px-3 py-2 rounded-md flex transition-colors items-center justify-between hover:bg-surface-hover"
+            class="px-3 py-2 rounded-md flex transition-colors items-center hover:bg-surface-hover"
+            data-testid="shortcut-item"
           >
-            <span class="text-sm text-text-primary">
-              {{ shortcut.description }}
-            </span>
+            <div class="flex items-center flex-1 min-w-0">
+              <!-- Icon -->
+              <div class="mr-3 flex-shrink-0">
+                <Icon
+                  :name="shortcut.icon || getDefaultIconForCategory(shortcut.category || 'General')"
+                  class="w-4 h-4 text-text-secondary"
+                />
+              </div>
 
-            <div class="flex items-center space-x-1">
+              <!-- Description -->
+              <span class="text-sm text-text-primary flex-1 min-w-0">
+                {{ shortcut.description }}
+              </span>
+            </div>
+
+            <!-- Keyboard shortcuts -->
+            <div class="flex items-center space-x-1 ml-4">
               <kbd
                 v-for="(key, index) in formatKeys(shortcut.keys).split(/(?=[⌘⌃⌥⇧])|(?<=\w)(?=[⌘⌃⌥⇧])/)"
                 :key="index"

@@ -228,16 +228,16 @@ export function useShortcuts() {
   // Helper function to get default icons for categories
   function getDefaultIconForCategory(category: string): string {
     const categoryIcons: Record<string, string> = {
-      Navigation: '🧭',
-      View: '👁️',
-      File: '📁',
-      General: '⚙️',
-      Help: '❓',
-      Insert: '📋',
-      Format: '✏️',
-      Settings: '⚙️',
+      Navigation: 'lucide:compass',
+      View: 'lucide:eye',
+      File: 'lucide:folder',
+      General: 'lucide:settings',
+      Help: 'lucide:help-circle',
+      Insert: 'lucide:plus',
+      Format: 'lucide:type',
+      Settings: 'lucide:settings',
     }
-    return categoryIcons[category] || '⌨️'
+    return categoryIcons[category] || 'lucide:keyboard'
   }
 
   // Utility to format key combination for display
@@ -397,6 +397,7 @@ export function useShortcuts() {
       description: 'Open settings',
       action: openSettings,
       category: 'Navigation',
+      icon: 'lucide:settings',
     })
 
     registeredShortcuts.value.set('g c', {

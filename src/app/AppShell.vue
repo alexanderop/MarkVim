@@ -170,18 +170,21 @@ onMounted(() => {
       description: 'Switch to Editor only',
       action: () => { setViewMode('editor') },
       category: 'View',
+      icon: 'lucide:edit-3',
     },
     {
       keys: '2',
       description: 'Switch to Split view',
       action: () => { setViewMode('split') },
       category: 'View',
+      icon: 'lucide:columns-2',
     },
     {
       keys: '3',
       description: 'Switch to Preview only',
       action: () => { setViewMode('preview') },
       category: 'View',
+      icon: 'lucide:eye',
     },
     {
       keys: 'meta+k',
@@ -190,6 +193,7 @@ onMounted(() => {
         openCommandPalette()
       },
       category: 'Navigation',
+      icon: 'lucide:search',
     },
     {
       keys: 'meta+s',
@@ -198,6 +202,7 @@ onMounted(() => {
         handleSaveDocument()
       },
       category: 'File',
+      icon: 'lucide:save',
     },
 
     {
@@ -215,6 +220,7 @@ onMounted(() => {
         URL.revokeObjectURL(url)
       },
       category: 'File',
+      icon: 'lucide:download',
     },
     {
       keys: 'v',
@@ -223,6 +229,7 @@ onMounted(() => {
         handleToggleVimMode()
       },
       category: 'Settings',
+      icon: 'lucide:terminal',
     },
     {
       keys: 'l',
@@ -231,6 +238,7 @@ onMounted(() => {
         handleToggleLineNumbers()
       },
       category: 'Settings',
+      icon: 'lucide:hash',
     },
     {
       keys: 'p',
@@ -239,6 +247,7 @@ onMounted(() => {
         handleTogglePreviewSync()
       },
       category: 'Settings',
+      icon: 'lucide:link-2',
     },
   ])
 
