@@ -1,5 +1,5 @@
 import { useCssVar, useMounted } from '@vueuse/core'
-import { watchEffect } from 'vue'
+import { watch, watchEffect } from 'vue'
 
 export interface EditorSettings {
   // Vim configuration
@@ -149,6 +149,11 @@ export function useEditorSettings() {
   onDataReset(() => {
     settings.value = { ...DEFAULT_EDITOR_CONFIG }
   })
+
+  // Auto-save settings when they change
+  watch(settings, () => {
+    saveToLocalStorage()
+  }, { deep: true })
 
   return {
     settings,
