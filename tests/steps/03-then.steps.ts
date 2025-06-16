@@ -2,6 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { Then } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
+import { ensurePage } from '../support/utils.js'
 
 const elementTypeMap: Record<string, string> = {
   headline: 'h1',
@@ -606,13 +607,3 @@ Then('the feature cards should stack vertically on small screens', async functio
   const gridClass = await featureGrid.getAttribute('class')
   expect(gridClass).toContain('grid')
 })
-
-async function ensurePage(world: MarkVimWorld) {
-  if (!world.page) {
-    await world.init()
-  }
-  if (!world.page) {
-    throw new Error('Page not initialized')
-  }
-  return world.page
-}

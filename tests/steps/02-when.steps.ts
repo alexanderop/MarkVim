@@ -2,16 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { When } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
-
-async function ensurePage(world: MarkVimWorld) {
-  if (!world.page) {
-    await world.init()
-  }
-  if (!world.page) {
-    throw new Error('Page not initialized')
-  }
-  return world.page
-}
+import { ensurePage } from '../support/utils.js'
 
 When('the page is loaded', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)

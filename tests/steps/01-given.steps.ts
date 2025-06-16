@@ -2,16 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { Given } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
-
-async function ensurePage(world: MarkVimWorld) {
-  if (!world.page) {
-    await world.init()
-  }
-  if (!world.page) {
-    throw new Error('Page not initialized')
-  }
-  return world.page
-}
+import { ensurePage } from '../support/utils.js'
 
 Given('I navigate to {string}', async function (this: MarkVimWorld, url: string) {
   const page = await ensurePage(this)
