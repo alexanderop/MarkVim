@@ -4,7 +4,6 @@ import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref } from 'vue'
 
 interface Props {
-  modelValue: number
   channel: 'l' | 'c' | 'h' | 'a'
   fullColor: OklchColor
   min: number
@@ -13,9 +12,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits<{
-  'update:modelValue': [value: number]
-}>()
+const model = defineModel<number>({ required: true })
 
 const showTooltip = ref(false)
 
@@ -48,12 +45,12 @@ const channelInfo = computed(() => {
 
 const displayValue = computed(() => {
   if (props.channel === 'l' || props.channel === 'a') {
-    return Math.round(props.modelValue * 100)
+    return Math.round(model.value * 100)
   }
   if (props.channel === 'h') {
-    return Math.round(props.modelValue)
+    return Math.round(model.value)
   }
-  return props.modelValue.toFixed(2)
+  return model.value.toFixed(2)
 })
 
 const trackGradient = computed(() => {
@@ -79,12 +76,12 @@ const trackGradient = computed(() => {
 })
 
 const tooltipPosition = computed(() => {
-  return ((props.modelValue - props.min) / (props.max - props.min)) * 100
+  return ((model.value - props.min) / (props.max - props.min)) * 100
 })
 
 function handleSliderChange(value: number[] | undefined) {
   if (value && value.length > 0) {
-    emit('update:modelValue', value[0])
+    model.value = value[0]
   }
 }
 
@@ -97,7 +94,7 @@ function handleInputChange(event: Event) {
   }
 
   if (!Number.isNaN(value)) {
-    emit('update:modelValue', Math.max(props.min, Math.min(props.max, value)))
+    model.value = Math.max(props.min, Math.min(props.max, value))
   }
 }
 </script>
@@ -140,7 +137,7 @@ function handleInputChange(event: Event) {
     <!-- Compact Slider -->
     <div class="relative group">
       <SliderRoot
-        :model-value="[modelValue]"
+        :model-value="[model]"
         :min="min"
         :max="max"
         :step="step"

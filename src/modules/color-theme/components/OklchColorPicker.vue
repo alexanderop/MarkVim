@@ -31,23 +31,14 @@
 import type { OklchColor } from '../composables/useColorTheme'
 
 interface Props {
-  modelValue: OklchColor
   label: string
   description?: string
 }
 
 const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  'update:modelValue': [value: OklchColor]
-}>()
+const currentColor = defineModel<OklchColor>({ required: true })
 
 const { oklchToString } = useColorTheme()
-
-const currentColor = computed({
-  get: () => props.modelValue,
-  set: (value: OklchColor) => emit('update:modelValue', value),
-})
 
 const colorPreview = computed(() => oklchToString(currentColor.value))
 
@@ -226,10 +217,10 @@ async function copyToClipboard() {
     <div class="flex items-center gap-4">
       <div class="flex-1">
         <h4 class="text-base font-semibold text-text-primary">
-          {{ label }}
+          {{ props.label }}
         </h4>
-        <p v-if="description" class="text-sm text-text-secondary">
-          {{ description }}
+        <p v-if="props.description" class="text-sm text-text-secondary">
+          {{ props.description }}
         </p>
       </div>
 

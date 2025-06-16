@@ -1,6 +1,5 @@
 <script setup lang="ts">
 interface Props {
-  open: boolean
   title: string
   description?: string
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
@@ -12,7 +11,6 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'update:open', value: boolean): void
   (e: 'close'): void
 }
 
@@ -23,9 +21,9 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
-
+const open = defineModel<boolean>('open', { required: true })
 function handleClose() {
-  emit('update:open', false)
+  open.value = false
   emit('close')
 }
 
@@ -42,7 +40,7 @@ const maxWidthClasses = {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="(newOpen) => $emit('update:open', newOpen)">
+  <DialogRoot :open="open" @update:open="(newOpen) => open = newOpen">
     <!-- Trigger slot for custom trigger button -->
     <slot name="trigger" />
 
@@ -69,7 +67,7 @@ const maxWidthClasses = {
                 </DialogDescription>
               </div>
 
-              <DialogClose v-if="showCloseButton" as-child>
+              <DialogClose v-if="props.showCloseButton" as-child>
                 <BaseButton
                   variant="icon"
                   size="icon"
@@ -91,19 +89,19 @@ const maxWidthClasses = {
         </div>
 
         <!-- Footer Section -->
-        <div v-if="$slots.footer || footerLeft || footerRight || $slots['footer-left'] || $slots['footer-right']" class="flex-shrink-0 border-t border-subtle bg-surface-primary/60">
+        <div v-if="$slots.footer || props.footerLeft || props.footerRight || $slots['footer-left'] || $slots['footer-right']" class="flex-shrink-0 border-t border-subtle bg-surface-primary/60">
           <slot name="footer">
             <!-- Default footer content -->
             <div class="p-3 flex items-center justify-between">
               <div class="text-xs text-text-tertiary">
                 <slot name="footer-left">
-                  {{ footerLeft || '' }}
+                  {{ props.footerLeft || '' }}
                 </slot>
               </div>
 
               <div class="text-xs text-text-tertiary">
                 <slot name="footer-right">
-                  {{ footerRight || '' }}
+                  {{ props.footerRight || '' }}
                 </slot>
               </div>
             </div>
