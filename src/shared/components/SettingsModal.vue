@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { settings, toggleVimMode, updateFontSize, resetToDefaults, togglePreviewSync, clearAllData } = useEditorSettings()
+const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 
 function useClearDataModal() {
@@ -59,54 +59,19 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           Editor Behavior
         </h3>
         <div class="space-y-2">
-          <div class="p-3 border border-border rounded-md bg-surface-primary flex items-center justify-between">
-            <div>
-              <h4 class="text-sm text-text-primary font-medium">
-                Vim Mode
-              </h4>
-              <p class="text-xs text-text-secondary">
-                Enable vim keybindings
-              </p>
-            </div>
-            <SwitchRoot
-              :model-value="settings.vimMode"
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-surface-primary" :class="[
-                settings.vimMode ? 'bg-accent' : 'bg-surface-hover',
-              ]"
-              @update:model-value="toggleVimMode"
-            >
-              <SwitchThumb
-                class="rounded-full bg-background h-3 w-3 inline-block transform transition-transform" :class="[
-                  settings.vimMode ? 'translate-x-5' : 'translate-x-1',
-                ]"
-              />
-            </SwitchRoot>
-          </div>
+          <BaseSwitch
+            v-model="settings.vimMode"
+            label="Vim Mode"
+            description="Enable vim keybindings"
+            data-testid="vim-mode-toggle"
+          />
 
-          <div class="p-3 border border-border rounded-md bg-surface-primary flex items-center justify-between">
-            <div>
-              <h4 class="text-sm text-text-primary font-medium">
-                Synchronized Scrolling
-              </h4>
-              <p class="text-xs text-text-secondary">
-                Sync scroll position in split view
-              </p>
-            </div>
-            <SwitchRoot
-              :model-value="settings.previewSync"
-              class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-surface-primary" :class="[
-                settings.previewSync ? 'bg-accent' : 'bg-surface-hover',
-              ]"
-              data-testid="sync-scroll-toggle"
-              @update:model-value="togglePreviewSync"
-            >
-              <SwitchThumb
-                class="rounded-full bg-background h-3 w-3 inline-block transform transition-transform" :class="[
-                  settings.previewSync ? 'translate-x-5' : 'translate-x-1',
-                ]"
-              />
-            </SwitchRoot>
-          </div>
+          <BaseSwitch
+            v-model="settings.previewSync"
+            label="Synchronized Scrolling"
+            description="Sync scroll position in split view"
+            data-testid="sync-scroll-toggle"
+          />
         </div>
       </div>
 
