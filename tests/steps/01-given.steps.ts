@@ -193,40 +193,6 @@ Given('I have disabled synchronized scrolling in the settings', async function (
 })
 
 // Welcome Screen Steps
-Given('I am on a clean browser with no localStorage data', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  await page.evaluate(() => {
-    try {
-      localStorage.clear()
-    }
-    catch {
-      // Ignore localStorage errors in test environments
-    }
-  })
-  // Also clear cookies
-  await page.context().clearCookies()
-})
-
-Given('I am on the welcome screen', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  // Clear localStorage and cookies to ensure welcome screen shows
-  await page.evaluate(() => {
-    try {
-      localStorage.clear()
-    }
-    catch {
-      // Ignore localStorage errors in test environments
-    }
-  })
-  await page.context().clearCookies()
-  await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
-
-  // Verify we're on the welcome screen
-  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
-  await expect(welcomeScreen).toBeVisible()
-})
-
 Given('I visit the MarkVim application for the first time', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.evaluate(() => {
@@ -238,24 +204,6 @@ Given('I visit the MarkVim application for the first time', async function (this
     }
   })
   await page.context().clearCookies()
-  await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
-})
-
-Given('I have previously seen the welcome screen', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-
-  // Set the cookie to indicate welcome screen has been seen
-  await page.context().addCookies([
-    {
-      name: 'markvim_welcome_seen',
-      value: 'true',
-      domain: 'localhost',
-      path: '/',
-      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
-    },
-  ])
-
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
 })

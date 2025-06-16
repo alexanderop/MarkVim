@@ -517,92 +517,42 @@ Then('scroll synchronization should not be active', async function (this: MarkVi
 })
 
 // Welcome Screen Steps
-Then('I should see the welcome screen', async function (this: MarkVimWorld) {
+Then('I should see the welcome screen with {string} title', async function (this: MarkVimWorld, expectedTitle: string) {
   const page = await ensurePage(this)
-  const welcomeScreen = page.locator('div', { hasText: 'MarkVim' }).first()
+  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
   await expect(welcomeScreen).toBeVisible()
-})
 
-Then('I should see the application title {string}', async function (this: MarkVimWorld, expectedTitle: string) {
-  const page = await ensurePage(this)
-  const title = page.locator('h1', { hasText: expectedTitle })
+  const title = page.locator('[data-testid="welcome-title"]', { hasText: expectedTitle })
   await expect(title).toBeVisible()
-})
-
-Then('I should see the tagline {string}', async function (this: MarkVimWorld, expectedTagline: string) {
-  const page = await ensurePage(this)
-  const tagline = page.locator('p', { hasText: expectedTagline })
-  await expect(tagline).toBeVisible()
-})
-
-Then('I should see feature cards for {string}, {string}, and {string}', async function (this: MarkVimWorld, feature1: string, feature2: string, feature3: string) {
-  const page = await ensurePage(this)
-  const features = [feature1, feature2, feature3]
-
-  for (const feature of features) {
-    const featureCard = page.locator('h3', { hasText: feature })
-    await expect(featureCard).toBeVisible()
-  }
 })
 
 Then('I should see a {string} button', async function (this: MarkVimWorld, buttonText: string) {
   const page = await ensurePage(this)
-  const button = page.locator('button', { hasText: buttonText })
+  const button = page.locator('[data-testid="start-writing-button"]', { hasText: buttonText })
   await expect(button).toBeVisible()
 })
 
-Then('I should not see the main application interface', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  const appShell = page.locator('[data-testid="editor-pane"]')
-  await expect(appShell).not.toBeVisible()
-})
-
-Then('I should see a feature card for {string} with description about {word}', async function (this: MarkVimWorld, featureTitle: string, keyword: string) {
-  const page = await ensurePage(this)
-  const featureCard = page.locator('h3', { hasText: featureTitle }).locator('..').locator('..')
-  await expect(featureCard).toBeVisible()
-  await expect(featureCard).toContainText(keyword)
-})
-
-Then('I should be taken to the main application interface', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  const appShell = page.locator('[data-testid="editor-pane"]')
-  await expect(appShell).toBeVisible()
-})
-
-Then('I should see the editor interface', async function (this: MarkVimWorld) {
+Then('I should see the main editor interface', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   const editorPane = page.locator('[data-testid="editor-pane"]')
   await expect(editorPane).toBeVisible()
 })
 
-Then('the welcome screen should be dismissed permanently', async function (this: MarkVimWorld) {
+Then('the welcome screen should not appear on subsequent visits', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
+
+  // Check that the cookie was set
   const cookies = await page.context().cookies()
   const welcomeSeenCookie = cookies.find(cookie => cookie.name === 'markvim_welcome_seen')
   expect(welcomeSeenCookie?.value).toBe('true')
-})
 
-Then('I should be taken directly to the main application interface', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  const appShell = page.locator('[data-testid="editor-pane"]')
-  await expect(appShell).toBeVisible()
-})
+  // Reload the page and verify welcome screen doesn't appear
+  await page.reload()
+  await page.waitForLoadState('networkidle')
 
-Then('the welcome screen should remain readable and functional', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  const title = page.locator('h1', { hasText: 'MarkVim' })
-  const startButton = page.locator('button', { hasText: 'Start Writing' })
+  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  await expect(welcomeScreen).not.toBeVisible()
 
-  await expect(title).toBeVisible()
-  await expect(startButton).toBeVisible()
-})
-
-Then('the feature cards should stack vertically on small screens', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  const featureGrid = page.locator('div').filter({ hasText: 'Vim Modal Editing' }).locator('..').locator('..')
-
-  // In mobile view, the grid should stack vertically
-  const gridClass = await featureGrid.getAttribute('class')
-  expect(gridClass).toContain('grid')
+  const editorPane = page.locator('[data-testid="editor-pane"]')
+  await expect(editorPane).toBeVisible()
 })

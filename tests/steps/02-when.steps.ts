@@ -345,19 +345,13 @@ When('I close the settings modal', async function (this: MarkVimWorld) {
 })
 
 // Welcome Screen Steps
-When('I visit the MarkVim application', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
-})
-
-// Moved to given.steps.ts as it's a state setup step, not an action
-
 When('I click the {string} button', async function (this: MarkVimWorld, buttonText: string) {
   const page = await ensurePage(this)
   const button = page.locator('button', { hasText: buttonText })
   await button.click()
 })
+
+// Moved to given.steps.ts as it's a state setup step, not an action
 
 When('I resize the browser to mobile size', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
