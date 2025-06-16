@@ -47,11 +47,17 @@ const channelInfo = computed(() => {
 })
 
 const displayValue = computed(() => {
-  if (props.channel === 'l' || props.channel === 'a') {
+  if (props.channel === 'l') {
+    return (props.modelValue * 100).toFixed(4)
+  }
+  if (props.channel === 'a') {
     return Math.round(props.modelValue * 100)
   }
   if (props.channel === 'h') {
     return Math.round(props.modelValue)
+  }
+  if (props.channel === 'c') {
+    return props.modelValue.toFixed(4)
   }
   return props.modelValue.toFixed(2)
 })
@@ -127,8 +133,10 @@ function handleInputChange(event: Event) {
           type="number"
           :min="min"
           :max="max"
-          :step="channel === 'l' || channel === 'a' ? 1 : channel === 'h' ? 1 : 0.001"
-          class="w-12 px-1 py-0.5 text-xs font-mono border border-border rounded bg-surface-primary text-text-primary focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent transition-all duration-200"
+          :step="channel === 'l' ? 0.0001 : channel === 'a' ? 1 : channel === 'h' ? 1 : channel === 'c' ? 0.0001 : 0.001"
+          class="px-1 py-0.5 text-xs font-mono border border-border rounded bg-surface-primary text-text-primary focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent transition-all duration-200" :class="[
+            channel === 'l' || channel === 'c' ? 'w-16' : 'w-12',
+          ]"
           @input="handleInputChange"
         >
         <span class="text-xs text-text-secondary">

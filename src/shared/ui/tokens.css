@@ -2,12 +2,11 @@
    ✨ SIMPLIFIED COLOR TOKENS
    =============================================*/
 :root {
-  /* Core 5 tokens - everything you need */
-  --background: oklch(12% 0.002 0);      /* Deep dark background */
-  --foreground: oklch(96% 0 0);          /* Light text */
-  --accent: oklch(60% 0.18 240);         /* Brighter blue for dark mode */
-  --muted: oklch(20% 0.002 0);           /* Dark muted surfaces */
-  --border: oklch(25% 0.003 20);         /* Subtle dark borders */
+  --background: oklch(0.3359 0.0175 280.89);  /* Deep dark background */
+  --foreground: oklch(0.9442 0.0069 247.9);   /* Light text */
+  --accent: oklch(0.754 0.2432 345.89);       /* Vibrant accent color */
+  --muted: oklch(0.4843 0.0447 341.86);       /* Dark muted surfaces */
+  --border: oklch(0.48 0.1046 345);           /* Subtle dark borders */
 
   /* =============================================
      ✨ FONT SYSTEM TOKENS

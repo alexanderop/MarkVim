@@ -18,18 +18,18 @@ export interface ColorTheme {
   alertCaution: OklchColor
 }
 
-// Default dark mode colors
+// Default color theme - matches tokens.css exactly for SSR compatibility
 export const DEFAULT_COLOR_THEME: ColorTheme = {
-  background: { l: 0.12, c: 0.002, h: 0 }, // oklch(12% 0.002 0) - Deep dark background
-  foreground: { l: 0.96, c: 0, h: 0 }, // oklch(96% 0 0) - Light text
-  accent: { l: 0.60, c: 0.18, h: 240 }, // oklch(60% 0.18 240) - Brighter blue for dark mode
-  muted: { l: 0.20, c: 0.002, h: 0 }, // oklch(20% 0.002 0) - Dark muted surfaces
-  border: { l: 0.25, c: 0.003, h: 20 }, // oklch(25% 0.003 20) - Subtle dark borders
-  alertNote: { l: 0.60, c: 0.18, h: 240 }, // Blue - Note/Info
-  alertTip: { l: 0.65, c: 0.18, h: 140 }, // Green - Tips/Success
-  alertImportant: { l: 0.65, c: 0.18, h: 280 }, // Purple - Important
-  alertWarning: { l: 0.65, c: 0.18, h: 80 }, // Orange - Warning
-  alertCaution: { l: 0.65, c: 0.18, h: 20 }, // Red - Danger/Caution
+  background: { l: 0.3359, c: 0.0175, h: 280.89 }, // oklch(33.59% 1.75% 280.89°)
+  foreground: { l: 0.9442, c: 0.0069, h: 247.9 }, // oklch(94.42% 0.69% 247.9°)
+  accent: { l: 0.754, c: 0.2432, h: 345.89 }, // oklch(75.4% 24.32% 345.89°)
+  muted: { l: 0.4843, c: 0.0447, h: 341.86 }, // oklch(48.43% 4.47% 341.86°)
+  border: { l: 0.48, c: 0.1046, h: 345 }, // oklch(48% 10.46% 345°)
+  alertNote: { l: 0.754, c: 0.2432, h: 345.89 }, // Using accent
+  alertTip: { l: 0.754, c: 0.2432, h: 140 }, // Green - Tips/Success
+  alertImportant: { l: 0.754, c: 0.2432, h: 280 }, // Purple - Important
+  alertWarning: { l: 0.754, c: 0.2432, h: 80 }, // Orange - Warning
+  alertCaution: { l: 0.754, c: 0.2432, h: 20 }, // Red - Danger/Caution
 }
 
 function oklchToString(color: OklchColor): string {
@@ -43,12 +43,12 @@ export function useColorTheme() {
     mergeDefaults: true,
   })
 
-  // CSS custom property references
-  const backgroundVar = useCssVar('--background')
-  const foregroundVar = useCssVar('--foreground')
-  const accentVar = useCssVar('--accent')
-  const mutedVar = useCssVar('--muted')
-  const borderVar = useCssVar('--border')
+  // CSS custom property references with SSR-safe initial values
+  const backgroundVar = useCssVar('--background', undefined, { initialValue: 'oklch(33.59% 0.0175 280.89)' })
+  const foregroundVar = useCssVar('--foreground', undefined, { initialValue: 'oklch(94.42% 0.0069 247.9)' })
+  const accentVar = useCssVar('--accent', undefined, { initialValue: 'oklch(75.4% 0.2432 345.89)' })
+  const mutedVar = useCssVar('--muted', undefined, { initialValue: 'oklch(48.43% 0.0447 341.86)' })
+  const borderVar = useCssVar('--border', undefined, { initialValue: 'oklch(48% 0.1046 345)' })
   const alertNoteVar = useCssVar('--alert-note')
   const alertTipVar = useCssVar('--alert-tip')
   const alertImportantVar = useCssVar('--alert-important')
