@@ -344,3 +344,27 @@ When('I close the settings modal', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.closeSettingsModal()
 })
+
+// Welcome Screen Steps
+When('I visit the MarkVim application', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.goto('http://localhost:3000')
+  await page.waitForLoadState('networkidle')
+})
+
+When('I am on the welcome screen', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  await expect(welcomeScreen).toBeVisible()
+})
+
+When('I click the {string} button', async function (this: MarkVimWorld, buttonText: string) {
+  const page = await ensurePage(this)
+  const button = page.locator('button', { hasText: buttonText })
+  await button.click()
+})
+
+When('I resize the browser to mobile size', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.setViewportSize({ width: 375, height: 667 })
+})

@@ -142,3 +142,27 @@ Given('I have disabled synchronized scrolling in the settings', async function (
   await markVimPage.closeSettingsModal()
   await markVimPage.verifySynchronizedScrollingDisabled()
 })
+
+// Welcome Screen Steps
+Given('I am on a clean browser with no localStorage data', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.evaluate(() => {
+    localStorage.clear()
+  })
+})
+
+Given('I visit the MarkVim application for the first time', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.evaluate(() => {
+    localStorage.clear()
+  })
+  await page.goto('http://localhost:3000')
+  await page.waitForLoadState('networkidle')
+})
+
+Given('I have previously seen the welcome screen', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.evaluate(() => {
+    localStorage.setItem('markvim_welcome_seen', 'true')
+  })
+})
