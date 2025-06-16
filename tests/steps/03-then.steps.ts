@@ -578,10 +578,9 @@ Then('I should see the editor interface', async function (this: MarkVimWorld) {
 
 Then('the welcome screen should be dismissed permanently', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
-  const welcomeSeenFlag = await page.evaluate(() => {
-    return localStorage.getItem('markvim_welcome_seen')
-  })
-  expect(welcomeSeenFlag).toBe('true')
+  const cookies = await page.context().cookies()
+  const welcomeSeenCookie = cookies.find(cookie => cookie.name === 'markvim_welcome_seen')
+  expect(welcomeSeenCookie?.value).toBe('true')
 })
 
 Then('I should be taken directly to the main application interface', async function (this: MarkVimWorld) {

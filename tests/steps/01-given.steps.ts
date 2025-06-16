@@ -15,15 +15,16 @@ Given('I navigate to the App', async function (this: MarkVimWorld) {
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
   // Set welcome as seen so tests go directly to the main interface
-  await page.evaluate(() => {
-    try {
-      localStorage.setItem('markvim_welcome_seen', 'true')
-    }
-    catch {
-      // Ignore localStorage errors in test environments
-    }
-  })
-  // Reload to apply the localStorage setting
+  await page.context().addCookies([
+    {
+      name: 'markvim_welcome_seen',
+      value: 'true',
+      domain: 'localhost',
+      path: '/',
+      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+    },
+  ])
+  // Reload to apply the cookie setting
   await page.reload()
   await page.waitForLoadState('networkidle')
 })
@@ -33,15 +34,16 @@ Given('I am on the application page', async function (this: MarkVimWorld) {
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
   // Set welcome as seen so tests go directly to the main interface
-  await page.evaluate(() => {
-    try {
-      localStorage.setItem('markvim_welcome_seen', 'true')
-    }
-    catch {
-      // Ignore localStorage errors in test environments
-    }
-  })
-  // Reload to apply the localStorage setting
+  await page.context().addCookies([
+    {
+      name: 'markvim_welcome_seen',
+      value: 'true',
+      domain: 'localhost',
+      path: '/',
+      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+    },
+  ])
+  // Reload to apply the cookie setting
   await page.reload()
   await page.waitForLoadState('networkidle')
 })
@@ -59,7 +61,6 @@ Given('I have some data stored in localStorage', async function (this: MarkVimWo
     try {
       localStorage.setItem('markvim-view-mode', 'editor')
       localStorage.setItem('markvim-sidebar-visible', 'false')
-      localStorage.setItem('markvim_welcome_seen', 'true')
       localStorage.setItem('markvim-settings', JSON.stringify({
         vimMode: false,
         theme: 'light',
@@ -75,6 +76,17 @@ Given('I have some data stored in localStorage', async function (this: MarkVimWo
       // Ignore localStorage errors in test environments
     }
   })
+
+  // Set the welcome cookie separately
+  await markVimPage.page.context().addCookies([
+    {
+      name: 'markvim_welcome_seen',
+      value: 'true',
+      domain: 'localhost',
+      path: '/',
+      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+    },
+  ])
 })
 
 Given('I have modified settings in localStorage', async function (this: MarkVimWorld) {
@@ -84,7 +96,6 @@ Given('I have modified settings in localStorage', async function (this: MarkVimW
     try {
       localStorage.setItem('markvim-view-mode', 'editor')
       localStorage.setItem('markvim-sidebar-visible', 'false')
-      localStorage.setItem('markvim_welcome_seen', 'true')
       localStorage.setItem('markvim-settings', JSON.stringify({
         vimMode: false,
         theme: 'light',
@@ -98,6 +109,17 @@ Given('I have modified settings in localStorage', async function (this: MarkVimW
       // Ignore localStorage errors in test environments
     }
   })
+
+  // Set the welcome cookie separately
+  await markVimPage.page.context().addCookies([
+    {
+      name: 'markvim_welcome_seen',
+      value: 'true',
+      domain: 'localhost',
+      path: '/',
+      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+    },
+  ])
 })
 
 Given('I create a document with long content for scrolling', async function (this: MarkVimWorld) {
@@ -181,11 +203,13 @@ Given('I am on a clean browser with no localStorage data', async function (this:
       // Ignore localStorage errors in test environments
     }
   })
+  // Also clear cookies
+  await page.context().clearCookies()
 })
 
 Given('I am on the welcome screen', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
-  // Clear localStorage to ensure welcome screen shows
+  // Clear localStorage and cookies to ensure welcome screen shows
   await page.evaluate(() => {
     try {
       localStorage.clear()
@@ -194,6 +218,7 @@ Given('I am on the welcome screen', async function (this: MarkVimWorld) {
       // Ignore localStorage errors in test environments
     }
   })
+  await page.context().clearCookies()
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
 
@@ -212,27 +237,25 @@ Given('I visit the MarkVim application for the first time', async function (this
       // Ignore localStorage errors in test environments
     }
   })
+  await page.context().clearCookies()
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
 })
 
 Given('I have previously seen the welcome screen', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
-  // First navigate to the page
+
+  // Set the cookie to indicate welcome screen has been seen
+  await page.context().addCookies([
+    {
+      name: 'markvim_welcome_seen',
+      value: 'true',
+      domain: 'localhost',
+      path: '/',
+      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+    },
+  ])
+
   await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
-
-  // Then set the localStorage flag
-  await page.evaluate(() => {
-    try {
-      localStorage.setItem('markvim_welcome_seen', 'true')
-    }
-    catch {
-      // Ignore localStorage errors in test environments
-    }
-  })
-
-  // Reload to apply the localStorage setting
-  await page.reload()
   await page.waitForLoadState('networkidle')
 })

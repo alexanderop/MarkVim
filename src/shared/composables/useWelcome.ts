@@ -1,7 +1,7 @@
 export function useWelcome() {
-  // Use VueUse's useLocalStorage with initOnMounted to prevent hydration mismatch
-  const hasSeenWelcome = useLocalStorage('markvim_welcome_seen', false, {
-    initOnMounted: true,
+  const hasSeenWelcome = useCookie<boolean>('markvim_welcome_seen', {
+    default: () => false,
+    maxAge: 60 * 60 * 24 * 365, // 1 year
   })
 
   const markWelcomeAsSeen = () => {

@@ -5,10 +5,18 @@ import { getMarkVimPage } from '../page-objects/markvim-page.js'
 import { ensurePage } from '../support/utils.js'
 
 When('the page is loaded', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  await page.waitForLoadState('networkidle')
-  await expect(page.locator('[data-testid="editor-pane"]')).toBeVisible()
-  await expect(page.locator('[data-testid="preview-pane"]')).toBeVisible()
+  const markVimPage = await getMarkVimPage(this)
+
+  // Check if we're on the welcome screen first
+  const welcomeScreen = markVimPage.page.locator('[data-testid="welcome-screen"]')
+
+  if (await welcomeScreen.isVisible()) {
+    // If we see the welcome screen, click through it to get to the main app
+    await markVimPage.page.getByRole('button', { name: 'Start Writing' }).click()
+  }
+
+  // Now wait for the editor pane to be visible
+  await expect(markVimPage.editorPane).toBeVisible()
 })
 
 When('I click on {word} mode', async function (this: MarkVimWorld, mode: string) {

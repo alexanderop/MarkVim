@@ -20,19 +20,10 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/icon',
-    '@nuxt/image',
-    'nuxt-codemirror',
     'reka-ui/nuxt',
     '@unocss/nuxt',
     '@vueuse/nuxt',
-    'nuxt-delay-hydration',
   ],
-  delayHydration: {
-    // Use manual mode to control which parts get delayed
-    mode: 'manual',
-    // Enable debug in development to see what's happening
-    debug: import.meta.env.DEV,
-  },
   // Configure auto-imports for our custom structure
   components: [
     {
