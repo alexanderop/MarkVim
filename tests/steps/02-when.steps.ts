@@ -303,3 +303,44 @@ When('I navigate to the copied share link in the browser', async function (this:
   this.sharedLink = copiedLink
   await markVimPage.navigateToUrl(copiedLink)
 })
+
+// Add these new steps for the scroll-sync feature
+When('I scroll down in the editor pane', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.scrollDownInEditorPane()
+})
+
+When('I scroll down in the preview pane', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.scrollDownInPreviewPane()
+})
+
+When('I disable synchronized scrolling', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.disableSynchronizedScrolling()
+})
+
+When('I enable synchronized scrolling', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.enableSynchronizedScrolling()
+})
+
+When('I switch to editor-only view', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.switchToEditorView()
+})
+
+When('I switch to preview-only view', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.switchToPreviewView()
+})
+
+When('I open the settings modal', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.openSettingsModal()
+})
+
+When('I close the settings modal', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.closeSettingsModal()
+})

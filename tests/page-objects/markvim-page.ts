@@ -712,7 +712,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     const isEnabled = await this.isSyncScrollEnabled()
     if (!isEnabled) {
       await this.syncScrollToggle.click()
-      await this.page.waitForTimeout(200) // Wait for state change
+      await this.page.waitForTimeout(1500) // Wait for state change and scroll sync setup (1000ms + buffer)
     }
   }
 

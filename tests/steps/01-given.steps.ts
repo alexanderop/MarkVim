@@ -127,3 +127,18 @@ Given('I create a document with the content {string}', async function (this: Mar
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.createDocumentWithContent(content)
 })
+
+// Add these new steps for the scroll-sync feature
+Given('I am in split view', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.switchToSplitView()
+  await markVimPage.verifyCurrentViewMode('split')
+})
+
+Given('I have disabled synchronized scrolling in the settings', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.openSettingsModal()
+  await markVimPage.disableSynchronizedScrolling()
+  await markVimPage.closeSettingsModal()
+  await markVimPage.verifySynchronizedScrollingDisabled()
+})

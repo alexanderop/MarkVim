@@ -488,3 +488,29 @@ Then('the document list should contain {int} documents', async function (this: M
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.verifyDocumentCount(expectedCount)
 })
+
+// Add these new steps for the scroll-sync feature
+Then('the preview pane should scroll proportionally', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyPreviewPaneScrollsProportionally()
+})
+
+Then('the editor pane should scroll proportionally', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyEditorPaneScrollsProportionally()
+})
+
+Then('the preview pane should not scroll', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyPreviewPaneDoesNotScroll()
+})
+
+Then('the editor pane should not scroll', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyEditorPaneDoesNotScroll()
+})
+
+Then('scroll synchronization should not be active', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifySyncScrollNotActive()
+})
