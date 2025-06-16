@@ -298,12 +298,12 @@ function handleGlobalKeydown(event: KeyboardEvent) {
               >
                 <div class="flex flex-1 gap-3 min-w-0 items-center">
                   <!-- Icon -->
-                  <span
+                  <div
                     v-if="command.icon"
-                    class="text-gray-300 text-center flex-shrink-0 w-5"
+                    class="text-gray-300 text-center flex-shrink-0 w-5 h-5 flex items-center justify-center"
                   >
-                    {{ command.icon }}
-                  </span>
+                    <Icon :name="command.icon" class="h-4 w-4" />
+                  </div>
 
                   <!-- Content -->
                   <div class="flex flex-1 flex-col min-w-0">
