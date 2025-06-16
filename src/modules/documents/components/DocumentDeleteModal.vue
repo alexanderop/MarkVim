@@ -1,18 +1,17 @@
 <script setup lang="ts">
 const {
-  open = false,
   documentTitle = '',
 } = defineProps<{
-  open?: boolean
   documentTitle?: string
 }>()
 
 defineEmits<{
-  'update:open': [value: boolean]
-  'confirm': []
-  'cancel': []
-  'close': []
+  confirm: []
+  cancel: []
+  close: []
 }>()
+
+const open = defineModel<boolean>('open', { default: false })
 </script>
 
 <template>
@@ -21,7 +20,7 @@ defineEmits<{
     title="Delete Document"
     max-width="md"
     data-testid="delete-confirm-modal"
-    @update:open="$emit('update:open', $event)"
+    @update:open="(newOpen) => open = newOpen"
     @close="$emit('close')"
   >
     <div class="py-4">

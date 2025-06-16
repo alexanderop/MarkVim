@@ -2,16 +2,11 @@
 import type { Document } from '~/modules/documents/composables/useDocuments'
 
 interface Props {
-  open: boolean
   document: Document | null
 }
 
-interface Emits {
-  (e: 'update:open', value: boolean): void
-}
-
 const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const open = defineModel<boolean>('open', { required: true })
 
 const {
   generateShareLink,
@@ -59,7 +54,7 @@ function formatPercentage(ratio: number): string {
 
 // Generate share link when dialog opens
 watch(
-  () => props.open,
+  () => open.value,
   (isOpen) => {
     if (isOpen && props.document) {
       copySuccess.value = false
@@ -90,7 +85,7 @@ async function copyToClipboard() {
 }
 
 function handleClose() {
-  emit('update:open', false)
+  open.value = false
 }
 </script>
 
@@ -101,7 +96,7 @@ function handleClose() {
     :description="modalDescription"
     max-width="lg"
     data-testid="share-dialog"
-    @update:open="$emit('update:open', $event)"
+    @update:open="(newOpen) => open = newOpen"
     @close="handleClose"
   >
     <div class="space-y-4">

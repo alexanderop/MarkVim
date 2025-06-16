@@ -2,13 +2,11 @@
 import type { Document as DocType } from '~/modules/documents/composables/useDocuments'
 
 const props = withDefaults(defineProps<{
-  open?: boolean
   position?: { x: number, y: number }
   viewMode?: ViewMode
   markdown?: string
   documents?: DocType[]
 }>(), {
-  open: false,
   position: () => ({ x: 0, y: 0 }),
   viewMode: 'split',
   markdown: '',
@@ -16,17 +14,18 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'update:open': [value: boolean]
-  'commandSelected': [command: Command]
-  'changeViewMode': [mode: ViewMode]
-  'saveDocument': []
-  'insertText': [text: string]
-  'toggleVimMode': []
-  'toggleLineNumbers': []
-  'togglePreviewSync': []
-  'toggleSettings': []
-  'selectDocument': [id: string]
+  commandSelected: [command: Command]
+  changeViewMode: [mode: ViewMode]
+  saveDocument: []
+  insertText: [text: string]
+  toggleVimMode: []
+  toggleLineNumbers: []
+  togglePreviewSync: []
+  toggleSettings: []
+  selectDocument: [id: string]
 }>()
+
+const open = defineModel<boolean>('open')
 
 const searchTerm = ref('')
 const selectedIndex = ref(0)
@@ -152,7 +151,7 @@ function selectCommand(command: Command) {
   trackCommandUsage(command.id)
 
   emit('commandSelected', command)
-  emit('update:open', false)
+  open.value = false
   command.action()
   selectedIndex.value = 0
   searchTerm.value = ''
@@ -164,7 +163,7 @@ function handleKeydown(event: KeyboardEvent) {
 
   switch (event.key) {
     case 'Escape':
-      emit('update:open', false)
+      open.value = false
       break
     case 'ArrowDown':
       event.preventDefault()
@@ -212,7 +211,7 @@ function getCommandIndex(command: Command): number {
 }
 
 // Watch for open state changes to reset state
-watch(() => props.open, (isOpen) => {
+watch(() => open.value, (isOpen) => {
   if (isOpen) {
     nextTick(() => {
       searchTerm.value = ''
@@ -237,7 +236,7 @@ onBeforeUnmount(() => {
 })
 
 function handleGlobalKeydown(event: KeyboardEvent) {
-  if (!props.open)
+  if (!open.value)
     return
 
   if (event.target === inputRef.value && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(event.key)) {
@@ -249,7 +248,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="emit('update:open', $event)">
+  <DialogRoot :open="open" @update:open="(newOpen) => open = newOpen">
     <DialogPortal>
       <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
       <DialogContent

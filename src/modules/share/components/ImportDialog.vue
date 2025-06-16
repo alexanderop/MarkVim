@@ -2,19 +2,17 @@
 import type { Document } from '~/modules/documents/composables/useDocuments'
 
 interface Props {
-  open: boolean
   autoImportDocument?: Document | null
 }
 
 interface Emits {
-  (e: 'update:open', value: boolean): void
   (e: 'import', document: Document): void
   (e: 'cancel'): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
-
+const open = defineModel<boolean>('open', { required: true })
 const {
   importFromUrl,
   importError,
@@ -89,7 +87,7 @@ async function handleImport() {
 }
 
 function handleClose() {
-  emit('update:open', false)
+  open.value = false
   importUrl.value = ''
   previewDocument.value = null
 }
@@ -104,7 +102,7 @@ function handleCancel() {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="handleClose">
+  <DialogRoot :open="open" @update:open="(newOpen) => open = newOpen">
     <DialogPortal>
       <DialogOverlay class="bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50" />
       <DialogContent data-testid="import-dialog" class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-gray-700 bg-gray-800 p-6 shadow-xl duration-200 rounded-lg">
