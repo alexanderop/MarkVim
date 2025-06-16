@@ -1,33 +1,23 @@
 export function useWelcome() {
-  const isMounted = useMounted()
+  // Always start with false (show welcome) for consistent SSR/client rendering
+  const hasSeenWelcome = useState<boolean>('markvim-welcome-seen', () => false)
 
-  const hasSeenWelcome = useState<boolean>('markvim-welcome-seen', () => {
-    if (isMounted.value && typeof localStorage !== 'undefined') {
+  // Check localStorage after mount and update state
+  onMounted(() => {
+    if (typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem('markvim_welcome_seen')
-      return saved === 'true'
-    }
-    return false
-  })
-
-  const saveToLocalStorage = () => {
-    if (isMounted.value && typeof localStorage !== 'undefined') {
-      localStorage.setItem('markvim_welcome_seen', hasSeenWelcome.value.toString())
-    }
-  }
-
-  // Watch for mount state and update from localStorage when available
-  watchEffect(() => {
-    if (isMounted.value && typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('markvim_welcome_seen')
-      const savedValue = saved === 'true'
-      if (savedValue !== hasSeenWelcome.value) {
-        hasSeenWelcome.value = savedValue
+      if (saved === 'true') {
+        hasSeenWelcome.value = true
       }
     }
   })
 
   // Watch for changes and save to localStorage
-  watch(hasSeenWelcome, saveToLocalStorage, { immediate: false })
+  watch(hasSeenWelcome, (newValue) => {
+    if (import.meta.client && typeof localStorage !== 'undefined') {
+      localStorage.setItem('markvim_welcome_seen', newValue.toString())
+    }
+  }, { immediate: false })
 
   const markWelcomeAsSeen = () => {
     hasSeenWelcome.value = true
