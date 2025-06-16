@@ -130,56 +130,53 @@ function handleInputBlur() {
   }
 }
 
+function isExtremeLightness(lightness: number): boolean {
+  return lightness < 0.2 || lightness > 0.95
+}
+
+function isExtremeChroma(chroma: number): boolean {
+  return chroma > 0.37
+}
+
+function isExtremeChromaForLightness(lightness: number, chroma: number): boolean {
+  return isExtremeLightness(lightness) && chroma > 0.15
+}
+
+function getMaxChromaForHue(hue: number): number {
+  const normalizedHue = ((hue % 360) + 360) % 360
+
+  if (normalizedHue <= 60)
+    return 0.35
+  if (normalizedHue <= 120)
+    return 0.32
+  if (normalizedHue <= 180)
+    return 0.28
+  if (normalizedHue <= 240)
+    return 0.25
+  if (normalizedHue <= 300)
+    return 0.22
+  return 0.30
+}
+
+function isHueChromaOutOfGamut(lightness: number, chroma: number, hue: number): boolean {
+  if (!isInMidLightnessRange(lightness))
+    return false
+  return chroma > getMaxChromaForHue(hue)
+}
+
+function isInMidLightnessRange(lightness: number): boolean {
+  return lightness >= 0.2 && lightness <= 0.95
+}
+
 const isOutOfGamut = computed(() => {
   const { l, c, h } = currentColor.value
 
-  // More accurate sRGB gamut boundary detection
-  // OKLCH can represent colors outside the sRGB gamut, especially at high chroma values
-
-  // Very high chroma values are almost always out of gamut
-  if (c > 0.37)
+  if (isExtremeChroma(c))
     return true
-
-  // Chroma limits vary by lightness and hue
-  // These are approximate boundaries based on sRGB color space limits
-
-  // Very dark colors (L < 20%) have limited chroma range
-  if (l < 0.2 && c > 0.15)
+  if (isExtremeChromaForLightness(l, c))
     return true
-
-  // Very light colors (L > 95%) have limited chroma range
-  if (l > 0.95 && c > 0.15)
+  if (isHueChromaOutOfGamut(l, c, h))
     return true
-
-  // Mid-range lightness but high chroma
-  if (l >= 0.2 && l <= 0.95) {
-    // Hue-dependent chroma limits (approximate)
-    const normalizedHue = ((h % 360) + 360) % 360 // Normalize to 0-360
-
-    // Red/Orange hues (0-60°) can handle higher chroma
-    if (normalizedHue <= 60 && c > 0.35)
-      return true
-
-    // Yellow hues (60-120°) have good chroma range
-    if (normalizedHue > 60 && normalizedHue <= 120 && c > 0.32)
-      return true
-
-    // Green hues (120-180°) have moderate chroma limits
-    if (normalizedHue > 120 && normalizedHue <= 180 && c > 0.28)
-      return true
-
-    // Cyan hues (180-240°) have lower chroma limits
-    if (normalizedHue > 180 && normalizedHue <= 240 && c > 0.25)
-      return true
-
-    // Blue hues (240-300°) have very limited chroma
-    if (normalizedHue > 240 && normalizedHue <= 300 && c > 0.22)
-      return true
-
-    // Purple/Magenta hues (300-360°) can handle higher chroma
-    if (normalizedHue > 300 && c > 0.30)
-      return true
-  }
 
   return false
 })

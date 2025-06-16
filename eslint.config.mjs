@@ -10,4 +10,13 @@ export default withNuxt(
       'reports/**/*',
     ],
   }),
+  // Additional rule overrides
+  {
+    rules: {
+      // Cyclomatic complexity rule
+      // Default threshold is 20, but you can adjust based on your needs
+      // Start with 'warn' to ease into it, then change to 'error'
+      complexity: ['error', { max: 16 }],
+    },
+  },
 )
