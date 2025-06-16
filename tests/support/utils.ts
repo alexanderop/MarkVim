@@ -8,4 +8,4 @@ export async function ensurePage(world: MarkVimWorld) {
     throw new Error('Page not initialized')
   }
   return world.page
-} 
+}
