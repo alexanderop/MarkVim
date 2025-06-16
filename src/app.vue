@@ -7,6 +7,8 @@ function handleWelcomeEnter() {
 </script>
 
 <template>
-  <Welcome v-if="!hasSeenWelcome" @enter="handleWelcomeEnter" />
-  <AppShell v-else />
+  <BaseLayout>
+    <Welcome v-if="!hasSeenWelcome" @enter="handleWelcomeEnter" />
+    <AppShell v-else />
+  </BaseLayout>
 </template>

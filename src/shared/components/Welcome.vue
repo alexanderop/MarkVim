@@ -9,7 +9,7 @@ function handleStartWriting() {
 </script>
 
 <template>
-  <div class="bg-background text-foreground min-h-screen flex items-center justify-center p-6" data-testid="welcome-screen">
+  <div class="flex-1 flex items-center justify-center p-6" data-testid="welcome-screen">
     <div class="max-w-4xl mx-auto text-center">
       <!-- Main Title -->
       <div class="mb-8">

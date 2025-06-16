@@ -343,11 +343,7 @@ When('I visit the MarkVim application', async function (this: MarkVimWorld) {
   await page.waitForLoadState('networkidle')
 })
 
-When('I am on the welcome screen', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
-  await expect(welcomeScreen).toBeVisible()
-})
+// Moved to given.steps.ts as it's a state setup step, not an action
 
 When('I click the {string} button', async function (this: MarkVimWorld, buttonText: string) {
   const page = await ensurePage(this)

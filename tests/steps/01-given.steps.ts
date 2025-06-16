@@ -14,11 +14,35 @@ Given('I navigate to the App', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
+  // Set welcome as seen so tests go directly to the main interface
+  await page.evaluate(() => {
+    try {
+      localStorage.setItem('markvim_welcome_seen', 'true')
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
+  })
+  // Reload to apply the localStorage setting
+  await page.reload()
+  await page.waitForLoadState('networkidle')
 })
 
 Given('I am on the application page', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.goto('http://localhost:3000')
+  await page.waitForLoadState('networkidle')
+  // Set welcome as seen so tests go directly to the main interface
+  await page.evaluate(() => {
+    try {
+      localStorage.setItem('markvim_welcome_seen', 'true')
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
+  })
+  // Reload to apply the localStorage setting
+  await page.reload()
   await page.waitForLoadState('networkidle')
 })
 
@@ -32,18 +56,24 @@ Given('I have some data stored in localStorage', async function (this: MarkVimWo
   const markVimPage = await getMarkVimPage(this)
 
   await markVimPage.page.evaluate(() => {
-    localStorage.setItem('markvim-view-mode', 'editor')
-    localStorage.setItem('markvim-sidebar-visible', 'false')
-    localStorage.setItem('markvim-settings', JSON.stringify({
-      vimMode: false,
-      theme: 'light',
-      fontSize: 16,
-    }))
-    localStorage.setItem('markvim-documents', JSON.stringify([
-      { id: 'test-doc', content: '# Test Doc', createdAt: Date.now() },
-    ]))
-    localStorage.setItem('markvim-pane-width', '60')
-    localStorage.setItem('markvim-command-history', JSON.stringify(['command1', 'command2']))
+    try {
+      localStorage.setItem('markvim-view-mode', 'editor')
+      localStorage.setItem('markvim-sidebar-visible', 'false')
+      localStorage.setItem('markvim_welcome_seen', 'true')
+      localStorage.setItem('markvim-settings', JSON.stringify({
+        vimMode: false,
+        theme: 'light',
+        fontSize: 16,
+      }))
+      localStorage.setItem('markvim-documents', JSON.stringify([
+        { id: 'test-doc', content: '# Test Doc', createdAt: Date.now() },
+      ]))
+      localStorage.setItem('markvim-pane-width', '60')
+      localStorage.setItem('markvim-command-history', JSON.stringify(['command1', 'command2']))
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
   })
 })
 
@@ -51,16 +81,22 @@ Given('I have modified settings in localStorage', async function (this: MarkVimW
   const markVimPage = await getMarkVimPage(this)
 
   await markVimPage.page.evaluate(() => {
-    localStorage.setItem('markvim-view-mode', 'editor')
-    localStorage.setItem('markvim-sidebar-visible', 'false')
-    localStorage.setItem('markvim-settings', JSON.stringify({
-      vimMode: false,
-      theme: 'light',
-      fontSize: 18,
-      lineNumbers: false,
-      previewSync: false,
-    }))
-    localStorage.setItem('markvim-pane-width', '70')
+    try {
+      localStorage.setItem('markvim-view-mode', 'editor')
+      localStorage.setItem('markvim-sidebar-visible', 'false')
+      localStorage.setItem('markvim_welcome_seen', 'true')
+      localStorage.setItem('markvim-settings', JSON.stringify({
+        vimMode: false,
+        theme: 'light',
+        fontSize: 18,
+        lineNumbers: false,
+        previewSync: false,
+      }))
+      localStorage.setItem('markvim-pane-width', '70')
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
   })
 })
 
@@ -138,14 +174,43 @@ Given('I have disabled synchronized scrolling in the settings', async function (
 Given('I am on a clean browser with no localStorage data', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.evaluate(() => {
-    localStorage.clear()
+    try {
+      localStorage.clear()
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
   })
+})
+
+Given('I am on the welcome screen', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  // Clear localStorage to ensure welcome screen shows
+  await page.evaluate(() => {
+    try {
+      localStorage.clear()
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
+  })
+  await page.goto('http://localhost:3000')
+  await page.waitForLoadState('networkidle')
+
+  // Verify we're on the welcome screen
+  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  await expect(welcomeScreen).toBeVisible()
 })
 
 Given('I visit the MarkVim application for the first time', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.evaluate(() => {
-    localStorage.clear()
+    try {
+      localStorage.clear()
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
   })
   await page.goto('http://localhost:3000')
   await page.waitForLoadState('networkidle')
@@ -153,7 +218,21 @@ Given('I visit the MarkVim application for the first time', async function (this
 
 Given('I have previously seen the welcome screen', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
+  // First navigate to the page
+  await page.goto('http://localhost:3000')
+  await page.waitForLoadState('networkidle')
+
+  // Then set the localStorage flag
   await page.evaluate(() => {
-    localStorage.setItem('markvim_welcome_seen', 'true')
+    try {
+      localStorage.setItem('markvim_welcome_seen', 'true')
+    }
+    catch {
+      // Ignore localStorage errors in test environments
+    }
   })
+
+  // Reload to apply the localStorage setting
+  await page.reload()
+  await page.waitForLoadState('networkidle')
 })
