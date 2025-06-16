@@ -2,6 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { Then } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
+import { ensurePage } from '../support/utils.js'
 
 const elementTypeMap: Record<string, string> = {
   headline: 'h1',
@@ -513,4 +514,45 @@ Then('the editor pane should not scroll', async function (this: MarkVimWorld) {
 Then('scroll synchronization should not be active', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.verifySyncScrollNotActive()
+})
+
+// Welcome Screen Steps
+Then('I should see the welcome screen with {string} title', async function (this: MarkVimWorld, expectedTitle: string) {
+  const page = await ensurePage(this)
+  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  await expect(welcomeScreen).toBeVisible()
+
+  const title = page.locator('[data-testid="welcome-title"]', { hasText: expectedTitle })
+  await expect(title).toBeVisible()
+})
+
+Then('I should see a {string} button', async function (this: MarkVimWorld, buttonText: string) {
+  const page = await ensurePage(this)
+  const button = page.locator('[data-testid="start-writing-button"]', { hasText: buttonText })
+  await expect(button).toBeVisible()
+})
+
+Then('I should see the main editor interface', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  const editorPane = page.locator('[data-testid="editor-pane"]')
+  await expect(editorPane).toBeVisible()
+})
+
+Then('the welcome screen should not appear on subsequent visits', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+
+  // Check that the cookie was set
+  const cookies = await page.context().cookies()
+  const welcomeSeenCookie = cookies.find(cookie => cookie.name === 'markvim_welcome_seen')
+  expect(welcomeSeenCookie?.value).toBe('true')
+
+  // Reload the page and verify welcome screen doesn't appear
+  await page.reload()
+  await page.waitForLoadState('networkidle')
+
+  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  await expect(welcomeScreen).not.toBeVisible()
+
+  const editorPane = page.locator('[data-testid="editor-pane"]')
+  await expect(editorPane).toBeVisible()
 })

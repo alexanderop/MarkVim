@@ -2,22 +2,21 @@ import type { MarkVimWorld } from '../support/world.js'
 import { When } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
-
-async function ensurePage(world: MarkVimWorld) {
-  if (!world.page) {
-    await world.init()
-  }
-  if (!world.page) {
-    throw new Error('Page not initialized')
-  }
-  return world.page
-}
+import { ensurePage } from '../support/utils.js'
 
 When('the page is loaded', async function (this: MarkVimWorld) {
-  const page = await ensurePage(this)
-  await page.waitForLoadState('networkidle')
-  await expect(page.locator('[data-testid="editor-pane"]')).toBeVisible()
-  await expect(page.locator('[data-testid="preview-pane"]')).toBeVisible()
+  const markVimPage = await getMarkVimPage(this)
+
+  // Check if we're on the welcome screen first
+  const welcomeScreen = markVimPage.page.locator('[data-testid="welcome-screen"]')
+
+  if (await welcomeScreen.isVisible()) {
+    // If we see the welcome screen, click through it to get to the main app
+    await markVimPage.page.getByRole('button', { name: 'Start Writing' }).click()
+  }
+
+  // Now wait for the editor pane to be visible
+  await expect(markVimPage.editorPane).toBeVisible()
 })
 
 When('I click on {word} mode', async function (this: MarkVimWorld, mode: string) {
@@ -343,4 +342,18 @@ When('I open the settings modal', async function (this: MarkVimWorld) {
 When('I close the settings modal', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.closeSettingsModal()
+})
+
+// Welcome Screen Steps
+When('I click the {string} button', async function (this: MarkVimWorld, buttonText: string) {
+  const page = await ensurePage(this)
+  const button = page.locator('button', { hasText: buttonText })
+  await button.click()
+})
+
+// Moved to given.steps.ts as it's a state setup step, not an action
+
+When('I resize the browser to mobile size', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.setViewportSize({ width: 375, height: 667 })
 })
