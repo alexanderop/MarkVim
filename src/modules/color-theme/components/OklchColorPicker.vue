@@ -19,12 +19,10 @@
  *
  * WHEN ARE COLORS MOST LIKELY OUT OF GAMUT?
  * - Very high chroma values (> 0.3-0.4)
- * - Extreme lightness (very dark < 20% or very bright > 95%) with high chroma
  * - Certain hue ranges (especially blues and cyans) have lower chroma limits
  *
  * HOW TO STAY IN GAMUT:
  * - Keep chroma values moderate (< 0.25 for most cases)
- * - Be extra careful with blues, cyans, and extreme lightness values
  * - Use the warning indicator to know when you're pushing boundaries
  */
 
@@ -130,16 +128,8 @@ function handleInputBlur() {
   }
 }
 
-function isExtremeLightness(lightness: number): boolean {
-  return lightness < 0.2 || lightness > 0.95
-}
-
 function isExtremeChroma(chroma: number): boolean {
   return chroma > 0.37
-}
-
-function isExtremeChromaForLightness(lightness: number, chroma: number): boolean {
-  return isExtremeLightness(lightness) && chroma > 0.15
 }
 
 function getMaxChromaForHue(hue: number): number {
@@ -173,8 +163,6 @@ const isOutOfGamut = computed(() => {
 
   if (isExtremeChroma(c))
     return true
-  if (isExtremeChromaForLightness(l, c))
-    return true
   if (isHueChromaOutOfGamut(l, c, h))
     return true
 
@@ -185,14 +173,10 @@ const gamutWarningText = computed(() => {
   if (!isOutOfGamut.value)
     return ''
 
-  const { l, c } = currentColor.value
+  const { c } = currentColor.value
 
   if (c > 0.37) {
     return 'Extremely high chroma - will be clamped to sRGB limits'
-  }
-
-  if (l < 0.2 || l > 0.95) {
-    return 'High chroma at extreme lightness - may appear desaturated'
   }
 
   return 'Color exceeds sRGB gamut - may appear different on some displays'

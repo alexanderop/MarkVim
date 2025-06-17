@@ -3,11 +3,11 @@
    =============================================*/
 :root {
   /* Core 5 tokens - everything you need */
-  --background: oklch(12% 0.002 0);      /* Deep dark background */
-  --foreground: oklch(96% 0 0);          /* Light text */
-  --accent: oklch(60% 0.18 240);         /* Brighter blue for dark mode */
-  --muted: oklch(20% 0.002 0);           /* Dark muted surfaces */
-  --border: oklch(25% 0.003 20);         /* Subtle dark borders */
+  --background: oklch(12% 0.002 0);      
+  --foreground: oklch(96% 0 0);          
+  --accent: oklch(60% 0.18 240);         
+  --muted: oklch(20% 0.002 0);           
+  --border: oklch(25% 0.003 20);         
 
   /* =============================================
      ✨ FONT SYSTEM TOKENS
