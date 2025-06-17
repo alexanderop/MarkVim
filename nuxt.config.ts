@@ -78,16 +78,6 @@ export default defineNuxtConfig({
       'shared/utils',
       'stores',
     ],
-    presets: [
-      {
-        from: 'vue',
-        imports: ['ref', 'computed', 'reactive', 'watch', 'onMounted', 'onUnmounted', 'nextTick'],
-      },
-      {
-        from: '@vueuse/core',
-        imports: ['useLocalStorage', 'useMediaQuery', 'watchDebounced'],
-      },
-    ],
   },
   css: [
     '~/shared/ui/tokens.css',
@@ -96,28 +86,6 @@ export default defineNuxtConfig({
     checker: true,
     config: {
       standalone: false,
-    },
-  },
-  vite: {
-    optimizeDeps: {
-      include: ['vue', 'vue-router'],
-      exclude: [],
-    },
-  },
-  ssr: {
-    noExternal: ['vue', 'vue-router', '@vueuse/core', '@vueuse/nuxt', '@pinia/nuxt', 'pinia', 'reka-ui'],
-  },
-  alias: {
-    vue: 'vue/dist/vue.esm-bundler.js',
-  },
-  nitro: {
-    experimental: {
-      wasm: true,
-    },
-    esbuild: {
-      options: {
-        target: 'es2022',
-      },
     },
   },
 })

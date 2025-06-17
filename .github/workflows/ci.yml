@@ -82,14 +82,11 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Build application for testing
-        run: pnpm run build
-
-      - name: Start server and run E2E tests
+      - name: Start dev server and run E2E tests
         run: |
-          pnpm run preview &
+          pnpm run dev &
           SERVER_PID=$!
-          sleep 5
+          sleep 10
           pnpm run test:e2e:ci
           kill $SERVER_PID
 
