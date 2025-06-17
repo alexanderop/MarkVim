@@ -310,61 +310,40 @@ export function useShortcuts() {
     showColorTheme.value = !showColorTheme.value
   }
 
-  // Sequential key support for g+s (like Linear)
-  function createSequentialShortcut(sequence: string[], action: () => void, timeout = 1000) {
-    const sequenceProgress = ref(0)
-    let sequenceTimer: NodeJS.Timeout | null = null
+  // Sequential key support (like Linear g+s shortcuts)
+  function createSequentialShortcut(firstKey: string, secondKey: string, action: () => void, timeout = 1500) {
+    const stage = ref<'start' | 'got-first'>('start')
+    let timer: ReturnType<typeof setTimeout>
 
-    // Reset sequence progress
-    const resetSequence = () => {
-      sequenceProgress.value = 0
-      if (sequenceTimer) {
-        clearTimeout(sequenceTimer)
-        sequenceTimer = null
-      }
+    const resetStage = () => {
+      stage.value = 'start'
+      clearTimeout(timer)
     }
 
-    // Handle each key in sequence
-    sequence.forEach((key, index) => {
-      const keyRef = keys[key as keyof typeof keys]
+    // Listen for first key
+    whenever(keys[firstKey as keyof typeof keys], () => {
+      if (!notUsingInput.value) {
+        resetStage()
+        return
+      }
 
-      whenever(keyRef, () => {
-        if (!notUsingInput.value) {
-          resetSequence()
-          return
-        }
-
-        if (sequenceProgress.value === index) {
-          sequenceProgress.value++
-
-          // Reset timer
-          if (sequenceTimer)
-            clearTimeout(sequenceTimer)
-
-          // If we completed the sequence
-          if (sequenceProgress.value >= sequence.length) {
-            action()
-            resetSequence()
-            return
-          }
-
-          // Set timeout to reset if no next key pressed
-          sequenceTimer = setTimeout(resetSequence, timeout)
-        }
-        else {
-          // Wrong key in sequence, check if this key could start a new sequence
-          if (index === 0) {
-            sequenceProgress.value = 1
-            sequenceTimer = setTimeout(resetSequence, timeout)
-          }
-          else {
-            resetSequence()
-          }
-        }
-      })
+      stage.value = 'got-first'
+      clearTimeout(timer)
+      timer = setTimeout(resetStage, timeout)
     })
 
-    return resetSequence
+    // Listen for second key when we're in the right stage
+    whenever(() => stage.value === 'got-first' && keys[secondKey as keyof typeof keys].value, () => {
+      if (!notUsingInput.value) {
+        resetStage()
+        return
+      }
+
+      action()
+      resetStage()
+    })
+
+    return resetStage
   }
 
   // New document shortcut functionality
@@ -383,13 +362,13 @@ export function useShortcuts() {
   // Pre-register settings shortcut (Linear style: g then s)
   onMounted(() => {
     // Create g->s sequence shortcut
-    createSequentialShortcut(['g', 's'], openSettings)
+    createSequentialShortcut('g', 's', openSettings)
 
     // Create g->c sequence shortcut for color theme
-    createSequentialShortcut(['g', 'c'], openColorTheme)
+    createSequentialShortcut('g', 'c', openColorTheme)
 
     // Create g->n sequence shortcut for new document
-    createSequentialShortcut(['g', 'n'], createNewDocument)
+    createSequentialShortcut('g', 'n', createNewDocument)
 
     // Also register them in the shortcuts list for help display
     registeredShortcuts.value.set('g s', {
@@ -414,6 +393,14 @@ export function useShortcuts() {
       action: createNewDocument,
       category: 'File',
       icon: 'lucide:file-plus',
+    })
+
+    registeredShortcuts.value.set('g t', {
+      keys: 'g t',
+      description: 'Toggle sidebar',
+      action: () => {}, // This will be overridden by the actual handler in AppShell
+      category: 'View',
+      icon: 'lucide:panel-left',
     })
   })
 

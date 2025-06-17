@@ -149,7 +149,7 @@ onMounted(() => {
   const { createSequentialShortcut } = useShortcuts()
 
   // Create g->t sequence shortcut for toggling sidebar
-  createSequentialShortcut(['g', 't'], handleToggleSidebar)
+  createSequentialShortcut('g', 't', handleToggleSidebar)
 
   registerShortcuts([
     {
