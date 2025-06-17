@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
   vimMode: false,
   lineNumbers: true,
   lineNumberMode: 'absolute',
-  lineWrapping: true,
+  lineWrapping: false,
   fontSize: 14,
 })
 
@@ -425,6 +425,11 @@ onBeforeUnmount(() => {
   color: var(--foreground) !important;
   opacity: 0.5;
   font-size: var(--font-size-sm) !important;
+}
+
+.cm-editor .cm-activeLineGutter {
+  color: var(--muted) !important;
+  opacity: 1;
 }
 
 .cm-editor .cm-cursor {

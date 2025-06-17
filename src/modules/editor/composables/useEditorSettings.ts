@@ -45,7 +45,7 @@ export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   fontFamily: 'mono',
   lineNumbers: true,
   lineNumberMode: 'relative',
-  lineWrapping: true,
+  lineWrapping: false,
 
   // Code formatting
   tabSize: 2,
