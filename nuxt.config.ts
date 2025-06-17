@@ -68,6 +68,7 @@ export default defineNuxtConfig({
     dirs: [
       'modules/color-theme/composables',
       'modules/documents/composables',
+      'modules/documents/store.ts',
       'modules/editor/composables',
       'modules/markdown-preview/composables',
       'modules/shortcuts/composables',

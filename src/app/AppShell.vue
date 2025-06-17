@@ -11,15 +11,9 @@ const commandPalettePosition = ref({ x: 0, y: 0 })
 
 const isMobile = useMediaQuery('(max-width: 768px)')
 
-const {
-  documents,
-  activeDocument,
-  activeDocumentId,
-  createDocument,
-  setActiveDocument,
-  updateDocument,
-  getDocumentTitle,
-} = useDocuments()
+const store = useDocumentsStore()
+const { documents, activeDocument, activeDocumentId } = storeToRefs(store)
+const { createDocument, setActiveDocument, updateDocument, getDocumentTitle } = store
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()

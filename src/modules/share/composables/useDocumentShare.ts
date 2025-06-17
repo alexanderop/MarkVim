@@ -1,4 +1,4 @@
-import type { Document } from '~/modules/documents/composables/useDocuments'
+import type { Document } from '~/modules/documents/store'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 
 export interface ShareableDocument {

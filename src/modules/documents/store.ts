@@ -5,10 +5,9 @@ export interface Document {
   updatedAt: number
 }
 
-export function useDocuments() {
-  const defaultDocument: Document = {
-    id: crypto.randomUUID(),
-    content: `# Welcome to MarkVim
+const defaultDocument: Document = {
+  id: crypto.randomUUID(),
+  content: `# Welcome to MarkVim
 
 MarkVim is a markdown editor with full Vim modal editing support and custom keybindings.
 
@@ -179,38 +178,55 @@ You can also reference the same footnote multiple times[^1].
 ---
 
 *Tip: The \`jj\` mapping works just like in your .vimrc - press both j's quickly together.*`,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  }
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
+}
 
-  const documentsStorage = useLocalStorage<Document[]>('markvim-documents', [defaultDocument])
-  const activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDocument.id)
-
-  const { onDataReset } = useDataReset()
-  onDataReset(() => {
-    documentsStorage.value = [defaultDocument]
-    activeDocumentId.value = defaultDocument.id
-  })
+// Private internal store (not exported)
+const _useDocumentsInternalStore = defineStore('documents-internal', () => {
+  const _documents = useLocalStorage<Document[]>('markvim-documents', [defaultDocument])
+  const _activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDocument.id)
 
   // Ensure we have at least one document
-  if (documentsStorage.value.length === 0) {
-    documentsStorage.value = [defaultDocument]
-    activeDocumentId.value = defaultDocument.id
+  if (_documents.value.length === 0) {
+    _documents.value = [defaultDocument]
+    _activeDocumentId.value = defaultDocument.id
   }
 
   // Ensure active document exists
-  if (!documentsStorage.value.find(doc => doc.id === activeDocumentId.value)) {
-    activeDocumentId.value = documentsStorage.value[0]?.id || defaultDocument.id
+  if (!_documents.value.find(doc => doc.id === _activeDocumentId.value)) {
+    _activeDocumentId.value = _documents.value[0]?.id || defaultDocument.id
   }
 
+  return {
+    documents: _documents,
+    activeDocumentId: _activeDocumentId,
+  }
+})
+
+// Public store (exported)
+export const useDocumentsStore = defineStore('documents', () => {
+  const internalStore = _useDocumentsInternalStore()
+  const { onDataReset } = useDataReset()
+
+  // Data reset handling
+  onDataReset(() => {
+    internalStore.documents = [defaultDocument]
+    internalStore.activeDocumentId = defaultDocument.id
+  })
+
+  // Computed properties
   const documents = computed(() => {
-    return [...documentsStorage.value].sort((a, b) => b.updatedAt - a.updatedAt)
+    return [...internalStore.documents].sort((a, b) => b.updatedAt - a.updatedAt)
   })
 
   const activeDocument = computed(() => {
-    return documents.value.find(doc => doc.id === activeDocumentId.value) || documents.value[0]
+    return documents.value.find(doc => doc.id === internalStore.activeDocumentId) || documents.value[0]
   })
 
+  const activeDocumentId = computed(() => internalStore.activeDocumentId)
+
+  // Actions
   function createDocument(): string {
     const newDoc: Document = {
       id: crypto.randomUUID(),
@@ -219,23 +235,23 @@ You can also reference the same footnote multiple times[^1].
       updatedAt: Date.now(),
     }
 
-    documentsStorage.value.unshift(newDoc)
-    activeDocumentId.value = newDoc.id
+    internalStore.documents.unshift(newDoc)
+    internalStore.activeDocumentId = newDoc.id
     return newDoc.id
   }
 
   function setActiveDocument(id: string): void {
-    const doc = documentsStorage.value.find(d => d.id === id)
+    const doc = internalStore.documents.find(d => d.id === id)
     if (doc) {
-      activeDocumentId.value = id
+      internalStore.activeDocumentId = id
     }
   }
 
   function updateDocument(id: string, content: string): void {
-    const docIndex = documentsStorage.value.findIndex(d => d.id === id)
+    const docIndex = internalStore.documents.findIndex(d => d.id === id)
     if (docIndex !== -1) {
-      documentsStorage.value[docIndex] = {
-        ...documentsStorage.value[docIndex],
+      internalStore.documents[docIndex] = {
+        ...internalStore.documents[docIndex],
         content,
         updatedAt: Date.now(),
       }
@@ -243,21 +259,21 @@ You can also reference the same footnote multiple times[^1].
   }
 
   function deleteDocument(id: string): void {
-    const docIndex = documentsStorage.value.findIndex(d => d.id === id)
+    const docIndex = internalStore.documents.findIndex(d => d.id === id)
     if (docIndex === -1)
       return
 
-    documentsStorage.value.splice(docIndex, 1)
+    internalStore.documents.splice(docIndex, 1)
 
     // If we deleted the active document, select another one
-    if (activeDocumentId.value === id) {
-      if (documentsStorage.value.length === 0) {
+    if (internalStore.activeDocumentId === id) {
+      if (internalStore.documents.length === 0) {
         // Create a new document if none exist
         createDocument()
       }
       else {
         // Select the first available document
-        activeDocumentId.value = documentsStorage.value[0].id
+        internalStore.activeDocumentId = internalStore.documents[0].id
       }
     }
   }
@@ -273,11 +289,11 @@ You can also reference the same footnote multiple times[^1].
   return {
     documents,
     activeDocument,
-    activeDocumentId: readonly(activeDocumentId),
+    activeDocumentId,
     createDocument,
     setActiveDocument,
     updateDocument,
     deleteDocument,
     getDocumentTitle,
   }
-}
+})

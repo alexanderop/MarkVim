@@ -1,5 +1,5 @@
 export function useDocumentDeletion() {
-  const { deleteDocument, getDocumentTitle } = useDocuments()
+  const { deleteDocument, getDocumentTitle } = useDocumentsStore()
 
   const deleteModalOpen = ref(false)
   const documentToDelete = ref<{ id: string, title: string } | null>(null)
