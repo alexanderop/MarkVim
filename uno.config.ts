@@ -10,8 +10,9 @@ export default defineConfig({
         '.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6': {
           color: 'var(--accent)',
         },
-        '.prose .shiki, .prose .shiki code, .prose .shiki pre, .prose [class*="shiki-"], .prose pre[data-language] code': {
-          border: '1px solid var(--muted)',
+        '.prose .shiki': {
+          'border-radius': '0.5rem',
+          'overflow-x': 'auto',
         },
         '.prose .mermaid': {
           'display': 'flex',
@@ -123,22 +124,15 @@ export default defineConfig({
             font-variant-ligatures: contextual;
           }
 
-          /* Shiki code blocks */
+          /* Shiki code blocks - let night-owl theme handle colors */
           .shiki,
           .shiki code,
-          .shiki pre,
-          [class*="shiki-"],
-          pre[data-language] code {
+          .shiki pre {
             font-family: var(--font-family-mono) !important;
             font-size: var(--font-size-base) !important;
             font-feature-settings: 'liga' 1, 'calt' 1;
             font-variant-ligatures: contextual;
-          }
-
-          /* Ensure Shiki has proper line wrapping structure */
-          .shiki .line {
-            display: block;
-            min-height: 1.25em;
+            tab-size: 2;
           }
 
           /* CodeMirror editor */

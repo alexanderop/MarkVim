@@ -1,11 +1,10 @@
 import type MarkdownIt from 'markdown-it'
-import { addDataTestIdToAlerts, createMarkdownRenderer, generateShikiCSS } from '~/shared/utils/markdown'
+import { addDataTestIdToAlerts, createMarkdownRenderer } from '~/shared/utils/markdown'
 
 export function useMarkdown(markdownContent: Ref<string>) {
   let md: MarkdownIt | null = null
 
   const renderedMarkdown = ref('')
-  const shikiCSS = ref('')
 
   const updateMarkdown = async () => {
     try {
@@ -14,7 +13,6 @@ export function useMarkdown(markdownContent: Ref<string>) {
       }
       const rawHtml = md.render(markdownContent.value)
       renderedMarkdown.value = addDataTestIdToAlerts(rawHtml)
-      shikiCSS.value = generateShikiCSS()
     }
     catch (error) {
       console.error('Failed to render markdown:', error)
@@ -32,7 +30,6 @@ export function useMarkdown(markdownContent: Ref<string>) {
 
   return {
     renderedMarkdown,
-    shikiCSS,
     updateMarkdown,
   }
 }

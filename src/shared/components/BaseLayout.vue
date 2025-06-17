@@ -1,13 +1,5 @@
 <script setup lang="ts">
-const { shikiCSS } = useMarkdown(ref(''))
-
-useHead({
-  style: [
-    {
-      innerHTML: shikiCSS,
-    },
-  ],
-})
+// No need for Shiki CSS injection anymore since we're using proper dual themes
 </script>
 
 <template>

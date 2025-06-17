@@ -8,20 +8,6 @@ import { createHighlighter } from 'shiki'
 
 let markdownInstance: MarkdownIt | null = null
 let shikiHighlighter: Highlighter | null = null
-const cssClassMap = new Map<string, string>()
-let cssCounter = 0
-
-function stripInlineStyles(html: string): string {
-  const styleAttr = /style=(["'])(.*?)\1/g
-
-  return html.replace(styleAttr, (...args) => {
-    const styleContent = args[2]
-    if (!cssClassMap.has(styleContent)) {
-      cssClassMap.set(styleContent, `shiki-${cssCounter++}`)
-    }
-    return `class="${cssClassMap.get(styleContent)}"`
-  })
-}
 
 async function getShikiHighlighter() {
   if (!shikiHighlighter) {
@@ -33,6 +19,8 @@ async function getShikiHighlighter() {
         'vue',
         'html',
         'css',
+        'scss',
+        'less',
         'json',
         'markdown',
         'bash',
@@ -52,6 +40,8 @@ async function getShikiHighlighter() {
         'xml',
         'dockerfile',
         'plaintext',
+        'tsx',
+        'jsx',
       ],
     })
   }
@@ -102,9 +92,7 @@ export async function createMarkdownRenderer() {
       }
 
       const result = originalFence.call(this, tokens, idx, options, env, slf)
-      const stripped = stripInlineStyles(result)
-
-      return stripped.replace('<pre', `<pre data-language="${langName}"`)
+      return result.replace('<pre', `<pre data-language="${langName}"`)
     }
 
     return markdownInstance
@@ -123,14 +111,9 @@ export async function createMarkdownRenderer() {
 }
 
 export function generateShikiCSS(): string {
-  const cssRules = Array.from(cssClassMap.entries())
-    .map(([style, className]) => `.${className} { ${style} }`)
-    .join('\n')
-
-  return cssRules ? `@layer syntax { ${cssRules} }` : ''
+  return ''
 }
 
 export function resetShikiCSS() {
-  cssClassMap.clear()
-  cssCounter = 0
+  // No-op since we're not using custom CSS classes anymore
 }
