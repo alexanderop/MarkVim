@@ -35,8 +35,8 @@
 }
 
 /* ──────────────────────────
-──────────────────────────*/
    4. Shiki Line Numbers
+   ──────────────────────────*/
 /* Enable line numbers for Shiki code blocks using CSS counters */
 .shiki {
   counter-reset: shiki-line-number;
