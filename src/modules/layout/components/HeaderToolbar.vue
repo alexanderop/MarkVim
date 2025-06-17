@@ -23,14 +23,17 @@ defineEmits<Emits>()
   <header data-testid="header-toolbar" class="px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
     <!-- Left section -->
     <div class="flex gap-3 items-center">
-      <ToolbarButton
+      <BaseButton
         :icon="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
-        :text="isSidebarVisible ? 'Hide' : 'Show'"
-        :title="isSidebarVisible ? 'Hide' : 'Show'"
-        variant="toggle"
+        :title="isSidebarVisible ? 'Hide sidebar' : 'Show sidebar'"
+        variant="ghost"
+        size="sm"
         data-testid="sidebar-toggle"
+        class="text-xs font-medium px-2 py-1 md:text-sm md:px-3 md:py-1.5"
         @click="$emit('toggleSidebar')"
-      />
+      >
+        <span class="hidden md:inline">{{ isSidebarVisible ? 'Hide' : 'Show' }}</span>
+      </BaseButton>
 
       <div class="flex gap-2 items-center">
         <h1 class="text-sm text-gray-100 tracking-tight font-medium w-48 truncate">

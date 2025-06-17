@@ -41,12 +41,13 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     @close="closeSettings"
   >
     <template #trigger>
-      <ToolbarButton
-        variant="toggle"
+      <BaseButton
+        variant="icon"
+        size="icon"
         icon="lucide:settings"
-        text="Settings"
         title="Settings (g s)"
         data-testid="settings-button"
+        icon-only
         @click="openSettings"
       />
     </template>

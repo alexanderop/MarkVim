@@ -56,12 +56,13 @@ const totalShortcuts = computed(() =>
     @close="closeModal"
   >
     <template #trigger>
-      <ToolbarButton
-        variant="toggle"
+      <BaseButton
+        variant="icon"
+        size="icon"
         icon="lucide:keyboard"
-        text="Shortcuts"
         title="Keyboard shortcuts (Shift + ?)"
         data-testid="keyboard-shortcuts-button"
+        icon-only
         @click="openModal"
       />
     </template>
