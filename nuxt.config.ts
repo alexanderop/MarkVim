@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     'reka-ui/nuxt',
     '@unocss/nuxt',
     '@vueuse/nuxt',
+    '@pinia/nuxt',
   ],
   // Configure auto-imports for our custom structure
   components: [
@@ -74,6 +75,7 @@ export default defineNuxtConfig({
       'modules/layout/composables',
       'shared/composables',
       'shared/utils',
+      'stores',
     ],
   },
   css: [
