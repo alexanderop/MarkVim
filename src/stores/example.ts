@@ -21,4 +21,4 @@ export const useExampleStore = defineStore('example', () => {
     increment,
     updateName,
   }
-}) 
+})
