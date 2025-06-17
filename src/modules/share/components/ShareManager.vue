@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/composables/useDocuments'
+import type { Document } from '~/modules/documents/store'
 
 interface Emits {
   (e: 'documentImported', document: Document): void
@@ -8,7 +8,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const { parseShareUrl, clearShareFromUrl } = useDocumentShare()
-const { setActiveDocument } = useDocuments()
+const { setActiveDocument } = useDocumentsStore()
 const { setViewMode } = useViewMode()
 
 const showImportDialog = ref(false)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document as DocType } from '~/modules/documents/composables/useDocuments'
+import type { Document as DocType } from '~/modules/documents/store'
 
 interface Props {
   documents: DocType[]
@@ -16,7 +16,7 @@ interface Emits {
 const _props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { getDocumentTitle } = useDocuments()
+const { getDocumentTitle } = useDocumentsStore()
 
 function handleDocumentClick(id: string) {
   emit('selectDocument', id)

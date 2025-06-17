@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document as DocType } from '~/modules/documents/composables/useDocuments'
+import type { Document as DocType } from '~/modules/documents/store'
 
 const props = withDefaults(defineProps<{
   position?: { x: number, y: number }
@@ -34,7 +34,7 @@ const inputRef = ref<HTMLInputElement>()
 
 // Get all commands from the useShortcuts composable
 const { allCommands } = useShortcuts()
-const { getDocumentTitle } = useDocuments()
+const { getDocumentTitle } = useDocumentsStore()
 const { trackCommandUsage, sortCommandsByHistory } = useCommandHistory()
 
 // Create a computed property to transform documents into commands
