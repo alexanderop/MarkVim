@@ -54,7 +54,8 @@ function openColorPicker(colorDef: typeof colorDefinitions[0]) {
   selectedColorKey.value = colorDef.key
   selectedColorData.value = colorDef
   // Initialize temp color with current theme color, ensuring alpha defaults to 1
-  tempColor.value = { ...theme.value[colorDef.key], a: theme.value[colorDef.key].a ?? 1 }
+  const currentColor = theme[colorDef.key]
+  tempColor.value = { ...currentColor, a: currentColor.a ?? 1 }
   showColorPickerModal.value = true
 }
 
