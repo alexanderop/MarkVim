@@ -249,7 +249,7 @@ When('I click the {string} color setting to open the picker', async function (th
   const markVimPage = await getMarkVimPage(this)
   const colorButton = markVimPage.page.locator(`[data-testid="color-button-${colorName.toLowerCase()}"]`)
   await colorButton.click()
-  
+
   // Wait for the color picker modal to open
   await markVimPage.page.waitForTimeout(500)
   await expect(markVimPage.oklchStringInput).toBeVisible()

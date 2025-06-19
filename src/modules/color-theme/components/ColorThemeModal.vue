@@ -2,7 +2,7 @@
 import type { ColorTheme } from '../store'
 
 const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
-const { showColorTheme, openColorTheme, closeColorTheme } = useShortcuts()
+const { showColorTheme, closeColorTheme } = useShortcuts()
 
 const showColorPickerModal = ref(false)
 const selectedColorKey = ref<keyof ColorTheme>('background')

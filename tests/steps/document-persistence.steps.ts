@@ -10,14 +10,7 @@ Given('I am on the MarkVim home page', async function () {
 })
 
 When('I create a new document with content {string}', async function (content: string) {
-  console.log(`Creating document with content: "${content}"`)
   await markVimPage.createDocumentWithContent(content)
-
-  // Debug: check content after creation
-  const editorContent = await markVimPage.editorContent.textContent()
-  const headerTitle = await markVimPage.headerTitle.textContent()
-  console.log(`After creation - Editor content: "${editorContent}"`)
-  console.log(`After creation - Header title: "${headerTitle}"`)
 
   // Wait for client-only components to load and document to be saved to localStorage
   await this.page.waitForTimeout(1000)
@@ -49,14 +42,6 @@ When('I check the browser console', async function () {
 })
 
 Then('I should see the document {string} is still active', async (documentTitle: string) => {
-  // Debug: check what the actual title is and editor content
-  const actualTitle = await markVimPage.headerTitle.textContent()
-  const editorContent = await markVimPage.editorContent.textContent()
-  console.log(`Expected title: "${documentTitle}"`)
-  console.log(`Actual title: "${actualTitle}"`)
-  console.log(`Editor content: "${editorContent}"`)
-  console.log(`Editor content first line: "${editorContent?.split('\n')[0]}"`)
-
   await markVimPage.verifyDocumentTitle(documentTitle)
 })
 
@@ -77,5 +62,4 @@ Then('I should not see any hydration mismatch warnings', async function () {
   )
 
   expect(hydrationWarnings).toHaveLength(0)
-  console.log('✅ No hydration warnings detected')
 })

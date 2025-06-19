@@ -24,8 +24,6 @@ function createDefaultDocument(): Document {
 }
 
 export const useDocumentsStore = defineStore('documents', () => {
-  console.log('[Documents Store] Initializing documents store (client-only)')
-
   const defaultDoc = createDefaultDocument()
 
   // Since components are client-only, we can use localStorage directly
@@ -34,21 +32,10 @@ export const useDocumentsStore = defineStore('documents', () => {
 
   const { onDataReset } = useDataReset()
 
-  console.log('[Documents Store] Loaded from localStorage:', {
-    documentsCount: _documents.value.length,
-    activeDocumentId: _activeDocumentId.value,
-    documents: _documents.value.map(d => ({
-      id: d.id,
-      title: d.content.split('\n')[0],
-      createdAt: new Date(d.createdAt).toISOString(),
-    })),
-  })
-
   // Initialize store state
   function initializeStore() {
     // Ensure we have at least one document
     if (_documents.value.length === 0) {
-      console.log('[Documents Store] No documents found, creating default document')
       const newDefaultDoc = createDefaultDocument()
       _documents.value = [newDefaultDoc]
       _activeDocumentId.value = newDefaultDoc.id
@@ -56,11 +43,6 @@ export const useDocumentsStore = defineStore('documents', () => {
 
     // Ensure active document exists
     if (!_documents.value.find(doc => doc.id === _activeDocumentId.value)) {
-      console.log('[Documents Store] Active document not found, selecting first available:', {
-        requestedId: _activeDocumentId.value,
-        availableIds: _documents.value.map(d => d.id),
-        selectedId: _documents.value[0]?.id || DEFAULT_DOCUMENT_ID,
-      })
       _activeDocumentId.value = _documents.value[0]?.id || DEFAULT_DOCUMENT_ID
     }
   }
@@ -70,11 +52,9 @@ export const useDocumentsStore = defineStore('documents', () => {
 
   // Data reset handling
   onDataReset(() => {
-    console.log('[Documents Store] Data reset triggered, resetting to default document')
     const newDefaultDoc = createDefaultDocument()
     _documents.value = [newDefaultDoc]
     _activeDocumentId.value = newDefaultDoc.id
-    console.log('[Documents Store] Data reset complete')
   })
 
   // Computed properties
@@ -98,95 +78,48 @@ export const useDocumentsStore = defineStore('documents', () => {
       updatedAt: now,
     }
 
-    console.log('[Documents Store] Creating new document:', {
-      id: newDoc.id,
-      title: newDoc.content.split('\n')[0],
-      documentsCountBefore: _documents.value.length,
-    })
-
     _documents.value.unshift(newDoc)
     _activeDocumentId.value = newDoc.id
-
-    console.log('[Documents Store] Document created successfully:', {
-      documentsCountAfter: _documents.value.length,
-      activeDocumentId: _activeDocumentId.value,
-    })
 
     return newDoc.id
   }
 
   function setActiveDocument(id: string): void {
     const doc = _documents.value.find(d => d.id === id)
-    console.log('[Documents Store] Setting active document:', {
-      requestedId: id,
-      found: !!doc,
-      currentActiveId: _activeDocumentId.value,
-    })
     if (doc) {
       _activeDocumentId.value = id
-      console.log('[Documents Store] Active document changed to:', id)
-    }
-    else {
-      console.warn('[Documents Store] Document not found:', id)
     }
   }
 
   function updateDocument(id: string, content: string): void {
     const docIndex = _documents.value.findIndex(d => d.id === id)
-    console.log('[Documents Store] Updating document:', {
-      id,
-      found: docIndex !== -1,
-      contentLength: content.length,
-      title: content.split('\n')[0],
-    })
     if (docIndex !== -1) {
       _documents.value[docIndex] = {
         ..._documents.value[docIndex],
         content,
         updatedAt: Date.now(),
       }
-      console.log('[Documents Store] Document updated successfully:', {
-        id,
-        updatedAt: new Date().toISOString(),
-      })
-    }
-    else {
-      console.warn('[Documents Store] Document not found for update:', id)
     }
   }
 
   function deleteDocument(id: string): void {
     const docIndex = _documents.value.findIndex(d => d.id === id)
-    console.log('[Documents Store] Deleting document:', {
-      id,
-      found: docIndex !== -1,
-      documentsCountBefore: _documents.value.length,
-      isActiveDocument: _activeDocumentId.value === id,
-    })
 
     if (docIndex === -1) {
-      console.warn('[Documents Store] Document not found for deletion:', id)
       return
     }
 
     _documents.value.splice(docIndex, 1)
-    console.log('[Documents Store] Document deleted:', {
-      id,
-      documentsCountAfter: _documents.value.length,
-    })
 
     // If we deleted the active document, select another one
     if (_activeDocumentId.value === id) {
-      console.log('[Documents Store] Deleted document was active, selecting new active document')
       if (_documents.value.length === 0) {
-        console.log('[Documents Store] No documents left, creating new default document')
         // Create a new document if none exist
         createDocument()
       }
       else {
         // Select the first available document
         const newActiveId = _documents.value[0].id
-        console.log('[Documents Store] Selecting first available document as active:', newActiveId)
         _activeDocumentId.value = newActiveId
       }
     }

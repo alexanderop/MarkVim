@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/store'
 
+defineProps<Props>()
+
+defineEmits<Emits>()
+
 const { openColorTheme } = useShortcuts()
 
 interface Props {
@@ -16,9 +20,6 @@ interface Emits {
   (e: 'toggleSidebar'): void
   (e: 'deleteDocument'): void
 }
-
-defineProps<Props>()
-defineEmits<Emits>()
 </script>
 
 <template>

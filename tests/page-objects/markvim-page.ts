@@ -631,7 +631,6 @@ export class MarkVimPage {
 
     // If CodeMirror API didn't work, fall back to keyboard input
     if (!result.success) {
-      console.log('CodeMirror API failed, falling back to keyboard input')
       // Select all and replace
       const selectAllKey = process.platform === 'darwin' ? 'Meta+a' : 'Control+a'
       await this.page.keyboard.press(selectAllKey)
@@ -659,10 +658,6 @@ export class MarkVimPage {
       catch (error) {
         attempts++
         if (attempts === maxAttempts) {
-          // Log debug info before final failure
-          const actualTitle = await this.headerTitle.textContent()
-          const editorContent = await this.editorContent.textContent()
-          console.log(`Final attempt failed. Expected: "${expectedTitle}", Actual: "${actualTitle}", Editor: "${editorContent?.substring(0, 50)}..."`)
           throw error
         }
         await this.page.waitForTimeout(1000)
