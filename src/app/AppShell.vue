@@ -273,7 +273,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="containerRef" class="flex flex-col h-[100dvh] w-screen overflow-hidden" @keydown="handleGlobalKeydown">
+  <div ref="containerRef" class="flex flex-col h-[100dvh] w-screen overflow-hidden">
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
