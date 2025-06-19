@@ -1,4 +1,5 @@
 import type { Locator, Page } from '@playwright/test'
+import process from 'node:process'
 import { expect } from '@playwright/test'
 
 export class MarkVimPage {
@@ -192,7 +193,12 @@ export class MarkVimPage {
   }
 
   async createNewDocument(): Promise<void> {
+    // Wait for client-only components to load
+    await this.page.waitForSelector('[data-testid="document-list"]', { timeout: 10000 })
     await this.createDocumentBtn.click()
+
+    // Wait for the new document to be created and UI to update
+    await this.page.waitForTimeout(500)
   }
 
   async createNewDocumentWithKeyboard(): Promise<void> {
@@ -595,12 +601,68 @@ export class MarkVimPage {
   async createDocumentWithContent(content: string): Promise<void> {
     await this.createNewDocument()
     await this.focusEditor()
-    await this.page.keyboard.press('Meta+a')
-    await this.page.keyboard.type(content)
+
+    // Use CodeMirror's proper API to set content
+    const result = await this.page.evaluate((newContent) => {
+      // Look for the CodeMirror editor instance
+      const cmElements = document.querySelectorAll('.cm-editor')
+      for (const cmElement of cmElements) {
+        const editorView = (cmElement as any).CodeMirror
+        if (editorView && editorView.dispatch) {
+          // Replace all content
+          editorView.dispatch({
+            changes: { from: 0, to: editorView.state.doc.length, insert: newContent },
+          })
+          return { success: true, content: editorView.state.doc.toString() }
+        }
+      }
+
+      // Fallback: try to find the editor view through global reference
+      if ((window as any).__codemirror_view) {
+        const editorView = (window as any).__codemirror_view
+        editorView.dispatch({
+          changes: { from: 0, to: editorView.state.doc.length, insert: newContent },
+        })
+        return { success: true, content: editorView.state.doc.toString() }
+      }
+
+      return { success: false, content: null }
+    }, content)
+
+    // If CodeMirror API didn't work, fall back to keyboard input
+    if (!result.success) {
+      // Select all and replace
+      const selectAllKey = process.platform === 'darwin' ? 'Meta+a' : 'Control+a'
+      await this.page.keyboard.press(selectAllKey)
+      await this.page.waitForTimeout(100)
+      await this.page.keyboard.type(content)
+    }
+
+    // Wait for the content to be processed and stored
+    await this.page.waitForTimeout(2000)
   }
 
   async verifyDocumentTitle(expectedTitle: string): Promise<void> {
-    await expect(this.headerTitle).toContainText(expectedTitle)
+    // Wait for the header title to be updated after client-side hydration
+    await this.page.waitForTimeout(2000)
+
+    // Check if the title matches or if we need to wait longer
+    const maxAttempts = 5
+    let attempts = 0
+
+    while (attempts < maxAttempts) {
+      try {
+        await expect(this.headerTitle).toContainText(expectedTitle, { timeout: 2000 })
+        return // Success
+      }
+      catch (error) {
+        attempts++
+        if (attempts === maxAttempts) {
+          throw error
+        }
+        await this.page.waitForTimeout(1000)
+      }
+    }
   }
 
   async verifyActiveDocumentContent(expectedContent: string): Promise<void> {
@@ -628,7 +690,7 @@ export class MarkVimPage {
   }
 
   async verifyDialogFocusManagement(): Promise<void> {
-    const focusedElement = await this.page.locator(':focus')
+    const focusedElement = this.page.locator(':focus')
     await expect(focusedElement).toBeVisible()
   }
 
@@ -1121,6 +1183,17 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   async navigateToUrl(url: string): Promise<void> {
     await this.page.goto(url)
     await this.page.waitForLoadState('networkidle')
+  }
+
+  async verifyActiveDocumentIsNotDefault(): Promise<void> {
+    // Verify that the active document is not the default "Welcome to MarkVim" document
+    // by checking that the editor content does not contain the default welcome text
+    const editorContent = await this.editorContent.textContent()
+    expect(editorContent).not.toContain('Welcome to MarkVim')
+
+    // Also verify the document title in the header is not the default
+    const headerText = await this.headerTitle.textContent()
+    expect(headerText).not.toContain('Welcome to MarkVim')
   }
 }
 

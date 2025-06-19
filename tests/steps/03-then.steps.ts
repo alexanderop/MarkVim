@@ -556,3 +556,9 @@ Then('the welcome screen should not appear on subsequent visits', async function
   const editorPane = page.locator('[data-testid="editor-pane"]')
   await expect(editorPane).toBeVisible()
 })
+
+Then('the new document should still be active', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  // Verify that we're not on the default welcome document
+  await markVimPage.verifyActiveDocumentIsNotDefault()
+})

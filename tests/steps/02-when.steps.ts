@@ -249,6 +249,10 @@ When('I click the {string} color setting to open the picker', async function (th
   const markVimPage = await getMarkVimPage(this)
   const colorButton = markVimPage.page.locator(`[data-testid="color-button-${colorName.toLowerCase()}"]`)
   await colorButton.click()
+
+  // Wait for the color picker modal to open
+  await markVimPage.page.waitForTimeout(500)
+  await expect(markVimPage.oklchStringInput).toBeVisible()
 })
 
 When('I set the color picker value to {string} which is a vibrant red', async function (this: MarkVimWorld, colorValue: string) {
@@ -356,4 +360,10 @@ When('I click the {string} button', async function (this: MarkVimWorld, buttonTe
 When('I resize the browser to mobile size', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.setViewportSize({ width: 375, height: 667 })
+})
+
+When('I reload the page', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.reload()
+  await page.waitForLoadState('networkidle')
 })

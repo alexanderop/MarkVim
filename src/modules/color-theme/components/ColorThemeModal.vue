@@ -1,11 +1,13 @@
 <script setup lang="ts">
-const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorTheme()
-const { showColorTheme, openColorTheme, closeColorTheme } = useShortcuts()
+import type { ColorTheme } from '../store'
+
+const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
+const { showColorTheme, closeColorTheme } = useShortcuts()
 
 const showColorPickerModal = ref(false)
-const selectedColorKey = ref<keyof typeof theme.value>('background')
+const selectedColorKey = ref<keyof ColorTheme>('background')
 const selectedColorData = ref({
-  key: 'background' as keyof typeof theme.value,
+  key: 'background' as keyof ColorTheme,
   label: 'Background',
   description: 'Main application background color',
   icon: 'lucide:layout',
@@ -52,7 +54,8 @@ function openColorPicker(colorDef: typeof colorDefinitions[0]) {
   selectedColorKey.value = colorDef.key
   selectedColorData.value = colorDef
   // Initialize temp color with current theme color, ensuring alpha defaults to 1
-  tempColor.value = { ...theme.value[colorDef.key], a: theme.value[colorDef.key].a ?? 1 }
+  const currentColor = theme[colorDef.key]
+  tempColor.value = { ...currentColor, a: currentColor.a ?? 1 }
   showColorPickerModal.value = true
 }
 
@@ -152,18 +155,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     @update:open="(open) => !open && closeColorTheme()"
     @close="closeColorTheme"
   >
-    <template #trigger>
-      <BaseButton
-        variant="ghost"
-        size="sm"
-        icon="lucide:palette"
-        icon-only
-        title="Color Theme"
-        data-testid="color-theme-button"
-        @click="openColorTheme"
-      />
-    </template>
-
     <div class="space-y-6">
       <div>
         <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">

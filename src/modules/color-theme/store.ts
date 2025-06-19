@@ -32,16 +32,27 @@ export const DEFAULT_COLOR_THEME: ColorTheme = {
   alertCaution: { l: 0.65, c: 0.18, h: 20 }, // Red - Danger/Caution
 }
 
-function oklchToString(color: OklchColor): string {
-  const alpha = color.a !== undefined ? ` / ${color.a.toFixed(3)}` : ''
-  return `oklch(${(color.l * 100).toFixed(1)}% ${color.c.toFixed(3)} ${color.h.toFixed(0)}${alpha})`
-}
-
-export function useColorTheme() {
-  // Reactive theme stored in localStorage with VueUse
-  const theme = useLocalStorage<ColorTheme>('markvim-color-theme', DEFAULT_COLOR_THEME, {
+// Private internal store (not exported)
+const _useColorThemeInternalStore = defineStore('color-theme-internal', () => {
+  const _theme = useLocalStorage<ColorTheme>('markvim-color-theme', DEFAULT_COLOR_THEME, {
     mergeDefaults: true,
   })
+
+  return {
+    _theme,
+  }
+})
+
+// Public store (exported)
+export const useColorThemeStore = defineStore('color-theme', () => {
+  // Get internal store instance
+  const internalStore = _useColorThemeInternalStore()
+
+  // Helper function for converting OKLCH to string
+  function oklchToString(color: OklchColor): string {
+    const alpha = color.a !== undefined ? ` / ${color.a.toFixed(3)}` : ''
+    return `oklch(${(color.l * 100).toFixed(1)}% ${color.c.toFixed(3)} ${color.h.toFixed(0)}${alpha})`
+  }
 
   // CSS custom property references
   const backgroundVar = useCssVar('--background')
@@ -81,62 +92,69 @@ export function useColorTheme() {
 
   // Update CSS custom properties when theme changes
   watchEffect(() => {
-    backgroundVar.value = oklchToString(theme.value.background)
-    foregroundVar.value = oklchToString(theme.value.foreground)
-    accentVar.value = oklchToString(theme.value.accent)
-    mutedVar.value = oklchToString(theme.value.muted)
-    borderVar.value = oklchToString(theme.value.border)
-    alertNoteVar.value = oklchToString(theme.value.alertNote)
-    alertTipVar.value = oklchToString(theme.value.alertTip)
-    alertImportantVar.value = oklchToString(theme.value.alertImportant)
-    alertWarningVar.value = oklchToString(theme.value.alertWarning)
-    alertCautionVar.value = oklchToString(theme.value.alertCaution)
+    const currentTheme = internalStore._theme
+
+    // Guard against undefined theme during initialization
+    if (!currentTheme || !currentTheme.background) {
+      return
+    }
+
+    backgroundVar.value = oklchToString(currentTheme.background)
+    foregroundVar.value = oklchToString(currentTheme.foreground)
+    accentVar.value = oklchToString(currentTheme.accent)
+    mutedVar.value = oklchToString(currentTheme.muted)
+    borderVar.value = oklchToString(currentTheme.border)
+    alertNoteVar.value = oklchToString(currentTheme.alertNote)
+    alertTipVar.value = oklchToString(currentTheme.alertTip)
+    alertImportantVar.value = oklchToString(currentTheme.alertImportant)
+    alertWarningVar.value = oklchToString(currentTheme.alertWarning)
+    alertCautionVar.value = oklchToString(currentTheme.alertCaution)
 
     // CodeMirror syntax highlighting colors - accent for headings, foreground for regular text
-    cmContentVar.value = oklchToString(theme.value.foreground)
-    cmHeading1Var.value = oklchToString(theme.value.accent)
-    cmHeading2Var.value = oklchToString(theme.value.accent)
-    cmHeading3Var.value = oklchToString(theme.value.accent)
-    cmHeading4Var.value = oklchToString(theme.value.accent)
-    cmHeading5Var.value = oklchToString(theme.value.accent)
-    cmHeading6Var.value = oklchToString(theme.value.accent)
-    cmKeywordVar.value = oklchToString(theme.value.accent)
-    cmStringVar.value = oklchToString(theme.value.foreground)
-    cmCommentVar.value = oklchToString(theme.value.foreground)
-    cmNumberVar.value = oklchToString(theme.value.accent)
-    cmOperatorVar.value = oklchToString(theme.value.foreground)
-    cmVariableNameVar.value = oklchToString(theme.value.foreground)
-    cmPunctuationVar.value = oklchToString(theme.value.foreground)
-    cmBracketVar.value = oklchToString(theme.value.foreground)
-    cmLinkVar.value = oklchToString(theme.value.accent)
-    cmEmphasisVar.value = oklchToString(theme.value.foreground)
-    cmStrongVar.value = oklchToString(theme.value.foreground)
-    cmStrikethroughVar.value = oklchToString(theme.value.foreground)
+    cmContentVar.value = oklchToString(currentTheme.foreground)
+    cmHeading1Var.value = oklchToString(currentTheme.accent)
+    cmHeading2Var.value = oklchToString(currentTheme.accent)
+    cmHeading3Var.value = oklchToString(currentTheme.accent)
+    cmHeading4Var.value = oklchToString(currentTheme.accent)
+    cmHeading5Var.value = oklchToString(currentTheme.accent)
+    cmHeading6Var.value = oklchToString(currentTheme.accent)
+    cmKeywordVar.value = oklchToString(currentTheme.accent)
+    cmStringVar.value = oklchToString(currentTheme.foreground)
+    cmCommentVar.value = oklchToString(currentTheme.foreground)
+    cmNumberVar.value = oklchToString(currentTheme.accent)
+    cmOperatorVar.value = oklchToString(currentTheme.foreground)
+    cmVariableNameVar.value = oklchToString(currentTheme.foreground)
+    cmPunctuationVar.value = oklchToString(currentTheme.foreground)
+    cmBracketVar.value = oklchToString(currentTheme.foreground)
+    cmLinkVar.value = oklchToString(currentTheme.accent)
+    cmEmphasisVar.value = oklchToString(currentTheme.foreground)
+    cmStrongVar.value = oklchToString(currentTheme.foreground)
+    cmStrikethroughVar.value = oklchToString(currentTheme.foreground)
 
     // CodeMirror selection background - use muted color with some transparency for vim visual mode
-    cmSelectionBackgroundVar.value = oklchToString({ ...theme.value.muted, a: 0.3 })
+    cmSelectionBackgroundVar.value = oklchToString({ ...currentTheme.muted, a: 0.3 })
   })
 
-  // Update a specific color in the theme
-  const updateColor = (colorKey: keyof ColorTheme, color: OklchColor) => {
-    theme.value = {
-      ...theme.value,
+  // Public API - computed properties
+  const theme = computed(() => internalStore._theme)
+
+  // Public API - actions
+  function updateColor(colorKey: keyof ColorTheme, color: OklchColor) {
+    internalStore._theme = {
+      ...internalStore._theme,
       [colorKey]: color,
     }
   }
 
-  // Reset theme to defaults
-  const resetToDefaults = () => {
-    theme.value = { ...DEFAULT_COLOR_THEME }
+  function resetToDefaults() {
+    internalStore._theme = { ...DEFAULT_COLOR_THEME }
   }
 
-  // Export theme as JSON string
-  const exportTheme = (): string => {
-    return JSON.stringify(theme.value, null, 2)
+  function exportTheme(): string {
+    return JSON.stringify(internalStore._theme, null, 2)
   }
 
-  // Import theme from JSON string
-  const importTheme = (themeJson: string): boolean => {
+  function importTheme(themeJson: string): boolean {
     try {
       const parsedTheme = JSON.parse(themeJson) as ColorTheme
 
@@ -154,7 +172,7 @@ export function useColorTheme() {
         return false
       }
 
-      theme.value = parsedTheme
+      internalStore._theme = parsedTheme
       return true
     }
     catch {
@@ -163,11 +181,11 @@ export function useColorTheme() {
   }
 
   return {
-    theme: readonly(theme),
+    theme,
     updateColor,
     resetToDefaults,
     exportTheme,
     importTheme,
     oklchToString,
   }
-}
+})

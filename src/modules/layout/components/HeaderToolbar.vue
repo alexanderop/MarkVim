@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/store'
 
+defineProps<Props>()
+
+defineEmits<Emits>()
+
+const { openColorTheme } = useShortcuts()
+
 interface Props {
   viewMode: ViewMode
   isMobile: boolean
@@ -14,9 +20,6 @@ interface Emits {
   (e: 'toggleSidebar'): void
   (e: 'deleteDocument'): void
 }
-
-defineProps<Props>()
-defineEmits<Emits>()
 </script>
 
 <template>
@@ -91,7 +94,15 @@ defineEmits<Emits>()
       <div class="bg-gray-700/50 h-4 w-px" />
 
       <div class="flex gap-1 items-center">
-        <ColorThemeModal />
+        <BaseButton
+          variant="ghost"
+          size="sm"
+          icon="lucide:palette"
+          icon-only
+          title="Color Theme"
+          data-testid="color-theme-button"
+          @click="openColorTheme"
+        />
         <ShortcutsModal />
         <SettingsModal />
       </div>

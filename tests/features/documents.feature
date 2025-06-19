@@ -83,4 +83,10 @@ Feature: Documents Management
     Then the delete-modal should be visible
     When I confirm the deletion
     Then the document should be deleted
-    And the document-list should contain 1 document 
+    And the document-list should contain 1 document
+
+  Scenario: Document persistence bug - active document resets on reload
+    Given the sidebar is visible
+    When I create a new document
+    When I reload the page
+    Then the new document should still be active 

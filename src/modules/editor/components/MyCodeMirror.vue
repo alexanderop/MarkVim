@@ -288,6 +288,11 @@ function useEditorLifecycle() {
       parent: editor.value,
     })
 
+    // Expose editor view globally for testing
+    if (import.meta.env.NODE_ENV === 'test' || import.meta.env.DEV) {
+      ;(window as any).__codemirror_view = view.value
+    }
+
     if (vimMode.value) {
       setupCustomVimKeybindings()
     }
