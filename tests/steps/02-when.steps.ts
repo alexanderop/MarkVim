@@ -357,3 +357,9 @@ When('I resize the browser to mobile size', async function (this: MarkVimWorld) 
   const page = await ensurePage(this)
   await page.setViewportSize({ width: 375, height: 667 })
 })
+
+When('I reload the page', async function (this: MarkVimWorld) {
+  const page = await ensurePage(this)
+  await page.reload()
+  await page.waitForLoadState('networkidle')
+})

@@ -1122,6 +1122,17 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     await this.page.goto(url)
     await this.page.waitForLoadState('networkidle')
   }
+
+  async verifyActiveDocumentIsNotDefault(): Promise<void> {
+    // Verify that the active document is not the default "Welcome to MarkVim" document
+    // by checking that the editor content does not contain the default welcome text
+    const editorContent = await this.editorContent.textContent()
+    expect(editorContent).not.toContain('Welcome to MarkVim')
+
+    // Also verify the document title in the header is not the default
+    const headerText = await this.headerTitle.textContent()
+    expect(headerText).not.toContain('Welcome to MarkVim')
+  }
 }
 
 // Helper function to get MarkVimPage instance
