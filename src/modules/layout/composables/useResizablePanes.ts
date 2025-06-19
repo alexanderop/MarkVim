@@ -1,4 +1,5 @@
 export function useResizablePanes(initialLeftWidth: number = 50) {
+  const isMobile = useMediaQuery('(max-width: 768px)')
   const leftPaneWidth = useLocalStorage('markvim-pane-width', initialLeftWidth)
   const rightPaneWidth = computed(() => 100 - leftPaneWidth.value)
 
@@ -95,6 +96,11 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
   }
 
   const startDrag = (event: PointerEvent) => {
+    // Disable resizing on mobile
+    if (isMobile.value) {
+      return
+    }
+
     event.preventDefault()
 
     // Capture the pointer to ensure we get all events

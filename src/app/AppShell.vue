@@ -126,6 +126,9 @@ function handleToggleSidebar() {
 
 function handleDocumentSelect(id: string) {
   setActiveDocument(id)
+  if (isMobile.value) {
+    isSidebarVisible.value = false
+  }
 }
 
 function handleCreateDocument() {
@@ -270,7 +273,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="containerRef" class="flex flex-col flex-1 overflow-hidden">
+  <div ref="containerRef" class="flex flex-col h-[100dvh] w-screen overflow-hidden" @keydown="handleGlobalKeydown">
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
@@ -289,7 +292,7 @@ onBeforeUnmount(() => {
           :documents="documents"
           :active-document-id="activeDocumentId"
           :is-visible="isSidebarVisible"
-          class="transition-all duration-300 ease-out" :class="[
+          class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none" :class="[
             isSidebarVisible
               ? 'transform translate-x-0 opacity-100'
               : 'transform -translate-x-full opacity-0 pointer-events-none',
@@ -301,7 +304,7 @@ onBeforeUnmount(() => {
         <template #fallback>
           <DocumentListSkeleton
             v-show="isSidebarVisible"
-            class="transition-all duration-300 ease-out" :class="[
+            class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none" :class="[
               isSidebarVisible
                 ? 'transform translate-x-0 opacity-100'
                 : 'transform -translate-x-full opacity-0 pointer-events-none',
@@ -309,6 +312,13 @@ onBeforeUnmount(() => {
           />
         </template>
       </ClientOnly>
+
+      <!-- Mobile overlay when sidebar is open -->
+      <div
+        v-if="isSidebarVisible && isMobile"
+        class="bg-black/50 inset-0 fixed z-10 md:hidden"
+        @click="isSidebarVisible = false"
+      />
 
       <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
         <div
@@ -321,9 +331,9 @@ onBeforeUnmount(() => {
             v-if="isEditorVisible"
             ref="editorScrollContainer"
             data-testid="editor-pane"
-            class="w-full transition-all duration-300 ease-in-out" :class="[
-              isSplitView ? 'md:border-r border-gray-800 border-b md:border-b-0' : '',
-              isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+            class="w-full transition-all duration-300 ease-in-out overflow-auto" :class="[
+              isSplitView ? 'md:border-r border-gray-800' : '',
+              isSplitView && isMobile ? 'h-1/2' : 'h-full',
               !isSplitView && !isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
               isDragging ? 'opacity-90' : '',
             ]"
@@ -359,7 +369,7 @@ onBeforeUnmount(() => {
             ref="previewScrollContainer"
             data-testid="preview-pane"
             class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
-              isSplitView ? 'h-1/2 md:h-full' : 'h-full',
+              isSplitView && isMobile ? 'h-1/2' : 'h-full',
               !isSplitView && !isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
               isDragging ? 'opacity-90' : '',
             ]"
