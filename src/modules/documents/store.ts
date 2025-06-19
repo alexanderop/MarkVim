@@ -9,9 +9,9 @@ export interface Document {
   updatedAt: number
 }
 
-// Use a consistent default document ID to avoid SSR hydration mismatches
+// Use a consistent default document ID
 const DEFAULT_DOCUMENT_ID = 'default-welcome-document-id'
-// Use fixed timestamps to avoid SSR/client hydration mismatches
+// Use fixed timestamps to avoid hydration mismatches
 const DEFAULT_TIMESTAMP = 1703980800000 // 2023-12-31 00:00:00 UTC
 
 function createDefaultDocument(): Document {
@@ -23,38 +23,28 @@ function createDefaultDocument(): Document {
   }
 }
 
-// Client-side only localStorage operations to avoid SSR issues
-function createClientSafeLocalStorage<T>(key: string, defaultValue: T) {
-  // During SSR, return reactive ref with default value
-  if (import.meta.server) {
-    return ref(defaultValue)
-  }
-
-  // On client, use normal useLocalStorage
-  return useLocalStorage(key, defaultValue)
-}
-
-// Private internal store (not exported)
-const _useDocumentsInternalStore = defineStore('documents-internal', () => {
-  console.log('[Documents Store] Initializing documents store')
+export const useDocumentsStore = defineStore('documents', () => {
+  console.log('[Documents Store] Initializing documents store (client-only)')
 
   const defaultDoc = createDefaultDocument()
-  const _documents = createClientSafeLocalStorage<Document[]>('markvim-documents', [defaultDoc])
-  const _activeDocumentId = createClientSafeLocalStorage('markvim-active-document-id', defaultDoc.id)
 
-  // Only log localStorage details on client-side to avoid SSR issues
-  if (import.meta.client) {
-    console.log('[Documents Store] Loaded from localStorage:', {
-      documentsCount: _documents.value.length,
-      activeDocumentId: _activeDocumentId.value,
-      documents: _documents.value.map(d => ({ id: d.id, title: d.content.split('\n')[0], createdAt: new Date(d.createdAt).toISOString() })),
-    })
-  }
-  else {
-    console.log('[Documents Store] SSR initialization with default document')
-  }
+  // Since components are client-only, we can use localStorage directly
+  const _documents = useLocalStorage<Document[]>('markvim-documents', [defaultDoc])
+  const _activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDoc.id)
 
-  // Initialize store state - handle both SSR and client scenarios
+  const { onDataReset } = useDataReset()
+
+  console.log('[Documents Store] Loaded from localStorage:', {
+    documentsCount: _documents.value.length,
+    activeDocumentId: _activeDocumentId.value,
+    documents: _documents.value.map(d => ({
+      id: d.id,
+      title: d.content.split('\n')[0],
+      createdAt: new Date(d.createdAt).toISOString(),
+    })),
+  })
+
+  // Initialize store state
   function initializeStore() {
     // Ensure we have at least one document
     if (_documents.value.length === 0) {
@@ -78,45 +68,25 @@ const _useDocumentsInternalStore = defineStore('documents-internal', () => {
   // Initialize immediately
   initializeStore()
 
-  // Re-initialize on client hydration to ensure persistence works
-  if (import.meta.client) {
-    nextTick(() => {
-      initializeStore()
-    })
-  }
-
-  return {
-    documents: _documents,
-    activeDocumentId: _activeDocumentId,
-  }
-})
-
-// Public store (exported)
-export const useDocumentsStore = defineStore('documents', () => {
-  const internalStore = _useDocumentsInternalStore()
-  const { onDataReset } = useDataReset()
-
-  // Data reset handling - only on client-side
-  if (import.meta.client) {
-    onDataReset(() => {
-      console.log('[Documents Store] Data reset triggered, resetting to default document')
-      const newDefaultDoc = createDefaultDocument()
-      internalStore.documents = [newDefaultDoc]
-      internalStore.activeDocumentId = newDefaultDoc.id
-      console.log('[Documents Store] Data reset complete')
-    })
-  }
+  // Data reset handling
+  onDataReset(() => {
+    console.log('[Documents Store] Data reset triggered, resetting to default document')
+    const newDefaultDoc = createDefaultDocument()
+    _documents.value = [newDefaultDoc]
+    _activeDocumentId.value = newDefaultDoc.id
+    console.log('[Documents Store] Data reset complete')
+  })
 
   // Computed properties
   const documents = computed(() => {
-    return [...internalStore.documents].sort((a, b) => b.updatedAt - a.updatedAt)
+    return [..._documents.value].sort((a, b) => b.updatedAt - a.updatedAt)
   })
 
   const activeDocument = computed(() => {
-    return documents.value.find(doc => doc.id === internalStore.activeDocumentId) || documents.value[0]
+    return documents.value.find(doc => doc.id === _activeDocumentId.value) || documents.value[0]
   })
 
-  const activeDocumentId = computed(() => internalStore.activeDocumentId)
+  const activeDocumentId = computed(() => _activeDocumentId.value)
 
   // Actions
   function createDocument(): string {
@@ -131,29 +101,29 @@ export const useDocumentsStore = defineStore('documents', () => {
     console.log('[Documents Store] Creating new document:', {
       id: newDoc.id,
       title: newDoc.content.split('\n')[0],
-      documentsCountBefore: internalStore.documents.length,
+      documentsCountBefore: _documents.value.length,
     })
 
-    internalStore.documents.unshift(newDoc)
-    internalStore.activeDocumentId = newDoc.id
+    _documents.value.unshift(newDoc)
+    _activeDocumentId.value = newDoc.id
 
     console.log('[Documents Store] Document created successfully:', {
-      documentsCountAfter: internalStore.documents.length,
-      activeDocumentId: internalStore.activeDocumentId,
+      documentsCountAfter: _documents.value.length,
+      activeDocumentId: _activeDocumentId.value,
     })
 
     return newDoc.id
   }
 
   function setActiveDocument(id: string): void {
-    const doc = internalStore.documents.find(d => d.id === id)
+    const doc = _documents.value.find(d => d.id === id)
     console.log('[Documents Store] Setting active document:', {
       requestedId: id,
       found: !!doc,
-      currentActiveId: internalStore.activeDocumentId,
+      currentActiveId: _activeDocumentId.value,
     })
     if (doc) {
-      internalStore.activeDocumentId = id
+      _activeDocumentId.value = id
       console.log('[Documents Store] Active document changed to:', id)
     }
     else {
@@ -162,7 +132,7 @@ export const useDocumentsStore = defineStore('documents', () => {
   }
 
   function updateDocument(id: string, content: string): void {
-    const docIndex = internalStore.documents.findIndex(d => d.id === id)
+    const docIndex = _documents.value.findIndex(d => d.id === id)
     console.log('[Documents Store] Updating document:', {
       id,
       found: docIndex !== -1,
@@ -170,8 +140,8 @@ export const useDocumentsStore = defineStore('documents', () => {
       title: content.split('\n')[0],
     })
     if (docIndex !== -1) {
-      internalStore.documents[docIndex] = {
-        ...internalStore.documents[docIndex],
+      _documents.value[docIndex] = {
+        ..._documents.value[docIndex],
         content,
         updatedAt: Date.now(),
       }
@@ -186,12 +156,12 @@ export const useDocumentsStore = defineStore('documents', () => {
   }
 
   function deleteDocument(id: string): void {
-    const docIndex = internalStore.documents.findIndex(d => d.id === id)
+    const docIndex = _documents.value.findIndex(d => d.id === id)
     console.log('[Documents Store] Deleting document:', {
       id,
       found: docIndex !== -1,
-      documentsCountBefore: internalStore.documents.length,
-      isActiveDocument: internalStore.activeDocumentId === id,
+      documentsCountBefore: _documents.value.length,
+      isActiveDocument: _activeDocumentId.value === id,
     })
 
     if (docIndex === -1) {
@@ -199,25 +169,25 @@ export const useDocumentsStore = defineStore('documents', () => {
       return
     }
 
-    internalStore.documents.splice(docIndex, 1)
+    _documents.value.splice(docIndex, 1)
     console.log('[Documents Store] Document deleted:', {
       id,
-      documentsCountAfter: internalStore.documents.length,
+      documentsCountAfter: _documents.value.length,
     })
 
     // If we deleted the active document, select another one
-    if (internalStore.activeDocumentId === id) {
+    if (_activeDocumentId.value === id) {
       console.log('[Documents Store] Deleted document was active, selecting new active document')
-      if (internalStore.documents.length === 0) {
+      if (_documents.value.length === 0) {
         console.log('[Documents Store] No documents left, creating new default document')
         // Create a new document if none exist
         createDocument()
       }
       else {
         // Select the first available document
-        const newActiveId = internalStore.documents[0].id
+        const newActiveId = _documents.value[0].id
         console.log('[Documents Store] Selecting first available document as active:', newActiveId)
-        internalStore.activeDocumentId = newActiveId
+        _activeDocumentId.value = newActiveId
       }
     }
   }

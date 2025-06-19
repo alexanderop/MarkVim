@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const isSidebarVisible = useLocalStorage('markvim-sidebar-visible', true)
+// Client-safe localStorage for sidebar visibility
+const isSidebarVisible = import.meta.client
+  ? useLocalStorage('markvim-sidebar-visible', true)
+  : ref(true)
 
 const { onDataReset } = useDataReset()
 onDataReset(() => {
@@ -277,20 +280,32 @@ onBeforeUnmount(() => {
     />
 
     <div class="flex flex-1 relative overflow-hidden">
-      <DocumentList
-        v-show="isSidebarVisible"
-        :documents="documents"
-        :active-document-id="activeDocumentId"
-        :is-visible="isSidebarVisible"
-        class="transition-all duration-300 ease-out" :class="[
-          isSidebarVisible
-            ? 'transform translate-x-0 opacity-100'
-            : 'transform -translate-x-full opacity-0 pointer-events-none',
-        ]"
-        @select-document="handleDocumentSelect"
-        @create-document="handleCreateDocument"
-        @delete-document="handleDeleteActiveDocument"
-      />
+      <ClientOnly>
+        <DocumentList
+          v-show="isSidebarVisible"
+          :documents="documents"
+          :active-document-id="activeDocumentId"
+          :is-visible="isSidebarVisible"
+          class="transition-all duration-300 ease-out" :class="[
+            isSidebarVisible
+              ? 'transform translate-x-0 opacity-100'
+              : 'transform -translate-x-full opacity-0 pointer-events-none',
+          ]"
+          @select-document="handleDocumentSelect"
+          @create-document="handleCreateDocument"
+          @delete-document="handleDeleteActiveDocument"
+        />
+        <template #fallback>
+          <DocumentListSkeleton
+            v-show="isSidebarVisible"
+            class="transition-all duration-300 ease-out" :class="[
+              isSidebarVisible
+                ? 'transform translate-x-0 opacity-100'
+                : 'transform -translate-x-full opacity-0 pointer-events-none',
+            ]"
+          />
+        </template>
+      </ClientOnly>
 
       <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
         <div
@@ -314,13 +329,18 @@ onBeforeUnmount(() => {
               width: isSplitView && !isMobile ? `${leftPaneWidth}%` : '100%',
             }"
           >
-            <MarkdownEditor
-              :model-value="activeMarkdown"
-              :settings="settings"
-              class="h-full"
-              @update:model-value="activeMarkdown = $event || ''"
-              @vim-mode-change="handleVimModeChange"
-            />
+            <ClientOnly>
+              <MarkdownEditor
+                :model-value="activeMarkdown"
+                :settings="settings"
+                class="h-full"
+                @update:model-value="activeMarkdown = $event || ''"
+                @vim-mode-change="handleVimModeChange"
+              />
+              <template #fallback>
+                <MarkdownEditorSkeleton />
+              </template>
+            </ClientOnly>
           </div>
 
           <ResizableSplitter

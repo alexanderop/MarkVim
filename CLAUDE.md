@@ -38,14 +38,17 @@ pnpm preview
 
 ### Testing Commands
 ```bash
-# Run E2E tests (headless)
+# Run E2E tests (headless) - REQUIRES DEV SERVER RUNNING
 pnpm run test:e2e
 
-# Run E2E tests with browser UI
+# Run E2E tests with browser UI - REQUIRES DEV SERVER RUNNING
 pnpm run test:e2e:headed
 
-# Run tests with auto-started server
+# Run tests with auto-started server (RECOMMENDED FOR DEBUGGING)
 pnpm run test:e2e:with-server
+
+# IMPORTANT: Always use test:e2e:with-server when debugging E2E tests
+# This automatically starts the dev server before running tests
 ```
 
 ## Project Structure
