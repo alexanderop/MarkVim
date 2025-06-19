@@ -22,6 +22,9 @@ const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = u
 const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
 const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode } = useViewMode()
 
+// Initialize color theme store to ensure persistence on app startup
+const _colorThemeStore = useColorThemeStore()
+
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
