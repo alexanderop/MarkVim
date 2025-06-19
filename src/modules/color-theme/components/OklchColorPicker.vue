@@ -26,7 +26,7 @@
  * - Use the warning indicator to know when you're pushing boundaries
  */
 
-import type { OklchColor } from '../composables/useColorTheme'
+import type { OklchColor } from '../store'
 
 interface Props {
   label: string
@@ -36,7 +36,7 @@ interface Props {
 const props = defineProps<Props>()
 const currentColor = defineModel<OklchColor>({ required: true })
 
-const { oklchToString } = useColorTheme()
+const { oklchToString } = useColorThemeStore()
 
 const colorPreview = computed(() => oklchToString(currentColor.value))
 

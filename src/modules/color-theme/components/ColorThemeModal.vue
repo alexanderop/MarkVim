@@ -1,11 +1,13 @@
 <script setup lang="ts">
-const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorTheme()
+import type { ColorTheme } from '../store'
+
+const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
 const { showColorTheme, openColorTheme, closeColorTheme } = useShortcuts()
 
 const showColorPickerModal = ref(false)
-const selectedColorKey = ref<keyof typeof theme.value>('background')
+const selectedColorKey = ref<keyof ColorTheme>('background')
 const selectedColorData = ref({
-  key: 'background' as keyof typeof theme.value,
+  key: 'background' as keyof ColorTheme,
   label: 'Background',
   description: 'Main application background color',
   icon: 'lucide:layout',
@@ -152,18 +154,6 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     @update:open="(open) => !open && closeColorTheme()"
     @close="closeColorTheme"
   >
-    <template #trigger>
-      <BaseButton
-        variant="ghost"
-        size="sm"
-        icon="lucide:palette"
-        icon-only
-        title="Color Theme"
-        data-testid="color-theme-button"
-        @click="openColorTheme"
-      />
-    </template>
-
     <div class="space-y-6">
       <div>
         <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">

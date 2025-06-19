@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/store'
 
+const { openColorTheme } = useShortcuts()
+
 interface Props {
   viewMode: ViewMode
   isMobile: boolean
@@ -91,7 +93,15 @@ defineEmits<Emits>()
       <div class="bg-gray-700/50 h-4 w-px" />
 
       <div class="flex gap-1 items-center">
-        <ColorThemeModal />
+        <BaseButton
+          variant="ghost"
+          size="sm"
+          icon="lucide:palette"
+          icon-only
+          title="Color Theme"
+          data-testid="color-theme-button"
+          @click="openColorTheme"
+        />
         <ShortcutsModal />
         <SettingsModal />
       </div>

@@ -413,5 +413,7 @@ onBeforeUnmount(() => {
     />
 
     <ShareManager @document-imported="handleDocumentImported" />
+
+    <ColorThemeModal />
   </div>
 </template>
