@@ -10,19 +10,20 @@ const emit = defineEmits<{
 }>()
 
 const modelValue = defineModel<string>()
+const isMobile = useMediaQuery('(max-width: 768px)')
 </script>
 
 <template>
-  <div class="bg-surface-primary flex flex-col h-screen w-full">
+  <div class="bg-surface-primary flex flex-col h-full w-full">
     <!-- Header -->
-    <div class="px-6 border-b border-border bg-surface-primary flex flex-shrink-0 h-10 items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-1.5">
+    <div class="px-3 md:px-6 border-b border-border bg-surface-primary flex flex-shrink-0 h-10 items-center justify-between">
+      <div class="flex items-center space-x-2 md:space-x-4">
+        <div class="hidden md:flex items-center space-x-1.5">
           <div class="rounded-full bg-window-close h-3 w-3 shadow-sm" />
           <div class="rounded-full bg-window-minimize h-3 w-3 shadow-sm" />
           <div class="rounded-full bg-window-maximize h-3 w-3 shadow-sm" />
         </div>
-        <div class="bg-border h-4 w-px" />
+        <div class="bg-border h-4 w-px hidden md:block" />
         <Icon name="lucide:edit-3" class="text-text-primary h-4 w-4" />
       </div>
       <div class="flex items-center space-x-3" />
@@ -41,7 +42,7 @@ const modelValue = defineModel<string>()
         :line-numbers="settings.lineNumbers"
         :line-number-mode="settings.lineNumberMode"
         :line-wrapping="settings.lineWrapping"
-        :font-size="settings.fontSize"
+        :font-size="isMobile ? Math.max(16, settings.fontSize) : settings.fontSize"
         :style="{
           fontFamily: settings.fontFamily === 'mono' ? 'var(--font-family-mono)' : 'var(--font-family-sans)',
         }"

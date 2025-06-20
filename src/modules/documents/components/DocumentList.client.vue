@@ -66,9 +66,9 @@ function formatDate(timestamp: number): string {
     class="border-r border-[var(--border)] bg-[var(--background)] flex flex-col h-full w-72"
   >
     <!-- Header -->
-    <div class="px-4 border-b border-[var(--border)] flex h-14 items-center justify-between">
+    <div class="px-4 py-3 md:py-0 border-b border-[var(--border)] flex h-14 items-center justify-between">
       <div class="flex gap-3 items-center">
-        <h2 class="text-sm text-[var(--foreground)] font-medium">
+        <h2 class="text-base md:text-sm text-[var(--foreground)] font-medium">
           Notes
         </h2>
         <div class="rounded-full bg-[var(--muted)] flex h-5 w-5 items-center justify-center">
@@ -78,13 +78,13 @@ function formatDate(timestamp: number): string {
 
       <button
         data-testid="create-document-btn"
-        class="group text-[var(--background)] rounded-md bg-[var(--accent)] flex h-7 w-7 shadow-lg transition-all duration-200 items-center justify-center hover:opacity-90"
+        class="group text-[var(--background)] rounded-md bg-[var(--accent)] flex h-8 w-8 md:h-7 md:w-7 shadow-lg transition-all duration-200 items-center justify-center hover:opacity-90 active:scale-95"
         title="New note"
         @click="handleCreateDocument"
       >
         <Icon
           name="i-lucide-plus"
-          class="h-4 w-4 transition-transform duration-200 group-hover:scale-110"
+          class="h-5 w-5 md:h-4 md:w-4 transition-transform duration-200 group-hover:scale-110"
         />
       </button>
     </div>
@@ -102,7 +102,7 @@ function formatDate(timestamp: number): string {
             <!-- Main document item -->
             <ContextMenuTrigger as-child>
               <div
-                class="px-3 py-3 border rounded-lg cursor-pointer transition-all duration-200 relative"
+                class="px-3 py-3 md:py-3 border rounded-lg cursor-pointer transition-all duration-200 relative active:scale-[0.98]"
                 :class="[
                   document.id === activeDocumentId
                     ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-30 shadow-lg'

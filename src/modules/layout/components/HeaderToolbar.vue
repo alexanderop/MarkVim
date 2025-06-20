@@ -23,7 +23,7 @@ interface Emits {
 </script>
 
 <template>
-  <header data-testid="header-toolbar" class="px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
+  <header data-testid="header-toolbar" class="px-2 md:px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
     <!-- Left section -->
     <div class="flex gap-3 items-center">
       <BaseButton
@@ -39,14 +39,14 @@ interface Emits {
       </BaseButton>
 
       <div class="flex gap-2 items-center">
-        <h1 class="text-sm text-gray-100 tracking-tight font-medium w-48 truncate">
+        <h1 class="text-sm text-gray-100 tracking-tight font-medium w-32 md:w-48 truncate">
           {{ activeDocumentTitle }}
         </h1>
       </div>
     </div>
 
     <!-- Center section - View mode toggle -->
-    <div data-testid="view-mode-toggle" class="p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
+    <div data-testid="view-mode-toggle" class="p-0.5 md:p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
       <BaseButton
         v-for="mode in [
           { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
@@ -58,7 +58,7 @@ interface Emits {
         size="sm"
         :icon="mode.icon"
         :data-testid="`view-mode-${mode.key}`"
-        class="relative"
+        class="relative px-2 py-1 md:px-3 md:py-1.5"
         :class="viewMode === mode.key ? 'text-accent' : 'text-foreground opacity-60 hover:opacity-80'"
         :title="`${mode.label} (${mode.shortcut})`"
         @click="$emit('update:viewMode', mode.key as 'split' | 'editor' | 'preview')"
@@ -75,7 +75,7 @@ interface Emits {
     </div>
 
     <!-- Right section -->
-    <div class="flex gap-2 items-center">
+    <div class="flex gap-1 md:gap-2 items-center">
       <ShareButton
         :document="activeDocument"
       />
@@ -86,14 +86,14 @@ interface Emits {
         icon="lucide:trash-2"
         title="Delete note"
         data-testid="delete-document-btn"
-        class="hover:text-error hover:bg-error/10"
+        class="hover:text-error hover:bg-error/10 hidden md:flex"
         icon-only
         @click="$emit('deleteDocument')"
       />
 
-      <div class="bg-gray-700/50 h-4 w-px" />
+      <div class="bg-gray-700/50 h-4 w-px hidden md:block" />
 
-      <div class="flex gap-1 items-center">
+      <div class="flex gap-0.5 md:gap-1 items-center">
         <BaseButton
           variant="ghost"
           size="sm"
@@ -101,6 +101,7 @@ interface Emits {
           icon-only
           title="Color Theme"
           data-testid="color-theme-button"
+          class="hidden md:flex"
           @click="openColorTheme"
         />
         <ShortcutsModal />
