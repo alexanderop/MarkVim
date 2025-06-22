@@ -1,25 +1,21 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/store'
 
-defineProps<Props>()
-
-defineEmits<Emits>()
-
-const { openColorTheme } = useShortcuts()
-
-interface Props {
+defineProps<{
   viewMode: ViewMode
   isMobile: boolean
   isSidebarVisible: boolean
   activeDocumentTitle: string
   activeDocument: Document | null
-}
+}>()
 
-interface Emits {
+defineEmits<{
   (e: 'update:viewMode', value: ViewMode): void
   (e: 'toggleSidebar'): void
   (e: 'deleteDocument'): void
-}
+}>()
+
+const { openColorTheme } = useShortcuts()
 </script>
 
 <template>

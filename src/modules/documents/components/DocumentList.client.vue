@@ -76,17 +76,15 @@ function formatDate(timestamp: number): string {
         </div>
       </div>
 
-      <button
+      <BaseButton
         data-testid="create-document-btn"
-        class="group text-[var(--background)] rounded-md bg-[var(--accent)] flex h-8 w-8 md:h-7 md:w-7 shadow-lg transition-all duration-200 items-center justify-center hover:opacity-90 active:scale-95"
+        variant="icon"
+        size="icon"
+        icon="lucide:plus"
         title="New note"
+        class="bg-accent text-accent-foreground shadow-lg hover:opacity-90 active:scale-95"
         @click="handleCreateDocument"
-      >
-        <Icon
-          name="i-lucide-plus"
-          class="h-5 w-5 md:h-4 md:w-4 transition-transform duration-200 group-hover:scale-110"
-        />
-      </button>
+      />
     </div>
 
     <!-- Document List -->
