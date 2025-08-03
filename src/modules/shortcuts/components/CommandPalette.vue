@@ -45,7 +45,7 @@ const documentCommands = computed((): Command[] => {
     description: `Last updated: ${new Date(doc.updatedAt).toLocaleDateString()}`,
     action: () => emit('selectDocument', doc.id),
     group: 'Files',
-    icon: '📄',
+    icon: 'lucide:file-text',
   }))
 })
 
@@ -258,13 +258,14 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         <!-- Search Input -->
         <div class="px-4 py-3 border-b border-gray-700">
           <input
+            id="command-search"
             ref="inputRef"
             v-model="searchTerm"
             type="text"
             placeholder="Type a command or search..."
+            aria-label="Search commands"
             data-testid="command-palette-search"
             class="text-base text-gray-100 outline-none bg-transparent w-full placeholder-gray-400"
-            autofocus
           >
         </div>
 
@@ -284,14 +285,16 @@ function handleGlobalKeydown(event: KeyboardEvent) {
               </div>
 
               <!-- Commands in Group -->
-              <div
+              <button
                 v-for="command in group.commands"
                 :key="command.id"
-                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between" :class="[
+                type="button"
+                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between w-full text-left focus:outline-none focus:ring-0" :class="[
                   isSelected(command)
                     ? 'bg-gray-700/50'
                     : 'hover:bg-gray-800/50',
                 ]"
+                :aria-label="`Execute ${command.label} command`"
                 :data-command-index="getCommandIndex(command)"
                 @click="selectCommand(command)"
               >
@@ -325,7 +328,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                 >
                   {{ command.shortcut }}
                 </div>
-              </div>
+              </button>
             </div>
           </template>
         </div>

@@ -114,6 +114,7 @@ onMounted(() => {
             rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="MarkVim on GitHub"
+            aria-label="MarkVim on GitHub"
           >
             <Icon name="lucide:github" class="w-5 h-5" />
           </a>
@@ -123,6 +124,7 @@ onMounted(() => {
             rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="LinkedIn"
+            aria-label="LinkedIn"
           >
             <Icon name="lucide:linkedin" class="w-5 h-5" />
           </a>
@@ -132,6 +134,7 @@ onMounted(() => {
             rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="X (Twitter)"
+            aria-label="X (Twitter)"
           >
             <Icon name="lucide:twitter" class="w-5 h-5" />
           </a>
@@ -141,6 +144,7 @@ onMounted(() => {
             rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="BlueSky"
+            aria-label="BlueSky"
           >
             <Icon name="lucide:cloud" class="w-5 h-5" />
           </a>
@@ -148,6 +152,7 @@ onMounted(() => {
             href="mailto:alex@alexop.dev"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="Email"
+            aria-label="Email"
           >
             <Icon name="lucide:mail" class="w-5 h-5" />
           </a>

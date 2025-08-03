@@ -263,7 +263,7 @@ onMounted(() => {
       handleCreateDocument()
     },
     category: 'File',
-    icon: '📄',
+    icon: 'lucide:file-plus',
   })
 })
 
@@ -314,9 +314,11 @@ onBeforeUnmount(() => {
       </ClientOnly>
 
       <!-- Mobile overlay when sidebar is open -->
-      <div
+      <button
         v-if="isSidebarVisible && isMobile"
-        class="bg-black/50 inset-0 fixed z-10 md:hidden"
+        type="button"
+        class="bg-black/50 inset-0 fixed z-10 md:hidden cursor-default"
+        aria-label="Close sidebar"
         @click="isSidebarVisible = false"
       />
 

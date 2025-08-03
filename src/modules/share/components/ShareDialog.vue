@@ -116,13 +116,15 @@ function handleClose() {
       <!-- Share Link -->
       <div v-else-if="shareLink" class="space-y-3">
         <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-200">
+          <label for="share-link" class="text-sm font-medium text-gray-200">
             Share Link
           </label>
           <div class="flex gap-2">
             <input
+              id="share-link"
               v-model="shareLink"
               readonly
+              aria-label="Share link"
               class="flex-1 px-3 py-2 text-sm bg-gray-900/50 border border-gray-600 rounded-md text-gray-200 font-mono text-xs"
               data-testid="share-link-input"
             >
