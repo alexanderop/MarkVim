@@ -113,19 +113,21 @@ function handleInputChange(event: Event) {
             'bg-gray-400': channel === 'a',
           }"
         />
-        <label class="text-xs font-medium text-text-primary">
+        <label :for="`${channel}-input`" class="text-xs font-medium text-text-primary">
           {{ channelInfo.label }}
         </label>
       </div>
 
       <div class="flex items-center gap-2">
         <input
+          :id="`${channel}-input`"
           :value="displayValue"
           type="number"
           :min="min"
           :max="max"
           :step="channel === 'l' || channel === 'a' ? 1 : channel === 'h' ? 1 : 0.001"
           class="w-12 px-1 py-0.5 text-xs font-mono border border-border rounded bg-surface-primary text-text-primary focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent transition-all duration-200"
+          :aria-label="`${channelInfo.label} value`"
           @input="handleInputChange"
         >
         <span class="text-xs text-text-secondary">

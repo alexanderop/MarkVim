@@ -45,6 +45,7 @@ const switchId = props.id || useId()
     v-else
     :id="switchId"
     v-model="model"
+    aria-label="Toggle switch"
     class="rounded-full inline-flex h-5 w-9 transition-colors items-center relative focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-surface-primary"
     :class="[model ? 'bg-accent' : 'bg-surface-hover']"
   >

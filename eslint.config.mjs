@@ -1,5 +1,6 @@
 // @ts-check
 import antfu from '@antfu/eslint-config'
+import vueA11y from 'eslint-plugin-vuejs-accessibility'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
@@ -10,6 +11,17 @@ export default withNuxt(
       'reports/**/*',
     ],
   }),
+  // Vue accessibility plugin
+  {
+    plugins: {
+      'vuejs-accessibility': vueA11y,
+    },
+    rules: {
+      ...vueA11y.configs.recommended.rules,
+      // Disable label-has-for as we're using proper id/for associations
+      'vuejs-accessibility/label-has-for': 'off',
+    },
+  },
   // Additional rule overrides
   {
     rules: {

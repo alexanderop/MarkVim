@@ -229,7 +229,7 @@ async function copyToClipboard() {
     <!-- Compact OKLCH Input -->
     <div class="space-y-2">
       <div class="flex items-center justify-between">
-        <label class="text-sm font-medium text-text-primary">OKLCH Value</label>
+        <label for="oklch-input" class="text-sm font-medium text-text-primary">OKLCH Value</label>
         <button
           class="text-xs text-accent hover:text-accent/80 transition-colors"
           title="Copy to clipboard"
@@ -240,9 +240,11 @@ async function copyToClipboard() {
       </div>
 
       <input
+        id="oklch-input"
         :value="oklchInput"
         type="text"
         placeholder="oklch(60% 0.18 240)"
+        aria-label="OKLCH color value"
         class="w-full px-3 py-2 text-sm font-mono bg-surface-primary border rounded-lg transition-all duration-200 focus:outline-none"
         :class="[
           isValidInput

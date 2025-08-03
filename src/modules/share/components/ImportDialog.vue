@@ -140,12 +140,14 @@ function handleCancel() {
           <!-- Manual Import URL Input -->
           <div v-else class="space-y-3">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-gray-200">
+              <label for="import-url" class="text-sm font-medium text-gray-200">
                 Share Link
               </label>
               <textarea
+                id="import-url"
                 v-model="importUrl"
                 placeholder="Paste MarkVim share link here..."
+                aria-label="MarkVim share link"
                 class="w-full px-3 py-2 text-sm bg-gray-900/50 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 resize-none"
                 rows="3"
                 data-testid="import-url-input"

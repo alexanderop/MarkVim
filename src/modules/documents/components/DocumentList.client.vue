@@ -101,13 +101,16 @@ function formatDate(timestamp: number): string {
           <ContextMenuRoot>
             <!-- Main document item -->
             <ContextMenuTrigger as-child>
-              <div
-                class="px-3 py-3 md:py-3 border rounded-lg cursor-pointer transition-all duration-200 relative active:scale-[0.98]"
+              <button
+                type="button"
+                class="px-3 py-3 md:py-3 border rounded-lg cursor-pointer transition-all duration-200 relative active:scale-[0.98] w-full text-left"
                 :class="[
                   document.id === activeDocumentId
                     ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-30 shadow-lg'
                     : 'border-transparent hover:bg-[var(--muted)] hover:border-[var(--border)]',
                 ]"
+                :aria-label="`Select document: ${getDocumentTitle(document.content)}`"
+                :aria-current="document.id === activeDocumentId ? 'true' : undefined"
                 :data-testid="document.id === activeDocumentId ? `document-item-active-${index}` : `document-item-inactive-${index}`"
                 @click="handleDocumentClick(document.id)"
               >
@@ -175,7 +178,7 @@ function formatDate(timestamp: number): string {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             </ContextMenuTrigger>
 
             <!-- Context Menu -->

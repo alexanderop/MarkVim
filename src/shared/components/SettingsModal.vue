@@ -121,44 +121,48 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           <!-- Line Numbers -->
           <div class="p-3 border border-border rounded-md bg-surface-primary">
             <div class="space-y-2">
-              <label class="flex gap-2 items-center">
+              <div class="flex gap-2 items-center">
                 <input
+                  id="line-numbers"
                   v-model="settings.lineNumbers"
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-sm text-text-primary font-medium">Show Line Numbers</span>
-              </label>
+                <label for="line-numbers" class="text-sm text-text-primary font-medium">Show Line Numbers</label>
+              </div>
 
               <div v-if="settings.lineNumbers" class="ml-5 space-y-1">
                 <div class="flex gap-4">
-                  <label class="flex gap-1 items-center">
+                  <div class="flex gap-1 items-center">
                     <input
+                      id="line-mode-absolute"
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="absolute"
                       class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-text-primary">Absolute</span>
-                  </label>
-                  <label class="flex gap-1 items-center">
+                    <label for="line-mode-absolute" class="text-xs text-text-primary">Absolute</label>
+                  </div>
+                  <div class="flex gap-1 items-center">
                     <input
+                      id="line-mode-relative"
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="relative"
                       class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-text-primary">Relative</span>
-                  </label>
-                  <label class="flex gap-1 items-center">
+                    <label for="line-mode-relative" class="text-xs text-text-primary">Relative</label>
+                  </div>
+                  <div class="flex gap-1 items-center">
                     <input
+                      id="line-mode-both"
                       v-model="settings.lineNumberMode"
                       type="radio"
                       value="both"
                       class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <span class="text-xs text-text-primary">Hybrid</span>
-                  </label>
+                    <label for="line-mode-both" class="text-xs text-text-primary">Hybrid</label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -167,30 +171,33 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           <!-- Other Settings -->
           <div class="p-3 border border-border rounded-md bg-surface-primary">
             <div class="gap-3 grid grid-cols-3">
-              <label class="flex gap-2 items-center">
+              <div class="flex gap-2 items-center">
                 <input
+                  id="line-wrapping"
                   v-model="settings.lineWrapping"
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-text-primary">Line Wrapping</span>
-              </label>
-              <label class="flex gap-2 items-center">
+                <label for="line-wrapping" class="text-xs text-text-primary">Line Wrapping</label>
+              </div>
+              <div class="flex gap-2 items-center">
                 <input
+                  id="auto-save"
                   v-model="settings.autoSave"
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-text-primary">Auto Save</span>
-              </label>
-              <label class="flex gap-2 items-center">
+                <label for="auto-save" class="text-xs text-text-primary">Auto Save</label>
+              </div>
+              <div class="flex gap-2 items-center">
                 <input
+                  id="live-preview"
                   v-model="settings.livePreview"
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <span class="text-xs text-text-primary">Live Preview</span>
-              </label>
+                <label for="live-preview" class="text-xs text-text-primary">Live Preview</label>
+              </div>
             </div>
           </div>
         </div>
