@@ -10,7 +10,7 @@ Manages application theming using the OKLCH color space with a customizable colo
 
 ## Key Components
 - `ColorThemeModal.vue` - Main theme customization modal
-- `OklchColorPicker.vue` - OKLCH color space picker component  
+- `OklchColorPicker.vue` - OKLCH color space picker component
 - `OklchChannelSlider.vue` - Individual channel (L/C/H) slider controls
 - `store.ts` - Pinia store for theme persistence
 
@@ -20,7 +20,7 @@ Manages application theming using the OKLCH color space with a customizable colo
 ```typescript
 interface OklchColor {
   l: number // Lightness: 0-1
-  c: number // Chroma: 0-0.4  
+  c: number // Chroma: 0-0.4
   h: number // Hue: 0-360
   a?: number // Alpha: 0-1 (optional)
 }
@@ -34,11 +34,11 @@ interface ColorTheme {
   accent: OklchColor
   muted: OklchColor
   border: OklchColor
-  alertNote: OklchColor      // Blue - Notes/Info
-  alertTip: OklchColor       // Green - Tips/Success
+  alertNote: OklchColor // Blue - Notes/Info
+  alertTip: OklchColor // Green - Tips/Success
   alertImportant: OklchColor // Purple - Important
-  alertWarning: OklchColor   // Orange - Warning
-  alertCaution: OklchColor   // Red - Danger/Caution
+  alertWarning: OklchColor // Orange - Warning
+  alertCaution: OklchColor // Red - Danger/Caution
 }
 ```
 

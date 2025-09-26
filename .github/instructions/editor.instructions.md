@@ -122,7 +122,7 @@ watchEffect(() => {
 ### Settings Features
 ```typescript
 // Settings operations
-const { 
+const {
   settings,
   toggleVimMode,
   toggleLineNumbers,

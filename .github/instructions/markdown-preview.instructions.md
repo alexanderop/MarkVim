@@ -68,7 +68,7 @@ const primaryTextColor = useCssVar('--foreground')
 const background = useCssVar('--background')
 
 // Dynamic color calculations
-const errorBkgColor = computed(() => 
+const errorBkgColor = computed(() =>
   `oklch(from ${primaryColor.value} calc(l - 0.2) c calc(h + 180))`
 )
 ```
@@ -77,14 +77,6 @@ const errorBkgColor = computed(() =>
 
 ### Preview Component Setup
 ```vue
-<template>
-  <div 
-    ref="previewContainer"
-    class="markdown-preview"
-    v-html="renderedMarkdown"
-  />
-</template>
-
 <script setup>
 const previewContainer = ref<HTMLElement>()
 const { renderedMarkdown } = useMarkdown(content)
@@ -98,6 +90,14 @@ watch(renderedMarkdown, () => {
   nextTick(renderDiagrams)
 })
 </script>
+
+<template>
+  <div
+    ref="previewContainer"
+    class="markdown-preview"
+    v-html="renderedMarkdown"
+  />
+</template>
 ```
 
 ### Performance Optimization
@@ -111,7 +111,8 @@ watch(renderedMarkdown, () => {
 try {
   const rawHtml = md.render(markdownContent.value)
   renderedMarkdown.value = addDataTestIdToAlerts(rawHtml)
-} catch (error) {
+}
+catch (error) {
   console.error('Failed to render markdown:', error)
   // Fallback to basic MarkdownIt
   const basicMd = new MarkdownIt()
@@ -166,7 +167,7 @@ const { stop } = useMutationObserver(
 ### Custom Alert Blocks
 ```typescript
 // Add data-testid attributes for E2E testing
-const addDataTestIdToAlerts = (html: string) => {
+function addDataTestIdToAlerts(html: string) {
   return html.replace(
     /<div class="alert alert-(\w+)"/g,
     '<div class="alert alert-$1" data-testid="alert-$1"'

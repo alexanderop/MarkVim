@@ -68,7 +68,7 @@ export class MarkVimPage {
 
 ### Step Definitions
 ```typescript
-import { Given, When, Then } from '@cucumber/cucumber'
+import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 
 Given('the sidebar is visible', async function () {
@@ -105,7 +105,7 @@ async pressKeyboardShortcut(keys: string) {
   const parts = keys.split('+')
   const modifiers = parts.slice(0, -1)
   const key = parts[parts.length - 1]
-  
+
   await this.page.keyboard.press(`${modifiers.join('+')}+${key}`)
 }
 
@@ -202,7 +202,7 @@ Then('the share link should be copied', async function () {
 async testKeyboardNavigation() {
   await this.page.keyboard.press('Tab')
   await expect(this.firstFocusableElement).toBeFocused()
-  
+
   await this.page.keyboard.press('Tab')
   await expect(this.secondFocusableElement).toBeFocused()
 }

@@ -54,13 +54,13 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Enter text...'
 })
 
+const emit = defineEmits<Emits>()
+
 // Define events with proper typing
 interface Emits {
   (e: 'update:value', value: string): void
   (e: 'focus', event: FocusEvent): void
 }
-
-const emit = defineEmits<Emits>()
 </script>
 ```
 
@@ -134,7 +134,7 @@ export function addDataTestIdToAlerts(html: string): string
 ### Testing Patterns
 ```typescript
 // Include data-testid for E2E testing
-<BaseButton 
+<BaseButton
   data-testid="submit-button"
   @click="handleSubmit"
 >
@@ -193,7 +193,8 @@ export function safeUtility(input: unknown): Result | null {
   try {
     // Process input
     return result
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Utility failed:', error)
     return null
   }

@@ -9,6 +9,7 @@ export default withNuxt(
     ignores: [
       '.cursor/**/*.md',
       'reports/**/*',
+      '**/*.md',
     ],
   }),
   // Vue accessibility plugin

@@ -10,7 +10,7 @@ Enables document sharing via compressed URLs, import/export functionality, and c
 
 ## Key Components
 - `ShareDialog.vue` - Main sharing interface
-- `ImportDialog.vue` - Document import interface  
+- `ImportDialog.vue` - Document import interface
 - `ShareButton.vue` - Share action trigger
 - `ShareManager.vue` - Overall share/import management
 - `composables/useDocumentShare.ts` - Core sharing logic
@@ -42,7 +42,7 @@ interface ShareableDocument {
 
 ### URL Generation
 ```typescript
-const generateShareLink = (document: Document): string | null => {
+function generateShareLink(document: Document): string | null {
   // 1. Create shareable document object
   // 2. JSON stringify and compress with gzip
   // 3. Base64 encode compressed data
@@ -61,7 +61,7 @@ const generateShareLink = (document: Document): string | null => {
 ### Import/Export Flow
 ```typescript
 // Import from URL
-const importFromUrl = async (url: string): Promise<Document | null> => {
+async function importFromUrl(url: string): Promise<Document | null> {
   // 1. Extract encoded data from URL hash
   // 2. Decode base64 to compressed data
   // 3. Decompress with gunzip
@@ -70,7 +70,7 @@ const importFromUrl = async (url: string): Promise<Document | null> => {
 }
 
 // Export as file
-const exportDocument = (document: Document, format: 'md' | 'json') => {
+function exportDocument(document: Document, format: 'md' | 'json') {
   // Generate downloadable file
   // Handle different export formats
 }
@@ -80,6 +80,10 @@ const exportDocument = (document: Document, format: 'md' | 'json') => {
 
 ### Share Dialog Implementation
 ```vue
+<script setup>
+const { shareDocument, generateShareLink, isSharing, shareError } = useDocumentShare()
+</script>
+
 <template>
   <DialogModal>
     <div class="share-options">
@@ -88,10 +92,6 @@ const exportDocument = (document: Document, format: 'md' | 'json') => {
     </div>
   </DialogModal>
 </template>
-
-<script setup>
-const { shareDocument, generateShareLink, isSharing, shareError } = useDocumentShare()
-</script>
 ```
 
 ### Error Handling
@@ -138,7 +138,7 @@ const isImporting = ref(false)
 
 ### Import Validation
 ```typescript
-const validateImportedDocument = (data: any): Document | null => {
+function validateImportedDocument(data: any): Document | null {
   // Validate required fields
   // Sanitize content
   // Check data integrity

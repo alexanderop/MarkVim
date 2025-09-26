@@ -13,11 +13,11 @@ MarkVim is a Nuxt 3 Markdown editor with Vim mode support, built using a modular
 
 ## Development Commands
 
-Install dependencies: `pnpm install`  
-Start dev server: `pnpm dev`  
-Build: `pnpm build`  
-Lint: `pnpm lint`  
-Type check: `pnpm typecheck`  
+Install dependencies: `pnpm install`
+Start dev server: `pnpm dev`
+Build: `pnpm build`
+Lint: `pnpm lint`
+Type check: `pnpm typecheck`
 E2E tests: `pnpm test:e2e`
 
 ## Core Architectural Patterns

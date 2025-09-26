@@ -69,7 +69,7 @@ registerAppCommand({
 // Automatically detects when user is in input fields
 const notUsingInput = computed(() => {
   const el = activeElement.value
-  
+
   // Checks for:
   // - Standard input/textarea elements
   // - Contenteditable elements
@@ -125,12 +125,17 @@ const sortedCommands = sortCommandsByHistory(allCommands)
 
 ### Command Palette Setup
 ```vue
+<script setup>
+const { allCommands, formatKeys } = useShortcuts()
+const { sortCommandsByHistory } = useCommandHistory()
+</script>
+
 <template>
   <Teleport to="body">
     <div v-if="isOpen" class="command-palette-overlay">
       <div class="command-palette">
         <SearchInput v-model="searchQuery" />
-        <CommandList 
+        <CommandList
           :commands="filteredCommands"
           @execute="executeCommand"
         />
@@ -138,11 +143,6 @@ const sortedCommands = sortCommandsByHistory(allCommands)
     </div>
   </Teleport>
 </template>
-
-<script setup>
-const { allCommands, formatKeys } = useShortcuts()
-const { sortCommandsByHistory } = useCommandHistory()
-</script>
 ```
 
 ### Shortcut Registration Pattern
@@ -178,8 +178,8 @@ onMounted(() => {
 ### Platform-Specific Keys
 ```typescript
 // Use cmd on Mac, ctrl on Windows/Linux
-const formatKeys = (keys: string) => {
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+function formatKeys(keys: string) {
+  const isMac = navigator.platform.toUpperCase().includes('MAC')
   return keys.replace('cmd', isMac ? '⌘' : 'Ctrl')
 }
 ```
@@ -255,7 +255,7 @@ onUnmounted(() => {
 ## Key Formatting
 ```typescript
 // Platform-specific key display
-const formatKeys = (keys: string): string => {
+function formatKeys(keys: string): string {
   // Convert logical keys to display format
   // Handle platform differences (cmd vs ctrl)
   // Add visual key symbols (⌘, ⌃, ⌥, ⇧)

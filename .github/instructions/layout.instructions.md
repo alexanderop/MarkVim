@@ -85,8 +85,8 @@ const isMobile = useMediaQuery('(max-width: 768px)')
   <div :style="{ width: `${leftPaneWidth}%` }">
     <!-- Left pane content -->
   </div>
-  <div 
-    class="resize-handle" 
+  <div
+    class="resize-handle"
     @pointerdown="startDrag"
   />
   <div :style="{ width: `${rightPaneWidth}%` }">
