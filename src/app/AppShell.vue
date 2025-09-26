@@ -39,15 +39,6 @@ const activeMarkdown = computed({
 
 const { renderedMarkdown } = useMarkdown(activeMarkdown)
 
-const { deleteModalOpen, documentToDelete, handleDeleteDocument, confirmDeleteDocument, cancelDeleteDocument } = useDocumentDeletion()
-
-function handleDeleteActiveDocument() {
-  if (!activeDocument.value)
-    return
-
-  handleDeleteDocument(activeDocument.value.id, activeDocument.value.content)
-}
-
 const { registerShortcuts, registerAppCommand, formatKeys, setNewDocumentAction } = useShortcuts()
 
 const activeDocumentTitle = computed(() => {
@@ -282,7 +273,6 @@ onBeforeUnmount(() => {
       :active-document="activeDocument"
       @update:view-mode="setViewMode"
       @toggle-sidebar="handleToggleSidebar"
-      @delete-document="handleDeleteActiveDocument"
     />
 
     <div class="flex flex-1 relative overflow-hidden">
@@ -299,7 +289,6 @@ onBeforeUnmount(() => {
           ]"
           @select-document="handleDocumentSelect"
           @create-document="handleCreateDocument"
-          @delete-document="handleDeleteActiveDocument"
         />
         <template #fallback>
           <DocumentListSkeleton
@@ -419,13 +408,7 @@ onBeforeUnmount(() => {
       @select-document="handleDocumentSelectFromPalette"
     />
 
-    <DocumentDeleteModal
-      v-model:open="deleteModalOpen"
-      :document-title="documentToDelete?.title || ''"
-      @confirm="confirmDeleteDocument"
-      @cancel="cancelDeleteDocument"
-      @close="cancelDeleteDocument"
-    />
+    <DocumentActionManager />
 
     <ShareManager @document-imported="handleDocumentImported" />
 

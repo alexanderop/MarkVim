@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/store'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 
 interface Props {
   documents: DocType[]
@@ -10,7 +11,6 @@ interface Props {
 interface Emits {
   (e: 'selectDocument', id: string): void
   (e: 'createDocument'): void
-  (e: 'deleteDocument', id: string): void
 }
 
 const _props = defineProps<Props>()
@@ -31,7 +31,13 @@ function handleSelectDocument(id: string) {
 }
 
 function handleDeleteDocument(id: string) {
-  emit('deleteDocument', id)
+  const document = _props.documents.find(doc => doc.id === id)
+  if (document) {
+    emitAppEvent('document:delete', {
+      documentId: id,
+      documentTitle: getDocumentTitle(document.content),
+    })
+  }
 }
 
 function getDocumentPreview(content: string): string {

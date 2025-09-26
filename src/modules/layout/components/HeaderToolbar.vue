@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/store'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 defineEmits<Emits>()
 
 const { openColorTheme } = useShortcuts()
+const { getDocumentTitle } = useDocumentsStore()
 
 interface Props {
   viewMode: ViewMode
@@ -18,7 +20,15 @@ interface Props {
 interface Emits {
   (e: 'update:viewMode', value: ViewMode): void
   (e: 'toggleSidebar'): void
-  (e: 'deleteDocument'): void
+}
+
+function handleDeleteDocument() {
+  if (props.activeDocument) {
+    emitAppEvent('document:delete', {
+      documentId: props.activeDocument.id,
+      documentTitle: getDocumentTitle(props.activeDocument.content),
+    })
+  }
 }
 </script>
 
@@ -88,7 +98,7 @@ interface Emits {
         data-testid="delete-document-btn"
         class="hover:text-error hover:bg-error/10 hidden md:flex"
         icon-only
-        @click="$emit('deleteDocument')"
+        @click="handleDeleteDocument"
       />
 
       <div class="bg-gray-700/50 h-4 w-px hidden md:block" />

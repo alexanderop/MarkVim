@@ -10,6 +10,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck",
+    "clean": "rm -rf .nuxt dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test:e2e": "NODE_OPTIONS='--loader ts-node/esm' cucumber-js",

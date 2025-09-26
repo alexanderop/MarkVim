@@ -133,6 +133,10 @@ export const useDocumentsStore = defineStore('documents', () => {
     return firstLine || 'Untitled'
   }
 
+  function getDocumentById(id: string): Document | undefined {
+    return _documents.value.find(doc => doc.id === id)
+  }
+
   return {
     documents,
     activeDocument,
@@ -142,5 +146,6 @@ export const useDocumentsStore = defineStore('documents', () => {
     updateDocument,
     deleteDocument,
     getDocumentTitle,
+    getDocumentById,
   }
 })
