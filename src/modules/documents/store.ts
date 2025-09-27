@@ -1,16 +1,10 @@
+import type { Document } from '~/modules/core/api'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
 import { defaultDocumentContent } from './defaultContent'
-
-export interface Document {
-  id: string
-  content: string
-  createdAt: number
-  updatedAt: number
-}
 
 // Use a consistent default document ID
 const DEFAULT_DOCUMENT_ID = 'default-welcome-document-id'

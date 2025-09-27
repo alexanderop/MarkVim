@@ -1,21 +1,14 @@
-import { useEventBus } from '@vueuse/core'
-
-export interface DataResetEvent {
-  type: 'clear-all-data'
-  timestamp: number
-}
+import { localStorageService } from '@/services/LocalStorageService'
+import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 
 export function useDataReset() {
-  const eventBus = useEventBus<DataResetEvent>('markvim-data-reset')
-
   const clearAllData = () => {
     if (import.meta.client) {
-      eventBus.emit({
-        type: 'clear-all-data',
-        timestamp: Date.now(),
-      })
+      // Emit through main event bus for better coordination
+      emitAppEvent('data:reset', undefined)
 
       setTimeout(() => {
+        // Use the storage service for centralized storage management
         const keysToRemove = []
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i)
@@ -23,22 +16,17 @@ export function useDataReset() {
             keysToRemove.push(key)
           }
         }
-        keysToRemove.forEach(key => localStorage.removeItem(key))
+        keysToRemove.forEach(key => localStorageService.remove(key))
       }, 100)
     }
   }
 
-  const onDataReset = (callback: (event: DataResetEvent) => void) => {
-    eventBus.on(callback)
-  }
-
-  const offDataReset = (callback: (event: DataResetEvent) => void) => {
-    eventBus.off(callback)
+  const onDataReset = (callback: () => void) => {
+    return onAppEvent('data:reset', callback)
   }
 
   return {
     clearAllData,
     onDataReset,
-    offDataReset,
   }
 }

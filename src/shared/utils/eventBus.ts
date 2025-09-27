@@ -53,6 +53,9 @@ export interface AppEvents {
     documentId: string
     content: string
   }
+
+  /** Data reset requested - clear all local storage */
+  'data:reset': undefined
 }
 
 export type AppEventKey = keyof AppEvents

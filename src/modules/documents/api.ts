@@ -11,10 +11,10 @@ export { default as DocumentActionManager } from './components/DocumentActionMan
 export { default as DocumentList } from './components/DocumentList.client.vue'
 
 export { default as DocumentListSkeleton } from './components/DocumentListSkeleton.vue'
-// Export types
-export type { Document } from './store'
 // Export composables and utilities
 export { useDocumentsStore } from './store'
+// Export types
+export type { Document } from '~/modules/core/api'
 
 // Export utilities that might be needed by other modules
 export function getDocumentTitle(content: string): string {

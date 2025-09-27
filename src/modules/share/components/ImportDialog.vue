@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/api'
+import type { Document } from '~/modules/core/api'
 import {
   DialogContent,
   DialogDescription,
