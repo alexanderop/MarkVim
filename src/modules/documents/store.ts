@@ -1,3 +1,4 @@
+import { onAppEvent } from '@/shared/utils/eventBus'
 import { defaultDocumentContent } from './defaultContent'
 
 // Nuxt auto-imports: defineStore, computed, useLocalStorage, useEventBus, ref, nextTick
@@ -136,6 +137,15 @@ export const useDocumentsStore = defineStore('documents', () => {
   function getDocumentById(id: string): Document | undefined {
     return _documents.value.find(doc => doc.id === id)
   }
+
+  // Listen for events from the event bus
+  onAppEvent('document:create', () => {
+    createDocument()
+  })
+
+  onAppEvent('document:select', (payload) => {
+    setActiveDocument(payload.documentId)
+  })
 
   return {
     documents,

@@ -15,13 +15,6 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   commandSelected: [command: Command]
-  changeViewMode: [mode: ViewMode]
-  saveDocument: []
-  insertText: [text: string]
-  toggleVimMode: []
-  toggleLineNumbers: []
-  togglePreviewSync: []
-  toggleSettings: []
   selectDocument: [id: string]
 }>()
 

@@ -1,3 +1,5 @@
+import { onAppEvent } from '@/shared/utils/eventBus'
+
 export type ViewMode = 'split' | 'editor' | 'preview'
 
 export function useViewMode() {
@@ -51,6 +53,11 @@ export function useViewMode() {
     const nextIndex = (currentIndex + 1) % modes.length
     setViewMode(modes[nextIndex])
   }
+
+  // Listen for view:set events from the event bus
+  onAppEvent('view:set', (payload) => {
+    setViewMode(payload.viewMode)
+  })
 
   return {
     viewMode: readonly(viewMode),

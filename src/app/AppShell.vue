@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onAppEvent } from '@/shared/utils/eventBus'
+
 // Client-safe localStorage for sidebar visibility
 const isSidebarVisible = import.meta.client
   ? useLocalStorage('markvim-sidebar-visible', true)
@@ -8,18 +10,15 @@ const { onDataReset } = useDataReset()
 onDataReset(() => {
   isSidebarVisible.value = true
 })
-const currentVimMode = ref<string>('NORMAL')
-const commandPaletteOpen = ref(false)
-const commandPalettePosition = ref({ x: 0, y: 0 })
 
 const isMobile = useMediaQuery('(max-width: 768px)')
 
 const store = useDocumentsStore()
 const { documents, activeDocument, activeDocumentId } = storeToRefs(store)
-const { createDocument, setActiveDocument, getDocumentTitle } = store
+const { getDocumentTitle } = store
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
-const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
+const { settings } = useEditorSettings()
 const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode } = useViewMode()
 
 // Initialize color theme store to ensure persistence on app startup
@@ -28,42 +27,14 @@ const _colorThemeStore = useColorThemeStore()
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
-const { registerShortcuts, registerAppCommand, formatKeys, setNewDocumentAction } = useShortcuts()
+// Reference to the ShortcutsManager component
+const shortcutsManagerRef = ref()
 
 const activeDocumentTitle = computed(() => {
   return activeDocument.value
     ? getDocumentTitle(activeDocument.value.content)
     : 'MarkVim'
 })
-
-function handleGlobalKeydown(event: KeyboardEvent) {
-  if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
-    event.preventDefault()
-    openCommandPalette(event)
-    return
-  }
-
-  if (event.key === 'Escape' && commandPaletteOpen.value) {
-    commandPaletteOpen.value = false
-  }
-}
-
-function openCommandPalette(_event?: KeyboardEvent) {
-  const centerX = window.innerWidth / 2 - 200
-  const centerY = window.innerHeight / 3
-
-  commandPalettePosition.value = { x: centerX, y: centerY }
-  commandPaletteOpen.value = true
-}
-
-function closeCommandPalette() {
-  commandPaletteOpen.value = false
-}
-
-function handleDocumentSelectFromPalette(id: string) {
-  setActiveDocument(id)
-  closeCommandPalette()
-}
 
 function handleSaveDocument() {
   if (!activeDocument.value)
@@ -78,171 +49,34 @@ function handleSaveDocument() {
   URL.revokeObjectURL(url)
 }
 
-function handleToggleVimMode() {
-  toggleVimMode()
-}
-
-function handleToggleLineNumbers() {
-  toggleLineNumbers()
-}
-
-function handleTogglePreviewSync() {
-  togglePreviewSync()
-}
-
-function handleToggleSettings() {
-  // This would open the settings modal - for now, just log
-}
-
 function handleToggleSidebar() {
   isSidebarVisible.value = !isSidebarVisible.value
 }
 
-function handleDocumentSelect(id: string) {
-  setActiveDocument(id)
+function handleDocumentSelect(_id: string) {
   if (isMobile.value) {
     isSidebarVisible.value = false
   }
 }
 
-function handleCreateDocument() {
-  createDocument()
+function handleDocumentImported(_document: any) {
+  // Document selection is now handled by the event bus in the store
 }
 
-function handleDocumentImported(document: any) {
-  setActiveDocument(document.id)
-}
-
-function handleVimModeChange(mode: string, subMode?: string) {
-  if (subMode) {
-    currentVimMode.value = `${mode.toUpperCase()} (${subMode.toUpperCase()})`
-  }
-  else {
-    currentVimMode.value = mode.toUpperCase()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('keydown', handleGlobalKeydown)
-
-  // Register the create document action with the shortcuts system
-  setNewDocumentAction(handleCreateDocument)
-
-  // Register sequential shortcuts using createSequentialShortcut
-  const { createSequentialShortcut } = useShortcuts()
-
-  // Create g->t sequence shortcut for toggling sidebar
-  createSequentialShortcut('g', 't', handleToggleSidebar)
-
-  registerShortcuts([
-    {
-      keys: 'g t',
-      description: 'Toggle sidebar',
-      action: handleToggleSidebar,
-      category: 'View',
-      icon: 'lucide:panel-left',
-    },
-    {
-      keys: '1',
-      description: 'Switch to Editor only',
-      action: () => { setViewMode('editor') },
-      category: 'View',
-      icon: 'lucide:edit-3',
-    },
-    {
-      keys: '2',
-      description: 'Switch to Split view',
-      action: () => { setViewMode('split') },
-      category: 'View',
-      icon: 'lucide:columns-2',
-    },
-    {
-      keys: '3',
-      description: 'Switch to Preview only',
-      action: () => { setViewMode('preview') },
-      category: 'View',
-      icon: 'lucide:eye',
-    },
-    {
-      keys: 'meta+k',
-      description: 'Open command palette',
-      action: () => {
-        openCommandPalette()
-      },
-      category: 'Navigation',
-      icon: 'lucide:search',
-    },
-    {
-      keys: 'meta+s',
-      description: 'Save document',
-      action: () => {
-        handleSaveDocument()
-      },
-      category: 'File',
-      icon: 'lucide:save',
-    },
-
-    {
-      keys: 'meta+shift+s',
-      description: 'Download as Markdown',
-      action: () => {
-        if (!activeDocument.value)
-          return
-        const blob = new Blob([activeDocument.value.content], { type: 'text/markdown' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${getDocumentTitle(activeDocument.value.content)}.md`
-        a.click()
-        URL.revokeObjectURL(url)
-      },
-      category: 'File',
-      icon: 'lucide:download',
-    },
-    {
-      keys: 'v',
-      description: 'Toggle Vim Mode',
-      action: () => {
-        handleToggleVimMode()
-      },
-      category: 'Settings',
-      icon: 'lucide:terminal',
-    },
-    {
-      keys: 'l',
-      description: 'Toggle Line Numbers',
-      action: () => {
-        handleToggleLineNumbers()
-      },
-      category: 'Settings',
-      icon: 'lucide:hash',
-    },
-    {
-      keys: 'p',
-      description: 'Toggle Preview Sync',
-      action: () => {
-        handleTogglePreviewSync()
-      },
-      category: 'Settings',
-      icon: 'lucide:link-2',
-    },
-  ])
-
-  // Register vim commands for command palette
-  registerAppCommand({
-    id: 'vim-new',
-    keys: ':new',
-    description: 'New Document (Vim)',
-    action: () => {
-      handleCreateDocument()
-    },
-    category: 'File',
-    icon: 'lucide:file-plus',
-  })
+// Listen to event bus events that affect AppShell state
+onAppEvent('sidebar:toggle', () => {
+  handleToggleSidebar()
 })
 
-onBeforeUnmount(() => {
-  document.removeEventListener('keydown', handleGlobalKeydown)
+onAppEvent('settings:save-document', () => {
+  handleSaveDocument()
+})
+
+onAppEvent('document:select', (_payload) => {
+  // Document selection is handled by the store, but we need to close sidebar on mobile
+  if (isMobile.value) {
+    isSidebarVisible.value = false
+  }
 })
 </script>
 
@@ -271,7 +105,6 @@ onBeforeUnmount(() => {
               : 'transform -translate-x-full opacity-0 pointer-events-none',
           ]"
           @select-document="handleDocumentSelect"
-          @create-document="handleCreateDocument"
         />
         <template #fallback>
           <DocumentListSkeleton
@@ -320,7 +153,7 @@ onBeforeUnmount(() => {
               <MarkdownEditor
                 :settings="settings"
                 class="h-full"
-                @vim-mode-change="handleVimModeChange"
+                @vim-mode-change="shortcutsManagerRef?.handleVimModeChange"
               />
               <template #fallback>
                 <MarkdownEditorSkeleton />
@@ -366,26 +199,12 @@ onBeforeUnmount(() => {
     <StatusBar
       :line-count="activeDocument?.content.split('\n').length || 0"
       :character-count="activeDocument?.content.length || 0"
-      :format-keys="formatKeys"
-      :vim-mode="currentVimMode"
+      :format-keys="shortcutsManagerRef?.formatKeys || ((k: string) => k)"
+      :vim-mode="shortcutsManagerRef?.currentVimMode || 'NORMAL'"
       :show-vim-mode="settings.vimMode"
     />
 
-    <CommandPalette
-      v-model:open="commandPaletteOpen"
-      :position="commandPalettePosition"
-      :view-mode="viewMode"
-      :markdown="activeDocument?.content || ''"
-      :documents="documents"
-      @command-selected="closeCommandPalette"
-      @change-view-mode="setViewMode"
-      @save-document="handleSaveDocument"
-      @toggle-vim-mode="handleToggleVimMode"
-      @toggle-line-numbers="handleToggleLineNumbers"
-      @toggle-preview-sync="handleTogglePreviewSync"
-      @toggle-settings="handleToggleSettings"
-      @select-document="handleDocumentSelectFromPalette"
-    />
+    <ShortcutsManager ref="shortcutsManagerRef" />
 
     <DocumentActionManager />
 
