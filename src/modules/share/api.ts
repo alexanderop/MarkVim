@@ -5,6 +5,12 @@
  * Other modules should import from this API file, not directly from internal files.
  */
 
+export { default as ImportDialog } from './components/ImportDialog.vue'
+
+// Export components that are used externally
+export { default as ShareButton } from './components/ShareButton.vue'
+export { default as ShareDialog } from './components/ShareDialog.vue'
+export { default as ShareManager } from './components/ShareManager.vue'
 // Export composables that other modules might need
 export { useDocumentShare } from './composables/useDocumentShare'
 

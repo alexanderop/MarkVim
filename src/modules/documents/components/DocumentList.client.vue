@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document as DocType } from '~/modules/documents/store'
+import type { Document as DocType } from '~/modules/documents/api'
 import {
   ContextMenuContent,
   ContextMenuItem,

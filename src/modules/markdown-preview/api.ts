@@ -5,8 +5,11 @@
  * Other modules should import from this API file, not directly from internal files.
  */
 
+// Export components that are used externally
+export { default as MarkdownPreview } from './components/MarkdownPreview.vue'
 // Export composables that other modules might need
 export { useMarkdown } from './composables/useMarkdown'
+
 export { useMermaid } from './composables/useMermaid'
 
 // Export any types if needed (check composables for exported types)

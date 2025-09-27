@@ -4,7 +4,7 @@ import importPlugin from 'eslint-plugin-import'
 import vueA11y from 'eslint-plugin-vuejs-accessibility'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
-// Generate module import restrictions
+// Generate comprehensive module boundary restrictions
 const modules = [
   'color-theme',
   'documents',
@@ -15,47 +15,17 @@ const modules = [
   'shortcuts',
 ]
 
-const moduleImportRestrictions = []
-
-// Create individual rules for each module pair to avoid mixing glob and literal patterns
-modules.forEach((moduleA) => {
-  modules.forEach((moduleB) => {
-    if (moduleA !== moduleB) {
-      // Prevent moduleA from importing moduleB internals - one rule per moduleB
-      moduleImportRestrictions.push({
-        target: `./src/modules/${moduleA}/**/*`,
-        from: [`./src/modules/${moduleB}/store.ts`],
-        message: `Direct imports between modules are not allowed. Use module APIs instead. Import from '~/modules/${moduleB}/api' if you need functionality from the ${moduleB} module.`,
-      })
-      moduleImportRestrictions.push({
-        target: `./src/modules/${moduleA}/**/*`,
-        from: [`./src/modules/${moduleB}/stores/**/*`],
-        message: `Direct imports between modules are not allowed. Use module APIs instead. Import from '~/modules/${moduleB}/api' if you need functionality from the ${moduleB} module.`,
-      })
-      moduleImportRestrictions.push({
-        target: `./src/modules/${moduleA}/**/*`,
-        from: [`./src/modules/${moduleB}/composables/**/*`],
-        message: `Direct imports between modules are not allowed. Use module APIs instead. Import from '~/modules/${moduleB}/api' if you need functionality from the ${moduleB} module.`,
-      })
-      moduleImportRestrictions.push({
-        target: `./src/modules/${moduleA}/**/*`,
-        from: [`./src/modules/${moduleB}/internal/**/*`],
-        message: `Direct imports between modules are not allowed. Use module APIs instead. Import from '~/modules/${moduleB}/api' if you need functionality from the ${moduleB} module.`,
-      })
-      moduleImportRestrictions.push({
-        target: `./src/modules/${moduleA}/**/*`,
-        from: [`./src/modules/${moduleB}/components/**/*`],
-        message: `Direct imports between modules are not allowed. Use module APIs instead. Import from '~/modules/${moduleB}/api' if you need functionality from the ${moduleB} module.`,
-      })
-    }
+// Create simple pattern restrictions for module boundaries
+const restrictedPatterns = []
+modules.forEach((module) => {
+  // Block all deep imports to this module except api.ts
+  restrictedPatterns.push({
+    group: [`~/modules/${module}/**`, `!~/modules/${module}/api`],
+    message: `Direct imports to module internals are not allowed. Use the public API instead: import from '~/modules/${module}/api'`,
   })
 })
 
-// Note: We only restrict cross-module imports.
-// This allows:
-// 1. Modules to import from themselves (including relative imports)
-// 2. Anyone to import from module APIs
-// 3. Prevents cross-module imports to internals
+// Note: This approach blocks all deep imports into modules except the '/api' file
 
 export default withNuxt(
   antfu({
@@ -83,10 +53,10 @@ export default withNuxt(
       import: importPlugin,
     },
     rules: {
-      'import/no-restricted-paths': [
+      'no-restricted-imports': [
         'error',
         {
-          zones: moduleImportRestrictions,
+          patterns: restrictedPatterns,
         },
       ],
     },

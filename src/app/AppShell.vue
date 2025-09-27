@@ -3,21 +3,13 @@ import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { onAppEvent } from '@/shared/utils/eventBus'
-import { useColorThemeStore } from '~/modules/color-theme/api'
-import ColorThemeModal from '~/modules/color-theme/components/ColorThemeModal.vue'
-import { useDocumentsStore } from '~/modules/documents/api'
-import DocumentsDocumentActionManager from '~/modules/documents/components/DocumentActionManager.vue'
-import DocumentsDocumentList from '~/modules/documents/components/DocumentList.client.vue'
-import DocumentsDocumentListSkeleton from '~/modules/documents/components/DocumentListSkeleton.vue'
-import { useEditorSettings } from '~/modules/editor/api'
-import EditorMarkdownEditor from '~/modules/editor/components/MarkdownEditor.vue'
-import EditorMarkdownEditorSkeleton from '~/modules/editor/components/MarkdownEditorSkeleton.vue'
-import { useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
-import LayoutHeaderToolbar from '~/modules/layout/components/HeaderToolbar.vue'
-import LayoutStatusBar from '~/modules/layout/components/StatusBar.vue'
-import MarkdownPreview from '~/modules/markdown-preview/components/MarkdownPreview.vue'
-import ShareManager from '~/modules/share/components/ShareManager.vue'
-import ShortcutsManager from '~/modules/shortcuts/components/ShortcutsManager.vue'
+import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
+import { DocumentActionManager, DocumentList, DocumentListSkeleton, useDocumentsStore } from '~/modules/documents/api'
+import { MarkdownEditor, MarkdownEditorSkeleton, useEditorSettings } from '~/modules/editor/api'
+import { HeaderToolbar, StatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
+import { MarkdownPreview } from '~/modules/markdown-preview/api'
+import { ShareManager } from '~/modules/share/api'
+import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
 const isMobile = useMediaQuery('(max-width: 768px)')
@@ -77,7 +69,7 @@ onAppEvent('document:select', () => {
 
 <template>
   <div ref="containerRef" class="flex flex-col h-[100dvh] w-screen overflow-hidden">
-    <LayoutHeaderToolbar
+    <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
       :active-document-title="activeDocumentTitle"
@@ -87,7 +79,7 @@ onAppEvent('document:select', () => {
 
     <div class="flex flex-1 relative overflow-hidden">
       <ClientOnly>
-        <DocumentsDocumentList
+        <DocumentList
           v-show="isSidebarVisible"
           :documents="documents"
           :active-document-id="activeDocumentId"
@@ -99,7 +91,7 @@ onAppEvent('document:select', () => {
           ]"
         />
         <template #fallback>
-          <DocumentsDocumentListSkeleton
+          <DocumentListSkeleton
             v-show="isSidebarVisible"
             class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none" :class="[
               isSidebarVisible
@@ -142,12 +134,12 @@ onAppEvent('document:select', () => {
             }"
           >
             <ClientOnly>
-              <EditorMarkdownEditor
+              <MarkdownEditor
                 :settings="settings"
                 class="h-full"
               />
               <template #fallback>
-                <EditorMarkdownEditorSkeleton />
+                <MarkdownEditorSkeleton />
               </template>
             </ClientOnly>
           </div>
@@ -187,7 +179,7 @@ onAppEvent('document:select', () => {
       </div>
     </div>
 
-    <LayoutStatusBar
+    <StatusBar
       :line-count="activeDocument?.content.split('\n').length || 0"
       :character-count="activeDocument?.content.length || 0"
       :format-keys="shortcutsManagerRef?.formatKeys || ((k: string) => k)"
@@ -196,7 +188,7 @@ onAppEvent('document:select', () => {
 
     <ShortcutsManager ref="shortcutsManagerRef" />
 
-    <DocumentsDocumentActionManager />
+    <DocumentActionManager />
 
     <ShareManager @document-imported="handleDocumentImported" />
 

@@ -1,5 +1,5 @@
 import { defineNuxtPlugin, nextTick } from '#imports'
-import { useColorThemeStore } from '~/modules/color-theme/store'
+import { useColorThemeStore } from '~/modules/color-theme/api'
 
 export default defineNuxtPlugin(() => {
   // Force color theme store initialization on client hydration
