@@ -28,6 +28,10 @@ export interface AppEvents {
   'editor:insert-text': {
     text: string
   }
+  'editor:content-update': {
+    documentId: string
+    content: string
+  }
 }
 
 export type AppEventKey = keyof AppEvents

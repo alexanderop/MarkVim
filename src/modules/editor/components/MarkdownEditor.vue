@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 
 const { settings } = defineProps<{
   settings: EditorSettings
@@ -9,8 +10,27 @@ const emit = defineEmits<{
   vimModeChange: [mode: string, subMode?: string]
 }>()
 
-const modelValue = defineModel<string>()
 const isMobile = useMediaQuery('(max-width: 768px)')
+
+// Get store directly
+const store = useDocumentsStore()
+const { activeDocument } = storeToRefs(store)
+const { updateDocument } = store
+
+// Create computed property for content that interacts directly with store
+const content = computed({
+  get: () => activeDocument.value?.content || '',
+  set: (value: string) => {
+    if (activeDocument.value) {
+      updateDocument(activeDocument.value.id, value)
+      // Emit event for real-time synchronization
+      emitAppEvent('editor:content-update', {
+        documentId: activeDocument.value.id,
+        content: value,
+      })
+    }
+  },
+})
 </script>
 
 <template>
@@ -33,7 +53,7 @@ const isMobile = useMediaQuery('(max-width: 768px)')
     <div class="flex-1 min-h-0">
       <MyCodeMirror
         :key="`editor-${'dark'}`"
-        v-model="modelValue"
+        v-model="content"
         :extensions="[markdownLang()]"
         theme="dark"
         placeholder="# Start writing your story..."

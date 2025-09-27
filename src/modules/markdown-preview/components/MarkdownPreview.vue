@@ -1,10 +1,16 @@
 <script setup lang="ts">
-const { renderedHtml } = defineProps<{
-  renderedHtml: string
-}>()
-
 const root = ref<HTMLElement>()
 const scrollContainer = useTemplateRef<HTMLElement>('scrollContainer')
+
+// Get store directly for active document content
+const store = useDocumentsStore()
+const { activeDocument } = storeToRefs(store)
+
+// Create computed for markdown content
+const markdownContent = computed(() => activeDocument.value?.content || '')
+
+// Initialize markdown renderer internally
+const { renderedMarkdown } = useMarkdown(markdownContent)
 
 // Get the view mode state to detect when preview becomes visible
 const { viewMode, isPreviewVisible } = useViewMode()
@@ -44,7 +50,7 @@ onUnmounted(() => {
   cleanup()
 })
 
-watch(() => renderedHtml, () => nextTick(renderDiagrams))
+watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
 </script>
 
 <template>
@@ -65,7 +71,7 @@ watch(() => renderedHtml, () => nextTick(renderDiagrams))
         <article
           class="prose-lg max-w-none prose"
           data-testid="rendered-markdown-article"
-          v-html="renderedHtml"
+          v-html="renderedMarkdown"
         />
       </div>
     </div>

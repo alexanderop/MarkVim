@@ -16,7 +16,7 @@ const isMobile = useMediaQuery('(max-width: 768px)')
 
 const store = useDocumentsStore()
 const { documents, activeDocument, activeDocumentId } = storeToRefs(store)
-const { createDocument, setActiveDocument, updateDocument, getDocumentTitle } = store
+const { createDocument, setActiveDocument, getDocumentTitle } = store
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings, toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
@@ -27,17 +27,6 @@ const _colorThemeStore = useColorThemeStore()
 
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
-
-const activeMarkdown = computed({
-  get: () => activeDocument.value?.content || '',
-  set: (value: string) => {
-    if (activeDocument.value) {
-      updateDocument(activeDocument.value.id, value)
-    }
-  },
-})
-
-const { renderedMarkdown } = useMarkdown(activeMarkdown)
 
 const { registerShortcuts, registerAppCommand, formatKeys, setNewDocumentAction } = useShortcuts()
 
@@ -87,12 +76,6 @@ function handleSaveDocument() {
   a.download = `${getDocumentTitle(activeDocument.value.content)}.md`
   a.click()
   URL.revokeObjectURL(url)
-}
-
-function handleInsertText(text: string) {
-  if (activeDocument.value) {
-    activeMarkdown.value += text
-  }
 }
 
 function handleToggleVimMode() {
@@ -335,10 +318,8 @@ onBeforeUnmount(() => {
           >
             <ClientOnly>
               <MarkdownEditor
-                :model-value="activeMarkdown"
                 :settings="settings"
                 class="h-full"
-                @update:model-value="activeMarkdown = $event || ''"
                 @vim-mode-change="handleVimModeChange"
               />
               <template #fallback>
@@ -370,7 +351,6 @@ onBeforeUnmount(() => {
             }"
           >
             <MarkdownPreview
-              :rendered-html="renderedMarkdown"
               class="h-full"
             />
           </div>
@@ -384,8 +364,8 @@ onBeforeUnmount(() => {
     </div>
 
     <StatusBar
-      :line-count="activeMarkdown.split('\n').length"
-      :character-count="activeMarkdown.length"
+      :line-count="activeDocument?.content.split('\n').length || 0"
+      :character-count="activeDocument?.content.length || 0"
       :format-keys="formatKeys"
       :vim-mode="currentVimMode"
       :show-vim-mode="settings.vimMode"
@@ -395,12 +375,11 @@ onBeforeUnmount(() => {
       v-model:open="commandPaletteOpen"
       :position="commandPalettePosition"
       :view-mode="viewMode"
-      :markdown="activeMarkdown"
+      :markdown="activeDocument?.content || ''"
       :documents="documents"
       @command-selected="closeCommandPalette"
       @change-view-mode="setViewMode"
       @save-document="handleSaveDocument"
-      @insert-text="handleInsertText"
       @toggle-vim-mode="handleToggleVimMode"
       @toggle-line-numbers="handleToggleLineNumbers"
       @toggle-preview-sync="handleTogglePreviewSync"
