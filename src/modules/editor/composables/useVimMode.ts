@@ -1,3 +1,4 @@
+import { readonly, ref } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
 
 export function useVimMode() {

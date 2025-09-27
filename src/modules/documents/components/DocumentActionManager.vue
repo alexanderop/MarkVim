@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { onAppEvent } from '@/shared/utils/eventBus'
+import { useDocumentsStore } from '~/modules/documents/api'
+import DocumentsDocumentDeleteModal from './DocumentDeleteModal.vue'
 
 const { deleteDocument } = useDocumentsStore()
 
@@ -29,7 +32,7 @@ onAppEvent('document:delete', handleDeleteDocument)
 </script>
 
 <template>
-  <DocumentDeleteModal
+  <DocumentsDocumentDeleteModal
     v-model:open="deleteModalOpen"
     :document-title="documentToDelete?.title || ''"
     @confirm="confirmDeleteDocument"

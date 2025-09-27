@@ -1,3 +1,5 @@
+import { useEventBus } from '@vueuse/core'
+
 export interface DataResetEvent {
   type: 'clear-all-data'
   timestamp: number

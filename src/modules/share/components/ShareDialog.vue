@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/store'
+import type { Document } from '~/modules/documents/api'
+import { computed, ref, watch } from 'vue'
+import { useDocumentShare } from '~/modules/share/api'
+import BaseButton from '~/shared/components/BaseButton.vue'
+import BaseModal from '~/shared/components/BaseModal.vue'
 
 interface Props {
   document: Document | null

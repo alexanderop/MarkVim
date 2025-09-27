@@ -1,3 +1,6 @@
+import { useAsyncState, useCssVar, useMutationObserver } from '@vueuse/core'
+import { computed, nextTick, type Ref } from 'vue'
+
 export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
   let mermaid: any = null
 

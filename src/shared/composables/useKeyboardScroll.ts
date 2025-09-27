@@ -1,3 +1,6 @@
+import { useMagicKeys, useRafFn, useScroll, useTimestamp } from '@vueuse/core'
+import { ref, type Ref, watchEffect } from 'vue'
+
 /**
  * A Vue composable that provides smooth keyboard scrolling functionality with acceleration.
  *

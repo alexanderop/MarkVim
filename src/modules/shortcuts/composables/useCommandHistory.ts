@@ -1,4 +1,7 @@
 import type { Command } from './useShortcuts'
+import { useLocalStorage } from '@vueuse/core'
+import { readonly } from 'vue'
+import { useDataReset } from '@/shared/composables/useDataReset'
 
 export function useCommandHistory() {
   const commandHistory = useLocalStorage<string[]>('markvim-command-history', [])

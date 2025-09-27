@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
+import { useDocumentsStore } from '~/modules/documents/api'
+import { useViewMode } from '~/modules/layout/api'
+import { useMarkdown, useMermaid } from '~/modules/markdown-preview/api'
+import { useKeyboardScroll } from '~/shared/composables/useKeyboardScroll'
+
 const root = ref<HTMLElement>()
 const scrollContainer = useTemplateRef<HTMLElement>('scrollContainer')
 

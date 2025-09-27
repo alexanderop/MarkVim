@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useVimMode } from '~/modules/editor/api'
+
 interface Props {
   lineCount: number
   characterCount: number

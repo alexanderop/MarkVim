@@ -1,3 +1,6 @@
+import { defineNuxtPlugin } from '#imports'
+import { useDocumentsStore } from '~/modules/documents/store'
+
 export default defineNuxtPlugin(() => {
   // This plugin runs only on the client side after hydration
   // Initialize document store persistence after hydration

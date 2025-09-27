@@ -7,6 +7,7 @@ import { EditorState as CMEditorState, Compartment, StateEffect } from '@codemir
 import { lineNumbers as cmLineNumbers, placeholder as cmPlaceholder, drawSelection, EditorView, keymap } from '@codemirror/view'
 import { tags } from '@lezer/highlight'
 import { getCM, vim, Vim } from '@replit/codemirror-vim'
+import { onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
   extensions?: Extension[]

@@ -1,3 +1,7 @@
+import { useLocalStorage, useMediaQuery } from '@vueuse/core'
+import { computed, onUnmounted, readonly, ref } from 'vue'
+import { useDataReset } from '@/shared/composables/useDataReset'
+
 export function useResizablePanes(initialLeftWidth: number = 50) {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const leftPaneWidth = useLocalStorage('markvim-pane-width', initialLeftWidth)

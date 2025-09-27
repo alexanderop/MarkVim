@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import BaseButton from '~/shared/components/BaseButton.vue'
+import BaseModal from '~/shared/components/BaseModal.vue'
+
 const {
   documentTitle = '',
 } = defineProps<{

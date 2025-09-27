@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed, useSlots } from 'vue'
+
 const {
   variant = 'default',
   size = 'md',

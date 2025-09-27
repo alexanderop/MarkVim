@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/store'
+import type { Document } from '~/modules/documents/api'
+import { useLocalStorage } from '@vueuse/core'
+import { nextTick, onMounted, ref } from 'vue'
+import { useDocumentsStore } from '~/modules/documents/api'
+import { useViewMode } from '~/modules/layout/api'
+import { useDocumentShare } from '~/modules/share/api'
+import ShareImportDialog from './ImportDialog.vue'
 
 interface Emits {
   (e: 'documentImported', document: Document): void
@@ -100,7 +106,7 @@ defineExpose({
 </script>
 
 <template>
-  <ImportDialog
+  <ShareImportDialog
     v-model:open="showImportDialog"
     :auto-import-document="autoImportDocument"
     @import="handleImportConfirm"

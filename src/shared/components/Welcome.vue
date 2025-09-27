@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+
 const emit = defineEmits<{
   enter: []
 }>()

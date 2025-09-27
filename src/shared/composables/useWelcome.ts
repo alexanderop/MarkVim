@@ -1,3 +1,6 @@
+import { useCookie } from '#imports'
+import { readonly } from 'vue'
+
 export function useWelcome() {
   const hasSeenWelcome = useCookie<boolean>('markvim_welcome_seen', {
     default: () => false,

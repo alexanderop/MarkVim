@@ -1,7 +1,9 @@
+import { useLocalStorage } from '@vueuse/core'
+import { defineStore } from 'pinia'
+import { computed } from 'vue'
+import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
 import { defaultDocumentContent } from './defaultContent'
-
-// Nuxt auto-imports: defineStore, computed, useLocalStorage, useEventBus, ref, nextTick
 
 export interface Document {
   id: string

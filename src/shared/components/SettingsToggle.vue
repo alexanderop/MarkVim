@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useEditorSettings } from '~/modules/editor/api'
+import BaseButton from './BaseButton.vue'
+
 const { settings, toggleVimMode } = useEditorSettings()
 </script>
 

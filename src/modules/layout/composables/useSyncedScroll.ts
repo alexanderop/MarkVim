@@ -1,3 +1,6 @@
+import { useEventListener, useScroll, useThrottleFn } from '@vueuse/core'
+import { nextTick, onUnmounted, ref, type Ref, watch, watchEffect } from 'vue'
+
 export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
   const editorScrollContainer = ref<HTMLElement>()
   const previewScrollContainer = ref<HTMLElement>()

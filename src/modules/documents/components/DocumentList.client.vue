@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/store'
+import {
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuPortal,
+  ContextMenuRoot,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from 'reka-ui'
 import { emitAppEvent } from '@/shared/utils/eventBus'
+import { useDocumentsStore } from '../store'
 
 interface Props {
   documents: DocType[]

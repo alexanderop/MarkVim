@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/store'
+import type { Document } from '~/modules/documents/api'
 import { emitAppEvent } from '@/shared/utils/eventBus'
+import { useDocumentsStore } from '~/modules/documents/api'
+import { useViewMode, type ViewMode } from '~/modules/layout/api'
+import ShareButton from '~/modules/share/components/ShareButton.vue'
+import { useShortcuts } from '~/modules/shortcuts/api'
+import BaseButton from '~/shared/components/BaseButton.vue'
+import SettingsModal from '~/shared/components/SettingsModal.vue'
+import ShortcutsModal from '~/shared/components/ShortcutsModal.vue'
 
 const props = defineProps<Props>()
 

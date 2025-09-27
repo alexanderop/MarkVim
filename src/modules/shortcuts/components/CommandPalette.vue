@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import type { Document as DocType } from '~/modules/documents/store'
+import type { Document as DocType } from '~/modules/documents/api'
+import type { ViewMode } from '~/modules/layout/api'
+import {
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+} from 'reka-ui'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useDocumentsStore } from '~/modules/documents/api'
+import { type Command, useCommandHistory, useShortcuts } from '~/modules/shortcuts/api'
 
 const props = withDefaults(defineProps<{
   position?: { x: number, y: number }

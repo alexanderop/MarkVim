@@ -1,3 +1,7 @@
+import { useState } from '#imports'
+import { useActiveElement, useMagicKeys, useMounted, whenever } from '@vueuse/core'
+import { computed, type ComputedRef, type MaybeRefOrGetter, onMounted, readonly, ref, type Ref, toValue } from 'vue'
+
 /**
  * `AND` conditions for refs.
  *

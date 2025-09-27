@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
+import { useDocumentsStore } from '~/modules/documents/api'
+import { useShortcuts } from '~/modules/shortcuts/api'
+import ShortcutsCommandPalette from './CommandPalette.vue'
 
 // Command palette state - moved from AppShell
 const commandPaletteOpen = ref(false)
@@ -176,7 +181,7 @@ defineExpose({
 </script>
 
 <template>
-  <CommandPalette
+  <ShortcutsCommandPalette
     v-model:open="commandPaletteOpen"
     :position="commandPalettePosition"
     :documents="documents"

@@ -1,4 +1,5 @@
 import type MarkdownIt from 'markdown-it'
+import { onMounted, ref, type Ref, watch } from 'vue'
 import { addDataTestIdToAlerts, createMarkdownRenderer } from '~/shared/utils/markdown'
 
 export function useMarkdown(markdownContent: Ref<string>) {

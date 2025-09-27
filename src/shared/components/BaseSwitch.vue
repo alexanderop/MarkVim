@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useId } from '#imports'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 
 const props = defineProps<{

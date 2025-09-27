@@ -1,5 +1,7 @@
+import { useState } from '#imports'
 import { useCssVar, useMounted } from '@vueuse/core'
 import { watch, watchEffect } from 'vue'
+import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
 
 export interface EditorSettings {

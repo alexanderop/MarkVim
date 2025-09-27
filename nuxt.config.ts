@@ -34,58 +34,10 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ['./src/modules/**/store.ts', './src/stores/**'],
   },
-  // Configure auto-imports for our custom structure
-  components: [
-    {
-      path: './app',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/color-theme/components',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/documents/components',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/editor/components',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/layout/components',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/markdown-preview/components',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/shortcuts/components',
-      pathPrefix: false,
-    },
-    {
-      path: './modules/share/components',
-      pathPrefix: false,
-    },
-    {
-      path: './shared/components',
-      pathPrefix: false,
-    },
-  ],
+  // Disable auto-imports completely
+  components: [],
   imports: {
-    dirs: [
-      'modules/color-theme/composables',
-      'modules/documents/composables',
-      'modules/editor/composables',
-      'modules/markdown-preview/composables',
-      'modules/shortcuts/composables',
-      'modules/share/composables',
-      'modules/layout/composables',
-      'shared/composables',
-      'shared/utils',
-      'stores',
-    ],
+    autoImport: false,
   },
   css: [
     '~/shared/ui/tokens.css',

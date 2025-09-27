@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/store'
+import type { Document } from '~/modules/documents/api'
+import {
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from 'reka-ui'
+import { computed, ref, watch } from 'vue'
+import { useDocumentShare } from '~/modules/share/api'
 
 interface Props {
   autoImportDocument?: Document | null

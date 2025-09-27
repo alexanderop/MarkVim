@@ -1,3 +1,7 @@
+import { useState } from '#imports'
+import { useLocalStorage, useMounted } from '@vueuse/core'
+import { computed, readonly, ref, watch, watchEffect } from 'vue'
+import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
 
 export type ViewMode = 'split' | 'editor' | 'preview'

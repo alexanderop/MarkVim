@@ -1,3 +1,6 @@
+<script setup lang="ts">
+</script>
+
 <template>
   <div class="bg-surface-primary flex flex-col h-screen w-full">
     <!-- Header -->

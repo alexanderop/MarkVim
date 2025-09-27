@@ -1,3 +1,6 @@
+import { ref } from 'vue'
+import { useDocumentsStore } from '../store'
+
 export function useDocumentDeletion() {
   const { deleteDocument, getDocumentTitle } = useDocumentsStore()
 

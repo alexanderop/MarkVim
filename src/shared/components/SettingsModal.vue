@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useEditorSettings } from '~/modules/editor/api'
+import { useShortcuts } from '~/modules/shortcuts/api'
+import BaseButton from './BaseButton.vue'
+import BaseModal from './BaseModal.vue'
+import BaseSwitch from './BaseSwitch.vue'
+
 const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 

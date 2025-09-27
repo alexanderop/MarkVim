@@ -1,6 +1,13 @@
 <script setup lang="ts">
+import type { EditorSettings } from '~/modules/editor/api'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
+import { useMediaQuery } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
+import { useDocumentsStore } from '~/modules/documents/api'
+import { useVimMode } from '~/modules/editor/api'
+import EditorMyCodeMirror from './MyCodeMirror.vue'
 
 const { settings } = defineProps<{
   settings: EditorSettings
@@ -49,7 +56,7 @@ const content = computed({
 
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
-      <MyCodeMirror
+      <EditorMyCodeMirror
         :key="`editor-${'dark'}`"
         v-model="content"
         :extensions="[markdownLang()]"

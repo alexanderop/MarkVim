@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import type { ColorTheme } from '../store'
+import { ref } from 'vue'
+import { useColorThemeStore } from '~/modules/color-theme/api'
+import { useShortcuts } from '~/modules/shortcuts/api'
+import BaseButton from '~/shared/components/BaseButton.vue'
+import BaseModal from '~/shared/components/BaseModal.vue'
+import ColorThemeOklchColorPicker from './OklchColorPicker.vue'
 
 const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
 const { showColorTheme, closeColorTheme } = useShortcuts()
@@ -293,7 +299,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     @close="cancelColorChange"
   >
     <div class="p-4 border-t border-b border-border">
-      <OklchColorPicker
+      <ColorThemeOklchColorPicker
         v-model="tempColor"
         :label="selectedColorData.label"
         :description="selectedColorData.description"

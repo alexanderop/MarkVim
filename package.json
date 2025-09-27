@@ -68,6 +68,7 @@
     "@unocss/preset-wind4": "^66.1.4",
     "concurrently": "^9.1.0",
     "eslint": "^9.28.0",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-vuejs-accessibility": "^2.4.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.0",

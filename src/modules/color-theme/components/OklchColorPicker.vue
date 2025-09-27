@@ -27,6 +27,9 @@
  */
 
 import type { OklchColor } from '../store'
+import { computed, ref, watch } from 'vue'
+import { useColorThemeStore } from '../store'
+import OklchChannelSlider from './OklchChannelSlider.vue'
 
 interface Props {
   label: string
