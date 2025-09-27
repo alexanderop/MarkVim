@@ -6,11 +6,9 @@ const { settings } = defineProps<{
   settings: EditorSettings
 }>()
 
-const emit = defineEmits<{
-  vimModeChange: [mode: string, subMode?: string]
-}>()
-
 const isMobile = useMediaQuery('(max-width: 768px)')
+
+const { handleVimModeChange } = useVimMode()
 
 // Get store directly
 const store = useDocumentsStore()
@@ -66,7 +64,7 @@ const content = computed({
         :style="{
           fontFamily: settings.fontFamily === 'mono' ? 'var(--font-family-mono)' : 'var(--font-family-sans)',
         }"
-        @vim-mode-change="(mode, subMode) => emit('vimModeChange', mode, subMode)"
+        @vim-mode-change="handleVimModeChange"
       />
     </div>
   </div>

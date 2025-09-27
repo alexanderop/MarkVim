@@ -8,18 +8,17 @@ defineEmits<Emits>()
 
 const { openColorTheme } = useShortcuts()
 const { getDocumentTitle } = useDocumentsStore()
+const { isSidebarVisible, toggleSidebar } = useViewMode()
 
 interface Props {
   viewMode: ViewMode
   isMobile: boolean
-  isSidebarVisible: boolean
   activeDocumentTitle: string
   activeDocument: Document | null
 }
 
 interface Emits {
   (e: 'update:viewMode', value: ViewMode): void
-  (e: 'toggleSidebar'): void
 }
 
 function handleDeleteDocument() {
@@ -43,7 +42,7 @@ function handleDeleteDocument() {
         size="sm"
         data-testid="sidebar-toggle"
         class="text-xs font-medium px-2 py-1 md:text-sm md:px-3 md:py-1.5"
-        @click="$emit('toggleSidebar')"
+        @click="toggleSidebar"
       >
         <span class="hidden md:inline">{{ isSidebarVisible ? 'Hide' : 'Show' }}</span>
       </BaseButton>

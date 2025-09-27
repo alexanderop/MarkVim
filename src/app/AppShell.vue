@@ -1,16 +1,6 @@
 <script setup lang="ts">
 import { onAppEvent } from '@/shared/utils/eventBus'
 
-// Client-safe localStorage for sidebar visibility
-const isSidebarVisible = import.meta.client
-  ? useLocalStorage('markvim-sidebar-visible', true)
-  : ref(true)
-
-const { onDataReset } = useDataReset()
-onDataReset(() => {
-  isSidebarVisible.value = true
-})
-
 const isMobile = useMediaQuery('(max-width: 768px)')
 
 const store = useDocumentsStore()
@@ -19,7 +9,7 @@ const { getDocumentTitle } = store
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
-const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode } = useViewMode()
+const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode, isSidebarVisible } = useViewMode()
 
 // Initialize color theme store to ensure persistence on app startup
 const _colorThemeStore = useColorThemeStore()
@@ -49,30 +39,16 @@ function handleSaveDocument() {
   URL.revokeObjectURL(url)
 }
 
-function handleToggleSidebar() {
-  isSidebarVisible.value = !isSidebarVisible.value
-}
-
-function handleDocumentSelect(_id: string) {
-  if (isMobile.value) {
-    isSidebarVisible.value = false
-  }
-}
-
-function handleDocumentImported(_document: any) {
+function handleDocumentImported() {
   // Document selection is now handled by the event bus in the store
 }
 
 // Listen to event bus events that affect AppShell state
-onAppEvent('sidebar:toggle', () => {
-  handleToggleSidebar()
-})
-
 onAppEvent('settings:save-document', () => {
   handleSaveDocument()
 })
 
-onAppEvent('document:select', (_payload) => {
+onAppEvent('document:select', () => {
   // Document selection is handled by the store, but we need to close sidebar on mobile
   if (isMobile.value) {
     isSidebarVisible.value = false
@@ -85,11 +61,9 @@ onAppEvent('document:select', (_payload) => {
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
-      :is-sidebar-visible="isSidebarVisible"
       :active-document-title="activeDocumentTitle"
       :active-document="activeDocument"
       @update:view-mode="setViewMode"
-      @toggle-sidebar="handleToggleSidebar"
     />
 
     <div class="flex flex-1 relative overflow-hidden">
@@ -104,7 +78,6 @@ onAppEvent('document:select', (_payload) => {
               ? 'transform translate-x-0 opacity-100'
               : 'transform -translate-x-full opacity-0 pointer-events-none',
           ]"
-          @select-document="handleDocumentSelect"
         />
         <template #fallback>
           <DocumentListSkeleton
@@ -153,7 +126,6 @@ onAppEvent('document:select', (_payload) => {
               <MarkdownEditor
                 :settings="settings"
                 class="h-full"
-                @vim-mode-change="shortcutsManagerRef?.handleVimModeChange"
               />
               <template #fallback>
                 <MarkdownEditorSkeleton />
@@ -200,7 +172,6 @@ onAppEvent('document:select', (_payload) => {
       :line-count="activeDocument?.content.split('\n').length || 0"
       :character-count="activeDocument?.content.length || 0"
       :format-keys="shortcutsManagerRef?.formatKeys || ((k: string) => k)"
-      :vim-mode="shortcutsManagerRef?.currentVimMode || 'NORMAL'"
       :show-vim-mode="settings.vimMode"
     />
 

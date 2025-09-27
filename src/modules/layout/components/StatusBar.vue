@@ -3,20 +3,21 @@ interface Props {
   lineCount: number
   characterCount: number
   formatKeys: (keys: string) => string
-  vimMode?: string
   showVimMode?: boolean
 }
 
 defineProps<Props>()
+
+const { currentVimMode } = useVimMode()
 </script>
 
 <template>
   <footer data-testid="status-bar" class="px-4 border-t border-border bg-surface-primary/90 flex h-8 items-center justify-between backdrop-blur-xl">
     <div class="text-xs text-text-secondary flex gap-4 items-center">
-      <div v-if="showVimMode && vimMode" class="flex gap-1 items-center">
-        <span class="text-accent font-medium font-mono">{{ vimMode }}</span>
+      <div v-if="showVimMode && currentVimMode" class="flex gap-1 items-center">
+        <span class="text-accent font-medium font-mono">{{ currentVimMode }}</span>
       </div>
-      <div v-if="showVimMode && vimMode" class="bg-border h-3 w-px" />
+      <div v-if="showVimMode && currentVimMode" class="bg-border h-3 w-px" />
       <div class="flex gap-1 items-center">
         <span class="tabular-nums">{{ lineCount }}</span>
         <span>lines</span>

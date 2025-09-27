@@ -11,9 +11,6 @@ const store = useDocumentsStore()
 const { documents, activeDocument } = storeToRefs(store)
 const { getDocumentTitle } = store
 
-// Current vim mode tracking for status bar
-const currentVimMode = ref<string>('NORMAL')
-
 function handleGlobalKeydown(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
     event.preventDefault()
@@ -49,16 +46,6 @@ function handleSaveDocument() {
 
 function handleCreateDocument() {
   emitAppEvent('document:create')
-}
-
-function handleVimModeChange(mode: string, subMode?: string) {
-  if (subMode) {
-    currentVimMode.value = `${mode.toUpperCase()} (${subMode.toUpperCase()})`
-  }
-  else {
-    currentVimMode.value = mode.toUpperCase()
-  }
-  emitAppEvent('vim-mode:change', { mode, subMode })
 }
 
 // Listen to event bus events
@@ -182,10 +169,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleGlobalKeydown)
 })
 
-// Expose vim mode change handler, current mode, and format keys for parent components
+// Expose format keys for parent components
 defineExpose({
-  handleVimModeChange,
-  currentVimMode,
   formatKeys,
 })
 </script>

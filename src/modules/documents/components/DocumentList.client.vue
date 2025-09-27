@@ -8,26 +8,20 @@ interface Props {
   isVisible: boolean
 }
 
-interface Emits {
-  (e: 'selectDocument', id: string): void
-  (e: 'createDocument'): void
-}
-
 const _props = defineProps<Props>()
-const emit = defineEmits<Emits>()
 
 const { getDocumentTitle } = useDocumentsStore()
 
 function handleDocumentClick(id: string) {
-  emit('selectDocument', id)
+  emitAppEvent('document:select', { documentId: id })
 }
 
 function handleCreateDocument() {
-  emit('createDocument')
+  emitAppEvent('document:create')
 }
 
 function handleSelectDocument(id: string) {
-  emit('selectDocument', id)
+  emitAppEvent('document:select', { documentId: id })
 }
 
 function handleDeleteDocument(id: string) {

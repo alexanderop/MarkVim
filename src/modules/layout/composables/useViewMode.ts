@@ -15,9 +15,15 @@ export function useViewMode() {
     return 'split'
   })
 
+  // Client-safe localStorage for sidebar visibility
+  const isSidebarVisible = import.meta.client
+    ? useLocalStorage('markvim-sidebar-visible', true)
+    : ref(true)
+
   const { onDataReset } = useDataReset()
   onDataReset(() => {
     viewMode.value = 'split'
+    isSidebarVisible.value = true
   })
 
   const saveToLocalStorage = () => {
@@ -54,17 +60,28 @@ export function useViewMode() {
     setViewMode(modes[nextIndex])
   }
 
+  function toggleSidebar() {
+    isSidebarVisible.value = !isSidebarVisible.value
+  }
+
   // Listen for view:set events from the event bus
   onAppEvent('view:set', (payload) => {
     setViewMode(payload.viewMode)
   })
 
+  // Listen for sidebar:toggle events from the event bus
+  onAppEvent('sidebar:toggle', () => {
+    toggleSidebar()
+  })
+
   return {
     viewMode: readonly(viewMode),
+    isSidebarVisible,
     isPreviewVisible,
     isSplitView,
     isEditorVisible,
     setViewMode,
     toggleViewMode,
+    toggleSidebar,
   }
 }
