@@ -22,7 +22,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
   }
 
   if (event.key === 'Escape' && commandPaletteOpen.value) {
-    emitAppEvent('command-palette:close', undefined)
+    emitAppEvent('command-palette:close')
   }
 }
 
@@ -44,11 +44,11 @@ function handleDocumentSelectFromPalette(id: string) {
 }
 
 function handleSaveDocument() {
-  emitAppEvent('settings:save-document', undefined)
+  emitAppEvent('settings:save-document')
 }
 
 function handleCreateDocument() {
-  emitAppEvent('document:create', undefined)
+  emitAppEvent('document:create')
 }
 
 function handleVimModeChange(mode: string, subMode?: string) {
@@ -81,14 +81,14 @@ onMounted(() => {
 
   // Create g->t sequence shortcut for toggling sidebar
   createSequentialShortcut('g', 't', () => {
-    emitAppEvent('sidebar:toggle', undefined)
+    emitAppEvent('sidebar:toggle')
   })
 
   registerShortcuts([
     {
       keys: 'g t',
       description: 'Toggle sidebar',
-      action: () => emitAppEvent('sidebar:toggle', undefined),
+      action: () => emitAppEvent('sidebar:toggle'),
       category: 'View',
       icon: 'lucide:panel-left',
     },
@@ -147,21 +147,21 @@ onMounted(() => {
     {
       keys: 'v',
       description: 'Toggle Vim Mode',
-      action: () => emitAppEvent('settings:toggle-vim', undefined),
+      action: () => emitAppEvent('settings:toggle-vim'),
       category: 'Settings',
       icon: 'lucide:terminal',
     },
     {
       keys: 'l',
       description: 'Toggle Line Numbers',
-      action: () => emitAppEvent('settings:toggle-line-numbers', undefined),
+      action: () => emitAppEvent('settings:toggle-line-numbers'),
       category: 'Settings',
       icon: 'lucide:hash',
     },
     {
       keys: 'p',
       description: 'Toggle Preview Sync',
-      action: () => emitAppEvent('settings:toggle-preview-sync', undefined),
+      action: () => emitAppEvent('settings:toggle-preview-sync'),
       category: 'Settings',
       icon: 'lucide:link-2',
     },
