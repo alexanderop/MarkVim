@@ -60,33 +60,22 @@ The application follows a modular architecture with organized directories:
 ```
 src/
 ├── app/              # App-level components and layouts
-├── composables/      # Global composables
 ├── modules/          # Feature modules (see below)
-├── platform/         # Platform abstraction layer
-│   ├── commands/     # Command system
-│   ├── events/       # Event handling
-│   ├── keyboard/     # Keyboard management
-│   └── storage/      # Storage abstraction
-├── plugins/          # Nuxt plugins
 ├── shared/           # Shared utilities and components
 │   ├── components/   # Reusable components
 │   ├── composables/  # Shared composables
 │   ├── ui/          # UI tokens and styles
 │   └── utils/       # Utility functions
-├── types/            # TypeScript type definitions
-├── ui/              # UI system
-│   ├── components/   # Base UI components
-│   └── tokens/       # Design tokens
-└── utils/           # App-level utilities
+└── types/            # TypeScript type definitions
 ```
 
 ### Module Structure
 Each module under `src/modules/` follows a consistent structure:
 
 - **color-theme** - Theme customization with OKLCH color picker
-  - `api/`, `components/`, `composables/`, `internal/`, `stores/`
+  - `api/`, `components/`, `composables/`, `internal/`, `store.ts`
 - **documents** - Document CRUD operations and persistence via localStorage  
-  - `api/`, `components/`, `composables/`, `internal/`, `stores/`
+  - `api/`, `components/`, `composables/`, `internal/`, `store.ts`
 - **editor** - CodeMirror integration with vim mode support
   - `api/`, `components/`, `composables/`, `internal/`
 - **layout** - App layout components (header, status bar, resizable panes)
@@ -104,13 +93,12 @@ Each module under `src/modules/` follows a consistent structure:
 2. **Composables Pattern**: Business logic extracted into composables for reusability
 3. **Store Persistence**: Documents and settings persist to localStorage
 4. **Typed Event Bus**: Cross-component communication via typed event bus (`src/shared/utils/eventBus.ts`)
-5. **Platform Abstraction**: Platform layer provides abstractions for commands, events, keyboard, and storage
-6. **Modular Structure**: Each module contains its own API, components, composables, and internal logic
-7. **Responsive Design**: Mobile-first with adaptive layouts
+5. **Modular Structure**: Each module contains its own API, components, composables, and internal logic
+6. **Responsive Design**: Mobile-first with adaptive layouts
 
 ### State Management
-- Documents are managed by Pinia store (`src/modules/documents/stores/store.ts`)
-- Color theme managed by Pinia store (`src/modules/color-theme/stores/store.ts`)
+- Documents are managed by Pinia store (`src/modules/documents/store.ts`)
+- Color theme managed by Pinia store (`src/modules/color-theme/store.ts`)
 - Active document syncs with editor in real-time via event bus
 - Settings and documents persist to localStorage
 
