@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/core/api'
-import { useLocalStorage } from '@vueuse/core'
-import { nextTick, onMounted, ref } from 'vue'
-import { useDocumentsStore } from '~/modules/documents/api'
+import { onMounted, ref } from 'vue'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useViewMode } from '~/modules/layout/api'
 import { useDocumentShare } from '~/modules/share/api'
 import ShareImportDialog from './ImportDialog.vue'
@@ -14,7 +13,6 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const { parseShareUrl, clearShareFromUrl } = useDocumentShare()
-const { setActiveDocument } = useDocumentsStore()
 const { setViewMode } = useViewMode()
 
 const showImportDialog = ref(false)
@@ -51,14 +49,8 @@ function useAutoImportDetection() {
 const { detectShareInUrl } = useAutoImportDetection()
 
 async function handleAutoImport(document: Document) {
-  const documentStorage = useLocalStorage<Document[]>('markvim-documents', [])
-
-  // Add the document to storage
-  documentStorage.value.unshift(document)
-
-  // Use nextTick to ensure the reactive update happens before setting active
-  await nextTick()
-  setActiveDocument(document.id)
+  // Import via event
+  emitAppEvent('documents:import', { content: document.content })
 
   // Switch to preview mode
   setViewMode('preview')
@@ -69,14 +61,8 @@ async function handleAutoImport(document: Document) {
 }
 
 async function handleImportConfirm(document: Document) {
-  const documentStorage = useLocalStorage<Document[]>('markvim-documents', [])
-
-  // Add the document to storage
-  documentStorage.value.unshift(document)
-
-  // Use nextTick to ensure the reactive update happens before setting active
-  await nextTick()
-  setActiveDocument(document.id)
+  // Import via event
+  emitAppEvent('documents:import', { content: document.content })
 
   emit('documentImported', document)
 

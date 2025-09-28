@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/api'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { useDocumentsStore } from '~/modules/documents/api'
+import { getDocumentTitle } from '~/modules/documents/api'
 import { useViewMode, type ViewMode } from '~/modules/layout/api'
 import { ShareButton } from '~/modules/share/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
@@ -14,7 +14,6 @@ const props = defineProps<Props>()
 defineEmits<Emits>()
 
 const { openColorTheme } = useShortcuts()
-const { getDocumentTitle } = useDocumentsStore()
 const { isSidebarVisible, toggleSidebar } = useViewMode()
 
 interface Props {

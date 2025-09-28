@@ -2,40 +2,31 @@
 import type { EditorSettings } from '~/modules/editor/api'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
 import { useMediaQuery } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { useDocumentsStore } from '~/modules/documents/api'
 import { useVimMode } from '~/modules/editor/api'
 import EditorMyCodeMirror from './MyCodeMirror.vue'
 
-const { settings } = defineProps<{
+const { content, settings } = defineProps<{
+  content: string
   settings: EditorSettings
+}>()
+
+const emit = defineEmits<{
+  'update:content': [value: string]
 }>()
 
 const isMobile = useMediaQuery('(max-width: 768px)')
 
 const { handleVimModeChange } = useVimMode()
 
-// Get store directly
-const store = useDocumentsStore()
-const { activeDocument } = storeToRefs(store)
-const { updateDocument } = store
-
-// Create computed property for content that interacts directly with store
-const content = computed({
-  get: () => activeDocument.value?.content || '',
-  set: (value: string) => {
-    if (activeDocument.value) {
-      updateDocument(activeDocument.value.id, value)
-      // Emit event for real-time synchronization
-      emitAppEvent('editor:content-update', {
-        documentId: activeDocument.value.id,
-        content: value,
-      })
-    }
-  },
-})
+function handleContentUpdate(value: string) {
+  emit('update:content', value)
+  // Emit event for real-time synchronization
+  emitAppEvent('editor:content-update', {
+    documentId: 'current', // Will be resolved by parent
+    content: value,
+  })
+}
 </script>
 
 <template>
@@ -58,7 +49,7 @@ const content = computed({
     <div class="flex-1 min-h-0">
       <EditorMyCodeMirror
         :key="`editor-${'dark'}`"
-        v-model="content"
+        :model-value="content"
         :extensions="[markdownLang()]"
         theme="dark"
         placeholder="# Start writing your story..."
@@ -71,6 +62,7 @@ const content = computed({
         :style="{
           fontFamily: settings.fontFamily === 'mono' ? 'var(--font-family-mono)' : 'var(--font-family-sans)',
         }"
+        @update:model-value="handleContentUpdate"
         @vim-mode-change="handleVimModeChange"
       />
     </div>

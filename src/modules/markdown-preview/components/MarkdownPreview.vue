@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
-import { useDocumentsStore } from '~/modules/documents/api'
 import { useViewMode } from '~/modules/layout/api'
 import { useMarkdown, useMermaid } from '~/modules/markdown-preview/api'
 import { useKeyboardScroll } from '~/shared/composables/useKeyboardScroll'
 
+const { content } = defineProps<{
+  content: string
+}>()
+
 const root = ref<HTMLElement>()
 const scrollContainer = useTemplateRef<HTMLElement>('scrollContainer')
 
-// Get store directly for active document content
-const store = useDocumentsStore()
-const { activeDocument } = storeToRefs(store)
-
-// Create computed for markdown content
-const markdownContent = computed(() => activeDocument.value?.content || '')
+// Create computed for markdown content from props
+const markdownContent = computed(() => content)
 
 // Initialize markdown renderer internally
 const { renderedMarkdown } = useMarkdown(markdownContent)

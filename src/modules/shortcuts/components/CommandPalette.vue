@@ -8,7 +8,7 @@ import {
   DialogRoot,
 } from 'reka-ui'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useDocumentsStore } from '~/modules/documents/api'
+import { getDocumentTitle } from '~/modules/documents/api'
 import { type Command, useCommandHistory, useShortcuts } from '~/modules/shortcuts/api'
 
 const props = withDefaults(defineProps<{
@@ -37,7 +37,7 @@ const inputRef = ref<HTMLInputElement>()
 
 // Get all commands from the useShortcuts composable
 const { allCommands } = useShortcuts()
-const { getDocumentTitle } = useDocumentsStore()
+// getDocumentTitle is imported from api above
 const { trackCommandUsage, sortCommandsByHistory } = useCommandHistory()
 
 // Create a computed property to transform documents into commands

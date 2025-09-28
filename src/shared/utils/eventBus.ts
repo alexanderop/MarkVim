@@ -17,6 +17,32 @@ export interface AppEvents {
   /** Fired after a new document is created. */
   'document:create': undefined
 
+  /** Request all documents from the store */
+  'documents:request-state': undefined
+  /** Update all subscribers with current documents state */
+  'documents:state-updated': {
+    documents: Array<{
+      id: string
+      content: string
+      createdAt: number
+      updatedAt: number
+    }>
+    activeDocumentId: string
+  }
+  /** Update document content */
+  'documents:update': {
+    id: string
+    content: string
+  }
+  /** Add new document with content (store generates ID) */
+  'documents:add': {
+    content: string
+  }
+  /** Import document with content */
+  'documents:import': {
+    content: string
+  }
+
   /** Switch the main view mode. */
   'view:set': {
     viewMode: 'editor' | 'split' | 'preview'

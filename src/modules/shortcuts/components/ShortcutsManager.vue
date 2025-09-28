@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import type { Document } from '~/modules/core/api'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
-import { useDocumentsStore } from '~/modules/documents/api'
+import { getDocumentTitle } from '~/modules/documents/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import ShortcutsCommandPalette from './CommandPalette.vue'
 
@@ -10,11 +10,29 @@ import ShortcutsCommandPalette from './CommandPalette.vue'
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
 
+// Local state synced via events
+const documents = ref<Document[]>([])
+const activeDocumentId = ref<string>('')
+const activeDocument = computed(() =>
+  documents.value.find(doc => doc.id === activeDocumentId.value) || null,
+)
+
 // Get required composables
 const { registerShortcuts, registerAppCommand, formatKeys, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
-const store = useDocumentsStore()
-const { documents, activeDocument } = storeToRefs(store)
-const { getDocumentTitle } = store
+
+// Request initial state and subscribe to updates
+onMounted(async () => {
+  // Initialize the store if needed
+  const { useDocumentsStore } = await import('~/modules/documents/store')
+  useDocumentsStore()
+
+  emitAppEvent('documents:request-state')
+})
+
+onAppEvent('documents:state-updated', (payload) => {
+  documents.value = payload.documents
+  activeDocumentId.value = payload.activeDocumentId
+})
 
 function handleGlobalKeydown(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {

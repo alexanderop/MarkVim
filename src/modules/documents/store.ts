@@ -3,7 +3,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
-import { onAppEvent } from '@/shared/utils/eventBus'
+import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 import { defaultDocumentContent } from './defaultContent'
 
 // Use a consistent default document ID
@@ -29,6 +29,25 @@ export const useDocumentsStore = defineStore('documents', () => {
 
   const { onDataReset } = useDataReset()
 
+  // Computed properties
+  const documents = computed(() => {
+    return [..._documents.value].sort((a, b) => b.updatedAt - a.updatedAt)
+  })
+
+  const activeDocument = computed(() => {
+    return documents.value.find(doc => doc.id === _activeDocumentId.value) || documents.value[0]
+  })
+
+  const activeDocumentId = computed(() => _activeDocumentId.value)
+
+  // Emit current state to all subscribers
+  const emitState = () => {
+    emitAppEvent('documents:state-updated', {
+      documents: documents.value,
+      activeDocumentId: activeDocumentId.value,
+    })
+  }
+
   // Initialize store state
   function initializeStore() {
     // Ensure we have at least one document
@@ -42,9 +61,12 @@ export const useDocumentsStore = defineStore('documents', () => {
     if (!_documents.value.find(doc => doc.id === _activeDocumentId.value)) {
       _activeDocumentId.value = _documents.value[0]?.id || DEFAULT_DOCUMENT_ID
     }
+
+    // Emit initial state
+    emitState()
   }
 
-  // Initialize immediately
+  // Initialize immediately since the store needs to be ready when components request state
   initializeStore()
 
   // Data reset handling
@@ -52,18 +74,8 @@ export const useDocumentsStore = defineStore('documents', () => {
     const newDefaultDoc = createDefaultDocument()
     _documents.value = [newDefaultDoc]
     _activeDocumentId.value = newDefaultDoc.id
+    emitState()
   })
-
-  // Computed properties
-  const documents = computed(() => {
-    return [..._documents.value].sort((a, b) => b.updatedAt - a.updatedAt)
-  })
-
-  const activeDocument = computed(() => {
-    return documents.value.find(doc => doc.id === _activeDocumentId.value) || documents.value[0]
-  })
-
-  const activeDocumentId = computed(() => _activeDocumentId.value)
 
   // Actions
   function createDocument(): string {
@@ -77,6 +89,7 @@ export const useDocumentsStore = defineStore('documents', () => {
 
     _documents.value.unshift(newDoc)
     _activeDocumentId.value = newDoc.id
+    emitState()
 
     return newDoc.id
   }
@@ -85,6 +98,7 @@ export const useDocumentsStore = defineStore('documents', () => {
     const doc = _documents.value.find(d => d.id === id)
     if (doc) {
       _activeDocumentId.value = id
+      emitState()
     }
   }
 
@@ -96,7 +110,22 @@ export const useDocumentsStore = defineStore('documents', () => {
         content,
         updatedAt: Date.now(),
       }
+      emitState()
     }
+  }
+
+  function addDocument(content: string): string {
+    const now = Date.now()
+    const newDoc: Document = {
+      id: crypto.randomUUID(),
+      content,
+      createdAt: now,
+      updatedAt: now,
+    }
+    _documents.value.unshift(newDoc)
+    _activeDocumentId.value = newDoc.id
+    emitState()
+    return newDoc.id
   }
 
   function deleteDocument(id: string): void {
@@ -120,6 +149,7 @@ export const useDocumentsStore = defineStore('documents', () => {
         _activeDocumentId.value = newActiveId
       }
     }
+    emitState()
   }
 
   function getDocumentTitle(content: string): string {
@@ -141,6 +171,22 @@ export const useDocumentsStore = defineStore('documents', () => {
 
   onAppEvent('document:select', (payload) => {
     setActiveDocument(payload.documentId)
+  })
+
+  onAppEvent('documents:request-state', () => {
+    emitState()
+  })
+
+  onAppEvent('documents:update', (payload) => {
+    updateDocument(payload.id, payload.content)
+  })
+
+  onAppEvent('documents:add', (payload) => {
+    addDocument(payload.content)
+  })
+
+  onAppEvent('documents:import', (payload) => {
+    addDocument(payload.content)
   })
 
   return {

@@ -9,7 +9,7 @@ import {
   ContextMenuTrigger,
 } from 'reka-ui'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { useDocumentsStore } from '../store'
+import { getDocumentTitle } from '~/modules/documents/api'
 
 interface Props {
   documents: DocType[]
@@ -18,8 +18,6 @@ interface Props {
 }
 
 const _props = defineProps<Props>()
-
-const { getDocumentTitle } = useDocumentsStore()
 
 function handleDocumentClick(id: string) {
   emitAppEvent('document:select', { documentId: id })
