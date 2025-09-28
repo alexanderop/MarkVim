@@ -3,7 +3,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
-import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
+import { onAppEvent } from '@/shared/utils/eventBus'
 import { defaultDocumentContent } from './defaultContent'
 
 // Use a consistent default document ID
@@ -64,7 +64,6 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
     const newDefaultDoc = createDefaultDocument()
     _documents.value = [newDefaultDoc]
     _activeDocumentId.value = newDefaultDoc.id
-    emitAppEvent('document:select', { documentId: newDefaultDoc.id })
   })
 
   // Actions
@@ -79,7 +78,6 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
 
     _documents.value.unshift(newDoc)
     _activeDocumentId.value = newDoc.id
-    emitAppEvent('document:select', { documentId: newDoc.id })
 
     return newDoc.id
   }
@@ -88,7 +86,6 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
     const doc = _documents.value.find(d => d.id === id)
     if (doc) {
       _activeDocumentId.value = id
-      emitAppEvent('document:select', { documentId: id })
     }
   }
 
@@ -113,7 +110,6 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
     }
     _documents.value.unshift(newDoc)
     _activeDocumentId.value = newDoc.id
-    emitAppEvent('document:select', { documentId: newDoc.id })
     return newDoc.id
   }
 
@@ -149,7 +145,6 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
         // Select the first available document
         const newActiveId = _documents.value[0].id
         _activeDocumentId.value = newActiveId
-        emitAppEvent('document:select', { documentId: newActiveId })
       }
     }
   }

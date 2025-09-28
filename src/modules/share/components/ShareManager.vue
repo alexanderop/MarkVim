@@ -64,9 +64,6 @@ async function handleImportConfirm(document: Document) {
   // Import via event
   emitAppEvent('documents:import', { content: document.content })
 
-  // Switch to editor mode for manual imports
-  setViewMode('editor')
-
   emit('documentImported', document)
 
   clearShareFromUrl()

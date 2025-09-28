@@ -49,10 +49,7 @@ function handleSaveDocument() {
 }
 
 function handleDocumentImported() {
-  // Close sidebar on mobile when document is imported (similar to document selection)
-  if (isMobile.value) {
-    isSidebarVisible.value = false
-  }
+  // Document selection is now handled by the event bus in the store
 }
 
 // Listen to event bus events that affect AppShell state
