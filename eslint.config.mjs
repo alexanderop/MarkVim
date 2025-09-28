@@ -67,7 +67,9 @@ export default withNuxt(
       // Cyclomatic complexity rule
       // Default threshold is 20, but you can adjust based on your needs
       // Start with 'warn' to ease into it, then change to 'error'
-      complexity: ['error', { max: 16 }],
+      'complexity': ['error', { max: 15 }],
+      // Arrow spacing rule
+      'arrow-spacing': 'error',
       // Allow console.log statements
     },
   },
