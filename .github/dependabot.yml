@@ -1,0 +1,47 @@
+# GitHub Dependabot configuration for MarkVim
+# Automatically creates pull requests to update dependencies
+version: 2
+updates:
+  # Node.js dependencies (npm/pnpm)
+  - package-ecosystem: "npm"  # Use "npm" for pnpm projects
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "02:00"
+      timezone: "UTC"
+    # Group all dependencies into single PRs to reduce noise
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    open-pull-requests-limit: 5
+    # Ignore major updates for critical framework packages
+    ignore:
+      - dependency-name: "nuxt"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vue"
+        update-types: ["version-update:semver-major"]
+    # Allow all dependency types and security updates
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+      - update-type: "security"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "github-actions"
+      - "dependencies"
