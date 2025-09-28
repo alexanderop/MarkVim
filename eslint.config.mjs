@@ -84,6 +84,10 @@ export default withNuxt(
       'no-debugger': 'error',
       // No else return rule
       'no-else-return': 'error',
+      // Security rules
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-loop-func': 'error',
     },
   },
 )
