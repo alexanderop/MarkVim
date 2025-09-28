@@ -92,6 +92,9 @@ export default withNuxt(
       'no-param-reassign': 'error',
       'no-return-assign': 'error',
       'no-self-compare': 'error',
+      'no-sequences': 'error',
+      'no-throw-literal': 'error',
+      'no-unmodified-loop-condition': 'error',
     },
   },
 )
