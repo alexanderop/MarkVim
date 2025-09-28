@@ -95,6 +95,11 @@ export default withNuxt(
       'no-sequences': 'error',
       'no-throw-literal': 'error',
       'no-unmodified-loop-condition': 'error',
+      'prefer-promise-reject-errors': 'error',
+      'prefer-rest-params': 'error',
+      'prefer-spread': 'error',
+      'prefer-template': 'error',
+      'require-await': 'error',
     },
   },
 )

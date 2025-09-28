@@ -675,7 +675,7 @@ export class MarkVimPage {
     await this.page.waitForLoadState('networkidle')
   }
 
-  async verifyUrlFragment(expectedFragment: string): Promise<void> {
+  verifyUrlFragment(expectedFragment: string): void {
     const currentUrl = this.page.url()
     expect(currentUrl).toContain(expectedFragment)
   }
@@ -1150,7 +1150,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     await expect(colorPickerModal).not.toBeVisible()
   }
 
-  async generateLargeDocumentContent(): Promise<string> {
+  generateLargeDocumentContent(): string {
     const baseContent = '# Large Document\n\nThis is a very long document that will exceed the 8KB sharing limit. '
     const filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(200)
     return baseContent + filler.repeat(10)
@@ -1198,7 +1198,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 }
 
 // Helper function to get MarkVimPage instance
-export async function getMarkVimPage(world: any): Promise<MarkVimPage> {
+export function getMarkVimPage(world: any): MarkVimPage {
   if (!world.page) {
     throw new Error('Page not initialized')
   }

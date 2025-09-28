@@ -48,7 +48,7 @@ function useAutoImportDetection() {
 
 const { detectShareInUrl } = useAutoImportDetection()
 
-async function handleAutoImport(document: Document) {
+function handleAutoImport(document: Document) {
   // Import via event
   emitAppEvent('documents:import', { content: document.content })
 
@@ -60,7 +60,7 @@ async function handleAutoImport(document: Document) {
   clearShareFromUrl()
 }
 
-async function handleImportConfirm(document: Document) {
+function handleImportConfirm(document: Document) {
   // Import via event
   emitAppEvent('documents:import', { content: document.content })
 

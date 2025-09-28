@@ -32,7 +32,7 @@ When('I select the first document {string}', async function (documentTitle: stri
   await this.page.waitForTimeout(1000)
 })
 
-When('I check the browser console', async function () {
+When('I check the browser console', function () {
   // Start monitoring console messages
   const consoleLogs: string[] = []
   this.page.on('console', (msg: any) => {
@@ -53,7 +53,7 @@ Then('the active document should be {string}', async (documentTitle: string) => 
   await markVimPage.verifyDocumentTitle(documentTitle)
 })
 
-Then('I should not see any hydration mismatch warnings', async function () {
+Then('I should not see any hydration mismatch warnings', function () {
   const consoleLogs = this.consoleLogs as string[]
   const hydrationWarnings = consoleLogs.filter(log =>
     log.includes('hydration')

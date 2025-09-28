@@ -148,23 +148,23 @@ export function useDocumentShare() {
     return importedDoc
   }
 
-  async function importFromUrl(url?: string): Promise<Document | null> {
+  function importFromUrl(url?: string): Promise<Document | null> {
     isImporting.value = true
     importError.value = null
 
     try {
       const shareableDoc = parseShareUrl(url)
       if (!shareableDoc) {
-        return null
+        return Promise.resolve(null)
       }
 
       const importedDoc = importSharedDocument(shareableDoc)
-      return importedDoc
+      return Promise.resolve(importedDoc)
     }
     catch (error) {
       importError.value = 'Failed to import document from share link'
       console.error('Import error:', error)
-      return null
+      return Promise.resolve(null)
     }
     finally {
       isImporting.value = false
