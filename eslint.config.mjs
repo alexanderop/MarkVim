@@ -88,6 +88,10 @@ export default withNuxt(
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-loop-func': 'error',
+      'no-new-func': 'error',
+      'no-param-reassign': 'error',
+      'no-return-assign': 'error',
+      'no-self-compare': 'error',
     },
   },
 )
