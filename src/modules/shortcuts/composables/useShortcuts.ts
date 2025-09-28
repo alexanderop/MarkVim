@@ -99,7 +99,9 @@ export function useShortcuts() {
       const keyParts = keyCombo.split('+').map(k => k.trim().toLowerCase())
       keyParts.forEach((key) => {
         // Access the key to ensure it's created in the useMagicKeys proxy
-        const _ = keys[key as keyof typeof keys]
+        // Using bracket notation to safely access dynamic keys
+        const keysObj: Record<string, any> = keys
+        const _ = keysObj[key]
       })
     }
 
@@ -107,7 +109,8 @@ export function useShortcuts() {
     const keyPressed = computed(() => {
       // For single keys, use direct access
       if (!keyCombo.includes('+')) {
-        const keyRef = keys[keyCombo as keyof typeof keys]
+        const keysObj: Record<string, any> = keys
+        const keyRef = keysObj[keyCombo]
         return Boolean(keyRef?.value)
       }
 
@@ -120,7 +123,8 @@ export function useShortcuts() {
       ]
 
       for (const variation of variations) {
-        const keyRef = keys[variation as keyof typeof keys]
+        const keysObj: Record<string, any> = keys
+        const keyRef = keysObj[variation]
         if (keyRef?.value) {
           return true
         }
@@ -280,7 +284,8 @@ export function useShortcuts() {
   // Check if a shortcut is currently active
   function isShortcutActive(keyCombo: string): boolean {
     const normalizedKeys = keyCombo.toLowerCase().replace(/\s/g, '')
-    const keyRef = keys[normalizedKeys as keyof typeof keys] || keys[keyCombo as keyof typeof keys]
+    const keysRecord: Record<string, any> = keys
+    const keyRef = keysRecord[normalizedKeys] || keysRecord[keyCombo]
     return Boolean(keyRef?.value)
   }
 
@@ -325,7 +330,8 @@ export function useShortcuts() {
     }
 
     // Listen for first key
-    whenever(keys[firstKey as keyof typeof keys], () => {
+    const keysObj: Record<string, any> = keys
+    whenever(keysObj[firstKey], () => {
       if (!notUsingInput.value) {
         resetStage()
         return
@@ -337,7 +343,7 @@ export function useShortcuts() {
     })
 
     // Listen for second key when we're in the right stage
-    whenever(() => stage.value === 'got-first' && keys[secondKey as keyof typeof keys].value, () => {
+    whenever(() => stage.value === 'got-first' && keysObj[secondKey].value, () => {
       if (!notUsingInput.value) {
         resetStage()
         return

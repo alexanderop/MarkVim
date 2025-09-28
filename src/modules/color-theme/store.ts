@@ -1,6 +1,7 @@
 import { useCssVar, useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, watchEffect } from 'vue'
+import { z } from 'zod'
 
 export interface OklchColor {
   l: number // Lightness: 0-1
@@ -21,6 +22,27 @@ export interface ColorTheme {
   alertWarning: OklchColor
   alertCaution: OklchColor
 }
+
+// Zod schemas for validation
+const OklchColorSchema = z.object({
+  l: z.number().min(0).max(1),
+  c: z.number().min(0).max(0.4),
+  h: z.number().min(0).max(360),
+  a: z.number().min(0).max(1).optional(),
+})
+
+const ColorThemeSchema = z.object({
+  background: OklchColorSchema,
+  foreground: OklchColorSchema,
+  accent: OklchColorSchema,
+  muted: OklchColorSchema,
+  border: OklchColorSchema,
+  alertNote: OklchColorSchema,
+  alertTip: OklchColorSchema,
+  alertImportant: OklchColorSchema,
+  alertWarning: OklchColorSchema,
+  alertCaution: OklchColorSchema,
+})
 
 // Default dark mode colors
 export const DEFAULT_COLOR_THEME: ColorTheme = {
@@ -160,9 +182,15 @@ export const useColorThemeStore = defineStore('color-theme', () => {
 
   function importTheme(themeJson: string): boolean {
     try {
-      const parsedTheme = JSON.parse(themeJson) as ColorTheme
+      const parsedData = JSON.parse(themeJson)
+      const result = ColorThemeSchema.safeParse(parsedData)
 
-      // Validate the theme structure
+      if (!result.success) {
+        console.error('Invalid theme format:', result.error)
+        return false
+      }
+
+      const parsedTheme = result.data
       const requiredKeys: (keyof ColorTheme)[] = ['background', 'foreground', 'accent', 'muted', 'border', 'alertNote', 'alertTip', 'alertImportant', 'alertWarning', 'alertCaution']
       const isValid = requiredKeys.every(key =>
         parsedTheme[key]

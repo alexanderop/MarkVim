@@ -75,7 +75,9 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
         initializeMermaid()
 
         nodes.forEach((node) => {
-          const element = node as HTMLElement
+          if (!(node instanceof HTMLElement))
+            return
+          const element = node
           if (element.hasAttribute('data-processed')) {
             element.removeAttribute('data-processed')
             const originalContent = element.dataset.mermaidSource || element.textContent
@@ -89,7 +91,8 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
           }
         })
 
-        await mermaid.default.run({ nodes: Array.from(nodes) as HTMLElement[] })
+        const htmlNodes = Array.from(nodes).filter((node): node is HTMLElement => node instanceof HTMLElement)
+        await mermaid.default.run({ nodes: htmlNodes })
       }
     }
     catch (error) {

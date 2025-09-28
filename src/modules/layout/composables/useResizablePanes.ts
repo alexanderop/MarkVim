@@ -89,9 +89,9 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     document.removeEventListener('pointercancel', stopDrag)
 
     // Release pointer capture if event is available
-    if (event && event.target) {
+    if (event && event.target instanceof Element) {
       try {
-        (event.target as Element).releasePointerCapture(event.pointerId)
+        event.target.releasePointerCapture(event.pointerId)
       }
       catch {
         // Ignore errors if capture was already released
@@ -108,7 +108,9 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     event.preventDefault()
 
     // Capture the pointer to ensure we get all events
-    const target = event.target as Element
+    if (!(event.target instanceof Element))
+      return
+    const target = event.target
     target.setPointerCapture(event.pointerId)
 
     isDragging.value = true

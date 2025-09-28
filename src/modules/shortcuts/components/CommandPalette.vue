@@ -111,6 +111,7 @@ const groupedCommands = computed(() => {
       }
       acc[group].push(command)
       return acc
+    // eslint-disable-next-line ts/consistent-type-assertions
     }, {} as Record<string, Command[]>)
 
     const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
@@ -135,6 +136,7 @@ const groupedCommands = computed(() => {
     }
     acc[group].push(command)
     return acc
+  // eslint-disable-next-line ts/consistent-type-assertions
   }, {} as Record<string, Command[]>)
 
   // Define group order - prioritize Files group
@@ -193,8 +195,8 @@ function scrollToSelected() {
     if (!scrollContainer.value)
       return
 
-    const selectedElement = scrollContainer.value.querySelector(`[data-command-index="${selectedIndex.value}"]`) as HTMLElement
-    if (selectedElement) {
+    const selectedElement = scrollContainer.value.querySelector(`[data-command-index="${selectedIndex.value}"]`)
+    if (selectedElement instanceof HTMLElement) {
       selectedElement.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',

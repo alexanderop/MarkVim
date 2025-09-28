@@ -2,6 +2,7 @@ import type { Document } from '~/modules/core/api'
 import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'
+import { z } from 'zod'
 
 export interface ShareableDocument {
   id: string
@@ -10,6 +11,14 @@ export interface ShareableDocument {
   createdAt: number
   sharedAt: number
 }
+
+const ShareableDocumentSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  content: z.string(),
+  createdAt: z.number(),
+  sharedAt: z.number(),
+})
 
 export function useDocumentShare() {
   const { copy: copyToClipboard, isSupported: clipboardSupported } = useClipboard()
@@ -121,14 +130,15 @@ export function useDocumentShare() {
         return null
       }
 
-      const shareableDoc = JSON.parse(jsonString) as ShareableDocument
+      const parsedData = JSON.parse(jsonString)
+      const result = ShareableDocumentSchema.safeParse(parsedData)
 
-      if (!shareableDoc.content || typeof shareableDoc.content !== 'string') {
+      if (!result.success) {
         importError.value = 'Invalid document data in share link'
         return null
       }
 
-      return shareableDoc
+      return result.data
     }
     catch (error) {
       importError.value = 'Failed to parse share link. The link may be invalid or corrupted.'

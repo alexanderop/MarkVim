@@ -54,7 +54,7 @@ Then('the active document should be {string}', async (documentTitle: string) => 
 })
 
 Then('I should not see any hydration mismatch warnings', function () {
-  const consoleLogs = this.consoleLogs as string[]
+  const consoleLogs: string[] = this.consoleLogs
   const hydrationWarnings = consoleLogs.filter(log =>
     log.includes('hydration')
     || log.includes('mismatch')

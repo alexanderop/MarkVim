@@ -108,7 +108,9 @@ function parseOklchString(input: string): OklchColor | null {
 
 // Handle OKLCH input changes
 function handleOklchInput(event: Event) {
-  const target = event.target as HTMLInputElement
+  if (!(event.target instanceof HTMLInputElement))
+    return
+  const target = event.target
   const value = target.value
   oklchInput.value = value
 

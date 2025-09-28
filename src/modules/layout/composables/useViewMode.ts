@@ -1,10 +1,13 @@
 import { useState } from '#imports'
 import { useLocalStorage, useMounted } from '@vueuse/core'
 import { computed, readonly, ref, watch, watchEffect } from 'vue'
+import { z } from 'zod'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
 
 export type ViewMode = 'split' | 'editor' | 'preview'
+
+const ViewModeSchema = z.enum(['split', 'editor', 'preview'])
 
 export function useViewMode() {
   const isMounted = useMounted()
@@ -12,8 +15,9 @@ export function useViewMode() {
   const viewMode = useState<ViewMode>('markvim-view-mode', () => {
     if (isMounted.value && typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem('markvim-view-mode')
-      if (saved && ['split', 'editor', 'preview'].includes(saved)) {
-        return saved as ViewMode
+      const result = ViewModeSchema.safeParse(saved)
+      if (result.success) {
+        return result.data
       }
     }
     return 'split'
@@ -40,8 +44,9 @@ export function useViewMode() {
   watchEffect(() => {
     if (isMounted.value && typeof localStorage !== 'undefined') {
       const saved = localStorage.getItem('markvim-view-mode')
-      if (saved && ['split', 'editor', 'preview'].includes(saved) && saved !== viewMode.value) {
-        viewMode.value = saved as ViewMode
+      const result = ViewModeSchema.safeParse(saved)
+      if (result.success && result.data !== viewMode.value) {
+        viewMode.value = result.data
       }
     }
   })

@@ -291,7 +291,8 @@ function useEditorLifecycle() {
 
     // Expose editor view globally for testing
     if (import.meta.env.NODE_ENV === 'test' || import.meta.env.DEV) {
-      ;(window as any).__codemirror_view = view.value
+      // eslint-disable-next-line ts/consistent-type-assertions
+      (window as unknown as Record<string, unknown>).__codemirror_view = view.value
     }
 
     if (vimMode.value) {

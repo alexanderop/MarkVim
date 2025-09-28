@@ -12,8 +12,13 @@ const { showColorTheme, closeColorTheme } = useShortcuts()
 
 const showColorPickerModal = ref(false)
 const selectedColorKey = ref<keyof ColorTheme>('background')
-const selectedColorData = ref({
-  key: 'background' as keyof ColorTheme,
+const selectedColorData = ref<{
+  key: keyof ColorTheme
+  label: string
+  description: string
+  icon: string
+}>({
+  key: 'background',
   label: 'Background',
   description: 'Main application background color',
   icon: 'lucide:layout',

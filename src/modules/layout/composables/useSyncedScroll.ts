@@ -52,8 +52,8 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
 
   const findScrollableBySelectors = (container: HTMLElement, selectors: string[]): HTMLElement | null => {
     for (const selector of selectors) {
-      const element = container.querySelector(selector) as HTMLElement
-      if (element && isElementScrollable(element))
+      const element = container.querySelector(selector)
+      if (element instanceof HTMLElement && isElementScrollable(element))
         return element
     }
     return null
@@ -62,7 +62,9 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
   const findScrollableInChildren = (container: HTMLElement): HTMLElement | null => {
     const allElements = container.querySelectorAll('*')
     for (const child of allElements) {
-      const htmlChild = child as HTMLElement
+      if (!(child instanceof HTMLElement))
+        continue
+      const htmlChild = child
       if (htmlChild.scrollHeight > htmlChild.clientHeight) {
         const styles = getComputedStyle(htmlChild)
         if (styles.overflowY === 'auto' || styles.overflowY === 'scroll')

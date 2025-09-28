@@ -607,6 +607,7 @@ export class MarkVimPage {
       // Look for the CodeMirror editor instance
       const cmElements = document.querySelectorAll('.cm-editor')
       for (const cmElement of cmElements) {
+        // eslint-disable-next-line ts/consistent-type-assertions
         const editorView = (cmElement as any).CodeMirror
         if (editorView && editorView.dispatch) {
           // Replace all content
@@ -618,7 +619,9 @@ export class MarkVimPage {
       }
 
       // Fallback: try to find the editor view through global reference
+      // eslint-disable-next-line ts/consistent-type-assertions
       if ((window as any).__codemirror_view) {
+        // eslint-disable-next-line ts/consistent-type-assertions
         const editorView = (window as any).__codemirror_view
         editorView.dispatch({
           changes: { from: 0, to: editorView.state.doc.length, insert: newContent },

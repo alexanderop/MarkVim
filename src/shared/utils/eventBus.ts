@@ -92,6 +92,7 @@ export function emitAppEvent<K extends AppEventKey>(
   ...args: AppEvents[K] extends undefined ? [] | [undefined] : [AppEvents[K]]
 ): void {
   const bus = busFor(key)
+  // eslint-disable-next-line ts/consistent-type-assertions
   bus.emit(args[0] as AppEvents[K])
 }
 

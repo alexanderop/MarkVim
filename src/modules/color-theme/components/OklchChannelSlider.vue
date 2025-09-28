@@ -86,7 +86,9 @@ function handleSliderChange(value: number[] | undefined) {
 }
 
 function handleInputChange(event: Event) {
-  const target = event.target as HTMLInputElement
+  if (!(event.target instanceof HTMLInputElement))
+    return
+  const target = event.target
   let value = Number.parseFloat(target.value)
 
   if (props.channel === 'l' || props.channel === 'a') {

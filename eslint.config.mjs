@@ -100,6 +100,18 @@ export default withNuxt(
       'prefer-spread': 'error',
       'prefer-template': 'error',
       'require-await': 'error',
+      'template-curly-spacing': 'error',
+      'ts/consistent-type-assertions': ['error', {
+        assertionStyle: 'never',
+      }],
+      'vue/block-lang': ['error', {
+        script: {
+          lang: 'ts',
+        },
+      }],
+      'vue/block-order': ['error', {
+        order: ['script', 'template', 'style'],
+      }],
     },
   },
 )
