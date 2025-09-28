@@ -57,12 +57,10 @@ function formatDate(timestamp: number): string {
   if (diffInHours < 24) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
-  else if (diffInHours < 24 * 7) {
+  if (diffInHours < 24 * 7) {
     return date.toLocaleDateString([], { weekday: 'short' })
   }
-  else {
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
-  }
+  return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
 }
 </script>
 

@@ -81,10 +81,8 @@ export function useDocumentShare() {
         await copyToClipboard(shareUrl)
         return true
       }
-      else {
-        shareError.value = 'Clipboard access not supported in this browser'
-        return false
-      }
+      shareError.value = 'Clipboard access not supported in this browser'
+      return false
     }
     catch (error) {
       shareError.value = 'Failed to copy share link to clipboard'

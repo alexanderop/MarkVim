@@ -78,7 +78,12 @@ export default withNuxt(
       'no-array-constructor': 'error',
       // No confusing arrow rule
       'no-confusing-arrow': 'error',
-      // Allow console.log statements
+      // Console rule
+      'no-console': 'warn',
+      // No debugger rule
+      'no-debugger': 'error',
+      // No else return rule
+      'no-else-return': 'error',
     },
   },
 )
