@@ -74,6 +74,10 @@ export default withNuxt(
       'dot-notation': 'off',
       // Max params rule
       'max-params': 'off',
+      // No array constructor rule
+      'no-array-constructor': 'error',
+      // No confusing arrow rule
+      'no-confusing-arrow': 'error',
       // Allow console.log statements
     },
   },

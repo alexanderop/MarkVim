@@ -113,7 +113,7 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
   )
 
   const { stop } = useMutationObserver(
-    () => import.meta.client ? document.documentElement : null,
+    () => (import.meta.client ? document.documentElement : null),
     () => {
       nextTick(renderDiagrams)
     },
