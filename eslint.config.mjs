@@ -70,6 +70,10 @@ export default withNuxt(
       'complexity': ['error', { max: 15 }],
       // Arrow spacing rule
       'arrow-spacing': 'error',
+      // Dot notation rule
+      'dot-notation': 'off',
+      // Max params rule
+      'max-params': 'off',
       // Allow console.log statements
     },
   },
