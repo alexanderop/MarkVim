@@ -3,7 +3,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
-import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
+import { onAppEvent } from '@/shared/utils/eventBus'
 import { defaultDocumentContent } from './defaultContent'
 
 // Use a consistent default document ID
@@ -20,7 +20,8 @@ function createDefaultDocument(): Document {
   }
 }
 
-export const useDocumentsStore = defineStore('documents', () => {
+// Private store - exported for proxy access but not in public API
+export const useDocumentsStorePrivate = defineStore('documents-private', () => {
   const defaultDoc = createDefaultDocument()
 
   // Since components are client-only, we can use localStorage directly
@@ -40,14 +41,6 @@ export const useDocumentsStore = defineStore('documents', () => {
 
   const activeDocumentId = computed(() => _activeDocumentId.value)
 
-  // Emit current state to all subscribers
-  const emitState = () => {
-    emitAppEvent('documents:state-updated', {
-      documents: documents.value,
-      activeDocumentId: activeDocumentId.value,
-    })
-  }
-
   // Initialize store state
   function initializeStore() {
     // Ensure we have at least one document
@@ -61,9 +54,6 @@ export const useDocumentsStore = defineStore('documents', () => {
     if (!_documents.value.find(doc => doc.id === _activeDocumentId.value)) {
       _activeDocumentId.value = _documents.value[0]?.id || DEFAULT_DOCUMENT_ID
     }
-
-    // Emit initial state
-    emitState()
   }
 
   // Initialize immediately since the store needs to be ready when components request state
@@ -74,22 +64,20 @@ export const useDocumentsStore = defineStore('documents', () => {
     const newDefaultDoc = createDefaultDocument()
     _documents.value = [newDefaultDoc]
     _activeDocumentId.value = newDefaultDoc.id
-    emitState()
   })
 
   // Actions
-  function createDocument(): string {
+  function createDocument(content?: string): string {
     const now = Date.now()
     const newDoc: Document = {
       id: crypto.randomUUID(),
-      content: '# New Note\n\nStart writing...',
+      content: content || '# New Note\n\nStart writing...',
       createdAt: now,
       updatedAt: now,
     }
 
     _documents.value.unshift(newDoc)
     _activeDocumentId.value = newDoc.id
-    emitState()
 
     return newDoc.id
   }
@@ -98,7 +86,6 @@ export const useDocumentsStore = defineStore('documents', () => {
     const doc = _documents.value.find(d => d.id === id)
     if (doc) {
       _activeDocumentId.value = id
-      emitState()
     }
   }
 
@@ -110,7 +97,6 @@ export const useDocumentsStore = defineStore('documents', () => {
         content,
         updatedAt: Date.now(),
       }
-      emitState()
     }
   }
 
@@ -124,7 +110,19 @@ export const useDocumentsStore = defineStore('documents', () => {
     }
     _documents.value.unshift(newDoc)
     _activeDocumentId.value = newDoc.id
-    emitState()
+    return newDoc.id
+  }
+
+  function importDocument(document: Omit<Document, 'id' | 'createdAt' | 'updatedAt'>): string {
+    const now = Date.now()
+    const newDoc: Document = {
+      id: crypto.randomUUID(),
+      ...document,
+      createdAt: now,
+      updatedAt: now,
+    }
+    _documents.value.unshift(newDoc)
+    _activeDocumentId.value = newDoc.id
     return newDoc.id
   }
 
@@ -149,7 +147,6 @@ export const useDocumentsStore = defineStore('documents', () => {
         _activeDocumentId.value = newActiveId
       }
     }
-    emitState()
   }
 
   function getDocumentTitle(content: string): string {
@@ -164,7 +161,7 @@ export const useDocumentsStore = defineStore('documents', () => {
     return _documents.value.find(doc => doc.id === id)
   }
 
-  // Listen for events from the event bus
+  // Listen for events from the event bus (all mutations happen through events)
   onAppEvent('document:create', () => {
     createDocument()
   })
@@ -173,12 +170,12 @@ export const useDocumentsStore = defineStore('documents', () => {
     setActiveDocument(payload.documentId)
   })
 
-  onAppEvent('documents:request-state', () => {
-    emitState()
+  onAppEvent('document:update', (payload) => {
+    updateDocument(payload.documentId, payload.content)
   })
 
-  onAppEvent('documents:update', (payload) => {
-    updateDocument(payload.id, payload.content)
+  onAppEvent('document:delete-confirmed', (payload) => {
+    deleteDocument(payload.documentId)
   })
 
   onAppEvent('documents:add', (payload) => {
@@ -197,7 +194,24 @@ export const useDocumentsStore = defineStore('documents', () => {
     setActiveDocument,
     updateDocument,
     deleteDocument,
+    importDocument,
     getDocumentTitle,
     getDocumentById,
+  }
+})
+
+// Public store - provides read-only access to private store
+export const useDocumentsStore = defineStore('documents', () => {
+  const privateStore = useDocumentsStorePrivate()
+
+  return {
+    // Read-only computed properties - all mutations happen through events
+    documents: computed(() => privateStore.documents),
+    activeDocument: computed(() => privateStore.activeDocument),
+    activeDocumentId: computed(() => privateStore.activeDocumentId),
+
+    // Utility functions that don't mutate state
+    getDocumentTitle: privateStore.getDocumentTitle,
+    getDocumentById: privateStore.getDocumentById,
   }
 })

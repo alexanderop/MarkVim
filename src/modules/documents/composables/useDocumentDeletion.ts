@@ -1,8 +1,9 @@
 import { ref } from 'vue'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useDocumentsStore } from '../store'
 
 export function useDocumentDeletion() {
-  const { deleteDocument, getDocumentTitle } = useDocumentsStore()
+  const { getDocumentTitle } = useDocumentsStore()
 
   const deleteModalOpen = ref(false)
   const documentToDelete = ref<{ id: string, title: string } | null>(null)
@@ -15,7 +16,7 @@ export function useDocumentDeletion() {
 
   const confirmDeleteDocument = () => {
     if (documentToDelete.value) {
-      deleteDocument(documentToDelete.value.id)
+      emitAppEvent('document:delete-confirmed', { documentId: documentToDelete.value.id })
       deleteModalOpen.value = false
       documentToDelete.value = null
     }

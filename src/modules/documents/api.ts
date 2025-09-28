@@ -12,7 +12,9 @@ export { default as DocumentList } from './components/DocumentList.client.vue'
 
 export { default as DocumentListSkeleton } from './components/DocumentListSkeleton.vue'
 // Export composables and utilities
-// Note: useDocumentsStore is no longer exported - use events instead
+export { useDocumentsProxy } from './composables/useDocumentsProxy'
+export { useDocumentsStore } from './store'
+// Note: useDocumentsStore is read-only - use useDocumentsProxy for mutations
 // Export types
 export type { Document } from '~/modules/core/api'
 

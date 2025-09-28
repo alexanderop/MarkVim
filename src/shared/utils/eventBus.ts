@@ -5,10 +5,14 @@ import { tryOnScopeDispose, useEventBus } from '@vueuse/core'
  * Keep namespaced keys: "<module>:<action>"
  */
 export interface AppEvents {
-  /** Fired after a document is deleted by the user. */
+  /** Fired when user requests document deletion (shows modal). */
   'document:delete': {
     documentId: string
     documentTitle: string
+  }
+  /** Fired when user confirms document deletion (actually deletes). */
+  'document:delete-confirmed': {
+    documentId: string
   }
   /** Fired when a document becomes the active selection. */
   'document:select': {
@@ -16,24 +20,12 @@ export interface AppEvents {
   }
   /** Fired after a new document is created. */
   'document:create': undefined
-
-  /** Request all documents from the store */
-  'documents:request-state': undefined
-  /** Update all subscribers with current documents state */
-  'documents:state-updated': {
-    documents: Array<{
-      id: string
-      content: string
-      createdAt: number
-      updatedAt: number
-    }>
-    activeDocumentId: string
-  }
   /** Update document content */
-  'documents:update': {
-    id: string
+  'document:update': {
+    documentId: string
     content: string
   }
+
   /** Add new document with content (store generates ID) */
   'documents:add': {
     content: string

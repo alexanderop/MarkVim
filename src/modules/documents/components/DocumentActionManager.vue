@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onAppEvent } from '@/shared/utils/eventBus'
+import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 import DocumentsDocumentDeleteModal from './DocumentDeleteModal.vue'
 
 const deleteModalOpen = ref(false)
@@ -11,12 +11,10 @@ function handleDeleteDocument(payload: { documentId: string, documentTitle: stri
   deleteModalOpen.value = true
 }
 
-async function confirmDeleteDocument() {
+function confirmDeleteDocument() {
   if (documentToDelete.value) {
-    // Use the store's internal deleteDocument via its event listener
-    const { useDocumentsStore } = await import('../store')
-    const store = useDocumentsStore()
-    store.deleteDocument(documentToDelete.value.id)
+    // Emit event to actually delete the document
+    emitAppEvent('document:delete-confirmed', { documentId: documentToDelete.value.id })
     deleteModalOpen.value = false
     documentToDelete.value = null
   }

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/core/api'
 import { useMediaQuery } from '@vueuse/core'
-import { computed, nextTick, onMounted, ref } from 'vue'
-import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
+import { computed, ref } from 'vue'
+import { onAppEvent } from '@/shared/utils/eventBus'
 import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
-import { DocumentActionManager, DocumentList, DocumentListSkeleton, getDocumentTitle } from '~/modules/documents/api'
+import { DocumentActionManager, DocumentList, DocumentListSkeleton, getDocumentTitle, useDocumentsProxy } from '~/modules/documents/api'
 import { MarkdownEditor, MarkdownEditorSkeleton, useEditorSettings } from '~/modules/editor/api'
 import { HeaderToolbar, StatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview } from '~/modules/markdown-preview/api'
@@ -14,12 +13,8 @@ import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
 const isMobile = useMediaQuery('(max-width: 768px)')
 
-// Local state synced via events
-const documents = ref<Document[]>([])
-const activeDocumentId = ref<string>('')
-const activeDocument = computed(() =>
-  documents.value.find(doc => doc.id === activeDocumentId.value) || null,
-)
+// Use documents proxy for state and actions
+const { documents, activeDocumentId, activeDocument, updateDocument } = useDocumentsProxy()
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
@@ -33,24 +28,6 @@ const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previe
 
 // Reference to the ShortcutsManager component
 const shortcutsManagerRef = ref()
-
-// Initialize store and request state
-onMounted(async () => {
-  // Initialize the store to ensure it exists and is listening for events
-  const { useDocumentsStore } = await import('~/modules/documents/store')
-  useDocumentsStore()
-
-  // Wait a tick to ensure store is fully initialized
-  await nextTick()
-
-  // Request initial state
-  emitAppEvent('documents:request-state')
-})
-
-onAppEvent('documents:state-updated', (payload) => {
-  documents.value = payload.documents
-  activeDocumentId.value = payload.activeDocumentId
-})
 
 const activeDocumentTitle = computed(() => {
   return activeDocument.value
@@ -159,7 +136,7 @@ onAppEvent('document:select', () => {
                 :content="activeDocument?.content || ''"
                 :settings="settings"
                 class="h-full"
-                @update:content="(value) => emitAppEvent('documents:update', { id: activeDocumentId, content: value })"
+                @update:content="(value) => activeDocument && updateDocument(activeDocument.id, { content: value })"
               />
               <template #fallback>
                 <MarkdownEditorSkeleton />
