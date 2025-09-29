@@ -13,20 +13,17 @@ import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
 const isMobile = useMediaQuery('(max-width: 768px)')
 
-// Use documents proxy for state and actions
 const { documents, activeDocumentId, activeDocument, updateDocument } = useDocumentsProxy()
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
 const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode, isSidebarVisible } = useViewMode()
 
-// Initialize color theme store to ensure persistence on app startup
-const _colorThemeStore = useColorThemeStore()
+useColorThemeStore()
 
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
-// Reference to the ShortcutsManager component
 const shortcutsManagerRef = ref()
 
 const activeDocumentTitle = computed(() => {
@@ -46,10 +43,6 @@ function handleSaveDocument() {
   a.download = `${getDocumentTitle(activeDocument.value.content)}.md`
   a.click()
   URL.revokeObjectURL(url)
-}
-
-function handleDocumentImported() {
-  // Document selection is now handled by the event bus in the store
 }
 
 // Listen to event bus events that affect AppShell state
@@ -191,7 +184,7 @@ onAppEvent('document:select', () => {
 
     <DocumentActionManager />
 
-    <ShareManager @document-imported="handleDocumentImported" />
+    <ShareManager />
 
     <ColorThemeModal />
   </div>
