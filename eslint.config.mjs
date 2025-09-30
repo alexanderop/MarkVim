@@ -112,6 +112,15 @@ export default withNuxt(
       'vue/block-order': ['error', {
         order: ['script', 'template', 'style'],
       }],
+      'vue/component-api-style': ['error', ['script-setup']],
+      'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+      'vue/define-emits-declaration': ['error', 'type-based'],
+      'vue/define-macros-order': ['error', {
+        defineExposeLast: true,
+        order: ['defineProps', 'defineEmits'],
+      }],
+      'vue/define-props-declaration': ['error', 'type-based'],
+      'vue/max-template-depth': ['error', { maxDepth: 10 }],
     },
   },
 )
