@@ -2,25 +2,32 @@
 import { useVimMode } from '~/modules/editor/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 
-interface Props {
+const { lineCount, characterCount, showVimMode } = defineProps<{
   lineCount: number
   characterCount: number
   showVimMode?: boolean
-}
-
-defineProps<Props>()
+}>()
 
 const { currentVimMode } = useVimMode()
 const { formatKeys } = useShortcuts()
 </script>
 
 <template>
-  <footer data-testid="status-bar" class="px-4 border-t border-border bg-surface-primary/90 flex h-8 items-center justify-between backdrop-blur-xl">
+  <footer
+    data-testid="status-bar"
+    class="px-4 border-t border-border bg-surface-primary/90 flex h-8 items-center justify-between backdrop-blur-xl"
+  >
     <div class="text-xs text-text-secondary flex gap-4 items-center">
-      <div v-if="showVimMode && currentVimMode" class="flex gap-1 items-center">
+      <div
+        v-if="showVimMode && currentVimMode"
+        class="flex gap-1 items-center"
+      >
         <span class="text-accent font-medium font-mono">{{ currentVimMode }}</span>
       </div>
-      <div v-if="showVimMode && currentVimMode" class="bg-border h-3 w-px" />
+      <div
+        v-if="showVimMode && currentVimMode"
+        class="bg-border h-3 w-px"
+      />
       <div class="flex gap-1 items-center">
         <span class="tabular-nums">{{ lineCount }}</span>
         <span>lines</span>

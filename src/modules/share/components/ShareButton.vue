@@ -5,12 +5,10 @@ import { useDocumentShare } from '~/modules/share/api'
 import BaseButton from '~/shared/components/BaseButton.vue'
 import ShareDialog from './ShareDialog.vue'
 
-interface Props {
+const { document, disabled } = defineProps<{
   document: Document | null
   disabled?: boolean
-}
-
-const props = defineProps<Props>()
+}>()
 
 const { isSharing, getShareStats } = useDocumentShare()
 const showShareDialog = ref(false)
@@ -20,9 +18,9 @@ function handleShareClick() {
 }
 
 const shareStats = computed(() => {
-  if (!props.document)
+  if (!document)
     return null
-  return getShareStats(props.document)
+  return getShareStats(document)
 })
 
 const canShare = computed(() => {

@@ -120,6 +120,19 @@ export default withNuxt(
         order: ['defineProps', 'defineEmits'],
       }],
       'vue/define-props-declaration': ['error', 'type-based'],
+      'vue/define-props-destructuring': ['error', {
+        destructure: 'always',
+      }],
+      'vue/first-attribute-linebreak': ['error', {
+        multiline: 'below',
+        singleline: 'beside',
+      }],
+      'vue/html-button-has-type': 'error',
+      'vue/html-comment-content-spacing': ['error', 'always'],
+      'vue/max-attributes-per-line': ['error', {
+        multiline: { max: 1 },
+        singleline: { max: 1 },
+      }],
       'vue/max-template-depth': ['error', { maxDepth: 10 }],
     },
   },

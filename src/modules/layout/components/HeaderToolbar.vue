@@ -9,36 +9,37 @@ import BaseButton from '~/shared/components/BaseButton.vue'
 import SettingsModal from '~/shared/components/SettingsModal.vue'
 import ShortcutsModal from '~/shared/components/ShortcutsModal.vue'
 
-const props = defineProps<Props>()
+interface Emits {
+  (e: 'update:viewMode', value: ViewMode): void
+}
+
+const { viewMode, activeDocumentTitle, activeDocument } = defineProps<{
+  viewMode: ViewMode
+  isMobile: boolean
+  activeDocumentTitle: string
+  activeDocument: Document | null
+}>()
 
 defineEmits<Emits>()
 
 const { openColorTheme } = useShortcuts()
 const { isSidebarVisible, toggleSidebar } = useViewMode()
 
-interface Props {
-  viewMode: ViewMode
-  isMobile: boolean
-  activeDocumentTitle: string
-  activeDocument: Document | null
-}
-
-interface Emits {
-  (e: 'update:viewMode', value: ViewMode): void
-}
-
 function handleDeleteDocument() {
-  if (props.activeDocument) {
+  if (activeDocument) {
     emitAppEvent('document:delete', {
-      documentId: props.activeDocument.id,
-      documentTitle: getDocumentTitle(props.activeDocument.content),
+      documentId: activeDocument.id,
+      documentTitle: getDocumentTitle(activeDocument.content),
     })
   }
 }
 </script>
 
 <template>
-  <header data-testid="header-toolbar" class="px-2 md:px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl">
+  <header
+    data-testid="header-toolbar"
+    class="px-2 md:px-4 border-b border-subtle bg-background/80 flex h-14 items-center justify-between backdrop-blur-xl"
+  >
     <!-- Left section -->
     <div class="flex gap-3 items-center">
       <BaseButton
@@ -61,7 +62,10 @@ function handleDeleteDocument() {
     </div>
 
     <!-- Center section - View mode toggle -->
-    <div data-testid="view-mode-toggle" class="p-0.5 md:p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center">
+    <div
+      data-testid="view-mode-toggle"
+      class="p-0.5 md:p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center"
+    >
       <BaseButton
         v-for="mode in [
           { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
@@ -91,9 +95,7 @@ function handleDeleteDocument() {
 
     <!-- Right section -->
     <div class="flex gap-1 md:gap-2 items-center">
-      <ShareButton
-        :document="activeDocument"
-      />
+      <ShareButton :document="activeDocument" />
 
       <BaseButton
         variant="icon"

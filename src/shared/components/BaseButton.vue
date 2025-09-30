@@ -81,7 +81,11 @@ const iconClasses = computed(() => {
     :type="type"
     @click="$emit('click', $event)"
   >
-    <Icon v-if="icon" :name="icon" :class="iconClasses" />
+    <Icon
+      v-if="icon"
+      :name="icon"
+      :class="iconClasses"
+    />
     <slot />
   </button>
 </template>

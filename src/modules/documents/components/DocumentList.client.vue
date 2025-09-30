@@ -2,13 +2,11 @@
 import type { Document as DocType } from '~/modules/documents/api'
 import { emitAppEvent } from '@/shared/utils/eventBus'
 
-interface Props {
+const { documents, activeDocumentId, isVisible } = defineProps<{
   documents: DocType[]
   activeDocumentId: string
   isVisible: boolean
-}
-
-defineProps<Props>()
+}>()
 
 function handleCreateDocument() {
   emitAppEvent('document:create')
@@ -33,6 +31,7 @@ function handleCreateDocument() {
       </div>
 
       <button
+        type="button"
         data-testid="create-document-btn"
         class="group text-[var(--background)] rounded-md bg-[var(--accent)] flex h-8 w-8 md:h-7 md:w-7 shadow-lg transition-all duration-200 items-center justify-center hover:opacity-90 active:scale-95"
         title="New note"
@@ -73,7 +72,10 @@ function handleCreateDocument() {
           class="py-12 text-center flex flex-col items-center justify-center"
         >
           <div class="mb-3 rounded-lg bg-[var(--muted)] flex h-12 w-12 items-center justify-center">
-            <Icon name="lucide:file-plus" class="text-[var(--foreground)] opacity-50 h-6 w-6" />
+            <Icon
+              name="lucide:file-plus"
+              class="text-[var(--foreground)] opacity-50 h-6 w-6"
+            />
           </div>
           <p class="text-sm text-[var(--foreground)] opacity-70 mb-1">
             No notes yet

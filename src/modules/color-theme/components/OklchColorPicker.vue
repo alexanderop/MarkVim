@@ -31,12 +31,10 @@ import { computed, ref, watch } from 'vue'
 import { useColorThemeStore } from '../store'
 import OklchChannelSlider from './OklchChannelSlider.vue'
 
-interface Props {
+const { label, description } = defineProps<{
   label: string
   description?: string
-}
-
-const props = defineProps<Props>()
+}>()
 const currentColor = defineModel<OklchColor>({ required: true })
 
 const { oklchToString } = useColorThemeStore()
@@ -203,10 +201,13 @@ async function copyToClipboard() {
     <div class="flex items-center gap-4">
       <div class="flex-1">
         <h4 class="text-base font-semibold text-text-primary">
-          {{ props.label }}
+          {{ label }}
         </h4>
-        <p v-if="props.description" class="text-sm text-text-secondary">
-          {{ props.description }}
+        <p
+          v-if="description"
+          class="text-sm text-text-secondary"
+        >
+          {{ description }}
         </p>
       </div>
 
@@ -225,8 +226,15 @@ async function copyToClipboard() {
         </div>
 
         <!-- Compact out of gamut indicator -->
-        <div v-if="isOutOfGamut" class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center" :title="gamutWarningText">
-          <BaseIcon name="lucide:alert-triangle" class="w-2 h-2 text-white" />
+        <div
+          v-if="isOutOfGamut"
+          class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center"
+          :title="gamutWarningText"
+        >
+          <BaseIcon
+            name="lucide:alert-triangle"
+            class="w-2 h-2 text-white"
+          />
         </div>
       </div>
     </div>
@@ -234,8 +242,12 @@ async function copyToClipboard() {
     <!-- Compact OKLCH Input -->
     <div class="space-y-2">
       <div class="flex items-center justify-between">
-        <label for="oklch-input" class="text-sm font-medium text-text-primary">OKLCH Value</label>
+        <label
+          for="oklch-input"
+          class="text-sm font-medium text-text-primary"
+        >OKLCH Value</label>
         <button
+          type="button"
           class="text-xs text-accent hover:text-accent/80 transition-colors"
           title="Copy to clipboard"
           @click="copyToClipboard"
@@ -262,10 +274,16 @@ async function copyToClipboard() {
       >
 
       <!-- Compact validation message -->
-      <p v-if="!isValidInput" class="text-xs text-red-500">
+      <p
+        v-if="!isValidInput"
+        class="text-xs text-red-500"
+      >
         Invalid format. Use: oklch(lightness% chroma hue)
       </p>
-      <p v-else-if="isOutOfGamut" class="text-xs text-yellow-600 dark:text-yellow-400">
+      <p
+        v-else-if="isOutOfGamut"
+        class="text-xs text-yellow-600 dark:text-yellow-400"
+      >
         {{ gamutWarningText }}
       </p>
     </div>

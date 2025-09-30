@@ -11,16 +11,14 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
 
-interface Props {
-  autoImportDocument?: Document | null
-}
-
 interface Emits {
   (e: 'import', document: Document): void
   (e: 'cancel'): void
 }
 
-const props = defineProps<Props>()
+const { autoImportDocument } = defineProps<{
+  autoImportDocument?: Document | null
+}>()
 const emit = defineEmits<Emits>()
 const open = defineModel<boolean>('open', { required: true })
 const {
@@ -33,10 +31,10 @@ const {
 const importUrl = ref('')
 const previewDocument = ref<Document | null>(null)
 
-const isAutoImport = computed(() => !!props.autoImportDocument)
+const isAutoImport = computed(() => !!autoImportDocument)
 
 const documentTitle = computed(() => {
-  const doc = props.autoImportDocument || previewDocument.value
+  const doc = autoImportDocument || previewDocument.value
   if (!doc)
     return 'Untitled'
 
@@ -48,7 +46,7 @@ const documentTitle = computed(() => {
 })
 
 const documentPreview = computed(() => {
-  const doc = props.autoImportDocument || previewDocument.value
+  const doc = autoImportDocument || previewDocument.value
   if (!doc)
     return ''
 
@@ -80,8 +78,8 @@ watch(
 async function handleImport() {
   let documentToImport: Document | null = null
 
-  if (isAutoImport.value && props.autoImportDocument) {
-    documentToImport = props.autoImportDocument
+  if (isAutoImport.value && autoImportDocument) {
+    documentToImport = autoImportDocument
   }
   else if (importUrl.value.trim()) {
     documentToImport = await importFromUrl(importUrl.value)
@@ -112,10 +110,16 @@ function handleCancel() {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="(newOpen) => newOpen ? open = true : handleClose()">
+  <DialogRoot
+    :open="open"
+    @update:open="(newOpen) => newOpen ? open = true : handleClose()"
+  >
     <DialogPortal>
       <DialogOverlay class="bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50" />
-      <DialogContent data-testid="import-dialog" class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-gray-700 bg-gray-800 p-6 shadow-xl duration-200 rounded-lg">
+      <DialogContent
+        data-testid="import-dialog"
+        class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-gray-700 bg-gray-800 p-6 shadow-xl duration-200 rounded-lg"
+      >
         <div class="flex flex-col space-y-1.5 text-center sm:text-left">
           <DialogTitle class="text-lg font-semibold text-gray-100">
             {{ isAutoImport ? 'Import Shared Document' : 'Import Document' }}
@@ -131,10 +135,16 @@ function handleCancel() {
 
         <div class="space-y-4">
           <!-- Auto Import Preview -->
-          <div v-if="isAutoImport && autoImportDocument" class="space-y-3">
+          <div
+            v-if="isAutoImport && autoImportDocument"
+            class="space-y-3"
+          >
             <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-md">
               <div class="flex items-start gap-2">
-                <Icon name="lucide:file-text" class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <Icon
+                  name="lucide:file-text"
+                  class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0"
+                />
                 <div class="space-y-1">
                   <h4 class="text-sm font-medium text-blue-100">
                     {{ documentTitle }}
@@ -148,9 +158,15 @@ function handleCancel() {
           </div>
 
           <!-- Manual Import URL Input -->
-          <div v-else class="space-y-3">
+          <div
+            v-else
+            class="space-y-3"
+          >
             <div class="space-y-2">
-              <label for="import-url" class="text-sm font-medium text-gray-200">
+              <label
+                for="import-url"
+                class="text-sm font-medium text-gray-200"
+              >
                 Share Link
               </label>
               <textarea
@@ -168,9 +184,15 @@ function handleCancel() {
             </div>
 
             <!-- Manual Import Preview -->
-            <div v-if="previewDocument" class="p-3 bg-green-500/10 border border-green-500/20 rounded-md">
+            <div
+              v-if="previewDocument"
+              class="p-3 bg-green-500/10 border border-green-500/20 rounded-md"
+            >
               <div class="flex items-start gap-2">
-                <Icon name="lucide:check-circle" class="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+                <Icon
+                  name="lucide:check-circle"
+                  class="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0"
+                />
                 <div class="space-y-1">
                   <h4 class="text-sm font-medium text-green-100">
                     Ready to import: {{ documentTitle }}
@@ -189,7 +211,10 @@ function handleCancel() {
             class="p-3 bg-red-500/10 border border-red-500/20 rounded-md"
           >
             <div class="flex items-start gap-2">
-              <Icon name="lucide:alert-circle" class="h-4 w-4 text-error mt-0.5 flex-shrink-0" />
+              <Icon
+                name="lucide:alert-circle"
+                class="h-4 w-4 text-error mt-0.5 flex-shrink-0"
+              />
               <div class="text-sm text-error">
                 {{ importError }}
               </div>
@@ -199,6 +224,7 @@ function handleCancel() {
 
         <div class="flex gap-2 justify-end">
           <button
+            type="button"
             class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
             data-testid="import-cancel-btn"
             @click="handleCancel"
@@ -206,6 +232,7 @@ function handleCancel() {
             {{ isAutoImport ? 'Skip' : 'Cancel' }}
           </button>
           <button
+            type="button"
             class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
             :disabled="isImporting || (!isAutoImport && !previewDocument)"
             data-testid="import-confirm-btn"

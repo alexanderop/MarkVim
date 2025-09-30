@@ -104,7 +104,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   data-testid="font-size-decrease"
                   @click="updateFontSize(settings.fontSize - 1)"
                 />
-                <span class="text-sm text-text-primary font-mono text-center min-w-[3rem]" data-testid="font-size-display">{{ settings.fontSize }}px</span>
+                <span
+                  class="text-sm text-text-primary font-mono text-center min-w-[3rem]"
+                  data-testid="font-size-display"
+                >{{ settings.fontSize }}px</span>
                 <BaseButton
                   variant="ghost"
                   size="sm"
@@ -135,10 +138,16 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <label for="line-numbers" class="text-sm text-text-primary font-medium">Show Line Numbers</label>
+                <label
+                  for="line-numbers"
+                  class="text-sm text-text-primary font-medium"
+                >Show Line Numbers</label>
               </div>
 
-              <div v-if="settings.lineNumbers" class="ml-5 space-y-1">
+              <div
+                v-if="settings.lineNumbers"
+                class="ml-5 space-y-1"
+              >
                 <div class="flex gap-4">
                   <div class="flex gap-1 items-center">
                     <input
@@ -148,7 +157,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                       value="absolute"
                       class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <label for="line-mode-absolute" class="text-xs text-text-primary">Absolute</label>
+                    <label
+                      for="line-mode-absolute"
+                      class="text-xs text-text-primary"
+                    >Absolute</label>
                   </div>
                   <div class="flex gap-1 items-center">
                     <input
@@ -158,7 +170,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                       value="relative"
                       class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <label for="line-mode-relative" class="text-xs text-text-primary">Relative</label>
+                    <label
+                      for="line-mode-relative"
+                      class="text-xs text-text-primary"
+                    >Relative</label>
                   </div>
                   <div class="flex gap-1 items-center">
                     <input
@@ -168,7 +183,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                       value="both"
                       class="border-border h-3 w-3 text-accent focus:ring-accent"
                     >
-                    <label for="line-mode-both" class="text-xs text-text-primary">Hybrid</label>
+                    <label
+                      for="line-mode-both"
+                      class="text-xs text-text-primary"
+                    >Hybrid</label>
                   </div>
                 </div>
               </div>
@@ -185,7 +203,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <label for="line-wrapping" class="text-xs text-text-primary">Line Wrapping</label>
+                <label
+                  for="line-wrapping"
+                  class="text-xs text-text-primary"
+                >Line Wrapping</label>
               </div>
               <div class="flex gap-2 items-center">
                 <input
@@ -194,7 +215,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <label for="auto-save" class="text-xs text-text-primary">Auto Save</label>
+                <label
+                  for="auto-save"
+                  class="text-xs text-text-primary"
+                >Auto Save</label>
               </div>
               <div class="flex gap-2 items-center">
                 <input
@@ -203,7 +227,10 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   type="checkbox"
                   class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
                 >
-                <label for="live-preview" class="text-xs text-text-primary">Live Preview</label>
+                <label
+                  for="live-preview"
+                  class="text-xs text-text-primary"
+                >Live Preview</label>
               </div>
             </div>
           </div>

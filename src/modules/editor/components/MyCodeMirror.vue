@@ -7,9 +7,20 @@ import { EditorState as CMEditorState, Compartment, StateEffect } from '@codemir
 import { lineNumbers as cmLineNumbers, placeholder as cmPlaceholder, drawSelection, EditorView, keymap } from '@codemirror/view'
 import { tags } from '@lezer/highlight'
 import { getCM, vim, Vim } from '@replit/codemirror-vim'
-import { onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-const props = withDefaults(defineProps<{
+const {
+  extensions = [],
+  theme = 'dark',
+  editable = true,
+  placeholder = '',
+  indentWithTab = true,
+  vimMode = false,
+  lineNumbers = true,
+  lineNumberMode = 'absolute',
+  lineWrapping = false,
+  fontSize = 14,
+} = defineProps<{
   extensions?: Extension[]
   theme?: 'light' | 'dark' | 'none'
   editable?: boolean
@@ -20,36 +31,12 @@ const props = withDefaults(defineProps<{
   lineNumberMode?: 'absolute' | 'relative' | 'both'
   lineWrapping?: boolean
   fontSize?: number
-}>(), {
-  extensions: () => [],
-  theme: 'dark',
-  editable: true,
-  placeholder: '',
-  indentWithTab: true,
-  vimMode: false,
-  lineNumbers: true,
-  lineNumberMode: 'absolute',
-  lineWrapping: false,
-  fontSize: 14,
-})
+}>()
 
 const emit = defineEmits<{
   (event: 'update', viewUpdate: ViewUpdate): void
   (event: 'vimModeChange', mode: string, subMode?: string): void
 }>()
-
-const {
-  extensions,
-  theme,
-  editable,
-  placeholder,
-  indentWithTab,
-  vimMode,
-  lineNumbers,
-  lineNumberMode,
-  lineWrapping,
-  fontSize,
-} = toRefs(props)
 
 const modelValue = defineModel<string>({ default: '' })
 
@@ -120,10 +107,10 @@ function useLineNumbers() {
   const lineNumberCompartment = new Compartment()
 
   function getLineNumberExtension() {
-    if (!lineNumbers.value)
+    if (!lineNumbers)
       return []
 
-    if (lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') {
+    if (lineNumberMode === 'relative' || lineNumberMode === 'both') {
       return cmLineNumbers({
         formatNumber: (lineNo, state) => {
           if (lineNo > state.doc.lines) {
@@ -132,7 +119,7 @@ function useLineNumbers() {
 
           const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
 
-          if (lineNumberMode.value === 'relative') {
+          if (lineNumberMode === 'relative') {
             return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()
           }
 
@@ -145,7 +132,7 @@ function useLineNumbers() {
   }
 
   function handleLineNumberUpdate(viewUpdate: ViewUpdate) {
-    if ((lineNumberMode.value === 'relative' || lineNumberMode.value === 'both') && viewUpdate.selectionSet) {
+    if ((lineNumberMode === 'relative' || lineNumberMode === 'both') && viewUpdate.selectionSet) {
       viewUpdate.view.dispatch({
         effects: lineNumberCompartment.reconfigure(getLineNumberExtension()),
       })
@@ -161,7 +148,7 @@ function useLineNumbers() {
 
 function useVimMode() {
   function setupCustomVimKeybindings() {
-    if (!vimMode.value)
+    if (!vimMode)
       return
 
     Vim.map('jj', '<Esc>', 'insert')
@@ -197,32 +184,32 @@ function useEditorExtensions() {
       }),
     ]
 
-    if (vimMode.value) {
+    if (vimMode) {
       extensionsList.unshift(vim())
     }
 
-    if (indentWithTab.value) {
+    if (indentWithTab) {
       extensionsList.push(keymap.of([cmIndentWithTab]))
     }
 
-    if (placeholder.value) {
-      extensionsList.push(cmPlaceholder(placeholder.value))
+    if (placeholder) {
+      extensionsList.push(cmPlaceholder(placeholder))
     }
 
     extensionsList.push(lineNumberCompartment.of(getLineNumberExtension()))
 
-    if (lineWrapping.value) {
+    if (lineWrapping) {
       extensionsList.push(EditorView.lineWrapping)
     }
 
     // Remove oneDark theme to avoid color conflicts with CSS custom properties
     // Our CSS custom properties will handle all theming
 
-    if (!editable.value) {
+    if (!editable) {
       extensionsList.push(EditorView.editable.of(false))
     }
 
-    extensionsList.push(...extensions.value)
+    extensionsList.push(...extensions)
 
     extensionsList.push(EditorView.updateListener.of((viewUpdate) => {
       handleLineNumberUpdate(viewUpdate)
@@ -236,7 +223,7 @@ function useEditorExtensions() {
       }
 
       // Track vim mode changes
-      if (vimMode.value) {
+      if (vimMode) {
         const cm = getCM(viewUpdate.view)
         if (cm) {
           const currentKeyMap = cm.state.keyMap || ''
@@ -295,7 +282,7 @@ function useEditorLifecycle() {
       (window as unknown as Record<string, unknown>).__codemirror_view = view.value
     }
 
-    if (vimMode.value) {
+    if (vimMode) {
       setupCustomVimKeybindings()
     }
   }
@@ -327,7 +314,7 @@ function useModelSync() {
         effects: StateEffect.reconfigure.of(getExtensions()),
       })
 
-      if (vimMode.value) {
+      if (vimMode) {
         setupCustomVimKeybindings()
       }
     }
@@ -348,7 +335,7 @@ watch(modelValue, (newValue) => {
 })
 
 // Watch vim mode separately for more aggressive reconfiguration
-watch(vimMode, (newVimMode) => {
+watch(() => vimMode, (newVimMode) => {
   if (view.value) {
     // Force a complete reconfiguration when vim mode changes
     view.value.dispatch({
@@ -366,7 +353,7 @@ watch(() => [extensions, theme, editable, indentWithTab, placeholder, lineNumber
 })
 
 // Watch theme separately for immediate reconfiguration
-watch(theme, () => {
+watch(() => theme, () => {
   if (view.value) {
     // Force complete reconfiguration on theme change
     view.value.dispatch({
@@ -381,7 +368,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="editor" class="cm-theme" />
+  <div
+    ref="editor"
+    class="cm-theme"
+  />
 </template>
 
 <style>

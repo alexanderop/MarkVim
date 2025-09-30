@@ -34,40 +34,67 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-background via-background to-muted/10 overflow-y-auto" data-testid="welcome-screen">
+  <div
+    class="min-h-screen bg-gradient-to-br from-background via-background to-muted/10 overflow-y-auto"
+    data-testid="welcome-screen"
+  >
     <!-- Hero Section -->
     <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 relative">
       <div class="text-center max-w-5xl mx-auto">
         <!-- Trust Signals -->
         <div class="mb-6 flex items-center justify-center gap-6 text-xs text-muted-foreground">
           <div class="flex items-center gap-1">
-            <Icon name="lucide:shield-check" class="w-3 h-3 text-accent" />
+            <Icon
+              name="lucide:shield-check"
+              class="w-3 h-3 text-accent"
+            />
             <span>Open Source</span>
           </div>
           <div class="flex items-center gap-1">
-            <Icon name="lucide:zap" class="w-3 h-3 text-accent" />
+            <Icon
+              name="lucide:zap"
+              class="w-3 h-3 text-accent"
+            />
             <span>Works Offline</span>
           </div>
           <div class="flex items-center gap-1">
-            <Icon name="lucide:lock" class="w-3 h-3 text-accent" />
+            <Icon
+              name="lucide:lock"
+              class="w-3 h-3 text-accent"
+            />
             <span>Private & Secure</span>
           </div>
         </div>
 
         <!-- Logo/Icon with Animation -->
-        <div class="mb-8" :class="{ 'animate-fade-in-up': isLoaded }">
+        <div
+          class="mb-8"
+          :class="{ 'animate-fade-in-up': isLoaded }"
+        >
           <div class="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-6 bg-gradient-to-br from-accent via-accent to-accent/80 rounded-3xl flex items-center justify-center shadow-2xl shadow-accent/25 transition-transform hover:scale-105 duration-300">
-            <Icon name="lucide:hash" class="w-10 h-10 sm:w-14 sm:h-14 text-accent-foreground" />
+            <Icon
+              name="lucide:hash"
+              class="w-10 h-10 sm:w-14 sm:h-14 text-accent-foreground"
+            />
           </div>
         </div>
 
         <!-- Main Value Proposition -->
-        <div class="space-y-6 mb-12" :class="{ 'animate-fade-in-up delay-200': isLoaded }">
-          <h1 class="text-5xl sm:text-7xl lg:text-8xl font-bold text-foreground mb-4 tracking-tight leading-none" data-testid="welcome-title">
+        <div
+          class="space-y-6 mb-12"
+          :class="{ 'animate-fade-in-up delay-200': isLoaded }"
+        >
+          <h1
+            class="text-5xl sm:text-7xl lg:text-8xl font-bold text-foreground mb-4 tracking-tight leading-none"
+            data-testid="welcome-title"
+          >
             MarkVim
           </h1>
 
-          <p class="text-xl sm:text-2xl lg:text-3xl text-muted-foreground font-medium mb-6 max-w-4xl mx-auto leading-relaxed" data-testid="welcome-tagline">
+          <p
+            class="text-xl sm:text-2xl lg:text-3xl text-muted-foreground font-medium mb-6 max-w-4xl mx-auto leading-relaxed"
+            data-testid="welcome-tagline"
+          >
             Write Markdown at the Speed of Thought
           </p>
 
@@ -81,7 +108,10 @@ onMounted(() => {
         </div>
 
         <!-- Social Proof Stats -->
-        <div class="grid grid-cols-3 gap-4 sm:gap-8 mb-12 max-w-2xl mx-auto" :class="{ 'animate-fade-in-up delay-300': isLoaded }">
+        <div
+          class="grid grid-cols-3 gap-4 sm:gap-8 mb-12 max-w-2xl mx-auto"
+          :class="{ 'animate-fade-in-up delay-300': isLoaded }"
+        >
           <div class="text-center">
             <div class="text-2xl sm:text-3xl font-bold text-foreground">
               3⭐
@@ -109,7 +139,10 @@ onMounted(() => {
         </div>
 
         <!-- Social Links -->
-        <div class="flex items-center justify-center gap-3 sm:gap-4 mb-12" :class="{ 'animate-fade-in-up delay-400': isLoaded }">
+        <div
+          class="flex items-center justify-center gap-3 sm:gap-4 mb-12"
+          :class="{ 'animate-fade-in-up delay-400': isLoaded }"
+        >
           <a
             href="https://github.com/alexanderop/MarkVim"
             target="_blank"
@@ -118,7 +151,10 @@ onMounted(() => {
             title="MarkVim on GitHub"
             aria-label="MarkVim on GitHub"
           >
-            <Icon name="lucide:github" class="w-5 h-5" />
+            <Icon
+              name="lucide:github"
+              class="w-5 h-5"
+            />
           </a>
           <a
             href="https://linkedin.com/in/alexanderopalic"
@@ -128,7 +164,10 @@ onMounted(() => {
             title="LinkedIn"
             aria-label="LinkedIn"
           >
-            <Icon name="lucide:linkedin" class="w-5 h-5" />
+            <Icon
+              name="lucide:linkedin"
+              class="w-5 h-5"
+            />
           </a>
           <a
             href="https://x.com/alexanderopalic"
@@ -138,7 +177,10 @@ onMounted(() => {
             title="X (Twitter)"
             aria-label="X (Twitter)"
           >
-            <Icon name="lucide:twitter" class="w-5 h-5" />
+            <Icon
+              name="lucide:twitter"
+              class="w-5 h-5"
+            />
           </a>
           <a
             href="https://bsky.app/profile/alexanderopalic"
@@ -148,7 +190,10 @@ onMounted(() => {
             title="BlueSky"
             aria-label="BlueSky"
           >
-            <Icon name="lucide:cloud" class="w-5 h-5" />
+            <Icon
+              name="lucide:cloud"
+              class="w-5 h-5"
+            />
           </a>
           <a
             href="mailto:alex@alexop.dev"
@@ -156,19 +201,28 @@ onMounted(() => {
             title="Email"
             aria-label="Email"
           >
-            <Icon name="lucide:mail" class="w-5 h-5" />
+            <Icon
+              name="lucide:mail"
+              class="w-5 h-5"
+            />
           </a>
         </div>
 
         <!-- Primary CTAs -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16" :class="{ 'animate-fade-in-up delay-500': isLoaded }">
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+          :class="{ 'animate-fade-in-up delay-500': isLoaded }"
+        >
           <button
             type="button"
             class="group bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 sm:px-12 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl transition-all duration-300 shadow-lg hover:shadow-xl border border-accent/20 min-w-64 hover:scale-105"
             data-testid="start-writing-button"
             @click="handleStartWriting"
           >
-            <Icon name="lucide:edit-3" class="w-5 h-5 mr-2 inline group-hover:rotate-12 transition-transform" />
+            <Icon
+              name="lucide:edit-3"
+              class="w-5 h-5 mr-2 inline group-hover:rotate-12 transition-transform"
+            />
             Start Writing Now
           </button>
           <button
@@ -176,36 +230,60 @@ onMounted(() => {
             class="group bg-transparent hover:bg-muted/50 text-foreground font-medium px-8 sm:px-12 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl transition-all duration-300 border border-border hover:border-accent/50 min-w-64"
             @click="scrollToFeatures"
           >
-            <Icon name="lucide:arrow-down" class="w-5 h-5 mr-2 inline group-hover:translate-y-1 transition-transform" />
+            <Icon
+              name="lucide:arrow-down"
+              class="w-5 h-5 mr-2 inline group-hover:translate-y-1 transition-transform"
+            />
             Explore Features
           </button>
         </div>
 
         <!-- Quick Benefits -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto" :class="{ 'animate-fade-in-up delay-600': isLoaded }">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto"
+          :class="{ 'animate-fade-in-up delay-600': isLoaded }"
+        >
           <div class="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:download" class="w-4 h-4 text-accent" />
+            <Icon
+              name="lucide:download"
+              class="w-4 h-4 text-accent"
+            />
             <span>No installation required</span>
           </div>
           <div class="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:wifi-off" class="w-4 h-4 text-accent" />
+            <Icon
+              name="lucide:wifi-off"
+              class="w-4 h-4 text-accent"
+            />
             <span>Works completely offline</span>
           </div>
           <div class="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:heart" class="w-4 h-4 text-accent" />
+            <Icon
+              name="lucide:heart"
+              class="w-4 h-4 text-accent"
+            />
             <span>Made by developers, for developers</span>
           </div>
         </div>
       </div>
 
       <!-- Scroll Indicator -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce" :class="{ 'animate-fade-in delay-700': isLoaded }">
-        <Icon name="lucide:chevron-down" class="w-6 h-6 text-muted-foreground" />
+      <div
+        class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+        :class="{ 'animate-fade-in delay-700': isLoaded }"
+      >
+        <Icon
+          name="lucide:chevron-down"
+          class="w-6 h-6 text-muted-foreground"
+        />
       </div>
     </div>
 
     <!-- Features Section -->
-    <div id="features-section" class="py-16 sm:py-24 px-4 sm:px-6">
+    <div
+      id="features-section"
+      class="py-16 sm:py-24 px-4 sm:px-6"
+    >
       <div class="max-w-7xl mx-auto">
         <!-- Section Header -->
         <div class="text-center mb-16 sm:mb-20">
@@ -223,48 +301,78 @@ onMounted(() => {
           <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
               <h3 class="text-2xl sm:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
-                <Icon name="lucide:x-circle" class="w-8 h-8 text-muted-foreground" />
+                <Icon
+                  name="lucide:x-circle"
+                  class="w-8 h-8 text-muted-foreground"
+                />
                 The Problem
               </h3>
               <ul class="space-y-3 text-muted-foreground">
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:minus" class="w-4 h-4 mt-1 text-muted-foreground" />
+                  <Icon
+                    name="lucide:minus"
+                    class="w-4 h-4 mt-1 text-muted-foreground"
+                  />
                   <span>Markdown editors are slow and clunky</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:minus" class="w-4 h-4 mt-1 text-muted-foreground" />
+                  <Icon
+                    name="lucide:minus"
+                    class="w-4 h-4 mt-1 text-muted-foreground"
+                  />
                   <span>No proper Vim keybindings support</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:minus" class="w-4 h-4 mt-1 text-muted-foreground" />
+                  <Icon
+                    name="lucide:minus"
+                    class="w-4 h-4 mt-1 text-muted-foreground"
+                  />
                   <span>Limited customization options</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:minus" class="w-4 h-4 mt-1 text-muted-foreground" />
+                  <Icon
+                    name="lucide:minus"
+                    class="w-4 h-4 mt-1 text-muted-foreground"
+                  />
                   <span>Cloud dependency and privacy concerns</span>
                 </li>
               </ul>
             </div>
             <div>
               <h3 class="text-2xl sm:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
-                <Icon name="lucide:check-circle" class="w-8 h-8 text-accent" />
+                <Icon
+                  name="lucide:check-circle"
+                  class="w-8 h-8 text-accent"
+                />
                 The Solution
               </h3>
               <ul class="space-y-3 text-muted-foreground">
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:plus" class="w-4 h-4 mt-1 text-accent" />
+                  <Icon
+                    name="lucide:plus"
+                    class="w-4 h-4 mt-1 text-accent"
+                  />
                   <span>Lightning-fast editing with instant preview</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:plus" class="w-4 h-4 mt-1 text-accent" />
+                  <Icon
+                    name="lucide:plus"
+                    class="w-4 h-4 mt-1 text-accent"
+                  />
                   <span>Full Vim modal editing with custom shortcuts</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:plus" class="w-4 h-4 mt-1 text-accent" />
+                  <Icon
+                    name="lucide:plus"
+                    class="w-4 h-4 mt-1 text-accent"
+                  />
                   <span>Complete color theme customization</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <Icon name="lucide:plus" class="w-4 h-4 mt-1 text-accent" />
+                  <Icon
+                    name="lucide:plus"
+                    class="w-4 h-4 mt-1 text-accent"
+                  />
                   <span>100% local, private, and secure</span>
                 </li>
               </ul>
@@ -278,7 +386,10 @@ onMounted(() => {
           <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <Icon name="lucide:keyboard" class="w-8 h-8 text-accent" />
+                <Icon
+                  name="lucide:keyboard"
+                  class="w-8 h-8 text-accent"
+                />
               </div>
               <div class="flex-1">
                 <h3 class="text-xl sm:text-2xl font-semibold text-foreground mb-3">
@@ -303,7 +414,10 @@ onMounted(() => {
           <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <Icon name="lucide:eye" class="w-8 h-8 text-accent" />
+                <Icon
+                  name="lucide:eye"
+                  class="w-8 h-8 text-accent"
+                />
               </div>
               <div class="flex-1">
                 <h3 class="text-xl sm:text-2xl font-semibold text-foreground mb-3">
@@ -326,7 +440,10 @@ onMounted(() => {
           <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <Icon name="lucide:git-branch" class="w-8 h-8 text-accent" />
+                <Icon
+                  name="lucide:git-branch"
+                  class="w-8 h-8 text-accent"
+                />
               </div>
               <div class="flex-1">
                 <h3 class="text-xl sm:text-2xl font-semibold text-foreground mb-3">
@@ -355,7 +472,10 @@ onMounted(() => {
           <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                <Icon name="lucide:alert-triangle" class="w-8 h-8 text-accent" />
+                <Icon
+                  name="lucide:alert-triangle"
+                  class="w-8 h-8 text-accent"
+                />
               </div>
               <div class="flex-1">
                 <h3 class="text-xl sm:text-2xl font-semibold text-foreground mb-3">
@@ -369,21 +489,48 @@ onMounted(() => {
                   <div class="bg-accent/10 border-l-4 border-accent pl-3 py-1 text-sm rounded-r">
                     <span class="text-accent font-medium">[!NOTE]</span> Important information
                   </div>
-                  <div class="border-l-4 pl-3 py-1 text-sm rounded-r" style="background: oklch(from var(--accent) l c 140 / 0.1); border-color: oklch(from var(--accent) l c 140);">
-                    <span class="font-medium" style="color: oklch(from var(--accent) l c 140);">[!TIP]</span> Helpful suggestion
+                  <div
+                    class="border-l-4 pl-3 py-1 text-sm rounded-r"
+                    style="background: oklch(from var(--accent) l c 140 / 0.1); border-color: oklch(from var(--accent) l c 140);"
+                  >
+                    <span
+                      class="font-medium"
+                      style="color: oklch(from var(--accent) l c 140);"
+                    >[!TIP]</span> Helpful suggestion
                   </div>
-                  <div class="border-l-4 pl-3 py-1 text-sm rounded-r" style="background: oklch(from var(--accent) l c 80 / 0.1); border-color: oklch(from var(--accent) l c 80);">
-                    <span class="font-medium" style="color: oklch(from var(--accent) l c 80);">[!WARNING]</span> Critical warning
+                  <div
+                    class="border-l-4 pl-3 py-1 text-sm rounded-r"
+                    style="background: oklch(from var(--accent) l c 80 / 0.1); border-color: oklch(from var(--accent) l c 80);"
+                  >
+                    <span
+                      class="font-medium"
+                      style="color: oklch(from var(--accent) l c 80);"
+                    >[!WARNING]</span> Critical warning
                   </div>
-                  <div class="border-l-4 pl-3 py-1 text-sm rounded-r" style="background: oklch(from var(--accent) l c 280 / 0.1); border-color: oklch(from var(--accent) l c 280);">
-                    <span class="font-medium" style="color: oklch(from var(--accent) l c 280);">[!IMPORTANT]</span> Key information
+                  <div
+                    class="border-l-4 pl-3 py-1 text-sm rounded-r"
+                    style="background: oklch(from var(--accent) l c 280 / 0.1); border-color: oklch(from var(--accent) l c 280);"
+                  >
+                    <span
+                      class="font-medium"
+                      style="color: oklch(from var(--accent) l c 280);"
+                    >[!IMPORTANT]</span> Key information
                   </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium">Notes</span>
-                  <span class="px-3 py-1 rounded-full text-sm font-medium" style="background: oklch(from var(--accent) l c 140 / 0.1); color: oklch(from var(--accent) l c 140);">Tips</span>
-                  <span class="px-3 py-1 rounded-full text-sm font-medium" style="background: oklch(from var(--accent) l c 80 / 0.1); color: oklch(from var(--accent) l c 80);">Warnings</span>
-                  <span class="px-3 py-1 rounded-full text-sm font-medium" style="background: oklch(from var(--accent) l c 280 / 0.1); color: oklch(from var(--accent) l c 280);">Important</span>
+                  <span
+                    class="px-3 py-1 rounded-full text-sm font-medium"
+                    style="background: oklch(from var(--accent) l c 140 / 0.1); color: oklch(from var(--accent) l c 140);"
+                  >Tips</span>
+                  <span
+                    class="px-3 py-1 rounded-full text-sm font-medium"
+                    style="background: oklch(from var(--accent) l c 80 / 0.1); color: oklch(from var(--accent) l c 80);"
+                  >Warnings</span>
+                  <span
+                    class="px-3 py-1 rounded-full text-sm font-medium"
+                    style="background: oklch(from var(--accent) l c 280 / 0.1); color: oklch(from var(--accent) l c 280);"
+                  >Important</span>
                 </div>
               </div>
             </div>
@@ -395,7 +542,10 @@ onMounted(() => {
           <!-- Keyboard Shortcuts -->
           <div class="text-center group">
             <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-              <Icon name="lucide:command" class="w-8 h-8 text-accent" />
+              <Icon
+                name="lucide:command"
+                class="w-8 h-8 text-accent"
+              />
             </div>
             <h3 class="text-xl font-semibold text-foreground mb-3">
               Powerful Shortcuts
@@ -414,7 +564,10 @@ onMounted(() => {
           <!-- Local Storage -->
           <div class="text-center group">
             <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-              <Icon name="lucide:hard-drive" class="w-8 h-8 text-accent" />
+              <Icon
+                name="lucide:hard-drive"
+                class="w-8 h-8 text-accent"
+              />
             </div>
             <h3 class="text-xl font-semibold text-foreground mb-3">
               Local & Private
@@ -428,7 +581,10 @@ onMounted(() => {
           <!-- Theme Customization -->
           <div class="text-center group sm:col-span-2 lg:col-span-1">
             <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-              <Icon name="lucide:palette" class="w-8 h-8 text-accent" />
+              <Icon
+                name="lucide:palette"
+                class="w-8 h-8 text-accent"
+              />
             </div>
             <h3 class="text-xl font-semibold text-foreground mb-3">
               Custom Color Themes
@@ -477,20 +633,32 @@ onMounted(() => {
             data-testid="start-writing-bottom-button"
             @click="handleStartWriting"
           >
-            <Icon name="lucide:rocket" class="w-6 h-6 mr-3 inline group-hover:translate-x-1 transition-transform" />
+            <Icon
+              name="lucide:rocket"
+              class="w-6 h-6 mr-3 inline group-hover:translate-x-1 transition-transform"
+            />
             Start Your Writing Journey
           </button>
           <div class="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
             <span class="flex items-center gap-1">
-              <Icon name="lucide:download" class="w-4 h-4 text-accent" />
+              <Icon
+                name="lucide:download"
+                class="w-4 h-4 text-accent"
+              />
               No installation required
             </span>
             <span class="flex items-center gap-1">
-              <Icon name="lucide:wifi-off" class="w-4 h-4 text-accent" />
+              <Icon
+                name="lucide:wifi-off"
+                class="w-4 h-4 text-accent"
+              />
               Works offline
             </span>
             <span class="flex items-center gap-1">
-              <Icon name="lucide:github" class="w-4 h-4 text-accent" />
+              <Icon
+                name="lucide:github"
+                class="w-4 h-4 text-accent"
+              />
               Open source
             </span>
           </div>

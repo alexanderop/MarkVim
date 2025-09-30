@@ -172,7 +172,10 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
           Current Theme
         </h3>
 
-        <div class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md" data-testid="color-palette-preview">
+        <div
+          class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md"
+          data-testid="color-palette-preview"
+        >
           <div
             v-for="colorDef in colorDefinitions"
             :key="colorDef.key"
@@ -200,6 +203,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
             <button
               v-for="colorDef in coreColors"
               :key="colorDef.key"
+              type="button"
               class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
               :data-testid="`color-button-${colorDef.key}`"
               @click="openColorPicker(colorDef)"
@@ -239,6 +243,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
             <button
               v-for="colorDef in alertColors"
               :key="colorDef.key"
+              type="button"
               class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
               :data-testid="`color-button-${colorDef.key}`"
               @click="openColorPicker(colorDef)"

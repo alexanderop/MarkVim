@@ -40,7 +40,10 @@ function handleContentUpdate(value: string) {
           <div class="rounded-full bg-window-maximize h-3 w-3 shadow-sm" />
         </div>
         <div class="bg-border h-4 w-px hidden md:block" />
-        <Icon name="lucide:edit-3" class="text-text-primary h-4 w-4" />
+        <Icon
+          name="lucide:edit-3"
+          class="text-text-primary h-4 w-4"
+        />
       </div>
       <div class="flex items-center space-x-3" />
     </div>

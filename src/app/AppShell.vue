@@ -30,7 +30,10 @@ function handleContentUpdate(value: string) {
 </script>
 
 <template>
-  <div ref="containerRef" class="flex flex-col h-[100dvh] w-screen overflow-hidden">
+  <div
+    ref="containerRef"
+    class="flex flex-col h-[100dvh] w-screen overflow-hidden"
+  >
     <HeaderToolbar
       :view-mode="viewMode"
       :is-mobile="isMobile"
@@ -46,7 +49,8 @@ function handleContentUpdate(value: string) {
           :documents="documents"
           :active-document-id="activeDocumentId"
           :is-visible="isSidebarVisible"
-          class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none" :class="[
+          class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
+          :class="[
             isSidebarVisible
               ? 'transform translate-x-0 opacity-100'
               : 'transform -translate-x-full opacity-0 pointer-events-none',
@@ -55,7 +59,8 @@ function handleContentUpdate(value: string) {
         <template #fallback>
           <DocumentListSkeleton
             v-show="isSidebarVisible"
-            class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none" :class="[
+            class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
+            :class="[
               isSidebarVisible
                 ? 'transform translate-x-0 opacity-100'
                 : 'transform -translate-x-full opacity-0 pointer-events-none',
@@ -75,7 +80,8 @@ function handleContentUpdate(value: string) {
 
       <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
         <div
-          class="flex flex-1 flex-col relative overflow-hidden md:flex-row" :class="[
+          class="flex flex-1 flex-col relative overflow-hidden md:flex-row"
+          :class="[
             !isSplitView && !isMobile ? 'md:justify-center md:items-center' : '',
             isDragging ? 'select-none' : '',
           ]"
@@ -84,7 +90,8 @@ function handleContentUpdate(value: string) {
             v-if="isEditorVisible"
             ref="editorScrollContainer"
             data-testid="editor-pane"
-            class="w-full transition-all duration-300 ease-in-out overflow-auto" :class="[
+            class="w-full transition-all duration-300 ease-in-out overflow-auto"
+            :class="[
               isSplitView ? 'md:border-r border-gray-800' : '',
               isSplitView && isMobile ? 'h-1/2' : 'h-full',
               !isSplitView && !isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
@@ -120,7 +127,8 @@ function handleContentUpdate(value: string) {
             v-if="isPreviewVisible"
             ref="previewScrollContainer"
             data-testid="preview-pane"
-            class="w-full transition-all duration-300 ease-in-out overflow-hidden" :class="[
+            class="w-full transition-all duration-300 ease-in-out overflow-hidden"
+            :class="[
               isSplitView && isMobile ? 'h-1/2' : 'h-full',
               !isSplitView && !isMobile ? 'md:max-w-6xl md:h-[90vh] md:rounded-lg md:border md:border-gray-800 md:shadow-2xl' : '',
               isDragging ? 'opacity-90' : '',

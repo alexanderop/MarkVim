@@ -2,7 +2,7 @@
 import { useId } from '#imports'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 
-const props = defineProps<{
+const { label, description, id } = defineProps<{
   label?: string
   description?: string
   id?: string
@@ -10,20 +10,26 @@ const props = defineProps<{
 
 const model = defineModel<boolean>()
 
-const switchId = props.id || useId()
+const switchId = id || useId()
 </script>
 
 <template>
   <div
-    v-if="props.label"
+    v-if="label"
     class="p-3 border border-border rounded-md bg-surface-primary flex items-start justify-between gap-4"
   >
-    <label :for="switchId" class="flex-1 cursor-pointer min-w-0">
+    <label
+      :for="switchId"
+      class="flex-1 cursor-pointer min-w-0"
+    >
       <div class="text-sm text-text-primary font-medium">
-        {{ props.label }}
+        {{ label }}
       </div>
-      <p v-if="props.description" class="text-xs text-text-secondary mt-1">
-        {{ props.description }}
+      <p
+        v-if="description"
+        class="text-xs text-text-secondary mt-1"
+      >
+        {{ description }}
       </p>
     </label>
 

@@ -62,7 +62,10 @@ watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
   <div class="bg-[var(--background)] flex flex-col h-full w-full">
     <div class="px-6 border-b border-[var(--border)] bg-[var(--background)] flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
-        <Icon name="lucide:eye" class="text-[var(--foreground)] h-4 w-4" />
+        <Icon
+          name="lucide:eye"
+          class="text-[var(--foreground)] h-4 w-4"
+        />
         <span class="text-xs text-[var(--foreground)] opacity-70">Use ↑↓ or j/k to scroll</span>
       </div>
     </div>
@@ -72,7 +75,10 @@ watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
       class="bg-[var(--background)] flex-1 min-h-0 overflow-auto focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-opacity-20 focus:ring-inset transition-all"
       tabindex="0"
     >
-      <div ref="root" class="mx-auto px-12 py-12 max-w-none">
+      <div
+        ref="root"
+        class="mx-auto px-12 py-12 max-w-none"
+      >
         <article
           class="prose-lg max-w-none prose"
           data-testid="rendered-markdown-article"

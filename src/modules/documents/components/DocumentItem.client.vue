@@ -148,7 +148,10 @@ function formatDate(timestamp: number): string {
           class="flex items-center gap-2 px-3 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--background)] rounded-md cursor-pointer transition-colors"
           @click="handleSelectDocument"
         >
-          <Icon name="lucide:mouse-pointer-click" class="h-4 w-4" />
+          <Icon
+            name="lucide:mouse-pointer-click"
+            class="h-4 w-4"
+          />
           Select
         </ContextMenuItem>
 
@@ -158,7 +161,10 @@ function formatDate(timestamp: number): string {
           class="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-400 hover:bg-opacity-10 rounded-md cursor-pointer transition-colors"
           @click="handleDeleteDocument"
         >
-          <Icon name="lucide:trash-2" class="h-4 w-4" />
+          <Icon
+            name="lucide:trash-2"
+            class="h-4 w-4"
+          />
           Delete
         </ContextMenuItem>
       </ContextMenuContent>

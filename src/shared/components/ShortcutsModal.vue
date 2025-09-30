@@ -108,7 +108,8 @@ const totalShortcuts = computed(() =>
               <kbd
                 v-for="(key, index) in formatKeys(shortcut.keys).split(/(?=[⌘⌃⌥⇧])|(?<=\w)(?=[⌘⌃⌥⇧])/)"
                 :key="index"
-                class="text-xs text-text-primary font-mono px-1.5 border border-border rounded bg-surface-primary inline-flex h-6 min-w-[1.5rem] shadow-sm items-center justify-center" :class="[
+                class="text-xs text-text-primary font-mono px-1.5 border border-border rounded bg-surface-primary inline-flex h-6 min-w-[1.5rem] shadow-sm items-center justify-center"
+                :class="[
                   key.match(/[⌘⌃⌥⇧]/) ? 'min-w-[1.25rem] px-1' : '',
                 ]"
               >

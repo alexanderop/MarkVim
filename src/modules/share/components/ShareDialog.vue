@@ -5,11 +5,9 @@ import { useDocumentShare } from '~/modules/share/api'
 import BaseButton from '~/shared/components/BaseButton.vue'
 import BaseModal from '~/shared/components/BaseModal.vue'
 
-interface Props {
+const { document } = defineProps<{
   document: Document | null
-}
-
-const props = defineProps<Props>()
+}>()
 const open = defineModel<boolean>('open', { required: true })
 
 const {
@@ -24,15 +22,15 @@ const copySuccess = ref(false)
 const showAdvanced = ref(false)
 
 const shareStats = computed(() => {
-  if (!props.document)
+  if (!document)
     return null
-  return getShareStats(props.document)
+  return getShareStats(document)
 })
 
 const documentTitle = computed(() => {
-  if (!props.document)
+  if (!document)
     return 'Untitled'
-  const firstLine = props.document.content.split('\n')[0].trim()
+  const firstLine = document.content.split('\n')[0].trim()
   if (firstLine.startsWith('#')) {
     return firstLine.replace(/^#+\s*/, '') || 'Untitled'
   }
@@ -60,9 +58,9 @@ function formatPercentage(ratio: number): string {
 watch(
   () => open.value,
   (isOpen) => {
-    if (isOpen && props.document) {
+    if (isOpen && document) {
       copySuccess.value = false
-      const link = generateShareLink(props.document)
+      const link = generateShareLink(document)
       shareLink.value = link || ''
     }
     else {
@@ -110,7 +108,10 @@ function handleClose() {
         class="p-3 bg-red-500/10 border border-red-500/20 rounded-md"
       >
         <div class="flex items-start gap-2">
-          <Icon name="lucide:alert-circle" class="h-4 w-4 text-error mt-0.5 flex-shrink-0" />
+          <Icon
+            name="lucide:alert-circle"
+            class="h-4 w-4 text-error mt-0.5 flex-shrink-0"
+          />
           <div class="text-sm text-error">
             {{ shareError }}
           </div>
@@ -118,9 +119,15 @@ function handleClose() {
       </div>
 
       <!-- Share Link -->
-      <div v-else-if="shareLink" class="space-y-3">
+      <div
+        v-else-if="shareLink"
+        class="space-y-3"
+      >
         <div class="space-y-2">
-          <label for="share-link" class="text-sm font-medium text-gray-200">
+          <label
+            for="share-link"
+            class="text-sm font-medium text-gray-200"
+          >
             Share Link
           </label>
           <div class="flex gap-2">
@@ -166,7 +173,11 @@ function handleClose() {
         </BaseButton>
 
         <!-- Advanced Stats -->
-        <div v-if="showAdvanced && shareStats" data-testid="share-advanced-stats" class="p-3 bg-gray-900/30 rounded-md space-y-2">
+        <div
+          v-if="showAdvanced && shareStats"
+          data-testid="share-advanced-stats"
+          class="p-3 bg-gray-900/30 rounded-md space-y-2"
+        >
           <div class="text-xs text-gray-400 space-y-1">
             <div class="flex justify-between">
               <span>Original size:</span>
@@ -195,8 +206,14 @@ function handleClose() {
       </div>
 
       <!-- No Document State -->
-      <div v-else class="text-center py-4">
-        <Icon name="lucide:file-x" class="h-8 w-8 text-gray-500 mx-auto mb-2" />
+      <div
+        v-else
+        class="text-center py-4"
+      >
+        <Icon
+          name="lucide:file-x"
+          class="h-8 w-8 text-gray-500 mx-auto mb-2"
+        />
         <p class="text-sm text-gray-400">
           No document to share
         </p>

@@ -11,17 +11,12 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getDocumentTitle } from '~/modules/documents/api'
 import { type Command, useCommandHistory, useShortcuts } from '~/modules/shortcuts/api'
 
-const props = withDefaults(defineProps<{
+const { documents = [] } = defineProps<{
   position?: { x: number, y: number }
   viewMode?: ViewMode
   markdown?: string
   documents?: DocType[]
-}>(), {
-  position: () => ({ x: 0, y: 0 }),
-  viewMode: 'split',
-  markdown: '',
-  documents: () => [],
-})
+}>()
 
 const emit = defineEmits<{
   commandSelected: [command: Command]
@@ -42,7 +37,7 @@ const { trackCommandUsage, sortCommandsByHistory } = useCommandHistory()
 
 // Create a computed property to transform documents into commands
 const documentCommands = computed((): Command[] => {
-  return (props.documents || []).map(doc => ({
+  return (documents || []).map(doc => ({
     id: `doc-${doc.id}`,
     label: getDocumentTitle(doc.content),
     description: `Last updated: ${new Date(doc.updatedAt).toLocaleDateString()}`,
@@ -253,7 +248,10 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="(newOpen) => open = newOpen">
+  <DialogRoot
+    :open="open"
+    @update:open="(newOpen) => open = newOpen"
+  >
     <DialogPortal>
       <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
       <DialogContent
@@ -275,7 +273,10 @@ function handleGlobalKeydown(event: KeyboardEvent) {
         </div>
 
         <!-- Commands List -->
-        <div ref="scrollContainer" class="max-h-80 overflow-y-auto">
+        <div
+          ref="scrollContainer"
+          class="max-h-80 overflow-y-auto"
+        >
           <template v-if="filteredCommands.length === 0">
             <div class="text-sm text-gray-500 px-4 py-8 text-center">
               No commands found
@@ -283,7 +284,11 @@ function handleGlobalKeydown(event: KeyboardEvent) {
           </template>
 
           <template v-else>
-            <div v-for="group in groupedCommands" :key="group.name" class="py-2">
+            <div
+              v-for="group in groupedCommands"
+              :key="group.name"
+              class="py-2"
+            >
               <!-- Group Label -->
               <div class="text-xs text-gray-400 tracking-wider font-medium px-4 py-2 uppercase">
                 {{ group.name }}
@@ -294,7 +299,8 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                 v-for="command in group.commands"
                 :key="command.id"
                 type="button"
-                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between w-full text-left focus:outline-none focus:ring-0" :class="[
+                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between w-full text-left focus:outline-none focus:ring-0"
+                :class="[
                   isSelected(command)
                     ? 'bg-gray-700/50'
                     : 'hover:bg-gray-800/50',
@@ -309,7 +315,10 @@ function handleGlobalKeydown(event: KeyboardEvent) {
                     v-if="command.icon"
                     class="text-gray-300 text-center flex-shrink-0 w-5 h-5 flex items-center justify-center"
                   >
-                    <Icon :name="command.icon" class="h-4 w-4" />
+                    <Icon
+                      :name="command.icon"
+                      class="h-4 w-4"
+                    />
                   </div>
 
                   <!-- Content -->

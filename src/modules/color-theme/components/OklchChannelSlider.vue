@@ -3,21 +3,19 @@ import type { OklchColor } from '../store'
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref } from 'vue'
 
-interface Props {
+const { channel, fullColor, min, max, step } = defineProps<{
   channel: 'l' | 'c' | 'h' | 'a'
   fullColor: OklchColor
   min: number
   max: number
   step: number
-}
-
-const props = defineProps<Props>()
+}>()
 const model = defineModel<number>({ required: true })
 
 const showTooltip = ref(false)
 
 const channelInfo = computed(() => {
-  switch (props.channel) {
+  switch (channel) {
     case 'l':
       return {
         label: 'Lightness',
@@ -44,31 +42,31 @@ const channelInfo = computed(() => {
 })
 
 const displayValue = computed(() => {
-  if (props.channel === 'l' || props.channel === 'a') {
+  if (channel === 'l' || channel === 'a') {
     return Math.round(model.value * 100)
   }
-  if (props.channel === 'h') {
+  if (channel === 'h') {
     return Math.round(model.value)
   }
   return model.value.toFixed(2)
 })
 
 const trackGradient = computed(() => {
-  const { l, c, h } = props.fullColor
+  const { l, c, h } = fullColor
 
-  if (props.channel === 'h') {
+  if (channel === 'h') {
     return `linear-gradient(to right, oklch(${l} ${c} 0), oklch(${l} ${c} 60), oklch(${l} ${c} 120), oklch(${l} ${c} 180), oklch(${l} ${c} 240), oklch(${l} ${c} 300), oklch(${l} ${c} 360))`
   }
 
-  if (props.channel === 'l') {
+  if (channel === 'l') {
     return `linear-gradient(to right, oklch(0 ${c} ${h}), oklch(1 ${c} ${h}))`
   }
 
-  if (props.channel === 'c') {
+  if (channel === 'c') {
     return `linear-gradient(to right, oklch(${l} 0 ${h}), oklch(${l} 0.4 ${h}))`
   }
 
-  if (props.channel === 'a') {
+  if (channel === 'a') {
     return `linear-gradient(to right, oklch(${l} ${c} ${h} / 0), oklch(${l} ${c} ${h} / 1))`
   }
 
@@ -76,7 +74,7 @@ const trackGradient = computed(() => {
 })
 
 const tooltipPosition = computed(() => {
-  return ((model.value - props.min) / (props.max - props.min)) * 100
+  return ((model.value - min) / (max - min)) * 100
 })
 
 function handleSliderChange(value: number[] | undefined) {
@@ -91,12 +89,12 @@ function handleInputChange(event: Event) {
   const target = event.target
   let value = Number.parseFloat(target.value)
 
-  if (props.channel === 'l' || props.channel === 'a') {
+  if (channel === 'l' || channel === 'a') {
     value = value / 100
   }
 
   if (!Number.isNaN(value)) {
-    model.value = Math.max(props.min, Math.min(props.max, value))
+    model.value = Math.max(min, Math.min(max, value))
   }
 }
 </script>
@@ -115,7 +113,10 @@ function handleInputChange(event: Event) {
             'bg-gray-400': channel === 'a',
           }"
         />
-        <label :for="`${channel}-input`" class="text-xs font-medium text-text-primary">
+        <label
+          :for="`${channel}-input`"
+          class="text-xs font-medium text-text-primary"
+        >
           {{ channelInfo.label }}
         </label>
       </div>

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-interface Props {
+interface Emits {
+  (e: 'close'): void
+}
+
+const { title, description, maxWidth = '3xl', maxHeight = '85vh', footerLeft, footerRight, showCloseButton = true, dataTestid } = defineProps<{
   title: string
   description?: string
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
@@ -8,17 +12,7 @@ interface Props {
   footerRight?: string
   showCloseButton?: boolean
   dataTestid?: string
-}
-
-interface Emits {
-  (e: 'close'): void
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  maxWidth: '3xl',
-  maxHeight: '85vh',
-  showCloseButton: true,
-})
+}>()
 
 const emit = defineEmits<Emits>()
 const open = defineModel<boolean>('open', { required: true })
@@ -40,7 +34,10 @@ const maxWidthClasses = {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="(newOpen) => open = newOpen">
+  <DialogRoot
+    :open="open"
+    @update:open="(newOpen) => open = newOpen"
+  >
     <!-- Trigger slot for custom trigger button -->
     <slot name="trigger" />
 
@@ -48,13 +45,16 @@ const maxWidthClasses = {
       <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
 
       <DialogContent
-        :data-testid="props.dataTestid"
+        :data-testid="dataTestid"
         class="bg-surface-primary border border-subtle flex flex-col w-full shadow-2xl shadow-black/40 ring-1 ring-white/10 translate-x-[-50%] translate-y-[-50%] duration-200 left-[50%] top-[50%] fixed z-50 overflow-hidden rounded-lg p-0"
-        :class="[maxWidthClasses[props.maxWidth]]"
-        :style="{ maxHeight: props.maxHeight }"
+        :class="[maxWidthClasses[maxWidth]]"
+        :style="{ maxHeight }"
       >
         <!-- Header Section -->
-        <div v-if="$slots.head || title" class="flex-shrink-0 border-b border-subtle bg-surface-primary">
+        <div
+          v-if="$slots.head || title"
+          class="flex-shrink-0 border-b border-subtle bg-surface-primary"
+        >
           <slot name="head">
             <!-- Default header content -->
             <div class="p-4 flex items-center justify-between">
@@ -62,12 +62,18 @@ const maxWidthClasses = {
                 <DialogTitle class="text-lg font-semibold text-text-bright">
                   {{ title }}
                 </DialogTitle>
-                <DialogDescription v-if="description" class="text-text-secondary text-sm mt-1">
+                <DialogDescription
+                  v-if="description"
+                  class="text-text-secondary text-sm mt-1"
+                >
                   {{ description }}
                 </DialogDescription>
               </div>
 
-              <DialogClose v-if="props.showCloseButton" as-child>
+              <DialogClose
+                v-if="showCloseButton"
+                as-child
+              >
                 <BaseButton
                   variant="icon"
                   size="icon"
@@ -89,19 +95,22 @@ const maxWidthClasses = {
         </div>
 
         <!-- Footer Section -->
-        <div v-if="$slots.footer || props.footerLeft || props.footerRight || $slots['footer-left'] || $slots['footer-right']" class="flex-shrink-0 border-t border-subtle bg-surface-primary/60">
+        <div
+          v-if="$slots.footer || footerLeft || footerRight || $slots['footer-left'] || $slots['footer-right']"
+          class="flex-shrink-0 border-t border-subtle bg-surface-primary/60"
+        >
           <slot name="footer">
             <!-- Default footer content -->
             <div class="p-3 flex items-center justify-between">
               <div class="text-xs text-text-tertiary">
                 <slot name="footer-left">
-                  {{ props.footerLeft || '' }}
+                  {{ footerLeft || '' }}
                 </slot>
               </div>
 
               <div class="text-xs text-text-tertiary">
                 <slot name="footer-right">
-                  {{ props.footerRight || '' }}
+                  {{ footerRight || '' }}
                 </slot>
               </div>
             </div>
