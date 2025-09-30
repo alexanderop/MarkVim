@@ -17,6 +17,9 @@
     "test:e2e:headed": "HEADED=true NODE_OPTIONS='--loader ts-node/esm' cucumber-js",
     "test:e2e:ci": "wait-on http://localhost:3000 --timeout 30000 && npm run test:e2e",
     "test:e2e:with-server": "concurrently --kill-others --success first \"nuxt dev\" \"wait-on http://localhost:3000 --timeout 30000 && npm run test:e2e\"",
+    "test:affected": "bash scripts/run-affected-tests.sh",
+    "test:affected:branch": "bash scripts/run-affected-tests.sh main",
+    "test:module": "bash scripts/test-module.sh",
     "prepare": "husky"
   },
   "dependencies": {

@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Maps source modules to their corresponding test files",
+  "modules": {
+    "color-theme": {
+      "sourcePaths": ["src/modules/color-theme/**"],
+      "testFiles": [
+        "tests/features/color.feature",
+        "tests/features/theme.feature"
+      ]
+    },
+    "documents": {
+      "sourcePaths": ["src/modules/documents/**"],
+      "testFiles": [
+        "tests/features/documents.feature",
+        "tests/features/document-persistence.feature"
+      ]
+    },
+    "editor": {
+      "sourcePaths": ["src/modules/editor/**"],
+      "testFiles": [
+        "tests/features/editing.feature",
+        "tests/features/scroll-sync.feature",
+        "tests/features/smoke.test.feature"
+      ]
+    },
+    "markdown-preview": {
+      "sourcePaths": ["src/modules/markdown-preview/**"],
+      "testFiles": [
+        "tests/features/editing.feature",
+        "tests/features/scroll-sync.feature",
+        "tests/features/smoke.test.feature"
+      ]
+    },
+    "share": {
+      "sourcePaths": ["src/modules/share/**"],
+      "testFiles": [
+        "tests/features/sharing.feature"
+      ]
+    },
+    "layout": {
+      "sourcePaths": ["src/modules/layout/**"],
+      "testFiles": [
+        "tests/features/scroll-sync.feature",
+        "tests/features/smoke.test.feature"
+      ]
+    },
+    "shortcuts": {
+      "sourcePaths": ["src/modules/shortcuts/**"],
+      "testFiles": [
+        "tests/features/smoke.test.feature"
+      ]
+    },
+    "core": {
+      "sourcePaths": ["src/modules/core/**"],
+      "testFiles": [
+        "tests/features/smoke.test.feature"
+      ]
+    },
+    "shared": {
+      "sourcePaths": ["src/shared/**"],
+      "testFiles": ["tests/features/**/*.feature"],
+      "runAllTests": true
+    },
+    "app": {
+      "sourcePaths": ["src/app/**"],
+      "testFiles": ["tests/features/**/*.feature"],
+      "runAllTests": true
+    }
+  }
+}
