@@ -13,7 +13,7 @@ const commandPalettePosition = ref({ x: 0, y: 0 })
 const { documents, activeDocument } = useDocumentsProxy()
 
 // Get required composables
-const { registerShortcuts, registerAppCommand, formatKeys, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
+const { registerShortcuts, registerAppCommand, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
 
 function handleGlobalKeydown(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
@@ -171,11 +171,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleGlobalKeydown)
-})
-
-// Expose format keys for parent components
-defineExpose({
-  formatKeys,
 })
 </script>
 

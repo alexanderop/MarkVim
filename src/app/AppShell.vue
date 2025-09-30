@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { useMediaQuery } from '@vueuse/core'
-import { computed, ref } from 'vue'
-import { onAppEvent } from '@/shared/utils/eventBus'
+import { computed } from 'vue'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
-import { DocumentActionManager, DocumentList, DocumentListSkeleton, getDocumentTitle, useDocumentsProxy } from '~/modules/documents/api'
+import { DocumentActionManager, DocumentList, DocumentListSkeleton, useActiveDocument, useDocumentsProxy } from '~/modules/documents/api'
 import { MarkdownEditor, MarkdownEditorSkeleton, useEditorSettings } from '~/modules/editor/api'
 import { HeaderToolbar, StatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview } from '~/modules/markdown-preview/api'
@@ -11,51 +10,23 @@ import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
-const isMobile = useMediaQuery('(max-width: 768px)')
-
-const { documents, activeDocumentId, activeDocument, updateDocument } = useDocumentsProxy()
+const { documents, activeDocumentId } = useDocumentsProxy()
+const { activeDocument, activeDocumentTitle } = useActiveDocument()
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
-const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode, isSidebarVisible } = useViewMode()
+const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode, isSidebarVisible, isMobile } = useViewMode()
 
 useColorThemeStore()
 
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
-const shortcutsManagerRef = ref()
-
-const activeDocumentTitle = computed(() => {
-  return activeDocument.value
-    ? getDocumentTitle(activeDocument.value.content)
-    : 'MarkVim'
-})
-
-function handleSaveDocument() {
-  if (!activeDocument.value)
-    return
-
-  const blob = new Blob([activeDocument.value.content], { type: 'text/markdown' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${getDocumentTitle(activeDocument.value.content)}.md`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-// Listen to event bus events that affect AppShell state
-onAppEvent('settings:save-document', () => {
-  handleSaveDocument()
-})
-
-onAppEvent('document:select', () => {
-  // Document selection is handled by the store, but we need to close sidebar on mobile
-  if (isMobile.value) {
-    isSidebarVisible.value = false
+function handleContentUpdate(value: string) {
+  if (activeDocument.value) {
+    emitAppEvent('document:update', { documentId: activeDocument.value.id, content: value })
   }
-})
+}
 </script>
 
 <template>
@@ -129,7 +100,7 @@ onAppEvent('document:select', () => {
                 :content="activeDocument?.content || ''"
                 :settings="settings"
                 class="h-full"
-                @update:content="(value) => activeDocument && updateDocument(activeDocument.id, { content: value })"
+                @update:content="handleContentUpdate"
               />
               <template #fallback>
                 <MarkdownEditorSkeleton />
@@ -176,11 +147,10 @@ onAppEvent('document:select', () => {
     <StatusBar
       :line-count="activeDocument?.content.split('\n').length || 0"
       :character-count="activeDocument?.content.length || 0"
-      :format-keys="shortcutsManagerRef?.formatKeys || ((k: string) => k)"
       :show-vim-mode="settings.vimMode"
     />
 
-    <ShortcutsManager ref="shortcutsManagerRef" />
+    <ShortcutsManager />
 
     <DocumentActionManager />
 

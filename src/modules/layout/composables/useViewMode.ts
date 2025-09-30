@@ -1,5 +1,5 @@
 import { useState } from '#imports'
-import { useLocalStorage, useMounted } from '@vueuse/core'
+import { useLocalStorage, useMediaQuery, useMounted } from '@vueuse/core'
 import { computed, readonly, ref, watch, watchEffect } from 'vue'
 import { z } from 'zod'
 import { useDataReset } from '@/shared/composables/useDataReset'
@@ -11,6 +11,7 @@ const ViewModeSchema = z.enum(['split', 'editor', 'preview'])
 
 export function useViewMode() {
   const isMounted = useMounted()
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   const viewMode = useState<ViewMode>('markvim-view-mode', () => {
     if (isMounted.value && typeof localStorage !== 'undefined') {
@@ -83,12 +84,20 @@ export function useViewMode() {
     toggleSidebar()
   })
 
+  // Close sidebar on mobile when a document is selected
+  onAppEvent('document:select', () => {
+    if (isMobile.value) {
+      isSidebarVisible.value = false
+    }
+  })
+
   return {
     viewMode: readonly(viewMode),
     isSidebarVisible,
     isPreviewVisible,
     isSplitView,
     isEditorVisible,
+    isMobile: readonly(isMobile),
     setViewMode,
     toggleViewMode,
     toggleSidebar,

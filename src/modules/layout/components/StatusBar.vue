@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { useVimMode } from '~/modules/editor/api'
+import { useShortcuts } from '~/modules/shortcuts/api'
 
 interface Props {
   lineCount: number
   characterCount: number
-  formatKeys: (keys: string) => string
   showVimMode?: boolean
 }
 
 defineProps<Props>()
 
 const { currentVimMode } = useVimMode()
+const { formatKeys } = useShortcuts()
 </script>
 
 <template>
