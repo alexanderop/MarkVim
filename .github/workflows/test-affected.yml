@@ -74,7 +74,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -104,28 +104,28 @@ jobs:
         include:
           - module: color-theme
             condition: ${{ needs.detect-changes.outputs.color-theme == 'true' }}
-            features: 'tests/features/color.feature tests/features/theme.feature'
+            features: tests/features/color.feature tests/features/theme.feature
           - module: documents
             condition: ${{ needs.detect-changes.outputs.documents == 'true' }}
-            features: 'tests/features/documents.feature tests/features/document-persistence.feature'
+            features: tests/features/documents.feature tests/features/document-persistence.feature
           - module: editor
             condition: ${{ needs.detect-changes.outputs.editor == 'true' }}
-            features: 'tests/features/editing.feature tests/features/scroll-sync.feature tests/features/smoke.test.feature'
+            features: tests/features/editing.feature tests/features/scroll-sync.feature tests/features/smoke.test.feature
           - module: markdown-preview
             condition: ${{ needs.detect-changes.outputs.markdown-preview == 'true' }}
-            features: 'tests/features/editing.feature tests/features/scroll-sync.feature tests/features/smoke.test.feature'
+            features: tests/features/editing.feature tests/features/scroll-sync.feature tests/features/smoke.test.feature
           - module: share
             condition: ${{ needs.detect-changes.outputs.share == 'true' }}
-            features: 'tests/features/sharing.feature'
+            features: tests/features/sharing.feature
           - module: layout
             condition: ${{ needs.detect-changes.outputs.layout == 'true' }}
-            features: 'tests/features/scroll-sync.feature tests/features/smoke.test.feature'
+            features: tests/features/scroll-sync.feature tests/features/smoke.test.feature
           - module: shortcuts
             condition: ${{ needs.detect-changes.outputs.shortcuts == 'true' }}
-            features: 'tests/features/smoke.test.feature'
+            features: tests/features/smoke.test.feature
           - module: core
             condition: ${{ needs.detect-changes.outputs.core == 'true' }}
-            features: 'tests/features/smoke.test.feature'
+            features: tests/features/smoke.test.feature
 
     steps:
       - uses: actions/checkout@v4
@@ -140,7 +140,7 @@ jobs:
         if: ${{ matrix.condition == 'true' }}
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         if: ${{ matrix.condition == 'true' }}
