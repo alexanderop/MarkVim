@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
 import { emitAppEvent } from '@/shared/utils/eventBus'
+import DocumentItemClient from './DocumentItem.client.vue'
 
 const { documents, activeDocumentId, isVisible } = defineProps<{
   documents: DocType[]
