@@ -68,6 +68,19 @@ watch(colorPreview, (newValue) => {
   oklchInput.value = newValue
 }, { immediate: true })
 
+// Validate OKLCH color values
+function isValidOklchValues(l: number, c: number, h: number, a: number): boolean {
+  if (Number.isNaN(l) || Number.isNaN(c) || Number.isNaN(h))
+    return false
+  if (l < 0 || l > 100)
+    return false
+  if (c < 0 || c > 1)
+    return false
+  if (Number.isNaN(a) || a < 0 || a > 1)
+    return false
+  return true
+}
+
 // Parse OKLCH string to extract L, C, H values
 function parseOklchString(input: string): OklchColor | null {
   // Remove extra whitespace and normalize
@@ -80,21 +93,19 @@ function parseOklchString(input: string): OklchColor | null {
     return null
 
   const [, lightness, chroma, hue, alpha] = match
+
+  // Type guard: match array elements are checked after null check
+  if (!lightness || !chroma || !hue)
+    return null
+
   const l = Number.parseFloat(lightness)
   const c = Number.parseFloat(chroma)
   const h = Number.parseFloat(hue)
   const a = alpha !== undefined ? Number.parseFloat(alpha) : 1
 
   // Validate ranges - note: hue has no limits as it's circular
-  if (Number.isNaN(l) || Number.isNaN(c) || Number.isNaN(h))
+  if (!isValidOklchValues(l, c, h, a))
     return null
-  if (l < 0 || l > 100)
-    return null
-  if (c < 0 || c > 1)
-    return null
-  if (Number.isNaN(a) || a < 0 || a > 1)
-    return null
-  // No hue validation - it's circular and unlimited
 
   return {
     l: l / 100, // Convert percentage to decimal

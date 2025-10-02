@@ -85,7 +85,11 @@ export async function createMarkdownRenderer() {
     }
     markdownInstance.renderer.rules.fence = function (tokens, idx, options, env, slf) {
       const token = tokens[idx]
-      const langName = token.info.trim().split(/\s+/g)[0] || 'plaintext'
+      if (!token) {
+        return originalFence.call(this, tokens, idx, options, env, slf)
+      }
+
+      const langName = token.info.trim().split(/\s+/g)[0] ?? 'plaintext'
 
       if (langName === 'mermaid') {
         return `<div class="mermaid">\n${token.content}\n</div>`

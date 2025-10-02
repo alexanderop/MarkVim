@@ -195,7 +195,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
   function handleDoubleGPress() {
     if (!isScrollContainerFocused())
       return
-    if (keyBindings.shift.value)
+    if (keyBindings.shift?.value)
       return
 
     const isCompletingSequence = doubleGSequence.isWaitingForSecondG.value
@@ -215,7 +215,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
       if (!isScrollContainerFocused())
         return
 
-      if (keyBindings.arrowUp.value || keyBindings.vimUp.value) {
+      if (keyBindings.arrowUp?.value || keyBindings.vimUp?.value) {
         startContinuousScrolling('up')
         return
       }
@@ -231,7 +231,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
       if (!isScrollContainerFocused())
         return
 
-      if (keyBindings.arrowDown.value || keyBindings.vimDown.value) {
+      if (keyBindings.arrowDown?.value || keyBindings.vimDown?.value) {
         startContinuousScrolling('down')
         return
       }
@@ -244,7 +244,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
 
   function setupJumpToTopKey() {
     watchEffect(() => {
-      if (keyBindings.g.value) {
+      if (keyBindings.g?.value) {
         handleDoubleGPress()
       }
     })
@@ -255,7 +255,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
       if (!isScrollContainerFocused())
         return
 
-      if (keyBindings.shift.value && keyBindings.g.value) {
+      if (keyBindings.shift?.value && keyBindings.g?.value) {
         jumpToBottom()
       }
     })

@@ -189,7 +189,7 @@ export function useDocumentShare() {
   }
 
   function getDocumentTitle(content: string): string {
-    const firstLine = content.split('\n')[0].trim()
+    const firstLine = content.split('\n')[0]?.trim() ?? ''
     if (firstLine.startsWith('#')) {
       return firstLine.replace(/^#+\s*/, '') || 'Untitled'
     }

@@ -38,7 +38,7 @@ const documentTitle = computed(() => {
   if (!doc)
     return 'Untitled'
 
-  const firstLine = doc.content.split('\n')[0].trim()
+  const firstLine = doc.content.split('\n')[0]?.trim() ?? ''
   if (firstLine.startsWith('#')) {
     return firstLine.replace(/^#+\s*/, '') || 'Untitled'
   }

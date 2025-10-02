@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
+import { parseDocuments } from '~/modules/core/api'
 import { defaultDocumentContent } from './defaultContent'
 
 // Use a consistent default document ID
@@ -25,7 +26,21 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
   const defaultDoc = createDefaultDocument()
 
   // Since components are client-only, we can use localStorage directly
-  const _documents = useLocalStorage<Document[]>('markvim-documents', [defaultDoc])
+  const _documents = useLocalStorage<Document[]>('markvim-documents', [defaultDoc], {
+    serializer: {
+      read: (raw: string) => {
+        try {
+          const parsed = JSON.parse(raw)
+          const validated = parseDocuments(parsed)
+          return validated.length > 0 ? validated : [defaultDoc]
+        }
+        catch {
+          return [defaultDoc]
+        }
+      },
+      write: (value: Document[]) => JSON.stringify(value),
+    },
+  })
   const _activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDoc.id)
 
   const { onDataReset } = useDataReset()
@@ -36,7 +51,7 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
   })
 
   const activeDocument = computed(() => {
-    return documents.value.find(doc => doc.id === _activeDocumentId.value) || documents.value[0]
+    return documents.value.find(doc => doc.id === _activeDocumentId.value) ?? documents.value[0] ?? null
   })
 
   const activeDocumentId = computed(() => _activeDocumentId.value)
@@ -51,8 +66,9 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
     }
 
     // Ensure active document exists
+    const firstDoc = _documents.value[0]
     if (!_documents.value.find(doc => doc.id === _activeDocumentId.value)) {
-      _activeDocumentId.value = _documents.value[0]?.id || DEFAULT_DOCUMENT_ID
+      _activeDocumentId.value = firstDoc?.id ?? DEFAULT_DOCUMENT_ID
     }
   }
 
@@ -92,10 +108,13 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
   function updateDocument(id: string, content: string): void {
     const docIndex = _documents.value.findIndex(d => d.id === id)
     if (docIndex !== -1) {
-      _documents.value[docIndex] = {
-        ..._documents.value[docIndex],
-        content,
-        updatedAt: Date.now(),
+      const doc = _documents.value[docIndex]
+      if (doc) {
+        _documents.value[docIndex] = {
+          ...doc,
+          content,
+          updatedAt: Date.now(),
+        }
       }
     }
   }
@@ -143,14 +162,16 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
       }
       else {
         // Select the first available document
-        const newActiveId = _documents.value[0].id
-        _activeDocumentId.value = newActiveId
+        const firstDoc = _documents.value[0]
+        if (firstDoc) {
+          _activeDocumentId.value = firstDoc.id
+        }
       }
     }
   }
 
   function getDocumentTitle(content: string): string {
-    const firstLine = content.split('\n')[0].trim()
+    const firstLine = content.split('\n')[0]?.trim() ?? ''
     if (firstLine.startsWith('#')) {
       return firstLine.replace(/^#+\s*/, '') || 'Untitled'
     }

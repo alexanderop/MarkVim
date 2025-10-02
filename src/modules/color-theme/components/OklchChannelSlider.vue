@@ -78,7 +78,7 @@ const tooltipPosition = computed(() => {
 })
 
 function handleSliderChange(value: number[] | undefined) {
-  if (value && value.length > 0) {
+  if (value && value.length > 0 && value[0] !== undefined) {
     model.value = value[0]
   }
 }

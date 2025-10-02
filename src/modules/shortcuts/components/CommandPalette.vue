@@ -112,12 +112,15 @@ const groupedCommands = computed(() => {
     const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
 
     groupOrder
-      .filter(groupName => otherGroups[groupName]?.length > 0)
+      .filter(groupName => (otherGroups[groupName]?.length ?? 0) > 0)
       .forEach((groupName) => {
-        groups.push({
-          name: groupName,
-          commands: otherGroups[groupName],
-        })
+        const groupCommands = otherGroups[groupName]
+        if (groupCommands) {
+          groups.push({
+            name: groupName,
+            commands: groupCommands,
+          })
+        }
       })
 
     return groups
@@ -138,11 +141,14 @@ const groupedCommands = computed(() => {
   const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
 
   return groupOrder
-    .filter(groupName => groups[groupName]?.length > 0)
-    .map(groupName => ({
-      name: groupName,
-      commands: groups[groupName],
-    }))
+    .filter(groupName => (groups[groupName]?.length ?? 0) > 0)
+    .map((groupName) => {
+      const groupCommands = groups[groupName]
+      return {
+        name: groupName,
+        commands: groupCommands ?? [],
+      }
+    })
 })
 
 // Handle command selection
@@ -175,12 +181,14 @@ function handleKeydown(event: KeyboardEvent) {
       selectedIndex.value = selectedIndex.value === 0 ? totalCommands - 1 : selectedIndex.value - 1
       scrollToSelected()
       break
-    case 'Enter':
+    case 'Enter': {
       event.preventDefault()
-      if (filteredCommands.value[selectedIndex.value]) {
-        selectCommand(filteredCommands.value[selectedIndex.value])
+      const selectedCommand = filteredCommands.value[selectedIndex.value]
+      if (selectedCommand) {
+        selectCommand(selectedCommand)
       }
       break
+    }
   }
 }
 

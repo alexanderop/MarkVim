@@ -117,7 +117,11 @@ function useLineNumbers() {
             return '0'
           }
 
-          const cursorLine = state.doc.lineAt(state.selection.asSingle().ranges[0].to).number
+          const firstRange = state.selection.asSingle().ranges[0]
+          if (!firstRange)
+            return lineNo.toString()
+
+          const cursorLine = state.doc.lineAt(firstRange.to).number
 
           if (lineNumberMode === 'relative') {
             return lineNo === cursorLine ? lineNo.toString() : Math.abs(cursorLine - lineNo).toString()

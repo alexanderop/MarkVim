@@ -30,7 +30,7 @@ const shareStats = computed(() => {
 const documentTitle = computed(() => {
   if (!document)
     return 'Untitled'
-  const firstLine = document.content.split('\n')[0].trim()
+  const firstLine = document.content.split('\n')[0]?.trim() ?? ''
   if (firstLine.startsWith('#')) {
     return firstLine.replace(/^#+\s*/, '') || 'Untitled'
   }

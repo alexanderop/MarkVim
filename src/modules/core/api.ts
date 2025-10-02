@@ -10,5 +10,7 @@
 export type { DocumentRepository } from './contracts/DocumentRepository'
 
 export type { StorageService } from './contracts/StorageService'
+// Schemas
+export { documentsArraySchema, documentSchema, parseDocument, parseDocuments } from './schemas/document.schema'
 // Domain Types
 export type { Document } from './types/Document'

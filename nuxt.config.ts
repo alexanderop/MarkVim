@@ -51,7 +51,7 @@ export default defineNuxtConfig({
   typescript: {
     tsConfig: {
       compilerOptions: {
-        noUncheckedIndexedAccess: false,
+        noUncheckedIndexedAccess: true,
       },
     },
   },

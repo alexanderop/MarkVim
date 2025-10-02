@@ -67,7 +67,10 @@ export function useViewMode() {
     const modes: ViewMode[] = ['split', 'editor', 'preview']
     const currentIndex = modes.indexOf(viewMode.value)
     const nextIndex = (currentIndex + 1) % modes.length
-    setViewMode(modes[nextIndex])
+    const nextMode = modes[nextIndex]
+    if (nextMode) {
+      setViewMode(nextMode)
+    }
   }
 
   function toggleSidebar() {
