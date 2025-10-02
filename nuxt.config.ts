@@ -2,7 +2,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-05-15',
+  compatibilityDate: '2025-01-15',
   devtools: { enabled: true },
   srcDir: 'src/',
   app: {
@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     storesDirs: ['./src/modules/**/store.ts', './src/stores/**'],
   },
   // Disable auto-imports completely
-  components: [],
+  components: false,
   imports: {
     autoImport: false,
   },
@@ -46,6 +46,13 @@ export default defineNuxtConfig({
     checker: true,
     config: {
       standalone: false,
+    },
+  },
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        noUncheckedIndexedAccess: false,
+      },
     },
   },
 })
