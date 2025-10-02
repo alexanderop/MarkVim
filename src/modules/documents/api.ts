@@ -14,10 +14,13 @@ export { default as DocumentListSkeleton } from './components/DocumentListSkelet
 // Export composables and utilities
 export { useActiveDocument } from './composables/useActiveDocument'
 export { useDocumentsProxy } from './composables/useDocumentsProxy'
+// Export events
+export type { DocumentsEvents } from './events'
 export { useDocumentsStore } from './store'
+
 // Note: useDocumentsStore is read-only - use useDocumentsProxy for mutations
 // Export types
-export type { Document } from '~/modules/core/api'
+export type { Document } from '~/modules/domain/api'
 
 // Export utilities that might be needed by other modules
 export function getDocumentTitle(content: string): string {

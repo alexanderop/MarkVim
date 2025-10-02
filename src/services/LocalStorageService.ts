@@ -1,4 +1,4 @@
-import type { StorageService } from '~/modules/core/api'
+import type { StorageService } from '~/modules/domain/api'
 
 export class LocalStorageService implements StorageService {
   get<T>(key: string): T | null {

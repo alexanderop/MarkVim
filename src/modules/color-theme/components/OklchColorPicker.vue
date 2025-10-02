@@ -26,9 +26,9 @@
  * - Use the warning indicator to know when you're pushing boundaries
  */
 
-import type { OklchColor } from '../store'
+import type { OklchColor } from '~/modules/color-theme/api'
 import { computed, ref, watch } from 'vue'
-import { useColorThemeStore } from '../store'
+import { useColorThemeStore } from '~/modules/color-theme/api'
 import OklchChannelSlider from './OklchChannelSlider.vue'
 
 const { label, description } = defineProps<{

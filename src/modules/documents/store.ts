@@ -1,10 +1,10 @@
-import type { Document } from '~/modules/core/api'
+import type { Document } from '~/modules/domain/api'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
-import { parseDocuments } from '~/modules/core/api'
+import { parseDocuments } from '~/modules/domain/api'
 import { defaultDocumentContent } from './defaultContent'
 
 // Use a consistent default document ID

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColorTheme } from '../store'
+import type { ColorTheme } from '~/modules/color-theme/api'
 import { ref } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'

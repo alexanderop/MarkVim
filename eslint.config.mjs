@@ -7,6 +7,7 @@ import withNuxt from './.nuxt/eslint.config.mjs'
 // Generate comprehensive module boundary restrictions
 const modules = [
   'color-theme',
+  'domain',
   'documents',
   'editor',
   'layout',
@@ -25,7 +26,8 @@ modules.forEach((module) => {
   })
 })
 
-// Note: This approach blocks all deep imports into modules except the '/api' file
+// Note: This blocks absolute path imports (~/modules/...) but not relative imports ('../store')
+// Within a module, prefer using the module's own API for consistency
 
 export default withNuxt(
   antfu({

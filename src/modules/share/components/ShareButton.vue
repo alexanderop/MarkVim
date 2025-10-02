@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/core/api'
+import type { Document } from '~/modules/domain/api'
 import { computed, ref } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
 import BaseButton from '~/shared/components/BaseButton.vue'

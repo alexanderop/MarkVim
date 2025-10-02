@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { OklchColor } from '../store'
+import type { OklchColor } from '~/modules/color-theme/api'
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { computed, ref } from 'vue'
 

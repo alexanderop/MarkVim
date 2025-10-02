@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/core/api'
+import type { Document } from '~/modules/domain/api'
 import { onMounted, ref } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useViewMode } from '~/modules/layout/api'

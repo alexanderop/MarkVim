@@ -11,4 +11,5 @@ export { default as ColorThemeModal } from './components/ColorThemeModal.vue'
 // Export the store for theme management
 export { useColorThemeStore } from './store'
 
-// Export any types if needed (check store for exported types)
+// Export types
+export type { ColorTheme, OklchColor } from './store'

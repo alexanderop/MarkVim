@@ -1,80 +1,29 @@
+import type { SharedEvents } from '../events'
+import type { DocumentsEvents } from '~/modules/documents/api'
+import type { EditorEvents } from '~/modules/editor/api'
+import type { LayoutEvents } from '~/modules/layout/api'
+import type { ShortcutsEvents } from '~/modules/shortcuts/api'
 import { tryOnScopeDispose, useEventBus } from '@vueuse/core'
 
 /**
- * Typed event contracts.
- * Keep namespaced keys: "<module>:<action>"
+ * Application Event Bus
+ *
+ * This aggregates all module events into a single typed interface.
+ * Each module defines its own events in a separate file (e.g., modules/documents/events.ts)
+ * and exports them via their public API.
+ *
+ * This approach provides:
+ * - Clear module ownership of events
+ * - Visible cross-module dependencies (if module A emits module B's events, it imports B's types)
+ * - Events as part of module's public contract
+ * - No circular dependencies (event bus imports from modules, not vice versa)
  */
-export interface AppEvents {
-  /** Fired when user requests document deletion (shows modal). */
-  'document:delete': {
-    documentId: string
-    documentTitle: string
-  }
-  /** Fired when user confirms document deletion (actually deletes). */
-  'document:delete-confirmed': {
-    documentId: string
-  }
-  /** Fired when a document becomes the active selection. */
-  'document:select': {
-    documentId: string
-  }
-  /** Fired after a new document is created. */
-  'document:create': undefined
-  /** Update document content */
-  'document:update': {
-    documentId: string
-    content: string
-  }
-
-  /** Add new document with content (store generates ID) */
-  'documents:add': {
-    content: string
-  }
-  /** Import document with content */
-  'documents:import': {
-    content: string
-  }
-
-  /** Switch the main view mode. */
-  'view:set': {
-    viewMode: 'editor' | 'split' | 'preview'
-  }
-
-  /** Open the command palette at an optional position. */
-  'command-palette:open': {
-    position?: { x: number, y: number }
-  }
-  /** Close the command palette. */
-  'command-palette:close': undefined
-
-  /** Toggle the sidebar. */
-  'sidebar:toggle': undefined
-
-  /** Vim mode changed in the editor. */
-  'vim-mode:change': {
-    mode: string
-    subMode?: string
-  }
-
-  /** Toggle editor settings. */
-  'settings:toggle-vim': undefined
-  'settings:toggle-line-numbers': undefined
-  'settings:toggle-preview-sync': undefined
-  'settings:save-document': undefined
-
-  /** Programmatically insert text at cursor. */
-  'editor:insert-text': {
-    text: string
-  }
-  /** Editor content changed for a specific document. */
-  'editor:content-update': {
-    documentId: string
-    content: string
-  }
-
-  /** Data reset requested - clear all local storage */
-  'data:reset': undefined
-}
+export interface AppEvents extends
+  DocumentsEvents,
+  EditorEvents,
+  LayoutEvents,
+  ShortcutsEvents,
+  SharedEvents {}
 
 export type AppEventKey = keyof AppEvents
 

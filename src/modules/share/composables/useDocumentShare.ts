@@ -1,4 +1,4 @@
-import type { Document } from '~/modules/core/api'
+import type { Document } from '~/modules/domain/api'
 import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'

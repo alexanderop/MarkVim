@@ -12,3 +12,6 @@ export { default as MarkdownEditorSkeleton } from './components/MarkdownEditorSk
 export { type EditorSettings, useEditorSettings } from './composables/useEditorSettings'
 // Export composables that other modules might need
 export { useVimMode } from './composables/useVimMode'
+
+// Export events
+export type { EditorEvents } from './events'

@@ -12,3 +12,6 @@ export { default as ShortcutsManager } from './components/ShortcutsManager.vue'
 export { useCommandHistory } from './composables/useCommandHistory'
 // Export composables that other modules might need
 export { type Command, type ShortcutAction, useShortcuts } from './composables/useShortcuts'
+
+// Export events
+export type { ShortcutsEvents } from './events'

@@ -1,10 +1,8 @@
 import { ref } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { useDocumentsStore } from '../store'
+import { getDocumentTitle } from '~/modules/documents/api'
 
 export function useDocumentDeletion() {
-  const { getDocumentTitle } = useDocumentsStore()
-
   const deleteModalOpen = ref(false)
   const documentToDelete = ref<{ id: string, title: string } | null>(null)
 
