@@ -44,10 +44,6 @@ function handleDocumentSelectFromPalette(id: string) {
   closeCommandPalette()
 }
 
-function handleSaveDocument() {
-  emitAppEvent('settings:save-document')
-}
-
 function handleCreateDocument() {
   emitAppEvent('document:create')
 }
@@ -114,7 +110,10 @@ onMounted(() => {
     {
       keys: 'meta+s',
       description: 'Save document',
-      action: () => handleSaveDocument(),
+      action: () => {
+        // Documents are auto-saved to localStorage on every change
+        // This shortcut is here for user familiarity but is a no-op
+      },
       category: 'File',
       icon: 'lucide:save',
     },

@@ -3,6 +3,7 @@ import antfu from '@antfu/eslint-config'
 import importPlugin from 'eslint-plugin-import'
 import vueA11y from 'eslint-plugin-vuejs-accessibility'
 import withNuxt from './.nuxt/eslint.config.mjs'
+import noUnusedEvents from './eslint-rules/no-unused-events.js'
 
 // Generate comprehensive module boundary restrictions
 const modules = [
@@ -61,6 +62,19 @@ export default withNuxt(
           patterns: restrictedPatterns,
         },
       ],
+    },
+  },
+  // Custom event bus rules
+  {
+    plugins: {
+      local: {
+        rules: {
+          'no-unused-events': noUnusedEvents,
+        },
+      },
+    },
+    rules: {
+      'local/no-unused-events': 'warn',
     },
   },
   // Additional rule overrides

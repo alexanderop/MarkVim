@@ -1,5 +1,4 @@
 import { readonly, ref } from 'vue'
-import { emitAppEvent } from '@/shared/utils/eventBus'
 
 export function useVimMode() {
   const currentVimMode = ref<string>('NORMAL')
@@ -11,7 +10,6 @@ export function useVimMode() {
     else {
       currentVimMode.value = mode.toUpperCase()
     }
-    emitAppEvent('vim-mode:change', { mode, subMode })
   }
 
   return {

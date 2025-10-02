@@ -2,7 +2,6 @@
 import type { EditorSettings } from '~/modules/editor/api'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
 import { useMediaQuery } from '@vueuse/core'
-import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useVimMode } from '~/modules/editor/api'
 import EditorMyCodeMirror from './MyCodeMirror.vue'
 
@@ -21,11 +20,6 @@ const { handleVimModeChange } = useVimMode()
 
 function handleContentUpdate(value: string) {
   emit('update:content', value)
-  // Emit event for real-time synchronization
-  emitAppEvent('editor:content-update', {
-    documentId: 'current', // Will be resolved by parent
-    content: value,
-  })
 }
 </script>
 

@@ -18,9 +18,6 @@ export interface SharedEvents {
   /** Toggle preview sync in split view */
   'settings:toggle-preview-sync': undefined
 
-  /** Save the active document */
-  'settings:save-document': undefined
-
   // ========================================
   // Data Events
   // ========================================
