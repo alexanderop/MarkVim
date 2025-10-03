@@ -71,6 +71,8 @@ When('I click the {word} button', async function (this: MarkVimWorld, buttonName
     'delete-confirm': () => markVimPage.clickDeleteConfirm(),
     'delete-cancel': () => markVimPage.clickDeleteCancel(),
     'share': () => markVimPage.clickShareButton(),
+    'clear-data': () => markVimPage.clickClearDataButton(),
+    'clear-data-confirm': () => markVimPage.clickClearDataConfirm(),
   }
 
   const clickMethod = buttonMap[buttonName]
@@ -373,4 +375,15 @@ When('I reload the page', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
   await page.reload()
   await page.waitForLoadState('networkidle')
+})
+
+// Feature Flags Steps
+When('I disable the {string} feature', async function (this: MarkVimWorld, featureName: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.disableFeature(featureName)
+})
+
+When('I enable the {string} feature', async function (this: MarkVimWorld, featureName: string) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.enableFeature(featureName)
 })

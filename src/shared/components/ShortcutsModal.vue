@@ -61,6 +61,7 @@ const totalShortcuts = computed(() =>
   >
     <template #trigger>
       <BaseButton
+        v-feature="'shortcuts'"
         variant="icon"
         size="icon"
         icon="lucide:keyboard"

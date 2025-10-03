@@ -46,6 +46,7 @@ function handleContentUpdate(value: string): void {
       <ClientOnly>
         <DocumentList
           v-show="isSidebarVisible"
+          v-feature="'documents'"
           :documents="documents"
           :active-document-id="activeDocumentId"
           :is-visible="isSidebarVisible"
@@ -89,6 +90,7 @@ function handleContentUpdate(value: string): void {
           <div
             v-if="isEditorVisible"
             ref="editorScrollContainer"
+            v-feature="'editor'"
             data-testid="editor-pane"
             class="w-full transition-all duration-300 ease-in-out overflow-auto"
             :class="[
@@ -126,6 +128,7 @@ function handleContentUpdate(value: string): void {
           <div
             v-if="isPreviewVisible"
             ref="previewScrollContainer"
+            v-feature="'markdown-preview'"
             data-testid="preview-pane"
             class="w-full transition-all duration-300 ease-in-out overflow-hidden"
             :class="[
@@ -158,12 +161,12 @@ function handleContentUpdate(value: string): void {
       :show-vim-mode="settings.vimMode"
     />
 
-    <ShortcutsManager />
+    <ShortcutsManager v-feature="'shortcuts'" />
 
-    <DocumentActionManager />
+    <DocumentActionManager v-feature="'documents'" />
 
-    <ShareManager />
+    <ShareManager v-feature="'share'" />
 
-    <ColorThemeModal />
+    <ColorThemeModal v-feature="'color-theme'" />
   </div>
 </template>

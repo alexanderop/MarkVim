@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useEditorSettings } from '~/modules/editor/api'
+import { type FeatureName, useFeatureFlagsStore } from '~/modules/feature-flags/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import BaseButton from './BaseButton.vue'
 import BaseModal from './BaseModal.vue'
@@ -9,6 +10,36 @@ import BaseSwitch from './BaseSwitch.vue'
 
 const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
+const featureFlagsStore = useFeatureFlagsStore()
+
+interface Feature {
+  key: FeatureName
+  label: string
+  description: string
+}
+
+const features = computed<Feature[]>(() => [
+  { key: 'documents', label: 'Documents', description: 'Document management and sidebar' },
+  { key: 'editor', label: 'Editor', description: 'Markdown editor (core feature)' },
+  { key: 'markdown-preview', label: 'Markdown Preview', description: 'Live preview with Mermaid diagrams' },
+  { key: 'vim-mode', label: 'Vim Mode Support', description: 'Vim keybindings in editor' },
+  { key: 'color-theme', label: 'Color Theme', description: 'OKLCH color customization' },
+  { key: 'share', label: 'Share', description: 'Import/Export documents' },
+  { key: 'shortcuts', label: 'Shortcuts', description: 'Keyboard shortcuts and command palette' },
+])
+
+function isFeatureEnabled(feature: FeatureName): boolean {
+  return featureFlagsStore.flags[feature]
+}
+
+function toggleFeature(feature: FeatureName): void {
+  featureFlagsStore.dispatch({ type: 'TOGGLE_FEATURE', payload: { feature } })
+}
+
+function handleResetToDefaults(): void {
+  resetToDefaults()
+  featureFlagsStore.dispatch({ type: 'RESET_TO_DEFAULTS' })
+}
 
 function useClearDataModal(): {
   showClearDataModal: Ref<boolean>
@@ -85,6 +116,24 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
             label="Synchronized Scrolling"
             description="Sync scroll position in split view"
             data-testid="sync-scroll-toggle"
+          />
+        </div>
+      </div>
+
+      <!-- Feature Flags Section -->
+      <div>
+        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-2 uppercase">
+          Features
+        </h3>
+        <div class="space-y-2">
+          <BaseSwitch
+            v-for="feature in features"
+            :key="feature.key"
+            :model-value="isFeatureEnabled(feature.key)"
+            :label="feature.label"
+            :description="feature.description"
+            :data-testid="`feature-${feature.key}-toggle`"
+            @update:model-value="toggleFeature(feature.key)"
           />
         </div>
       </div>
@@ -263,7 +312,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
           variant="default"
           size="sm"
           icon="lucide:rotate-ccw"
-          @click="resetToDefaults"
+          @click="handleResetToDefaults"
         >
           Reset to Defaults
         </BaseButton>
@@ -287,6 +336,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
       <ul class="text-text-secondary text-sm mt-3 space-y-1 list-disc list-inside">
         <li>All saved documents</li>
         <li>Editor settings and preferences</li>
+        <li>Feature flags and enabled features</li>
         <li>View mode preferences</li>
         <li>Command history</li>
         <li>Sidebar and pane layout settings</li>

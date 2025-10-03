@@ -95,9 +95,13 @@ function handleDeleteDocument(): void {
 
     <!-- Right section -->
     <div class="flex gap-1 md:gap-2 items-center">
-      <ShareButton :document="activeDocument" />
+      <ShareButton
+        v-feature="'share'"
+        :document="activeDocument"
+      />
 
       <BaseButton
+        v-feature="'documents'"
         variant="icon"
         size="icon"
         icon="lucide:trash-2"
@@ -112,6 +116,7 @@ function handleDeleteDocument(): void {
 
       <div class="flex gap-0.5 md:gap-1 items-center">
         <BaseButton
+          v-feature="'color-theme'"
           variant="ghost"
           size="sm"
           icon="lucide:palette"
@@ -121,7 +126,7 @@ function handleDeleteDocument(): void {
           class="hidden md:flex"
           @click="openColorTheme"
         />
-        <ShortcutsModal />
+        <ShortcutsModal v-feature="'shortcuts'" />
         <SettingsModal />
       </div>
     </div>

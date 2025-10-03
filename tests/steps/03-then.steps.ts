@@ -563,3 +563,54 @@ Then('the new document should still be active', async function (this: MarkVimWor
   // Verify that we're not on the default welcome document
   await markVimPage.verifyActiveDocumentIsNotDefault()
 })
+
+// Feature Flags Steps
+Then('the share button should not be visible in the toolbar', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyShareButtonNotVisible()
+})
+
+Then('the share button should be visible in the toolbar', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyShareButtonVisible()
+})
+
+Then('the document list sidebar should not be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyDocumentSidebarNotVisible()
+})
+
+Then('the document list sidebar should be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifySidebarVisible()
+})
+
+Then('the delete document button should not be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyDeleteDocumentButtonNotVisible()
+})
+
+Then('the color theme button should not be visible in the toolbar', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyColorThemeButtonNotVisible()
+})
+
+Then('the color theme button should not be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyColorThemeButtonNotVisible()
+})
+
+Then('the color theme button should be visible in the toolbar', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyColorThemeButtonVisible()
+})
+
+Then('the keyboard shortcuts button should not be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyKeyboardShortcutsButtonNotVisible()
+})
+
+Then('the share button should not be visible', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.verifyShareButtonNotVisible()
+})

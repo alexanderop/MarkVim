@@ -57,6 +57,21 @@ export class MarkVimPage {
   // Preview
   readonly renderedMarkdownArticle: Locator
 
+  // Feature Flags
+  readonly featureToggleDocuments: Locator
+  readonly featureToggleEditor: Locator
+  readonly featureToggleMarkdownPreview: Locator
+  readonly featureToggleColorTheme: Locator
+  readonly featureToggleShare: Locator
+  readonly featureToggleShortcuts: Locator
+  readonly featureToggleVimMode: Locator
+
+  // Clear Data
+  readonly clearDataButton: Locator
+  readonly clearDataConfirmModal: Locator
+  readonly clearDataConfirmBtn: Locator
+  readonly clearDataCancelBtn: Locator
+
   constructor(page: Page) {
     this.page = page
     this.headerToolbar = page.locator('[data-testid="header-toolbar"]')
@@ -109,6 +124,17 @@ export class MarkVimPage {
     this.oklchStringInput = page.locator('[data-testid="oklch-string-input"]')
     this.acceptColorChangeButton = page.locator('[data-testid="accept-color-change-button"]')
     this.renderedMarkdownArticle = page.locator('[data-testid="rendered-markdown-article"]')
+    this.featureToggleDocuments = page.locator('[data-testid="feature-documents-toggle"]')
+    this.featureToggleEditor = page.locator('[data-testid="feature-editor-toggle"]')
+    this.featureToggleMarkdownPreview = page.locator('[data-testid="feature-markdown-preview-toggle"]')
+    this.featureToggleColorTheme = page.locator('[data-testid="feature-color-theme-toggle"]')
+    this.featureToggleShare = page.locator('[data-testid="feature-share-toggle"]')
+    this.featureToggleShortcuts = page.locator('[data-testid="feature-shortcuts-toggle"]')
+    this.featureToggleVimMode = page.locator('[data-testid="feature-vim-mode-toggle"]')
+    this.clearDataButton = page.locator('[data-testid="clear-data-button"]')
+    this.clearDataConfirmModal = page.locator('[data-testid="clear-data-confirm-modal"]')
+    this.clearDataConfirmBtn = page.locator('[data-testid="clear-data-confirm-btn"]')
+    this.clearDataCancelBtn = page.locator('[data-testid="clear-data-cancel-btn"]')
   }
 
   async navigate(): Promise<void> {
@@ -1216,6 +1242,87 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     // Also verify the document title in the header is not the default
     const headerText = await this.headerTitle.textContent()
     expect(headerText).not.toContain('Welcome to MarkVim')
+  }
+
+  // Feature Flags Methods
+  async disableFeature(featureName: string): Promise<void> {
+    const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
+    const toggleButton = toggle.locator('button')
+    const isEnabled = await toggleButton.getAttribute('aria-checked')
+
+    if (isEnabled === 'true') {
+      await toggleButton.click()
+      await this.page.waitForTimeout(300) // Wait for state change
+    }
+  }
+
+  async enableFeature(featureName: string): Promise<void> {
+    const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
+    const toggleButton = toggle.locator('button')
+    const isEnabled = await toggleButton.getAttribute('aria-checked')
+
+    if (isEnabled === 'false') {
+      await toggleButton.click()
+      await this.page.waitForTimeout(300) // Wait for state change
+    }
+  }
+
+  async verifyFeatureEnabled(featureName: string): Promise<void> {
+    const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
+    const toggleButton = toggle.locator('button')
+    await expect(toggleButton).toHaveAttribute('aria-checked', 'true')
+  }
+
+  async verifyFeatureDisabled(featureName: string): Promise<void> {
+    const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
+    const toggleButton = toggle.locator('button')
+    await expect(toggleButton).toHaveAttribute('aria-checked', 'false')
+  }
+
+  async verifyShareButtonNotVisible(): Promise<void> {
+    await expect(this.shareButton).toBeHidden()
+  }
+
+  async verifyColorThemeButtonVisible(): Promise<void> {
+    await expect(this.colorThemeButton).toBeVisible()
+  }
+
+  async verifyColorThemeButtonNotVisible(): Promise<void> {
+    await expect(this.colorThemeButton).toBeHidden()
+  }
+
+  async verifyKeyboardShortcutsButtonNotVisible(): Promise<void> {
+    await expect(this.keyboardShortcutsButton).toBeHidden()
+  }
+
+  async verifyDeleteDocumentButtonNotVisible(): Promise<void> {
+    await expect(this.deleteDocumentBtn).toBeHidden()
+  }
+
+  async verifyDocumentSidebarNotVisible(): Promise<void> {
+    await expect(this.documentList).toBeHidden()
+  }
+
+  async clickClearDataButton(): Promise<void> {
+    await this.clearDataButton.click()
+    await this.page.waitForTimeout(300) // Wait for confirmation modal to appear
+  }
+
+  async clickClearDataConfirm(): Promise<void> {
+    await this.clearDataConfirmBtn.click()
+    await this.page.waitForTimeout(500) // Wait for data to be cleared and page to reload
+  }
+
+  async clickClearDataCancel(): Promise<void> {
+    await this.clearDataCancelBtn.click()
+  }
+
+  async verifyClearDataConfirmModalVisible(): Promise<void> {
+    await expect(this.clearDataConfirmModal).toBeVisible()
+  }
+
+  async verifyClearDataConfirmModalHidden(): Promise<void> {
+    await expect(this.clearDataConfirmModal).not.toBeVisible()
   }
 }
 
