@@ -38,6 +38,7 @@ export default withNuxt(
       '.cursor/**/*.md',
       'reports/**/*',
       '**/*.md',
+      '.claude/settings.local.json',
     ],
   }),
   // Vue accessibility plugin
@@ -65,6 +66,18 @@ export default withNuxt(
       ],
     },
   },
+  // Unused exports detection
+  // Note: Both import/no-unused-modules and custom TypeScript-based rules have limitations:
+  // - import/no-unused-modules: False positives with Vue SFC files (doesn't detect imports in <script> blocks)
+  // - Custom rule: TypeScript parser doesn't provide language service needed for findReferences()
+  //
+  // Solution: Use Knip for accurate unused export detection
+  // - Run: pnpm knip:exports (detects only unused exports)
+  // - Run: pnpm knip (detects unused exports, files, dependencies, etc.)
+  // - Knip properly handles Vue SFCs and provides accurate results
+  //
+  // See knip.json for configuration
+
   // Custom local rules
   {
     plugins: {
@@ -77,8 +90,6 @@ export default withNuxt(
     },
     rules: {
       'local/no-unused-events': 'warn',
-      // Temporarily disabled - requires TypeScript type information configuration
-      // 'local/no-unused-module-exports': 'warn',
     },
   },
   // Additional rule overrides

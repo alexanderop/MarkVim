@@ -33,7 +33,7 @@ pnpm typecheck
 # Detect unused exports, files, and dependencies
 pnpm knip
 
-# Check only for unused exports
+# Check only for unused exports (recommended for checking module API boundaries)
 pnpm knip:exports
 
 # Run E2E tests (requires dev server running)
@@ -48,6 +48,20 @@ pnpm test:e2e:with-server
 
 ### Git Hooks
 The project uses Husky with pre-commit hooks that automatically run `pnpm lint` on staged files.
+
+### Unused Exports Detection
+
+The project uses **Knip** for detecting unused exports in module API files. While ESLint has plugins for this (`import/no-unused-modules`), they have limitations with Vue Single File Components:
+
+- **Issue**: ESLint's import plugin cannot parse imports from Vue `<script>` blocks, leading to false positives
+- **Solution**: Knip properly handles Vue SFCs and provides accurate unused export detection
+
+**When to run Knip:**
+- Before refactoring module APIs: `pnpm knip:exports`
+- To clean up unused code: `pnpm knip` (checks exports, files, dependencies, etc.)
+- In CI/CD pipelines to prevent unused exports from being merged
+
+See `knip.json` for configuration details.
 
 ## High-Level Architecture
 
