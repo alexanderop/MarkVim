@@ -18,7 +18,7 @@ const CACHE_EXPIRATION_MS = 5000
 
 /**
  * Recursively find all TypeScript/Vue files in a directory
- * @returns {string[]}
+ * @returns {string[]} Array of file paths
  */
 // eslint-disable-next-line ts/explicit-function-return-type
 function findSourceFiles(dir, files = []) {
@@ -51,7 +51,7 @@ function findSourceFiles(dir, files = []) {
 
 /**
  * Extract event keys from event interface definitions
- * @returns {Array<{ key: string, interface: string, filename: string }>}
+ * @returns {Array<{ key: string, interface: string, filename: string }>} Array of event key objects with interface name and filename
  */
 // eslint-disable-next-line ts/explicit-function-return-type
 function extractEventKeys(content, filename) {
@@ -87,7 +87,7 @@ function extractEventKeys(content, filename) {
 
 /**
  * Find all emitAppEvent and onAppEvent calls
- * @returns {{ emitted: string[], listened: string[] }}
+ * @returns {{ emitted: string[], listened: string[] }} Object containing arrays of emitted and listened event keys
  */
 // eslint-disable-next-line ts/explicit-function-return-type
 function findEventUsage(content) {
@@ -117,7 +117,7 @@ function findEventUsage(content) {
 
 /**
  * Analyze project-wide event usage
- * @returns {{ allEventKeys: Array<{ key: string, interface: string, filename: string }>, allEmitted: Set<string>, allListened: Set<string> }}
+ * @returns {{ allEventKeys: Array<{ key: string, interface: string, filename: string }>, allEmitted: Set<string>, allListened: Set<string> }} Object containing all event keys and sets of emitted and listened event keys
  */
 // eslint-disable-next-line ts/explicit-function-return-type
 function analyzeEventUsage(projectRoot) {

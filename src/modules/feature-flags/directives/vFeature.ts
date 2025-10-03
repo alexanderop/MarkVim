@@ -1,12 +1,8 @@
-import type { Directive, WatchStopHandle } from 'vue'
+import type { FeatureDirective } from '@/types/directives'
 import { watch } from 'vue'
-import { type FeatureName, useFeatureFlagsStore } from '../store'
+import { useFeatureFlagsStore } from '../store'
 
-interface FeatureElement extends HTMLElement {
-  _vFeatureCleanup?: WatchStopHandle
-}
-
-export const vFeature: Directive<FeatureElement, FeatureName> = {
+export const vFeature = {
   mounted(el, binding) {
     const store = useFeatureFlagsStore()
     const featureName = binding.value
@@ -57,4 +53,4 @@ export const vFeature: Directive<FeatureElement, FeatureName> = {
       delete el._vFeatureCleanup
     }
   },
-}
+} satisfies FeatureDirective

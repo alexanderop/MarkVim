@@ -10,4 +10,6 @@ export { vFeature } from './directives/vFeature'
 // Export store
 export { useFeatureFlagsStore } from './store'
 
+// Export types
 export type { FeatureFlags, FeatureFlagsMessage, FeatureFlagsState, FeatureName } from './store'
+export type { FeatureDirective, FeatureElement } from '@/types/directives'
