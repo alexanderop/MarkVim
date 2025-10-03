@@ -3,7 +3,9 @@
   "nuxt": true,
   "entry": [
     "src/app/**/*.vue",
-    "src/shared/**/*.{ts,vue}"
+    "src/shared/**/*.{ts,vue}",
+    "src/modules/*/api.ts",
+    "scripts/**/*.sh"
   ],
   "project": [
     "src/**/*.{ts,vue,js}",
@@ -25,8 +27,12 @@
     "@/*": ["./src/*"]
   },
   "ignoreDependencies": [
-    "#app",
-    "#components",
-    "#imports"
-  ]
+    "vue-router",
+    "@iconify-json/lucide",
+    "@unocss/preset-typography",
+    "lint-staged",
+    "ts-node"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreUnresolved": ["^#.+"]
 }
