@@ -45,7 +45,7 @@ function handleContentUpdate(value: string): void {
     <div class="flex flex-1 relative overflow-hidden">
       <ClientOnly>
         <DocumentList
-          v-show="isSidebarVisible"
+          v-if="isSidebarVisible"
           v-feature="'documents'"
           :documents="documents"
           :active-document-id="activeDocumentId"
@@ -59,7 +59,7 @@ function handleContentUpdate(value: string): void {
         />
         <template #fallback>
           <DocumentListSkeleton
-            v-show="isSidebarVisible"
+            v-if="isSidebarVisible"
             class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
             :class="[
               isSidebarVisible
