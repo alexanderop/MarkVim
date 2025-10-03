@@ -24,13 +24,16 @@ function scrollToFeatures(): void {
   featuresElement?.scrollIntoView({ behavior: 'smooth' })
 }
 
+// Feature rotation interval in milliseconds
+const FEATURE_ROTATION_INTERVAL_MS = 3000
+
 onMounted(() => {
   isLoaded.value = true
 
-  // Rotate feature highlights every 3 seconds
+  // Rotate feature highlights
   setInterval(() => {
     currentFeatureIndex.value = (currentFeatureIndex.value + 1) % features.length
-  }, 3000)
+  }, FEATURE_ROTATION_INTERVAL_MS)
 })
 </script>
 

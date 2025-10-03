@@ -1,6 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { MarkVimPage } from '../page-objects/markvim-page.js'
+import { EXTRA_LONG_WAIT_MS } from '../support/constants.js'
 
 let markVimPage: MarkVimPage
 
@@ -13,7 +14,7 @@ When('I create a new document with content {string}', async function (content: s
   await markVimPage.createDocumentWithContent(content)
 
   // Wait for client-only components to load and document to be saved to localStorage
-  await this.page.waitForTimeout(1000)
+  await this.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 })
 
 When('I select the first document {string}', async function (documentTitle: string) {
@@ -29,7 +30,7 @@ When('I select the first document {string}', async function (documentTitle: stri
   await documentItem.click()
 
   // Wait for the document to become active
-  await this.page.waitForTimeout(1000)
+  await this.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 })
 
 When('I check the browser console', function () {

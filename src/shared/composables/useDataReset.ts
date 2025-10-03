@@ -1,6 +1,9 @@
 import { localStorageService } from '@/services/LocalStorageService'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 
+// Delay to allow event handlers to register before clearing storage
+const STORAGE_CLEAR_DELAY_MS = 100
+
 export function useDataReset(): {
   clearAllData: () => void
   onDataReset: (callback: () => void) => (() => void)
@@ -20,7 +23,7 @@ export function useDataReset(): {
           }
         }
         keysToRemove.forEach(key => localStorageService.remove(key))
-      }, 100)
+      }, STORAGE_CLEAR_DELAY_MS)
     }
   }
 

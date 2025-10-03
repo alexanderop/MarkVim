@@ -32,6 +32,8 @@ const {
 const importUrl = ref('')
 const previewDocument = ref<Document | null>(null)
 
+const PREVIEW_MAX_LENGTH = 100
+
 const isAutoImport = computed(() => !!autoImportDocument)
 
 const documentTitle = computed(() => {
@@ -55,7 +57,7 @@ const documentPreview = computed(() => {
   const firstNonHeaderLine = lines.find(line =>
     line.trim() && !line.trim().startsWith('#'),
   )
-  return firstNonHeaderLine?.trim().slice(0, 100) || 'No content preview available'
+  return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) || 'No content preview available'
 })
 
 watch(

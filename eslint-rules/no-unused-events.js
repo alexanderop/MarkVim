@@ -13,6 +13,9 @@ import { join } from 'node:path'
 let eventUsageCache = null
 let cacheTimestamp = 0
 
+// Cache expiration time in milliseconds
+const CACHE_EXPIRATION_MS = 5000
+
 /**
  * Recursively find all TypeScript/Vue files in a directory
  * @returns {string[]}
@@ -120,7 +123,7 @@ function findEventUsage(content) {
 function analyzeEventUsage(projectRoot) {
   // Use cache if recent (within same ESLint run)
   const now = Date.now()
-  if (eventUsageCache && (now - cacheTimestamp) < 5000) {
+  if (eventUsageCache && (now - cacheTimestamp) < CACHE_EXPIRATION_MS) {
     return eventUsageCache
   }
 

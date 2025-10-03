@@ -20,6 +20,14 @@ interface Props {
 
 const { document, isActive, index } = defineProps<Props>()
 
+// Time conversion constants
+const MILLISECONDS_IN_SECOND = 1000
+const SECONDS_IN_MINUTE = 60
+const MINUTES_IN_HOUR = 60
+const HOURS_IN_DAY = 24
+const DAYS_IN_WEEK = 7
+const PREVIEW_MAX_LENGTH = 60
+
 function handleDocumentClick(): void {
   emitAppEvent('document:select', { documentId: document.id })
 }
@@ -40,18 +48,18 @@ function getDocumentPreview(content: string): string {
   const firstNonHeaderLine = lines.find(line =>
     line.trim() && !line.trim().startsWith('#'),
   )
-  return firstNonHeaderLine?.trim().slice(0, 60) || 'No content'
+  return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) || 'No content'
 }
 
 function formatDate(timestamp: number): string {
   const date = new Date(timestamp)
   const now = new Date()
-  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+  const diffInHours = (now.getTime() - date.getTime()) / (MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR)
 
-  if (diffInHours < 24) {
+  if (diffInHours < HOURS_IN_DAY) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
-  if (diffInHours < 24 * 7) {
+  if (diffInHours < HOURS_IN_DAY * DAYS_IN_WEEK) {
     return date.toLocaleDateString([], { weekday: 'short' })
   }
   return date.toLocaleDateString([], { month: 'short', day: 'numeric' })

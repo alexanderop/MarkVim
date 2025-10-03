@@ -150,7 +150,8 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>): 
       1,
     )
 
-    const easeOutCubic = 1 - (1 - accelerationProgress) ** 3
+    const CUBIC_EASING_POWER = 3
+    const easeOutCubic = 1 - (1 - accelerationProgress) ** CUBIC_EASING_POWER
     const speedRange = SCROLL_SPEED_MAX_PX - SCROLL_SPEED_BASE_PX
 
     return SCROLL_SPEED_BASE_PX + speedRange * easeOutCubic

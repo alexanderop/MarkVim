@@ -3,6 +3,9 @@ import { useLocalStorage } from '@vueuse/core'
 import { readonly, type Ref } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 
+// Maximum number of commands to keep in history
+const MAX_COMMAND_HISTORY = 20
+
 export function useCommandHistory(): {
   trackCommandUsage: (commandId: string) => void
   sortCommandsByHistory: (commands: Command[]) => Command[]
@@ -27,8 +30,8 @@ export function useCommandHistory(): {
     // Add to the beginning
     history.unshift(commandId)
 
-    // Keep only the last 20 commands
-    commandHistory.value = history.slice(0, 20)
+    // Keep only the last N commands
+    commandHistory.value = history.slice(0, MAX_COMMAND_HISTORY)
   }
 
   function sortCommandsByHistory(commands: Command[]): Command[] {

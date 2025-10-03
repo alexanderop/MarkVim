@@ -14,6 +14,9 @@ const model = defineModel<number>({ required: true })
 
 const showTooltip = ref(false)
 
+// Percentage conversion factor (lightness and alpha are 0-1, displayed as 0-100%)
+const PERCENTAGE_FACTOR = 100
+
 const channelInfo = computed(() => {
   switch (channel) {
     case 'l':
@@ -43,7 +46,7 @@ const channelInfo = computed(() => {
 
 const displayValue = computed(() => {
   if (channel === 'l' || channel === 'a') {
-    return Math.round(model.value * 100)
+    return Math.round(model.value * PERCENTAGE_FACTOR)
   }
   if (channel === 'h') {
     return Math.round(model.value)
@@ -74,7 +77,7 @@ const trackGradient = computed(() => {
 })
 
 const tooltipPosition = computed(() => {
-  return ((model.value - min) / (max - min)) * 100
+  return ((model.value - min) / (max - min)) * PERCENTAGE_FACTOR
 })
 
 function handleSliderChange(value: number[] | undefined): void {
@@ -90,7 +93,7 @@ function handleInputChange(event: Event): void {
   let value = Number.parseFloat(target.value)
 
   if (channel === 'l' || channel === 'a') {
-    value = value / 100
+    value = value / PERCENTAGE_FACTOR
   }
 
   if (!Number.isNaN(value)) {

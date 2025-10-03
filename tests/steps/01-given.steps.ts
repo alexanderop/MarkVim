@@ -2,6 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { Given } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
+import { DAYS_IN_YEAR, HOURS_IN_DAY, LONG_WAIT_MS, MEDIUM_WAIT_MS, MILLISECONDS_IN_SECOND, MINUTES_IN_HOUR, SECONDS_IN_MINUTE } from '../support/constants.js'
 import { ensurePage } from '../support/utils.js'
 
 Given('I navigate to {string}', async function (this: MarkVimWorld, url: string) {
@@ -23,7 +24,7 @@ Given('I navigate to the App', async function (this: MarkVimWorld) {
       value: 'true',
       domain: 'localhost',
       path: '/',
-      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+      expires: Date.now() / MILLISECONDS_IN_SECOND + SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR, // 1 year from now
     },
   ])
   // Reload to apply the cookie setting
@@ -43,7 +44,7 @@ Given('I am on the application page', async function (this: MarkVimWorld) {
       value: 'true',
       domain: 'localhost',
       path: '/',
-      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+      expires: Date.now() / MILLISECONDS_IN_SECOND + SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR, // 1 year from now
     },
   ])
   // Reload to apply the cookie setting
@@ -87,7 +88,7 @@ Given('I have some data stored in localStorage', async function (this: MarkVimWo
       value: 'true',
       domain: 'localhost',
       path: '/',
-      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+      expires: Date.now() / MILLISECONDS_IN_SECOND + SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR, // 1 year from now
     },
   ])
 })
@@ -120,7 +121,7 @@ Given('I have modified settings in localStorage', async function (this: MarkVimW
       value: 'true',
       domain: 'localhost',
       path: '/',
-      expires: Date.now() / 1000 + 60 * 60 * 24 * 365, // 1 year from now
+      expires: Date.now() / MILLISECONDS_IN_SECOND + SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR, // 1 year from now
     },
   ])
 })
@@ -164,7 +165,7 @@ Given('I have an empty document', async function (this: MarkVimWorld) {
   await markVimPage.createNewDocument()
 
   // Wait for the new document to become active and ready
-  await markVimPage.page.waitForTimeout(500)
+  await markVimPage.page.waitForTimeout(LONG_WAIT_MS)
 
   // Focus the editor and select all content, then delete it
   await markVimPage.focusEditor()
@@ -172,7 +173,7 @@ Given('I have an empty document', async function (this: MarkVimWorld) {
   await markVimPage.page.keyboard.press('Backspace')
 
   // Wait a moment for the editor to update
-  await markVimPage.page.waitForTimeout(200)
+  await markVimPage.page.waitForTimeout(MEDIUM_WAIT_MS)
 })
 
 Given('I create a document with the content {string}', async function (this: MarkVimWorld, content: string) {

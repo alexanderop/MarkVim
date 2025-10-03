@@ -39,6 +39,10 @@ export interface EditorSettings {
   highlightActiveLine: boolean
 }
 
+// Font size constraints
+const MIN_FONT_SIZE = 8
+const MAX_FONT_SIZE = 32
+
 export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   // Vim configuration
   vimMode: true,
@@ -132,7 +136,7 @@ export function useEditorSettings(): {
   }
 
   const updateFontSize = (size: number): void => {
-    settings.value.fontSize = Math.max(8, Math.min(32, size))
+    settings.value.fontSize = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, size))
     saveToLocalStorage()
   }
 

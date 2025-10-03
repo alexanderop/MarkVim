@@ -23,11 +23,18 @@ export interface ColorTheme {
   alertCaution: OklchColor
 }
 
+// Color constants
+const MAX_CHROMA = 0.4
+const HUE_DEGREES_FULL_CIRCLE = 360
+const PERCENTAGE_FACTOR = 100
+const DECIMAL_PLACES_PERCENTAGE = 1
+const DECIMAL_PLACES_CHROMA = 3
+
 // Zod schemas for validation
 const OklchColorSchema = z.object({
   l: z.number().min(0).max(1),
-  c: z.number().min(0).max(0.4),
-  h: z.number().min(0).max(360),
+  c: z.number().min(0).max(MAX_CHROMA),
+  h: z.number().min(0).max(HUE_DEGREES_FULL_CIRCLE),
   a: z.number().min(0).max(1).optional(),
 })
 
@@ -76,8 +83,8 @@ export const useColorThemeStore = defineStore('color-theme', () => {
 
   // Helper function for converting OKLCH to string
   function oklchToString(color: OklchColor): string {
-    const alpha = color.a !== undefined ? ` / ${color.a.toFixed(3)}` : ''
-    return `oklch(${(color.l * 100).toFixed(1)}% ${color.c.toFixed(3)} ${color.h.toFixed(0)}${alpha})`
+    const alpha = color.a !== undefined ? ` / ${color.a.toFixed(DECIMAL_PLACES_CHROMA)}` : ''
+    return `oklch(${(color.l * PERCENTAGE_FACTOR).toFixed(DECIMAL_PLACES_PERCENTAGE)}% ${color.c.toFixed(DECIMAL_PLACES_CHROMA)} ${color.h.toFixed(0)}${alpha})`
   }
 
   // CSS custom property references

@@ -2,6 +2,11 @@ import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import { computed, type ComputedRef, onUnmounted, readonly, ref, type Ref } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 
+// Percentage constants
+const FULL_WIDTH_PERCENTAGE = 100
+const MIN_PANE_WIDTH_PERCENTAGE = 20
+const MAX_PANE_WIDTH_PERCENTAGE = 80
+
 export function useResizablePanes(initialLeftWidth: number = 50): {
   leftPaneWidth: Readonly<Ref<number>>
   rightPaneWidth: ComputedRef<number>
@@ -11,7 +16,7 @@ export function useResizablePanes(initialLeftWidth: number = 50): {
 } {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const leftPaneWidth = useLocalStorage('markvim-pane-width', initialLeftWidth)
-  const rightPaneWidth = computed(() => 100 - leftPaneWidth.value)
+  const rightPaneWidth = computed(() => FULL_WIDTH_PERCENTAGE - leftPaneWidth.value)
 
   const { onDataReset } = useDataReset()
   onDataReset(() => {
@@ -40,7 +45,7 @@ export function useResizablePanes(initialLeftWidth: number = 50): {
         }
 
         const relativeX = pendingUpdate - containerRect.left
-        const percentage = Math.max(20, Math.min(80, (relativeX / containerRect.width) * 100))
+        const percentage = Math.max(MIN_PANE_WIDTH_PERCENTAGE, Math.min(MAX_PANE_WIDTH_PERCENTAGE, (relativeX / containerRect.width) * FULL_WIDTH_PERCENTAGE))
 
         // Batch the update
         leftPaneWidth.value = percentage
@@ -73,7 +78,7 @@ export function useResizablePanes(initialLeftWidth: number = 50): {
     if (pendingUpdate !== null && containerRef.value) {
       const rect = containerRef.value.getBoundingClientRect()
       const relativeX = pendingUpdate - rect.left
-      const percentage = Math.max(20, Math.min(80, (relativeX / rect.width) * 100))
+      const percentage = Math.max(MIN_PANE_WIDTH_PERCENTAGE, Math.min(MAX_PANE_WIDTH_PERCENTAGE, (relativeX / rect.width) * FULL_WIDTH_PERCENTAGE))
       leftPaneWidth.value = percentage
       pendingUpdate = null
     }

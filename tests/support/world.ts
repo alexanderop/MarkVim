@@ -5,11 +5,12 @@ import type { Browser, Page } from '@playwright/test'
 import process from 'node:process'
 import { After, Before, setDefaultTimeout, setWorldConstructor, World } from '@cucumber/cucumber'
 import { chromium } from '@playwright/test'
+import { DEFAULT_TIMEOUT_MS, POLLING_INTERVAL_MS } from './constants'
 
 // Set default timeout for Cucumber steps
 // Use longer timeout in CI environment to account for slower machines
 const isCI = process.env.CI === 'true'
-const defaultTimeout = isCI ? 30 * 1000 : 10 * 1000
+const defaultTimeout = isCI ? DEFAULT_TIMEOUT_MS : POLLING_INTERVAL_MS
 setDefaultTimeout(defaultTimeout)
 
 export interface MarkVimWorld extends World {

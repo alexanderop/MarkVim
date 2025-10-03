@@ -22,6 +22,9 @@ const shareLink = ref<string>('')
 const copySuccess = ref(false)
 const showAdvanced = ref(false)
 
+const PERCENTAGE_FACTOR = 100
+const COPY_SUCCESS_DURATION_MS = 2000
+
 const shareStats = computed(() => {
   if (!document)
     return null
@@ -52,7 +55,7 @@ function formatBytes(bytes: number): string {
 }
 
 function formatPercentage(ratio: number): string {
-  return `${Math.round(ratio * 100)}%`
+  return `${Math.round(ratio * PERCENTAGE_FACTOR)}%`
 }
 
 // Generate share link when dialog opens
@@ -80,7 +83,7 @@ async function copyToClipboard(): Promise<void> {
     copySuccess.value = true
     setTimeout(() => {
       copySuccess.value = false
-    }, 2000)
+    }, COPY_SUCCESS_DURATION_MS)
   }
   catch (error) {
     console.error('Failed to copy to clipboard:', error)

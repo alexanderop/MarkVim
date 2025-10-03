@@ -10,6 +10,10 @@ import ShortcutsCommandPalette from './CommandPalette.vue'
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
 
+// Command palette position constants
+const COMMAND_PALETTE_HALF_WIDTH = 200
+const VERTICAL_POSITION_DIVISOR = 3
+
 // Use documents store
 const documentsStore = useDocumentsStore()
 const { documents, activeDocument } = storeToRefs(documentsStore)
@@ -30,8 +34,8 @@ function handleGlobalKeydown(event: KeyboardEvent): void {
 }
 
 function openCommandPalette(_event?: KeyboardEvent): void {
-  const centerX = window.innerWidth / 2 - 200
-  const centerY = window.innerHeight / 3
+  const centerX = window.innerWidth / 2 - COMMAND_PALETTE_HALF_WIDTH
+  const centerY = window.innerHeight / VERTICAL_POSITION_DIVISOR
 
   commandPalettePosition.value = { x: centerX, y: centerY }
   emitAppEvent('command-palette:open', { position: { x: centerX, y: centerY } })

@@ -2,6 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { When } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
+import { EXTRA_LONG_WAIT_MS, LONG_WAIT_MS, SHORT_WAIT_MS, STANDARD_WAIT_MS } from '../support/constants.js'
 import { ensurePage } from '../support/utils.js'
 
 When('the page is loaded', async function (this: MarkVimWorld) {
@@ -146,7 +147,7 @@ When('I type {string} into the editor', async function (this: MarkVimWorld, text
   await markVimPage.editorContent.fill(text)
 
   // Wait for the content to be processed
-  await markVimPage.page.waitForTimeout(300)
+  await markVimPage.page.waitForTimeout(STANDARD_WAIT_MS)
 })
 
 When('I paste the following {word} code into the editor:', async function (this: MarkVimWorld, _type: string, docString: string) {
@@ -157,7 +158,7 @@ When('I paste the following {word} code into the editor:', async function (this:
   await markVimPage.editorContent.fill(docString)
 
   // Wait for the content to be processed
-  await markVimPage.page.waitForTimeout(300)
+  await markVimPage.page.waitForTimeout(STANDARD_WAIT_MS)
 })
 
 // Add this step as well, which is a variation of the one above
@@ -169,7 +170,7 @@ When('I paste the following {word} markdown into the editor:', async function (t
   await markVimPage.editorContent.fill(docString)
 
   // Wait for the content to be processed
-  await markVimPage.page.waitForTimeout(300)
+  await markVimPage.page.waitForTimeout(STANDARD_WAIT_MS)
 })
 
 When('I type the following text into the editor:', async function (this: MarkVimWorld, docString: string) {
@@ -180,26 +181,26 @@ When('I type the following text into the editor:', async function (this: MarkVim
   await markVimPage.editorContent.fill(docString)
 
   // Wait for the content to be processed
-  await markVimPage.page.waitForTimeout(300)
+  await markVimPage.page.waitForTimeout(STANDARD_WAIT_MS)
 })
 
 When('I press {string} to ensure normal mode', async function (this: MarkVimWorld, key: string) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.pressKey(key)
-  await markVimPage.page.waitForTimeout(300)
+  await markVimPage.page.waitForTimeout(STANDARD_WAIT_MS)
 })
 
 When('I press {string} to enter vim visual mode', async function (this: MarkVimWorld, key: string) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.focusEditor()
   await markVimPage.pressKey(key)
-  await markVimPage.page.waitForTimeout(500) // Wait for visual mode to activate
+  await markVimPage.page.waitForTimeout(LONG_WAIT_MS) // Wait for visual mode to activate
 })
 
 When('I press {string} to select down one line', async function (this: MarkVimWorld, key: string) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.pressKey(key)
-  await markVimPage.page.waitForTimeout(300) // Wait for selection to update
+  await markVimPage.page.waitForTimeout(STANDARD_WAIT_MS) // Wait for selection to update
 })
 
 When('I change the font size to {int}', async function (this: MarkVimWorld, targetSize: number) {
@@ -223,7 +224,7 @@ When('I change the font size to {int}', async function (this: MarkVimWorld, targ
     const increaseButton = markVimPage.page.locator('[data-testid="font-size-increase"]')
     for (let i = 0; i < difference; i++) {
       await increaseButton.click()
-      await markVimPage.page.waitForTimeout(100) // Small delay for UI updates
+      await markVimPage.page.waitForTimeout(SHORT_WAIT_MS) // Small delay for UI updates
     }
   }
   else if (difference < 0) {
@@ -231,7 +232,7 @@ When('I change the font size to {int}', async function (this: MarkVimWorld, targ
     const decreaseButton = markVimPage.page.locator('[data-testid="font-size-decrease"]')
     for (let i = 0; i < Math.abs(difference); i++) {
       await decreaseButton.click()
-      await markVimPage.page.waitForTimeout(100) // Small delay for UI updates
+      await markVimPage.page.waitForTimeout(SHORT_WAIT_MS) // Small delay for UI updates
     }
   }
 
@@ -251,7 +252,7 @@ When('I click the {string} color setting to open the picker', async function (th
   await colorButton.click()
 
   // Wait for the color picker modal to open
-  await markVimPage.page.waitForTimeout(500)
+  await markVimPage.page.waitForTimeout(LONG_WAIT_MS)
   await expect(markVimPage.oklchStringInput).toBeVisible()
 })
 
@@ -276,7 +277,7 @@ When('I set the color picker value to {string} which is a muted blue', async fun
 When('I confirm the new color selection', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.acceptColorChangeButton.click()
-  await markVimPage.page.waitForTimeout(1000) // Wait for color changes to apply
+  await markVimPage.page.waitForTimeout(EXTRA_LONG_WAIT_MS) // Wait for color changes to apply
 })
 
 When('I enable vim mode', async function (this: MarkVimWorld) {

@@ -1,13 +1,20 @@
 import { useCookie } from '#imports'
 import { readonly, type Ref } from 'vue'
 
+// Time constants for cookie expiration
+const SECONDS_IN_MINUTE = 60
+const MINUTES_IN_HOUR = 60
+const HOURS_IN_DAY = 24
+const DAYS_IN_YEAR = 365
+const ONE_YEAR_IN_SECONDS = SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR
+
 export function useWelcome(): {
   hasSeenWelcome: Readonly<Ref<boolean>>
   markWelcomeAsSeen: () => void
 } {
   const hasSeenWelcome = useCookie<boolean>('markvim_welcome_seen', {
     default: () => false,
-    maxAge: 60 * 60 * 24 * 365, // 1 year
+    maxAge: ONE_YEAR_IN_SECONDS,
   })
 
   const markWelcomeAsSeen = (): void => {

@@ -27,6 +27,9 @@ const selectedColorData = ref<{
 // Temporary color state for preview (doesn't update main theme until OK is clicked)
 const tempColor = ref({ l: 0.7, c: 0.15, h: 200, a: 1 })
 
+// Duration to show "Copied!" message in milliseconds
+const COPIED_MESSAGE_DURATION_MS = 2000
+
 function resetThemeToDefaults(): void {
   resetToDefaults()
 }
@@ -42,7 +45,7 @@ async function handleExportTheme(): Promise<void> {
       button.textContent = 'Copied!'
       setTimeout(() => {
         button.textContent = originalText
-      }, 2000)
+      }, COPIED_MESSAGE_DURATION_MS)
     }
   }
   catch (error) {

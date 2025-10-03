@@ -61,6 +61,24 @@ function updateAlpha(value: number): void {
 const oklchInput = ref('')
 const isValidInput = ref(true)
 
+// Color constants
+const PERCENTAGE_FACTOR = 100
+const HUE_DEGREES_FULL_CIRCLE = 360
+const EXTREME_CHROMA_THRESHOLD = 0.37
+const HUE_BREAKPOINT_60 = 60
+const HUE_BREAKPOINT_120 = 120
+const HUE_BREAKPOINT_180 = 180
+const HUE_BREAKPOINT_240 = 240
+const HUE_BREAKPOINT_300 = 300
+const MAX_CHROMA_RED_YELLOW = 0.35
+const MAX_CHROMA_YELLOW_GREEN = 0.32
+const MAX_CHROMA_GREEN_CYAN = 0.28
+const MAX_CHROMA_CYAN_BLUE = 0.25
+const MAX_CHROMA_BLUE_MAGENTA = 0.22
+const MAX_CHROMA_MAGENTA_RED = 0.30
+const MIN_LIGHTNESS_GAMUT_CHECK = 0.2
+const MAX_LIGHTNESS_GAMUT_CHECK = 0.95
+
 // Update input when color changes from sliders
 watch(colorPreview, (newValue) => {
   if (document.activeElement?.getAttribute('data-testid') === 'oklch-string-input')
@@ -72,7 +90,7 @@ watch(colorPreview, (newValue) => {
 function isValidOklchValues(l: number, c: number, h: number, a: number): boolean {
   if (Number.isNaN(l) || Number.isNaN(c) || Number.isNaN(h))
     return false
-  if (l < 0 || l > 100)
+  if (l < 0 || l > PERCENTAGE_FACTOR)
     return false
   if (c < 0 || c > 1)
     return false
@@ -108,7 +126,7 @@ function parseOklchString(input: string): OklchColor | null {
     return null
 
   return {
-    l: l / 100, // Convert percentage to decimal
+    l: l / PERCENTAGE_FACTOR, // Convert percentage to decimal
     c,
     h, // Keep original hue value, don't normalize
     a,
@@ -143,23 +161,23 @@ function handleInputBlur(): void {
 }
 
 function isExtremeChroma(chroma: number): boolean {
-  return chroma > 0.37
+  return chroma > EXTREME_CHROMA_THRESHOLD
 }
 
 function getMaxChromaForHue(hue: number): number {
-  const normalizedHue = ((hue % 360) + 360) % 360
+  const normalizedHue = ((hue % HUE_DEGREES_FULL_CIRCLE) + HUE_DEGREES_FULL_CIRCLE) % HUE_DEGREES_FULL_CIRCLE
 
-  if (normalizedHue <= 60)
-    return 0.35
-  if (normalizedHue <= 120)
-    return 0.32
-  if (normalizedHue <= 180)
-    return 0.28
-  if (normalizedHue <= 240)
-    return 0.25
-  if (normalizedHue <= 300)
-    return 0.22
-  return 0.30
+  if (normalizedHue <= HUE_BREAKPOINT_60)
+    return MAX_CHROMA_RED_YELLOW
+  if (normalizedHue <= HUE_BREAKPOINT_120)
+    return MAX_CHROMA_YELLOW_GREEN
+  if (normalizedHue <= HUE_BREAKPOINT_180)
+    return MAX_CHROMA_GREEN_CYAN
+  if (normalizedHue <= HUE_BREAKPOINT_240)
+    return MAX_CHROMA_CYAN_BLUE
+  if (normalizedHue <= HUE_BREAKPOINT_300)
+    return MAX_CHROMA_BLUE_MAGENTA
+  return MAX_CHROMA_MAGENTA_RED
 }
 
 function isHueChromaOutOfGamut(lightness: number, chroma: number, hue: number): boolean {
@@ -169,7 +187,7 @@ function isHueChromaOutOfGamut(lightness: number, chroma: number, hue: number): 
 }
 
 function isInMidLightnessRange(lightness: number): boolean {
-  return lightness >= 0.2 && lightness <= 0.95
+  return lightness >= MIN_LIGHTNESS_GAMUT_CHECK && lightness <= MAX_LIGHTNESS_GAMUT_CHECK
 }
 
 const isOutOfGamut = computed(() => {
@@ -189,7 +207,7 @@ const gamutWarningText = computed(() => {
 
   const { c } = currentColor.value
 
-  if (c > 0.37) {
+  if (c > EXTREME_CHROMA_THRESHOLD) {
     return 'Extremely high chroma - will be clamped to sRGB limits'
   }
 

@@ -42,6 +42,9 @@ export function useDocumentShare(): {
   const importError = ref<string | null>(null)
 
   const MAX_COMPRESSED_SIZE = 50_000 // 50KB
+  const BYTES_TO_KB_DIVISOR = 1000
+  const GZIP_COMPRESSION_LEVEL = 9
+  const SHARE_PREFIX_LENGTH = 7 // Length of '#share='
 
   function generateShareLink(document: Document): string | null {
     shareError.value = null
@@ -61,7 +64,7 @@ export function useDocumentShare(): {
       }
 
       const jsonString = JSON.stringify(shareableDoc)
-      const compressed = gzipSync(strToU8(jsonString), { level: 9 })
+      const compressed = gzipSync(strToU8(jsonString), { level: GZIP_COMPRESSION_LEVEL })
       const encodedData = btoa(String.fromCharCode(...compressed))
 
       if (!encodedData) {
@@ -70,7 +73,7 @@ export function useDocumentShare(): {
       }
 
       if (encodedData.length > MAX_COMPRESSED_SIZE) {
-        shareError.value = `Document is too large to share via link (${Math.round(encodedData.length / 1000)}KB compressed). Try sharing a smaller document.`
+        shareError.value = `Document is too large to share via link (${Math.round(encodedData.length / BYTES_TO_KB_DIVISOR)}KB compressed). Try sharing a smaller document.`
         return null
       }
 
@@ -129,7 +132,7 @@ export function useDocumentShare(): {
         return null
       }
 
-      const encodedData = hash.slice(7)
+      const encodedData = hash.slice(SHARE_PREFIX_LENGTH)
       if (!encodedData) {
         importError.value = 'No share data found in URL'
         return null

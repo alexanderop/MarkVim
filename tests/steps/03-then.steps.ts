@@ -2,6 +2,7 @@ import type { MarkVimWorld } from '../support/world.js'
 import { Then } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 import { getMarkVimPage } from '../page-objects/markvim-page.js'
+import { EXTRA_EXTRA_LONG_WAIT_MS, EXTRA_LONG_WAIT_MS, LONG_WAIT_MS } from '../support/constants.js'
 import { ensurePage } from '../support/utils.js'
 
 const elementTypeMap: Record<string, string> = {
@@ -254,7 +255,7 @@ Then('the preview pane should show a level 2 heading with the text {string}', as
   const markVimPage = await getMarkVimPage(this)
 
   // Wait for the content to be processed and rendered
-  await markVimPage.page.waitForTimeout(1000)
+  await markVimPage.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 
   const heading = markVimPage.previewContent.locator('h2')
 
@@ -266,7 +267,7 @@ Then('the preview pane should display a rendered SVG flowchart', async function 
   const markVimPage = await getMarkVimPage(this)
 
   // Wait for mermaid processing
-  await markVimPage.page.waitForTimeout(2000)
+  await markVimPage.page.waitForTimeout(EXTRA_EXTRA_LONG_WAIT_MS)
 
   const mermaidContainer = markVimPage.previewContent.locator('.mermaid')
   const mermaidSvg = markVimPage.previewContent.locator('.mermaid svg')
@@ -387,7 +388,7 @@ Then('the heading color in the editor should be {string}', async function (this:
   const markVimPage = await getMarkVimPage(this)
 
   // Wait for CodeMirror to render the content
-  await markVimPage.page.waitForTimeout(500)
+  await markVimPage.page.waitForTimeout(LONG_WAIT_MS)
 
   // Try different possible selectors for heading elements in CodeMirror
   const possibleSelectors = [
@@ -426,7 +427,7 @@ Then('the vim mode indicator should show {string}', async function (this: MarkVi
   const markVimPage = await getMarkVimPage(this)
 
   // Wait for vim mode to update
-  await markVimPage.page.waitForTimeout(1000)
+  await markVimPage.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 
   // Check if vim mode indicator exists with the expected text, but don't fail if it doesn't
   const vimModeElement = markVimPage.statusBar.locator('span.text-accent.font-medium.font-mono')
@@ -447,7 +448,7 @@ Then('the selection background color should use the muted theme color', async fu
   const markVimPage = await getMarkVimPage(this)
 
   // Wait for selection to be visible
-  await markVimPage.page.waitForTimeout(1000)
+  await markVimPage.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 
   // Get the current muted theme color from CSS custom property
   const mutedThemeColor = await markVimPage.page.evaluate(() => {

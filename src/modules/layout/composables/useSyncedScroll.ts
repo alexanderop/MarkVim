@@ -1,6 +1,12 @@
 import { useEventListener, useScroll, useThrottleFn } from '@vueuse/core'
 import { nextTick, onUnmounted, ref, type Ref, watch, watchEffect } from 'vue'
 
+// Timing constants in milliseconds
+const SYNC_RESET_DELAY_MS = 50
+const SYNC_THROTTLE_MS = 32
+const RETRY_DELAY_MS = 300
+const SETUP_DELAY_MS = 1000
+
 export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
   editorScrollContainer: Ref<HTMLElement | undefined>
   previewScrollContainer: Ref<HTMLElement | undefined>
@@ -43,9 +49,9 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
     nextTick(() => {
       setTimeout(() => {
         isSyncing.value = false
-      }, 50)
+      }, SYNC_RESET_DELAY_MS)
     })
-  }, 32)
+  }, SYNC_THROTTLE_MS)
 
   const isElementScrollable = (element: HTMLElement): boolean => {
     if (element.scrollHeight <= element.clientHeight)
@@ -126,7 +132,7 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
 
     if (!editorScroller || !previewScroller) {
       if (retries > 0) {
-        await new Promise(resolve => setTimeout(resolve, 300))
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS))
         return findScrollableElements(retries - 1)
       }
       return null
@@ -151,7 +157,7 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
     }
 
     await nextTick()
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, SETUP_DELAY_MS))
 
     const elements = await findScrollableElements()
     if (!elements)

@@ -36,6 +36,9 @@ const { allCommands } = useShortcuts()
 // getDocumentTitle is imported from api above
 const { trackCommandUsage, sortCommandsByHistory } = useCommandHistory()
 
+// Maximum number of recent commands to show
+const MAX_RECENT_COMMANDS = 8
+
 // Create a computed property to transform documents into commands
 const documentCommands = computed((): Command[] => {
   return (documents || []).map(doc => ({
@@ -81,7 +84,7 @@ const groupedCommands = computed(() => {
   if (!searchTerm.value && commandHistory.value.length > 0) {
     const recentCommands: Command[] = []
     const otherCommands: Command[] = []
-    const recentIds = new Set(commandHistory.value.slice(0, 8)) // Show top 8 recent
+    const recentIds = new Set(commandHistory.value.slice(0, MAX_RECENT_COMMANDS))
 
     commands.forEach((command) => {
       if (recentIds.has(command.id)) {

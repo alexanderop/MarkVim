@@ -132,6 +132,13 @@ export default withNuxt(
       'prefer-template': 'error',
       'require-await': 'error',
       'template-curly-spacing': 'error',
+      'no-magic-numbers': ['error', {
+        ignore: [-1, 0, 1, 2],
+        ignoreArrayIndexes: true,
+        ignoreDefaultValues: true,
+        enforceConst: true,
+        detectObjects: false,
+      }],
       'ts/consistent-type-assertions': ['error', {
         assertionStyle: 'never',
       }],
@@ -227,6 +234,13 @@ export default withNuxt(
         allowTypedFunctionExpressions: true,
         allowHigherOrderFunctions: true,
       }],
+    },
+  },
+  // Disable no-magic-numbers for test files
+  {
+    files: ['tests/**/*.ts', 'tests/**/*.js'],
+    rules: {
+      'no-magic-numbers': 'off',
     },
   },
 )
