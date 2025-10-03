@@ -80,24 +80,6 @@ export const useDocumentsStore = defineStore('documents', () => {
       read: (raw: string) => {
         try {
           const parsed = JSON.parse(raw)
-
-          // Handle migration from old format (array) to new format (object)
-          if (Array.isArray(parsed)) {
-            // Old format: just an array of documents
-            const validatedDocs = parseDocuments(parsed)
-            const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
-            // Try to get activeDocumentId from old separate localStorage key
-            const oldActiveId = localStorage.getItem('markvim-active-document-id')
-            const activeId = oldActiveId && docs.some(d => d.id === oldActiveId)
-              ? oldActiveId
-              : docs[0]?.id || defaultDoc.id
-            return {
-              documents: docs,
-              activeDocumentId: activeId,
-            }
-          }
-
-          // New format: object with documents and activeDocumentId
           const validatedDocs = parseDocuments(parsed.documents || [])
           const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
           const activeId = parsed.activeDocumentId && docs.some(d => d.id === parsed.activeDocumentId)
