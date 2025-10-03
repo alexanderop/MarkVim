@@ -1,9 +1,12 @@
-import { readonly, ref } from 'vue'
+import { readonly, ref, type Ref } from 'vue'
 
-export function useVimMode() {
+export function useVimMode(): {
+  currentVimMode: Readonly<Ref<string>>
+  handleVimModeChange: (mode: string, subMode?: string) => void
+} {
   const currentVimMode = ref<string>('NORMAL')
 
-  function handleVimModeChange(mode: string, subMode?: string) {
+  function handleVimModeChange(mode: string, subMode?: string): void {
     if (subMode) {
       currentVimMode.value = `${mode.toUpperCase()} (${subMode.toUpperCase()})`
     }

@@ -25,7 +25,7 @@ defineEmits<Emits>()
 const { openColorTheme } = useShortcuts()
 const { isSidebarVisible, toggleSidebar } = useViewMode()
 
-function handleDeleteDocument() {
+function handleDeleteDocument(): void {
   if (activeDocument) {
     emitAppEvent('document:delete', {
       documentId: activeDocument.id,

@@ -77,13 +77,13 @@ const tooltipPosition = computed(() => {
   return ((model.value - min) / (max - min)) * 100
 })
 
-function handleSliderChange(value: number[] | undefined) {
+function handleSliderChange(value: number[] | undefined): void {
   if (value && value.length > 0 && value[0] !== undefined) {
     model.value = value[0]
   }
 }
 
-function handleInputChange(event: Event) {
+function handleInputChange(event: Event): void {
   if (!(event.target instanceof HTMLInputElement))
     return
   const target = event.target

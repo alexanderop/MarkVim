@@ -1,3 +1,4 @@
+import type { ComputedRef, Ref } from 'vue'
 import { useState } from '#imports'
 import { useLocalStorage, useMediaQuery, useMounted } from '@vueuse/core'
 import { computed, readonly, ref, watch, watchEffect } from 'vue'
@@ -9,7 +10,17 @@ export type ViewMode = 'split' | 'editor' | 'preview'
 
 const ViewModeSchema = z.enum(['split', 'editor', 'preview'])
 
-export function useViewMode() {
+export function useViewMode(): {
+  viewMode: Readonly<Ref<ViewMode>>
+  isSidebarVisible: Ref<boolean>
+  isPreviewVisible: ComputedRef<boolean>
+  isSplitView: ComputedRef<boolean>
+  isEditorVisible: ComputedRef<boolean>
+  isMobile: Readonly<Ref<boolean>>
+  setViewMode: (mode: ViewMode) => void
+  toggleViewMode: () => void
+  toggleSidebar: () => void
+} {
   const isMounted = useMounted()
   const isMobile = useMediaQuery('(max-width: 768px)')
 
@@ -35,7 +46,7 @@ export function useViewMode() {
     isSidebarVisible.value = true
   })
 
-  const saveToLocalStorage = () => {
+  const saveToLocalStorage = (): void => {
     if (isMounted.value && typeof localStorage !== 'undefined') {
       localStorage.setItem('markvim-view-mode', viewMode.value)
     }
@@ -59,11 +70,11 @@ export function useViewMode() {
   const isSplitView = computed(() => viewMode.value === 'split')
   const isEditorVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'editor')
 
-  function setViewMode(mode: ViewMode) {
+  function setViewMode(mode: ViewMode): void {
     viewMode.value = mode
   }
 
-  function toggleViewMode() {
+  function toggleViewMode(): void {
     const modes: ViewMode[] = ['split', 'editor', 'preview']
     const currentIndex = modes.indexOf(viewMode.value)
     const nextIndex = (currentIndex + 1) % modes.length
@@ -73,7 +84,7 @@ export function useViewMode() {
     }
   }
 
-  function toggleSidebar() {
+  function toggleSidebar(): void {
     isSidebarVisible.value = !isSidebarVisible.value
   }
 

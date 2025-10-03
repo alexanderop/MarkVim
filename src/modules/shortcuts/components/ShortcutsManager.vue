@@ -17,7 +17,7 @@ const { documents, activeDocument } = storeToRefs(documentsStore)
 // Get required composables
 const { registerShortcuts, registerAppCommand, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
 
-function handleGlobalKeydown(event: KeyboardEvent) {
+function handleGlobalKeydown(event: KeyboardEvent): void {
   if ((event.metaKey || event.ctrlKey) && event.key === 'k' && !commandPaletteOpen.value) {
     event.preventDefault()
     openCommandPalette(event)
@@ -29,7 +29,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
   }
 }
 
-function openCommandPalette(_event?: KeyboardEvent) {
+function openCommandPalette(_event?: KeyboardEvent): void {
   const centerX = window.innerWidth / 2 - 200
   const centerY = window.innerHeight / 3
 
@@ -37,16 +37,16 @@ function openCommandPalette(_event?: KeyboardEvent) {
   emitAppEvent('command-palette:open', { position: { x: centerX, y: centerY } })
 }
 
-function closeCommandPalette() {
+function closeCommandPalette(): void {
   commandPaletteOpen.value = false
 }
 
-function handleDocumentSelectFromPalette(id: string) {
+function handleDocumentSelectFromPalette(id: string): void {
   emitAppEvent('document:select', { documentId: id })
   closeCommandPalette()
 }
 
-function handleCreateDocument() {
+function handleCreateDocument(): void {
   documentsStore.dispatch({ type: 'CREATE_DOCUMENT' })
 }
 

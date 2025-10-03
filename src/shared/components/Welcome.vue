@@ -15,11 +15,11 @@ const features = [
   'GitHub Alerts',
 ]
 
-function handleStartWriting() {
+function handleStartWriting(): void {
   emit('enter')
 }
 
-function scrollToFeatures() {
+function scrollToFeatures(): void {
   const featuresElement = document.getElementById('features-section')
   featuresElement?.scrollIntoView({ behavior: 'smooth' })
 }

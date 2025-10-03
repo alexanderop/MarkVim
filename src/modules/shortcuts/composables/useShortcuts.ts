@@ -37,6 +37,7 @@ export interface ShortcutCategory {
   shortcuts: ShortcutAction[]
 }
 
+// eslint-disable-next-line ts/explicit-function-return-type
 export function useShortcuts() {
   // Track active element to prevent shortcuts when typing in inputs
   const activeElement = useActiveElement()
@@ -78,11 +79,11 @@ export function useShortcuts() {
   const appCommands = useState<Map<string, ShortcutAction>>('appCommands', () => new Map())
 
   // Function to register app commands (for command palette without keyboard shortcuts)
-  function registerAppCommand(command: ShortcutAction) {
+  function registerAppCommand(command: ShortcutAction): void {
     appCommands.value.set(command.id || command.keys, command)
   }
 
-  function registerAppCommands(commands: ShortcutAction[]) {
+  function registerAppCommands(commands: ShortcutAction[]): void {
     commands.forEach(registerAppCommand)
   }
 
@@ -292,39 +293,39 @@ export function useShortcuts() {
   // Settings shortcut functionality
   const showSettings = useState<boolean>('showSettings', () => false)
 
-  function openSettings() {
+  function openSettings(): void {
     showSettings.value = true
   }
 
-  function closeSettings() {
+  function closeSettings(): void {
     showSettings.value = false
   }
 
-  function toggleSettings() {
+  function toggleSettings(): void {
     showSettings.value = !showSettings.value
   }
 
   // Color theme shortcut functionality
   const showColorTheme = useState<boolean>('showColorTheme', () => false)
 
-  function openColorTheme() {
+  function openColorTheme(): void {
     showColorTheme.value = true
   }
 
-  function closeColorTheme() {
+  function closeColorTheme(): void {
     showColorTheme.value = false
   }
 
-  function toggleColorTheme() {
+  function toggleColorTheme(): void {
     showColorTheme.value = !showColorTheme.value
   }
 
   // Sequential key support (like Linear g+s shortcuts)
-  function createSequentialShortcut(firstKey: string, secondKey: string, action: () => void, timeout = 1500) {
+  function createSequentialShortcut(firstKey: string, secondKey: string, action: () => void, timeout = 1500): (() => void) {
     const stage = ref<'start' | 'got-first'>('start')
     let timer: ReturnType<typeof setTimeout>
 
-    const resetStage = () => {
+    const resetStage = (): void => {
       stage.value = 'start'
       clearTimeout(timer)
     }
@@ -366,11 +367,11 @@ export function useShortcuts() {
   // New document shortcut functionality
   const newDocumentAction = ref<(() => void) | null>(null)
 
-  function setNewDocumentAction(action: () => void) {
+  function setNewDocumentAction(action: () => void): void {
     newDocumentAction.value = action
   }
 
-  function createNewDocument() {
+  function createNewDocument(): void {
     if (newDocumentAction.value) {
       newDocumentAction.value()
     }
@@ -429,11 +430,11 @@ export function useShortcuts() {
     registerAppCommands,
 
     // State
-    shortcutsByCategory: readonly(shortcutsByCategory),
-    allCommands: readonly(allCommands),
+    shortcutsByCategory,
+    allCommands,
     registeredShortcuts: readonly(registeredShortcuts),
     appCommands: readonly(appCommands),
-    notUsingInput: readonly(notUsingInput),
+    notUsingInput,
     showSettings: readonly(showSettings),
     showColorTheme: readonly(showColorTheme),
 
@@ -460,7 +461,7 @@ export function useShortcuts() {
     createSequentialShortcut,
 
     // Direct access to magic keys for advanced usage
-    keys: readonly(keys),
+    keys,
 
     // Helper for conditional shortcuts
     createConditionalShortcut: (

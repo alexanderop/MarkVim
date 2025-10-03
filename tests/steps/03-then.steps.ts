@@ -12,7 +12,7 @@ const elementTypeMap: Record<string, string> = {
   content: '',
 }
 
-async function verifyContentInLocation(markVimPage: any, elementType: string, expectedText: string, location: string, shouldBeVisible: boolean = true) {
+async function verifyContentInLocation(markVimPage: any, elementType: string, expectedText: string, location: string, shouldBeVisible: boolean = true): Promise<void> {
   const locationMap: Record<string, (page: any, text: string, elementSelector?: string, visible?: boolean) => Promise<void>> = {
     editor: async (page, text, elementSelector, visible = true) => {
       if (!visible) {

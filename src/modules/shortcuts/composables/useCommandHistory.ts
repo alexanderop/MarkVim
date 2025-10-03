@@ -1,9 +1,13 @@
 import type { Command } from './useShortcuts'
 import { useLocalStorage } from '@vueuse/core'
-import { readonly } from 'vue'
+import { readonly, type Ref } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 
-export function useCommandHistory() {
+export function useCommandHistory(): {
+  trackCommandUsage: (commandId: string) => void
+  sortCommandsByHistory: (commands: Command[]) => Command[]
+  commandHistory: Readonly<Ref<readonly string[]>>
+} {
   const commandHistory = useLocalStorage<string[]>('markvim-command-history', [])
 
   const { onDataReset } = useDataReset()
@@ -11,7 +15,7 @@ export function useCommandHistory() {
     commandHistory.value = []
   })
 
-  function trackCommandUsage(commandId: string) {
+  function trackCommandUsage(commandId: string): void {
     const history = [...commandHistory.value]
 
     // Remove the command if it already exists

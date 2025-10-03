@@ -19,7 +19,7 @@ const { setViewMode } = useViewMode()
 const showImportDialog = ref(false)
 const autoImportDocument = ref<Document | null>(null)
 
-function useAutoImportDetection() {
+function useAutoImportDetection(): { detectShareInUrl: () => Promise<void> } {
   async function detectShareInUrl(): Promise<void> {
     if (!window.location.hash.startsWith('#share=')) {
       return
@@ -49,7 +49,7 @@ function useAutoImportDetection() {
 
 const { detectShareInUrl } = useAutoImportDetection()
 
-function handleAutoImport(document: Document) {
+function handleAutoImport(document: Document): void {
   // Import via store dispatch
   documentsStore.dispatch({ type: 'ADD_DOCUMENT', payload: { content: document.content } })
 
@@ -61,7 +61,7 @@ function handleAutoImport(document: Document) {
   clearShareFromUrl()
 }
 
-function handleImportConfirm(document: Document) {
+function handleImportConfirm(document: Document): void {
   // Import via store dispatch
   documentsStore.dispatch({ type: 'ADD_DOCUMENT', payload: { content: document.content } })
 
@@ -72,7 +72,7 @@ function handleImportConfirm(document: Document) {
   autoImportDocument.value = null
 }
 
-function handleImportCancel() {
+function handleImportCancel(): void {
   clearShareFromUrl()
   showImportDialog.value = false
   autoImportDocument.value = null
@@ -82,7 +82,7 @@ onMounted(() => {
   detectShareInUrl()
 })
 
-function openManualImport() {
+function openManualImport(): void {
   autoImportDocument.value = null
   showImportDialog.value = true
 }

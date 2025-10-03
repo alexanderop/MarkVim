@@ -9,7 +9,7 @@ import { createHighlighter } from 'shiki'
 let markdownInstance: MarkdownIt | null = null
 let shikiHighlighter: Highlighter | null = null
 
-async function getShikiHighlighter() {
+async function getShikiHighlighter(): Promise<Highlighter> {
   if (!shikiHighlighter) {
     shikiHighlighter = await createHighlighter({
       themes: ['night-owl'],
@@ -56,7 +56,7 @@ export function addDataTestIdToAlerts(html: string): string {
   )
 }
 
-export async function createMarkdownRenderer() {
+export async function createMarkdownRenderer(): Promise<MarkdownIt> {
   if (markdownInstance) {
     return markdownInstance
   }
@@ -83,7 +83,7 @@ export async function createMarkdownRenderer() {
     const originalFence = markdownInstance.renderer.rules.fence || function () {
       return ''
     }
-    markdownInstance.renderer.rules.fence = function (tokens, idx, options, env, slf) {
+    markdownInstance.renderer.rules.fence = function (tokens, idx, options, env, slf): string {
       const token = tokens[idx]
       if (!token) {
         return originalFence.call(this, tokens, idx, options, env, slf)
@@ -118,6 +118,6 @@ export function generateShikiCSS(): string {
   return ''
 }
 
-export function resetShikiCSS() {
+export function resetShikiCSS(): void {
   // No-op since we're not using custom CSS classes anymore
 }

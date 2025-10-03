@@ -8,17 +8,17 @@ const deleteModalOpen = ref(false)
 const documentToDelete = ref<{ id: string, title: string } | null>(null)
 const documentsStore = useDocumentsStore()
 
-function handleDeleteDocument(payload: { documentId: string, documentTitle: string }) {
+function handleDeleteDocument(payload: { documentId: string, documentTitle: string }): void {
   documentToDelete.value = { id: payload.documentId, title: payload.documentTitle }
   deleteModalOpen.value = true
 }
 
-function handleSelectDocument(payload: { documentId: string }) {
+function handleSelectDocument(payload: { documentId: string }): void {
   // Dispatch SELECT_DOCUMENT message (TEA pattern)
   documentsStore.dispatch({ type: 'SELECT_DOCUMENT', payload: { documentId: payload.documentId } })
 }
 
-function confirmDeleteDocument() {
+function confirmDeleteDocument(): void {
   if (documentToDelete.value) {
     // Dispatch DELETE_DOCUMENT message (TEA pattern)
     documentsStore.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: documentToDelete.value.id } })
@@ -27,7 +27,7 @@ function confirmDeleteDocument() {
   }
 }
 
-function cancelDeleteDocument() {
+function cancelDeleteDocument(): void {
   deleteModalOpen.value = false
   documentToDelete.value = null
 }

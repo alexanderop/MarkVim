@@ -153,7 +153,7 @@ const groupedCommands = computed(() => {
 })
 
 // Handle command selection
-function selectCommand(command: Command) {
+function selectCommand(command: Command): void {
   // Track command usage for history
   trackCommandUsage(command.id)
 
@@ -165,7 +165,7 @@ function selectCommand(command: Command) {
 }
 
 // Keyboard navigation
-function handleKeydown(event: KeyboardEvent) {
+function handleKeydown(event: KeyboardEvent): void {
   const totalCommands = filteredCommands.value.length
 
   switch (event.key) {
@@ -194,7 +194,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 // Scroll selected item into view
-function scrollToSelected() {
+function scrollToSelected(): void {
   nextTick(() => {
     if (!scrollContainer.value)
       return
@@ -244,7 +244,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', handleGlobalKeydown)
 })
 
-function handleGlobalKeydown(event: KeyboardEvent) {
+function handleGlobalKeydown(event: KeyboardEvent): void {
   if (!open.value)
     return
 

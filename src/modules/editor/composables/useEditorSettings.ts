@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import { useState } from '#imports'
 import { useCssVar, useMounted } from '@vueuse/core'
 import { watch, watchEffect } from 'vue'
@@ -72,7 +73,17 @@ export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   highlightActiveLine: true,
 }
 
-export function useEditorSettings() {
+export function useEditorSettings(): {
+  settings: Ref<EditorSettings>
+  toggleVimMode: () => void
+  toggleLineNumbers: () => void
+  togglePreviewSync: () => void
+  updateFontSize: (size: number) => void
+  resetToDefaults: () => void
+  exportSettings: () => string
+  importSettings: (settingsJson: string) => boolean
+  clearAllData: () => void
+} {
   const isMounted = useMounted()
 
   const settings = useState<EditorSettings>('markvim-settings', () => {
@@ -99,42 +110,42 @@ export function useEditorSettings() {
     fontSizeVar.value = `${settings.value.fontSize}px`
   })
 
-  const saveToLocalStorage = () => {
+  const saveToLocalStorage = (): void => {
     if (isMounted.value && typeof localStorage !== 'undefined') {
       localStorage.setItem('markvim-settings', JSON.stringify(settings.value))
     }
   }
 
-  const toggleVimMode = () => {
+  const toggleVimMode = (): void => {
     settings.value.vimMode = !settings.value.vimMode
     saveToLocalStorage()
   }
 
-  const toggleLineNumbers = () => {
+  const toggleLineNumbers = (): void => {
     settings.value.lineNumbers = !settings.value.lineNumbers
     saveToLocalStorage()
   }
 
-  const togglePreviewSync = () => {
+  const togglePreviewSync = (): void => {
     settings.value.previewSync = !settings.value.previewSync
     saveToLocalStorage()
   }
 
-  const updateFontSize = (size: number) => {
+  const updateFontSize = (size: number): void => {
     settings.value.fontSize = Math.max(8, Math.min(32, size))
     saveToLocalStorage()
   }
 
-  const resetToDefaults = () => {
+  const resetToDefaults = (): void => {
     settings.value = { ...DEFAULT_EDITOR_CONFIG }
     saveToLocalStorage()
   }
 
-  const exportSettings = () => {
+  const exportSettings = (): string => {
     return JSON.stringify(settings.value, null, 2)
   }
 
-  const importSettings = (settingsJson: string) => {
+  const importSettings = (settingsJson: string): boolean => {
     try {
       const imported = JSON.parse(settingsJson)
       settings.value = { ...DEFAULT_EDITOR_CONFIG, ...imported }

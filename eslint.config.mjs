@@ -221,6 +221,12 @@ export default withNuxt(
           'Base.*',
         ],
       }],
+      // Require explicit return types on functions
+      'ts/explicit-function-return-type': ['error', {
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true,
+      }],
     },
   },
 )

@@ -76,7 +76,7 @@ watch(
   },
 )
 
-async function handleImport() {
+async function handleImport(): Promise<void> {
   let documentToImport: Document | null = null
 
   if (isAutoImport.value && autoImportDocument) {
@@ -95,13 +95,13 @@ async function handleImport() {
   }
 }
 
-function handleClose() {
+function handleClose(): void {
   open.value = false
   importUrl.value = ''
   previewDocument.value = null
 }
 
-function handleCancel() {
+function handleCancel(): void {
   emit('cancel')
   if (isAutoImport.value) {
     clearShareFromUrl()

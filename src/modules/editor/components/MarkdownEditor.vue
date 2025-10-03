@@ -19,7 +19,7 @@ const isMobile = useMediaQuery('(max-width: 768px)')
 
 const { handleVimModeChange } = useVimMode()
 
-function handleContentUpdate(value: string) {
+function handleContentUpdate(value: string): void {
   emit('update:content', value)
 }
 </script>

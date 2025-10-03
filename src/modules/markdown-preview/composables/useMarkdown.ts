@@ -2,12 +2,15 @@ import type MarkdownIt from 'markdown-it'
 import { onMounted, ref, type Ref, watch } from 'vue'
 import { addDataTestIdToAlerts, createMarkdownRenderer } from '../internal/markdown'
 
-export function useMarkdown(markdownContent: Ref<string>) {
+export function useMarkdown(markdownContent: Ref<string>): {
+  renderedMarkdown: Ref<string>
+  updateMarkdown: () => Promise<void>
+} {
   let md: MarkdownIt | null = null
 
   const renderedMarkdown = ref('')
 
-  const updateMarkdown = async () => {
+  const updateMarkdown = async (): Promise<void> => {
     try {
       if (!md) {
         md = await createMarkdownRenderer()

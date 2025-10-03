@@ -96,8 +96,12 @@ export class TestUtils {
     let requestCount = 0
     let responseCount = 0
 
-    const requestHandler = () => requestCount++
-    const responseHandler = () => responseCount++
+    const requestHandler = (): void => {
+      requestCount++
+    }
+    const responseHandler = (): void => {
+      responseCount++
+    }
 
     page.on('request', requestHandler)
     page.on('response', responseHandler)

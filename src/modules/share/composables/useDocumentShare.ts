@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import type { Document } from '~/modules/domain/api'
 import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
@@ -20,7 +21,20 @@ const ShareableDocumentSchema = z.object({
   sharedAt: z.number(),
 })
 
-export function useDocumentShare() {
+export function useDocumentShare(): {
+  isSharing: Readonly<Ref<boolean>>
+  isImporting: Readonly<Ref<boolean>>
+  shareError: Readonly<Ref<string | null>>
+  importError: Readonly<Ref<string | null>>
+  clipboardSupported: Readonly<Ref<boolean>>
+  generateShareLink: (document: Document) => string | null
+  shareDocument: (document: Document) => Promise<boolean>
+  parseShareUrl: (url?: string) => ShareableDocument | null
+  importFromUrl: (url?: string) => Promise<Document | null>
+  clearShareFromUrl: () => void
+  getShareStats: (document: Document) => { originalSize: number, compressedSize: number, compressionRatio: number, canShare: boolean }
+  getDocumentTitle: (content: string) => string
+} {
   const { copy: copyToClipboard, isSupported: clipboardSupported } = useClipboard()
   const isSharing = ref(false)
   const isImporting = ref(false)

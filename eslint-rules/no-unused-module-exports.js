@@ -51,6 +51,13 @@ export default createRule({
       return {}
     }
 
+    /**
+     * @param {string} exportName
+     * @param {any} node
+     * @param {boolean} isTypeExport
+     * @returns {void}
+     */
+    // eslint-disable-next-line ts/explicit-function-return-type
     function checkExportUsage(
       exportName,
       node,
@@ -130,6 +137,11 @@ export default createRule({
       }
     }
 
+    /**
+     * @param {any} node
+     * @returns {void}
+     */
+    // eslint-disable-next-line ts/explicit-function-return-type
     function handleExportSpecifiers(node) {
       for (const specifier of node.specifiers) {
         const isTypeExport = node.exportKind === 'type' || specifier.exportKind === 'type'
@@ -137,6 +149,11 @@ export default createRule({
       }
     }
 
+    /**
+     * @param {any} declaration
+     * @returns {void}
+     */
+    // eslint-disable-next-line ts/explicit-function-return-type
     function handleExportDeclaration(declaration) {
       if (declaration.type === 'VariableDeclaration') {
         for (const declarator of declaration.declarations) {

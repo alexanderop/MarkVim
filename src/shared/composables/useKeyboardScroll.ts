@@ -1,5 +1,5 @@
 import { useMagicKeys, useRafFn, useScroll, useTimestamp } from '@vueuse/core'
-import { ref, type Ref, watchEffect } from 'vue'
+import { type ComputedRef, ref, type Ref, watchEffect } from 'vue'
 
 /**
  * A Vue composable that provides smooth keyboard scrolling functionality with acceleration.
@@ -46,7 +46,9 @@ import { ref, type Ref, watchEffect } from 'vue'
  *
  * @since 1.0.0
  */
-export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
+export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>): {
+  stopAllScrolling: () => void
+} {
   const SCROLL_SPEED_BASE_PX = 30
   const SCROLL_SPEED_MAX_PX = 150
   const ACCELERATION_DURATION_MS = 1000
@@ -66,7 +68,10 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
   setupJumpToBottomKey()
   setupSequenceCleanup()
 
-  function useScrollState() {
+  function useScrollState(): {
+    keyHoldStartTime: Ref<number>
+    currentDirection: Ref<'up' | 'down' | null>
+  } {
     const keyHoldStartTime = ref(0)
     const currentDirection = ref<'up' | 'down' | null>(null)
 
@@ -76,25 +81,31 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     }
   }
 
-  function useDoubleGSequence(timestamp: Ref<number>) {
+  function useDoubleGSequence(timestamp: Ref<number>): {
+    isWaitingForSecondG: Ref<boolean>
+    startSequence: () => void
+    completeSequence: () => void
+    isSequenceExpired: () => boolean
+    resetIfExpired: () => void
+  } {
     const firstGPressTime = ref(0)
     const isWaitingForSecondG = ref(false)
 
-    function startSequence() {
+    function startSequence(): void {
       isWaitingForSecondG.value = true
       firstGPressTime.value = timestamp.value
     }
 
-    function completeSequence() {
+    function completeSequence(): void {
       isWaitingForSecondG.value = false
       firstGPressTime.value = 0
     }
 
-    function isSequenceExpired() {
+    function isSequenceExpired(): boolean {
       return timestamp.value - firstGPressTime.value > DOUBLE_G_SEQUENCE_TIMEOUT_MS
     }
 
-    function resetIfExpired() {
+    function resetIfExpired(): void {
       if (isWaitingForSecondG.value && isSequenceExpired()) {
         completeSequence()
       }
@@ -109,7 +120,14 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     }
   }
 
-  function useKeyBindings() {
+  function useKeyBindings(): {
+    arrowUp: ComputedRef<boolean> | undefined
+    arrowDown: ComputedRef<boolean> | undefined
+    vimUp: ComputedRef<boolean> | undefined
+    vimDown: ComputedRef<boolean> | undefined
+    g: ComputedRef<boolean> | undefined
+    shift: ComputedRef<boolean> | undefined
+  } {
     const keys = useMagicKeys()
 
     return {
@@ -138,7 +156,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     return SCROLL_SPEED_BASE_PX + speedRange * easeOutCubic
   }
 
-  function performContinuousScroll() {
+  function performContinuousScroll(): void {
     if (!scrollContainerRef.value || !scrollState.currentDirection.value) {
       return
     }
@@ -154,13 +172,13 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     scrollPosition.value = scrollPosition.value + scrollSpeed
   }
 
-  function jumpToTop() {
+  function jumpToTop(): void {
     if (!scrollContainerRef.value)
       return
     scrollPosition.value = 0
   }
 
-  function jumpToBottom() {
+  function jumpToBottom(): void {
     if (!scrollContainerRef.value)
       return
 
@@ -177,7 +195,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     { immediate: false },
   )
 
-  function startContinuousScrolling(direction: 'up' | 'down') {
+  function startContinuousScrolling(direction: 'up' | 'down'): void {
     if (scrollState.currentDirection.value === direction) {
       return
     }
@@ -187,12 +205,12 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     resumeScrollAnimation()
   }
 
-  function stopContinuousScrolling() {
+  function stopContinuousScrolling(): void {
     scrollState.currentDirection.value = null
     pauseScrollAnimation()
   }
 
-  function handleDoubleGPress() {
+  function handleDoubleGPress(): void {
     if (!isScrollContainerFocused())
       return
     if (keyBindings.shift?.value)
@@ -210,7 +228,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     doubleGSequence.startSequence()
   }
 
-  function setupUpScrollingKeys() {
+  function setupUpScrollingKeys(): void {
     watchEffect(() => {
       if (!isScrollContainerFocused())
         return
@@ -226,7 +244,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     })
   }
 
-  function setupDownScrollingKeys() {
+  function setupDownScrollingKeys(): void {
     watchEffect(() => {
       if (!isScrollContainerFocused())
         return
@@ -242,7 +260,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     })
   }
 
-  function setupJumpToTopKey() {
+  function setupJumpToTopKey(): void {
     watchEffect(() => {
       if (keyBindings.g?.value) {
         handleDoubleGPress()
@@ -250,7 +268,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     })
   }
 
-  function setupJumpToBottomKey() {
+  function setupJumpToBottomKey(): void {
     watchEffect(() => {
       if (!isScrollContainerFocused())
         return
@@ -261,7 +279,7 @@ export function useKeyboardScroll(scrollContainerRef: Ref<HTMLElement | null>) {
     })
   }
 
-  function setupSequenceCleanup() {
+  function setupSequenceCleanup(): void {
     watchEffect(() => {
       doubleGSequence.resetIfExpired()
     })

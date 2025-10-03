@@ -1,7 +1,12 @@
 import { useEventListener, useScroll, useThrottleFn } from '@vueuse/core'
 import { nextTick, onUnmounted, ref, type Ref, watch, watchEffect } from 'vue'
 
-export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
+export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
+  editorScrollContainer: Ref<HTMLElement | undefined>
+  previewScrollContainer: Ref<HTMLElement | undefined>
+  editorArrivedState: any
+  previewArrivedState: any
+} {
   const editorScrollContainer = ref<HTMLElement>()
   const previewScrollContainer = ref<HTMLElement>()
   const isSyncing = ref(false)
@@ -133,12 +138,12 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
   // Store cleanup functions for event listeners
   const cleanupFunctions = ref<(() => void)[]>([])
 
-  const cleanupEventListeners = () => {
+  const cleanupEventListeners = (): void => {
     cleanupFunctions.value.forEach(cleanup => cleanup())
     cleanupFunctions.value = []
   }
 
-  const setupScrollSync = async () => {
+  const setupScrollSync = async (): Promise<void> => {
     cleanupEventListeners()
 
     if (!previewSyncEnabled.value) {
@@ -154,13 +159,13 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>) {
 
     const { editorScroller, previewScroller } = elements
 
-    const handleEditorScroll = () => {
+    const handleEditorScroll = (): void => {
       if (isSyncing.value || !previewSyncEnabled.value)
         return
       throttledSync(editorScroller, previewScroller)
     }
 
-    const handlePreviewScroll = () => {
+    const handlePreviewScroll = (): void => {
       if (isSyncing.value || !previewSyncEnabled.value)
         return
       throttledSync(previewScroller, editorScroller)

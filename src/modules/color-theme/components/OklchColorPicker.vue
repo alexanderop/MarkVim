@@ -41,19 +41,19 @@ const { oklchToString } = useColorThemeStore()
 
 const colorPreview = computed(() => oklchToString(currentColor.value))
 
-function updateLightness(value: number) {
+function updateLightness(value: number): void {
   currentColor.value = { ...currentColor.value, l: value }
 }
 
-function updateChroma(value: number) {
+function updateChroma(value: number): void {
   currentColor.value = { ...currentColor.value, c: value }
 }
 
-function updateHue(value: number) {
+function updateHue(value: number): void {
   currentColor.value = { ...currentColor.value, h: value }
 }
 
-function updateAlpha(value: number) {
+function updateAlpha(value: number): void {
   currentColor.value = { ...currentColor.value, a: value }
 }
 
@@ -116,7 +116,7 @@ function parseOklchString(input: string): OklchColor | null {
 }
 
 // Handle OKLCH input changes
-function handleOklchInput(event: Event) {
+function handleOklchInput(event: Event): void {
   if (!(event.target instanceof HTMLInputElement))
     return
   const target = event.target
@@ -135,7 +135,7 @@ function handleOklchInput(event: Event) {
 }
 
 // Handle input blur to reset invalid inputs
-function handleInputBlur() {
+function handleInputBlur(): void {
   if (!isValidInput.value) {
     oklchInput.value = colorPreview.value
     isValidInput.value = true
@@ -196,7 +196,7 @@ const gamutWarningText = computed(() => {
   return 'Color exceeds sRGB gamut - may appear different on some displays'
 })
 
-async function copyToClipboard() {
+async function copyToClipboard(): Promise<void> {
   try {
     await navigator.clipboard.writeText(colorPreview.value)
   }

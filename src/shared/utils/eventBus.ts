@@ -28,7 +28,7 @@ export interface AppEvents extends
 export type AppEventKey = keyof AppEvents
 
 // Internal helper: always returns the shared bus for a key.
-function busFor<K extends AppEventKey>(key: K) {
+function busFor<K extends AppEventKey>(key: K): ReturnType<typeof useEventBus<AppEvents[K]>> {
   return useEventBus<AppEvents[K]>(key)
 }
 
@@ -52,7 +52,7 @@ export function emitAppEvent<K extends AppEventKey>(
 export function onAppEvent<K extends AppEventKey>(
   key: K,
   handler: (payload: AppEvents[K]) => void,
-) {
+): (() => void) {
   const bus = busFor(key)
   const off = bus.on(handler)
   tryOnScopeDispose(off)
@@ -65,7 +65,7 @@ export function onAppEvent<K extends AppEventKey>(
 export function onceAppEvent<K extends AppEventKey>(
   key: K,
   handler: (payload: AppEvents[K]) => void,
-) {
+): (() => void) {
   const bus = busFor(key)
   const off = bus.on((p) => {
     off()

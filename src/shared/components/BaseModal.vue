@@ -18,7 +18,7 @@ const { title, description, maxWidth = '3xl', maxHeight = '85vh', footerLeft, fo
 
 const emit = defineEmits<Emits>()
 const open = defineModel<boolean>('open', { required: true })
-function handleClose() {
+function handleClose(): void {
   open.value = false
   emit('close')
 }

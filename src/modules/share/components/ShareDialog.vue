@@ -71,7 +71,7 @@ watch(
   },
 )
 
-async function copyToClipboard() {
+async function copyToClipboard(): Promise<void> {
   if (!shareLink.value || !clipboardSupported.value)
     return
 
@@ -87,7 +87,7 @@ async function copyToClipboard() {
   }
 }
 
-function handleClose() {
+function handleClose(): void {
   open.value = false
 }
 </script>

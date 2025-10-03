@@ -1,8 +1,11 @@
 import { localStorageService } from '@/services/LocalStorageService'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 
-export function useDataReset() {
-  const clearAllData = () => {
+export function useDataReset(): {
+  clearAllData: () => void
+  onDataReset: (callback: () => void) => (() => void)
+} {
+  const clearAllData = (): void => {
     if (import.meta.client) {
       // Emit through main event bus for better coordination
       emitAppEvent('data:reset', undefined)
@@ -21,7 +24,7 @@ export function useDataReset() {
     }
   }
 
-  const onDataReset = (callback: () => void) => {
+  const onDataReset = (callback: () => void): (() => void) => {
     return onAppEvent('data:reset', callback)
   }
 

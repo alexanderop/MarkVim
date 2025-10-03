@@ -15,7 +15,9 @@ let cacheTimestamp = 0
 
 /**
  * Recursively find all TypeScript/Vue files in a directory
+ * @returns {string[]}
  */
+// eslint-disable-next-line ts/explicit-function-return-type
 function findSourceFiles(dir, files = []) {
   try {
     const entries = readdirSync(dir)
@@ -46,7 +48,9 @@ function findSourceFiles(dir, files = []) {
 
 /**
  * Extract event keys from event interface definitions
+ * @returns {Array<{ key: string, interface: string, filename: string }>}
  */
+// eslint-disable-next-line ts/explicit-function-return-type
 function extractEventKeys(content, filename) {
   const eventKeys = []
 
@@ -80,7 +84,9 @@ function extractEventKeys(content, filename) {
 
 /**
  * Find all emitAppEvent and onAppEvent calls
+ * @returns {{ emitted: string[], listened: string[] }}
  */
+// eslint-disable-next-line ts/explicit-function-return-type
 function findEventUsage(content) {
   const emitted = []
   const listened = []
@@ -108,7 +114,9 @@ function findEventUsage(content) {
 
 /**
  * Analyze project-wide event usage
+ * @returns {{ allEventKeys: Array<{ key: string, interface: string, filename: string }>, allEmitted: Set<string>, allListened: Set<string> }}
  */
+// eslint-disable-next-line ts/explicit-function-return-type
 function analyzeEventUsage(projectRoot) {
   // Use cache if recent (within same ESLint run)
   const now = Date.now()

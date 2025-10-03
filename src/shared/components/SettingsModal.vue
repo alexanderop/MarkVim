@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { ref } from 'vue'
 import { useEditorSettings } from '~/modules/editor/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
@@ -9,18 +10,23 @@ import BaseSwitch from './BaseSwitch.vue'
 const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()
 const { showSettings, closeSettings, openSettings } = useShortcuts()
 
-function useClearDataModal() {
+function useClearDataModal(): {
+  showClearDataModal: Ref<boolean>
+  openClearDataModal: () => void
+  closeClearDataModal: () => void
+  confirmClearData: () => void
+} {
   const showClearDataModal = ref(false)
 
-  const openClearDataModal = () => {
+  const openClearDataModal = (): void => {
     showClearDataModal.value = true
   }
 
-  const closeClearDataModal = () => {
+  const closeClearDataModal = (): void => {
     showClearDataModal.value = false
   }
 
-  const confirmClearData = () => {
+  const confirmClearData = (): void => {
     clearAllData()
     closeClearDataModal()
     closeSettings()

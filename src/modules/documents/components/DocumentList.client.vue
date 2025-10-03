@@ -12,7 +12,7 @@ const { documents, activeDocumentId, isVisible } = defineProps<{
 
 const documentsStore = useDocumentsStore()
 
-function handleCreateDocument() {
+function handleCreateDocument(): void {
   documentsStore.dispatch({ type: 'CREATE_DOCUMENT' })
 }
 </script>

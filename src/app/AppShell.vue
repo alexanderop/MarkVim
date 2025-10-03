@@ -22,7 +22,7 @@ useColorThemeStore()
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
-function handleContentUpdate(value: string) {
+function handleContentUpdate(value: string): void {
   if (activeDocument.value) {
     documentsStore.dispatch({ type: 'UPDATE_DOCUMENT', payload: { documentId: activeDocument.value.id, content: value } })
   }

@@ -20,15 +20,15 @@ interface Props {
 
 const { document, isActive, index } = defineProps<Props>()
 
-function handleDocumentClick() {
+function handleDocumentClick(): void {
   emitAppEvent('document:select', { documentId: document.id })
 }
 
-function handleSelectDocument() {
+function handleSelectDocument(): void {
   emitAppEvent('document:select', { documentId: document.id })
 }
 
-function handleDeleteDocument() {
+function handleDeleteDocument(): void {
   emitAppEvent('document:delete', {
     documentId: document.id,
     documentTitle: getDocumentTitle(document.content),

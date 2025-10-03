@@ -11,11 +11,11 @@ const { shortcutsByCategory, formatKeys, registerShortcut, getDefaultIconForCate
 const isOpen = ref(false)
 
 // Expose the open function globally for other shortcuts
-function openModal() {
+function openModal(): void {
   isOpen.value = true
 }
 
-function closeModal() {
+function closeModal(): void {
   isOpen.value = false
 }
 

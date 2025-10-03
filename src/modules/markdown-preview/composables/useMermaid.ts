@@ -1,7 +1,13 @@
 import { useAsyncState, useCssVar, useMutationObserver } from '@vueuse/core'
 import { computed, nextTick, type Ref } from 'vue'
 
-export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
+export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
+  setupMermaid: () => Promise<any>
+  renderDiagrams: () => Promise<void>
+  cleanup: () => void
+  isLoading: any
+  isReady: any
+} {
   let mermaid: any = null
 
   const primaryColor = useCssVar('--accent')
@@ -24,9 +30,9 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
   const fillType2 = computed(() => `color-mix(in oklch, ${primaryColor.value} 20%, ${tertiaryColor.value})`)
   const fillType3 = useCssVar('--muted')
 
-  const isDark = () => document.documentElement.classList.contains('dark')
+  const isDark = (): boolean => document.documentElement.classList.contains('dark')
 
-  const initializeMermaid = () => {
+  const initializeMermaid = (): void => {
     if (!mermaid?.default)
       return
 
@@ -65,7 +71,7 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>) {
     }
   }
 
-  const renderDiagrams = async () => {
+  const renderDiagrams = async (): Promise<void> => {
     if (!mermaid?.default || !rootElement.value)
       return
 

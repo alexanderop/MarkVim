@@ -25,7 +25,7 @@ const { viewMode, isPreviewVisible } = useViewMode()
 useKeyboardScroll(scrollContainer)
 
 // Function to focus the scroll container
-function focusScrollContainer() {
+function focusScrollContainer(): void {
   if (scrollContainer.value) {
     scrollContainer.value.focus()
   }

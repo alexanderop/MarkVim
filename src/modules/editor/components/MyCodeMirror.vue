@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Extension } from '@codemirror/state'
 import type { ViewUpdate } from '@codemirror/view'
+import type { Ref } from 'vue'
 import { indentWithTab as cmIndentWithTab, defaultKeymap, history } from '@codemirror/commands'
 import { bracketMatching, HighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
 import { EditorState as CMEditorState, Compartment, StateEffect } from '@codemirror/state'
@@ -93,7 +94,7 @@ const customHighlightStyle = HighlightStyle.define([
   { tag: tags.attributeValue, color: 'var(--cm-attributeValue, var(--foreground))' },
 ])
 
-function getCustomHighlightStyle() {
+function getCustomHighlightStyle(): typeof customHighlightStyle {
   return customHighlightStyle
 }
 
@@ -103,10 +104,14 @@ const { getExtensions } = useEditorExtensions()
 const { editor, view, initializeEditor, destroyEditor } = useEditorLifecycle()
 const { syncModelValue, reconfigureExtensions } = useModelSync()
 
-function useLineNumbers() {
+function useLineNumbers(): {
+  lineNumberCompartment: Compartment
+  getLineNumberExtension: () => Extension | Extension[]
+  handleLineNumberUpdate: (viewUpdate: ViewUpdate) => void
+} {
   const lineNumberCompartment = new Compartment()
 
-  function getLineNumberExtension() {
+  function getLineNumberExtension(): Extension | Extension[] {
     if (!lineNumbers)
       return []
 
@@ -135,7 +140,7 @@ function useLineNumbers() {
     return cmLineNumbers()
   }
 
-  function handleLineNumberUpdate(viewUpdate: ViewUpdate) {
+  function handleLineNumberUpdate(viewUpdate: ViewUpdate): void {
     if ((lineNumberMode === 'relative' || lineNumberMode === 'both') && viewUpdate.selectionSet) {
       viewUpdate.view.dispatch({
         effects: lineNumberCompartment.reconfigure(getLineNumberExtension()),
@@ -150,8 +155,10 @@ function useLineNumbers() {
   }
 }
 
-function useVimMode() {
-  function setupCustomVimKeybindings() {
+function useVimMode(): {
+  setupCustomVimKeybindings: () => void
+} {
+  function setupCustomVimKeybindings(): void {
     if (!vimMode)
       return
 
@@ -168,10 +175,12 @@ function useVimMode() {
   }
 }
 
-function useEditorExtensions() {
+function useEditorExtensions(): {
+  getExtensions: () => Extension[]
+} {
   let previousVimMode = 'NORMAL'
 
-  function getExtensions() {
+  function getExtensions(): Extension[] {
     const extensionsList: Extension[] = [
       history(),
       drawSelection(),
@@ -261,11 +270,16 @@ function useEditorExtensions() {
   }
 }
 
-function useEditorLifecycle() {
+function useEditorLifecycle(): {
+  editor: Ref<HTMLDivElement | null>
+  view: Ref<EditorView | undefined>
+  initializeEditor: () => void
+  destroyEditor: () => void
+} {
   const editor = ref<HTMLDivElement | null>(null)
   const view = ref<EditorView>()
 
-  function initializeEditor() {
+  function initializeEditor(): void {
     if (!editor.value) {
       throw new Error('Editor container element not found.')
     }
@@ -291,7 +305,7 @@ function useEditorLifecycle() {
     }
   }
 
-  function destroyEditor() {
+  function destroyEditor(): void {
     view.value?.destroy()
   }
 
@@ -303,8 +317,11 @@ function useEditorLifecycle() {
   }
 }
 
-function useModelSync() {
-  function syncModelValue(newValue: string) {
+function useModelSync(): {
+  syncModelValue: (newValue: string) => void
+  reconfigureExtensions: () => void
+} {
+  function syncModelValue(newValue: string): void {
     if (view.value && newValue !== view.value.state.doc.toString()) {
       view.value.dispatch({
         changes: { from: 0, to: view.value.state.doc.length, insert: newValue },
@@ -312,7 +329,7 @@ function useModelSync() {
     }
   }
 
-  function reconfigureExtensions() {
+  function reconfigureExtensions(): void {
     if (view.value) {
       view.value.dispatch({
         effects: StateEffect.reconfigure.of(getExtensions()),

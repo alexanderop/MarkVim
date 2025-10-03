@@ -165,14 +165,14 @@ export const useColorThemeStore = defineStore('color-theme', () => {
   const theme = computed(() => internalStore._theme)
 
   // Public API - actions
-  function updateColor(colorKey: keyof ColorTheme, color: OklchColor) {
+  function updateColor(colorKey: keyof ColorTheme, color: OklchColor): void {
     internalStore._theme = {
       ...internalStore._theme,
       [colorKey]: color,
     }
   }
 
-  function resetToDefaults() {
+  function resetToDefaults(): void {
     internalStore._theme = { ...DEFAULT_COLOR_THEME }
   }
 

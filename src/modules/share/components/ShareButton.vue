@@ -13,7 +13,7 @@ const { document, disabled } = defineProps<{
 const { isSharing, getShareStats } = useDocumentShare()
 const showShareDialog = ref(false)
 
-function handleShareClick() {
+function handleShareClick(): void {
   showShareDialog.value = true
 }
 

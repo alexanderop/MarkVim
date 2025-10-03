@@ -1,6 +1,7 @@
+import type { Page } from '@playwright/test'
 import type { MarkVimWorld } from './world.js'
 
-export async function ensurePage(world: MarkVimWorld) {
+export async function ensurePage(world: MarkVimWorld): Promise<Page> {
   if (!world.page) {
     await world.init()
   }

@@ -27,11 +27,11 @@ const selectedColorData = ref<{
 // Temporary color state for preview (doesn't update main theme until OK is clicked)
 const tempColor = ref({ l: 0.7, c: 0.15, h: 200, a: 1 })
 
-function resetThemeToDefaults() {
+function resetThemeToDefaults(): void {
   resetToDefaults()
 }
 
-async function handleExportTheme() {
+async function handleExportTheme(): Promise<void> {
   try {
     const themeData = exportTheme()
     await navigator.clipboard.writeText(themeData)
@@ -61,7 +61,7 @@ async function handleExportTheme() {
   }
 }
 
-function openColorPicker(colorDef: typeof colorDefinitions[0]) {
+function openColorPicker(colorDef: typeof colorDefinitions[0]): void {
   selectedColorKey.value = colorDef.key
   selectedColorData.value = colorDef
   // Initialize temp color with current theme color, ensuring alpha defaults to 1
@@ -70,12 +70,12 @@ function openColorPicker(colorDef: typeof colorDefinitions[0]) {
   showColorPickerModal.value = true
 }
 
-function acceptColorChange() {
+function acceptColorChange(): void {
   updateColor(selectedColorKey.value, tempColor.value)
   showColorPickerModal.value = false
 }
 
-function cancelColorChange() {
+function cancelColorChange(): void {
   showColorPickerModal.value = false
 }
 

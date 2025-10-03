@@ -1,8 +1,14 @@
 import { useLocalStorage, useMediaQuery } from '@vueuse/core'
-import { computed, onUnmounted, readonly, ref } from 'vue'
+import { computed, type ComputedRef, onUnmounted, readonly, ref, type Ref } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 
-export function useResizablePanes(initialLeftWidth: number = 50) {
+export function useResizablePanes(initialLeftWidth: number = 50): {
+  leftPaneWidth: Readonly<Ref<number>>
+  rightPaneWidth: ComputedRef<number>
+  isDragging: Readonly<Ref<boolean>>
+  containerRef: Ref<HTMLElement | undefined>
+  startDrag: (event: PointerEvent) => void
+} {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const leftPaneWidth = useLocalStorage('markvim-pane-width', initialLeftWidth)
   const rightPaneWidth = computed(() => 100 - leftPaneWidth.value)
@@ -22,7 +28,7 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
   let containerRect: DOMRect | null = null
 
   // Throttle updates to requestAnimationFrame for smooth 60fps performance
-  const throttledUpdate = () => {
+  const throttledUpdate = (): void => {
     if (animationId)
       return
 
@@ -44,7 +50,7 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     })
   }
 
-  const handlePointerMove = (event: PointerEvent) => {
+  const handlePointerMove = (event: PointerEvent): void => {
     if (!isDragging.value)
       return
 
@@ -56,7 +62,7 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     throttledUpdate()
   }
 
-  const stopDrag = (event?: PointerEvent) => {
+  const stopDrag = (event?: PointerEvent): void => {
     if (!isDragging.value)
       return
 
@@ -99,7 +105,7 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     }
   }
 
-  const startDrag = (event: PointerEvent) => {
+  const startDrag = (event: PointerEvent): void => {
     // Disable resizing on mobile
     if (isMobile.value) {
       return
@@ -132,7 +138,7 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
     document.addEventListener('pointercancel', stopDrag)
   }
 
-  const cleanup = () => {
+  const cleanup = (): void => {
     if (isDragging.value) {
       stopDrag()
     }
@@ -146,7 +152,7 @@ export function useResizablePanes(initialLeftWidth: number = 50) {
 
   return {
     leftPaneWidth: readonly(leftPaneWidth),
-    rightPaneWidth: readonly(rightPaneWidth),
+    rightPaneWidth,
     isDragging: readonly(isDragging),
     containerRef,
     startDrag,
