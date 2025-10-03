@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
+import { onAppEvent } from '@/shared/utils/eventBus'
+import { useDocumentsStore } from '~/modules/documents/api'
 import DocumentsDocumentDeleteModal from './DocumentDeleteModal.vue'
 
 const deleteModalOpen = ref(false)
 const documentToDelete = ref<{ id: string, title: string } | null>(null)
+const documentsStore = useDocumentsStore()
 
 function handleDeleteDocument(payload: { documentId: string, documentTitle: string }) {
   documentToDelete.value = { id: payload.documentId, title: payload.documentTitle }
   deleteModalOpen.value = true
 }
 
+function handleSelectDocument(payload: { documentId: string }) {
+  // Dispatch SELECT_DOCUMENT message (TEA pattern)
+  documentsStore.dispatch({ type: 'SELECT_DOCUMENT', payload: { documentId: payload.documentId } })
+}
+
 function confirmDeleteDocument() {
   if (documentToDelete.value) {
-    // Emit event to actually delete the document
-    emitAppEvent('document:delete-confirmed', { documentId: documentToDelete.value.id })
+    // Dispatch DELETE_DOCUMENT message (TEA pattern)
+    documentsStore.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: documentToDelete.value.id } })
     deleteModalOpen.value = false
     documentToDelete.value = null
   }
@@ -25,8 +32,9 @@ function cancelDeleteDocument() {
   documentToDelete.value = null
 }
 
-// Listen for delete events from the typed event bus
+// Listen for events from the typed event bus
 onAppEvent('document:delete', handleDeleteDocument)
+onAppEvent('document:select', handleSelectDocument)
 </script>
 
 <template>

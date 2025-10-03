@@ -342,16 +342,23 @@ export function useShortcuts() {
       timer = setTimeout(resetStage, timeout)
     })
 
-    // Listen for second key when we're in the right stage
-    whenever(() => stage.value === 'got-first' && keysObj[secondKey].value, () => {
-      if (!notUsingInput.value) {
-        resetStage()
-        return
-      }
+    // Listen for second key - trigger whenever the key is pressed AND we're in the right stage
+    whenever(
+      computed(() => keysObj[secondKey].value),
+      (isPressed) => {
+        if (!isPressed || stage.value !== 'got-first') {
+          return
+        }
 
-      action()
-      resetStage()
-    })
+        if (!notUsingInput.value) {
+          resetStage()
+          return
+        }
+
+        action()
+        resetStage()
+      },
+    )
 
     return resetStage
   }

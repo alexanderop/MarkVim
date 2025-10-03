@@ -3,172 +3,162 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
-import { onAppEvent } from '@/shared/utils/eventBus'
 import { parseDocuments } from '~/modules/domain/api'
 import { defaultDocumentContent } from './defaultContent'
+import {
+  createDefaultDocument,
+  handleCreateDocument,
+  handleDeleteDocument,
+  handleImportDocument,
+  handleResetDocuments,
+  handleSelectDocument,
+  handleUpdateDocument,
+} from './internal/updateHandlers'
 
-// Use a consistent default document ID
-const DEFAULT_DOCUMENT_ID = 'default-welcome-document-id'
-// Use fixed timestamps to avoid hydration mismatches
-const DEFAULT_TIMESTAMP = 1703980800000 // 2023-12-31 00:00:00 UTC
+// --- THE MODEL ---
+// This interface represents the entire state of our documents module.
+export interface DocumentsState {
+  documents: Document[]
+  activeDocumentId: string
+}
 
-function createDefaultDocument(): Document {
-  return {
-    id: DEFAULT_DOCUMENT_ID,
-    content: defaultDocumentContent,
-    createdAt: DEFAULT_TIMESTAMP,
-    updatedAt: DEFAULT_TIMESTAMP,
+// --- THE MESSAGES ---
+// A union type of all possible actions that can change the state.
+// This replaces scattered event strings with a single, typed definition.
+export type DocumentMessage
+  = | { type: 'CREATE_DOCUMENT', payload?: { content?: string } }
+    | { type: 'SELECT_DOCUMENT', payload: { documentId: string } }
+    | { type: 'UPDATE_DOCUMENT', payload: { documentId: string, content: string } }
+    | { type: 'DELETE_DOCUMENT', payload: { documentId: string } }
+    | { type: 'IMPORT_DOCUMENT', payload: { document: Omit<Document, 'id' | 'createdAt' | 'updatedAt'> } }
+    | { type: 'ADD_DOCUMENT', payload: { content: string } }
+    | { type: 'RESET_DOCUMENTS' }
+
+// --- THE UPDATE FUNCTION (Reducer) ---
+// A pure function that calculates the next state based on the current state and a message.
+function update(currentState: DocumentsState, message: DocumentMessage): DocumentsState {
+  switch (message.type) {
+    case 'CREATE_DOCUMENT':
+      return handleCreateDocument(currentState, message.payload)
+
+    case 'SELECT_DOCUMENT':
+      return handleSelectDocument(currentState, message.payload)
+
+    case 'UPDATE_DOCUMENT':
+      return handleUpdateDocument(currentState, message.payload)
+
+    case 'DELETE_DOCUMENT':
+      return handleDeleteDocument(currentState, message.payload, defaultDocumentContent)
+
+    case 'IMPORT_DOCUMENT':
+      return handleImportDocument(currentState, message.payload)
+
+    case 'ADD_DOCUMENT':
+      return update(currentState, {
+        type: 'CREATE_DOCUMENT',
+        payload: { content: message.payload.content },
+      })
+
+    case 'RESET_DOCUMENTS':
+      return handleResetDocuments(defaultDocumentContent)
+
+    default:
+      return currentState
   }
 }
 
-// Private store - exported for proxy access but not in public API
-export const useDocumentsStorePrivate = defineStore('documents-private', () => {
-  const defaultDoc = createDefaultDocument()
+// Documents store following The Elm Architecture (TEA) pattern
+export const useDocumentsStore = defineStore('documents', () => {
+  const defaultDoc = createDefaultDocument(defaultDocumentContent)
 
-  // Since components are client-only, we can use localStorage directly
-  const _documents = useLocalStorage<Document[]>('markvim-documents', [defaultDoc], {
+  // The state (Model) is initialized and synced with localStorage.
+  const state = useLocalStorage<DocumentsState>('markvim-documents', {
+    documents: [defaultDoc],
+    activeDocumentId: defaultDoc.id,
+  }, {
     serializer: {
       read: (raw: string) => {
         try {
           const parsed = JSON.parse(raw)
-          const validated = parseDocuments(parsed)
-          return validated.length > 0 ? validated : [defaultDoc]
+
+          // Handle migration from old format (array) to new format (object)
+          if (Array.isArray(parsed)) {
+            // Old format: just an array of documents
+            const validatedDocs = parseDocuments(parsed)
+            const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
+            // Try to get activeDocumentId from old separate localStorage key
+            const oldActiveId = localStorage.getItem('markvim-active-document-id')
+            const activeId = oldActiveId && docs.some(d => d.id === oldActiveId)
+              ? oldActiveId
+              : docs[0]?.id || defaultDoc.id
+            return {
+              documents: docs,
+              activeDocumentId: activeId,
+            }
+          }
+
+          // New format: object with documents and activeDocumentId
+          const validatedDocs = parseDocuments(parsed.documents || [])
+          const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
+          const activeId = parsed.activeDocumentId && docs.some(d => d.id === parsed.activeDocumentId)
+            ? parsed.activeDocumentId
+            : docs[0]?.id || defaultDoc.id
+          return {
+            documents: docs,
+            activeDocumentId: activeId,
+          }
         }
         catch {
-          return [defaultDoc]
+          return {
+            documents: [defaultDoc],
+            activeDocumentId: defaultDoc.id,
+          }
         }
       },
-      write: (value: Document[]) => JSON.stringify(value),
+      write: (value: DocumentsState) => JSON.stringify(value),
     },
   })
-  const _activeDocumentId = useLocalStorage('markvim-active-document-id', defaultDoc.id)
 
   const { onDataReset } = useDataReset()
 
-  // Computed properties
+  // --- GETTERS (Selectors) ---
   const documents = computed(() => {
-    return [..._documents.value].sort((a, b) => b.updatedAt - a.updatedAt)
+    return [...state.value.documents].sort((a, b) => b.updatedAt - a.updatedAt)
   })
 
   const activeDocument = computed(() => {
-    return documents.value.find(doc => doc.id === _activeDocumentId.value) ?? documents.value[0] ?? null
+    return documents.value.find(doc => doc.id === state.value.activeDocumentId) ?? documents.value[0] ?? null
   })
 
-  const activeDocumentId = computed(() => _activeDocumentId.value)
+  const activeDocumentId = computed(() => state.value.activeDocumentId)
 
-  // Initialize store state
-  function initializeStore() {
-    // Ensure we have at least one document
-    if (_documents.value.length === 0) {
-      const newDefaultDoc = createDefaultDocument()
-      _documents.value = [newDefaultDoc]
-      _activeDocumentId.value = newDefaultDoc.id
+  const activeDocumentTitle = computed(() => {
+    if (!activeDocument.value)
+      return 'MarkVim'
+    const firstLine = activeDocument.value.content.split('\n')[0]?.trim() ?? ''
+    if (firstLine.startsWith('#')) {
+      return firstLine.replace(/^#+\s*/, '') || 'Untitled'
     }
+    return firstLine || 'Untitled'
+  })
 
-    // Ensure active document exists
-    const firstDoc = _documents.value[0]
-    if (!_documents.value.find(doc => doc.id === _activeDocumentId.value)) {
-      _activeDocumentId.value = firstDoc?.id ?? DEFAULT_DOCUMENT_ID
+  // --- ACTION (The only way to mutate state) ---
+  function dispatch(message: DocumentMessage): string | void {
+    // Pass the current state and the message to our pure update function.
+    // The result is the new state, which we assign back to our reactive state object.
+    const newState = update(state.value, message)
+    state.value = newState
+
+    // Return the new active document ID for operations that create documents
+    if (message.type === 'CREATE_DOCUMENT' || message.type === 'ADD_DOCUMENT' || message.type === 'IMPORT_DOCUMENT') {
+      return newState.activeDocumentId
     }
   }
-
-  // Initialize immediately since the store needs to be ready when components request state
-  initializeStore()
 
   // Data reset handling
   onDataReset(() => {
-    const newDefaultDoc = createDefaultDocument()
-    _documents.value = [newDefaultDoc]
-    _activeDocumentId.value = newDefaultDoc.id
+    dispatch({ type: 'RESET_DOCUMENTS' })
   })
-
-  // Actions
-  function createDocument(content?: string): string {
-    const now = Date.now()
-    const newDoc: Document = {
-      id: crypto.randomUUID(),
-      content: content || '# New Note\n\nStart writing...',
-      createdAt: now,
-      updatedAt: now,
-    }
-
-    _documents.value.unshift(newDoc)
-    _activeDocumentId.value = newDoc.id
-
-    return newDoc.id
-  }
-
-  function setActiveDocument(id: string): void {
-    const doc = _documents.value.find(d => d.id === id)
-    if (doc) {
-      _activeDocumentId.value = id
-    }
-  }
-
-  function updateDocument(id: string, content: string): void {
-    const docIndex = _documents.value.findIndex(d => d.id === id)
-    if (docIndex !== -1) {
-      const doc = _documents.value[docIndex]
-      if (doc) {
-        _documents.value[docIndex] = {
-          ...doc,
-          content,
-          updatedAt: Date.now(),
-        }
-      }
-    }
-  }
-
-  function addDocument(content: string): string {
-    const now = Date.now()
-    const newDoc: Document = {
-      id: crypto.randomUUID(),
-      content,
-      createdAt: now,
-      updatedAt: now,
-    }
-    _documents.value.unshift(newDoc)
-    _activeDocumentId.value = newDoc.id
-    return newDoc.id
-  }
-
-  function importDocument(document: Omit<Document, 'id' | 'createdAt' | 'updatedAt'>): string {
-    const now = Date.now()
-    const newDoc: Document = {
-      id: crypto.randomUUID(),
-      ...document,
-      createdAt: now,
-      updatedAt: now,
-    }
-    _documents.value.unshift(newDoc)
-    _activeDocumentId.value = newDoc.id
-    return newDoc.id
-  }
-
-  function deleteDocument(id: string): void {
-    const docIndex = _documents.value.findIndex(d => d.id === id)
-
-    if (docIndex === -1) {
-      return
-    }
-
-    _documents.value.splice(docIndex, 1)
-
-    // If we deleted the active document, select another one
-    if (_activeDocumentId.value === id) {
-      if (_documents.value.length === 0) {
-        // Create a new document if none exist
-        createDocument()
-      }
-      else {
-        // Select the first available document
-        const firstDoc = _documents.value[0]
-        if (firstDoc) {
-          _activeDocumentId.value = firstDoc.id
-        }
-      }
-    }
-  }
 
   function getDocumentTitle(content: string): string {
     const firstLine = content.split('\n')[0]?.trim() ?? ''
@@ -179,60 +169,16 @@ export const useDocumentsStorePrivate = defineStore('documents-private', () => {
   }
 
   function getDocumentById(id: string): Document | undefined {
-    return _documents.value.find(doc => doc.id === id)
+    return state.value.documents.find(doc => doc.id === id)
   }
-
-  // Listen for events from the event bus (all mutations happen through events)
-  onAppEvent('document:create', () => {
-    createDocument()
-  })
-
-  onAppEvent('document:select', (payload) => {
-    setActiveDocument(payload.documentId)
-  })
-
-  onAppEvent('document:update', (payload) => {
-    updateDocument(payload.documentId, payload.content)
-  })
-
-  onAppEvent('document:delete-confirmed', (payload) => {
-    deleteDocument(payload.documentId)
-  })
-
-  onAppEvent('documents:add', (payload) => {
-    addDocument(payload.content)
-  })
-
-  onAppEvent('documents:import', (payload) => {
-    addDocument(payload.content)
-  })
 
   return {
     documents,
     activeDocument,
     activeDocumentId,
-    createDocument,
-    setActiveDocument,
-    updateDocument,
-    deleteDocument,
-    importDocument,
+    activeDocumentTitle,
+    dispatch,
     getDocumentTitle,
     getDocumentById,
-  }
-})
-
-// Public store - provides read-only access to private store
-export const useDocumentsStore = defineStore('documents', () => {
-  const privateStore = useDocumentsStorePrivate()
-
-  return {
-    // Read-only computed properties - all mutations happen through events
-    documents: computed(() => privateStore.documents),
-    activeDocument: computed(() => privateStore.activeDocument),
-    activeDocumentId: computed(() => privateStore.activeDocumentId),
-
-    // Utility functions that don't mutate state
-    getDocumentTitle: privateStore.getDocumentTitle,
-    getDocumentById: privateStore.getDocumentById,
   }
 })

@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle, useDocumentsProxy } from '~/modules/documents/api'
+import { getDocumentTitle, useDocumentsStore } from '~/modules/documents/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import ShortcutsCommandPalette from './CommandPalette.vue'
 
@@ -9,8 +10,9 @@ import ShortcutsCommandPalette from './CommandPalette.vue'
 const commandPaletteOpen = ref(false)
 const commandPalettePosition = ref({ x: 0, y: 0 })
 
-// Use documents proxy instead of local state
-const { documents, activeDocument } = useDocumentsProxy()
+// Use documents store
+const documentsStore = useDocumentsStore()
+const { documents, activeDocument } = storeToRefs(documentsStore)
 
 // Get required composables
 const { registerShortcuts, registerAppCommand, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
@@ -45,7 +47,7 @@ function handleDocumentSelectFromPalette(id: string) {
 }
 
 function handleCreateDocument() {
-  emitAppEvent('document:create')
+  documentsStore.dispatch({ type: 'CREATE_DOCUMENT' })
 }
 
 // Listen to event bus events

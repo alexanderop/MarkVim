@@ -11,14 +11,13 @@ export { default as DocumentActionManager } from './components/DocumentActionMan
 export { default as DocumentList } from './components/DocumentList.client.vue'
 
 export { default as DocumentListSkeleton } from './components/DocumentListSkeleton.vue'
-// Export composables and utilities
-export { useActiveDocument } from './composables/useActiveDocument'
-export { useDocumentsProxy } from './composables/useDocumentsProxy'
 // Export events
 export type { DocumentsEvents } from './events'
+// Export store and TEA types
 export { useDocumentsStore } from './store'
+export type { DocumentMessage, DocumentsState } from './store'
 
-// Note: useDocumentsStore is read-only - use useDocumentsProxy for mutations
+// Note: useDocumentsStore follows The Elm Architecture (TEA) pattern with dispatch method
 // Export types
 export type { Document } from '~/modules/domain/api'
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { emitAppEvent } from '@/shared/utils/eventBus'
 import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
-import { DocumentActionManager, DocumentList, DocumentListSkeleton, useActiveDocument, useDocumentsProxy } from '~/modules/documents/api'
+import { DocumentActionManager, DocumentList, DocumentListSkeleton, useDocumentsStore } from '~/modules/documents/api'
 import { MarkdownEditor, MarkdownEditorSkeleton, useEditorSettings } from '~/modules/editor/api'
 import { HeaderToolbar, StatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview } from '~/modules/markdown-preview/api'
@@ -10,8 +10,8 @@ import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
-const { documents, activeDocumentId } = useDocumentsProxy()
-const { activeDocument, activeDocumentTitle } = useActiveDocument()
+const documentsStore = useDocumentsStore()
+const { documents, activeDocument, activeDocumentId, activeDocumentTitle } = storeToRefs(documentsStore)
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
@@ -24,7 +24,7 @@ const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previe
 
 function handleContentUpdate(value: string) {
   if (activeDocument.value) {
-    emitAppEvent('document:update', { documentId: activeDocument.value.id, content: value })
+    documentsStore.dispatch({ type: 'UPDATE_DOCUMENT', payload: { documentId: activeDocument.value.id, content: value } })
   }
 }
 </script>
