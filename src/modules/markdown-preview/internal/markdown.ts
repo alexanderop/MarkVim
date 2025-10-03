@@ -5,6 +5,7 @@ import MarkdownIt from 'markdown-it'
 import markdownItFootnote from 'markdown-it-footnote'
 import markdownItGitHubAlerts from 'markdown-it-github-alerts'
 import { createHighlighter } from 'shiki'
+import { tryCatchAsync } from '~/shared/utils/result'
 
 let markdownInstance: MarkdownIt | null = null
 let shikiHighlighter: Highlighter | null = null
@@ -61,57 +62,65 @@ export async function createMarkdownRenderer(): Promise<MarkdownIt> {
     return markdownInstance
   }
 
-  try {
-    const highlighter = await getShikiHighlighter()
+  const result = await tryCatchAsync(
+    async () => {
+      const highlighter = await getShikiHighlighter()
 
-    markdownInstance = new MarkdownIt({
-      html: true,
-      linkify: true,
-      typographer: true,
-    })
+      const md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+      })
 
-    markdownInstance.use(
-      fromHighlighter(highlighter, {
-        theme: 'night-owl',
-      }),
-    )
+      md.use(
+        fromHighlighter(highlighter, {
+          theme: 'night-owl',
+        }),
+      )
 
-    markdownInstance.use(markdownItMermaid)
-    markdownInstance.use(markdownItFootnote)
-    markdownInstance.use(markdownItGitHubAlerts)
+      md.use(markdownItMermaid)
+      md.use(markdownItFootnote)
+      md.use(markdownItGitHubAlerts)
 
-    const originalFence = markdownInstance.renderer.rules.fence || function () {
-      return ''
-    }
-    markdownInstance.renderer.rules.fence = function (tokens, idx, options, env, slf): string {
-      const token = tokens[idx]
-      if (!token) {
-        return originalFence.call(this, tokens, idx, options, env, slf)
+      const originalFence = md.renderer.rules.fence || function () {
+        return ''
+      }
+      md.renderer.rules.fence = function (tokens, idx, options, env, slf): string {
+        const token = tokens[idx]
+        if (!token) {
+          return originalFence.call(this, tokens, idx, options, env, slf)
+        }
+
+        const langName = token.info.trim().split(/\s+/)[0] ?? 'plaintext'
+
+        if (langName === 'mermaid') {
+          return `<div class="mermaid">\n${token.content}\n</div>`
+        }
+
+        const result = originalFence.call(this, tokens, idx, options, env, slf)
+        return result.replace('<pre', `<pre data-language="${langName}"`)
       }
 
-      const langName = token.info.trim().split(/\s+/g)[0] ?? 'plaintext'
+      return md
+    },
+    error => (error instanceof Error ? error : new Error(String(error))),
+  )
 
-      if (langName === 'mermaid') {
-        return `<div class="mermaid">\n${token.content}\n</div>`
-      }
-
-      const result = originalFence.call(this, tokens, idx, options, env, slf)
-      return result.replace('<pre', `<pre data-language="${langName}"`)
-    }
-
+  if (result.ok) {
+    markdownInstance = result.value
     return markdownInstance
   }
-  catch (error) {
-    console.error('Failed to initialize markdown renderer:', error)
-    markdownInstance = new MarkdownIt({
-      html: true,
-      linkify: true,
-      typographer: true,
-    })
-    markdownInstance.use(markdownItFootnote)
-    markdownInstance.use(markdownItGitHubAlerts)
-    return markdownInstance
-  }
+
+  // Fallback to basic markdown renderer without Shiki
+  console.error('Failed to initialize markdown renderer:', result.error)
+  markdownInstance = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true,
+  })
+  markdownInstance.use(markdownItFootnote)
+  markdownInstance.use(markdownItGitHubAlerts)
+  return markdownInstance
 }
 
 export function generateShikiCSS(): string {

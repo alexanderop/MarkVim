@@ -1,9 +1,11 @@
 import type { Ref } from 'vue'
+import type { Result } from '~/shared/utils/result'
 import { useState } from '#imports'
 import { useCssVar, useMounted } from '@vueuse/core'
 import { watch, watchEffect } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { onAppEvent } from '@/shared/utils/eventBus'
+import { Ok, tryCatch } from '~/shared/utils/result'
 
 export interface EditorSettings {
   // Vim configuration
@@ -85,7 +87,7 @@ export function useEditorSettings(): {
   updateFontSize: (size: number) => void
   resetToDefaults: () => void
   exportSettings: () => string
-  importSettings: (settingsJson: string) => boolean
+  importSettings: (settingsJson: string) => Result<void, Error>
   clearAllData: () => void
 } {
   const isMounted = useMounted()
@@ -94,12 +96,13 @@ export function useEditorSettings(): {
     if (isMounted.value && typeof localStorage !== 'undefined') {
       const stored = localStorage.getItem('markvim-settings')
       if (stored) {
-        try {
-          const parsed = JSON.parse(stored)
-          return { ...DEFAULT_EDITOR_CONFIG, ...parsed }
-        }
-        catch {
-          return { ...DEFAULT_EDITOR_CONFIG }
+        const parseResult = tryCatch(
+          () => JSON.parse(stored),
+          () => new Error('Failed to parse settings'),
+        )
+
+        if (parseResult.ok) {
+          return { ...DEFAULT_EDITOR_CONFIG, ...parseResult.value }
         }
       }
     }
@@ -149,16 +152,19 @@ export function useEditorSettings(): {
     return JSON.stringify(settings.value, null, 2)
   }
 
-  const importSettings = (settingsJson: string): boolean => {
-    try {
-      const imported = JSON.parse(settingsJson)
-      settings.value = { ...DEFAULT_EDITOR_CONFIG, ...imported }
-      saveToLocalStorage()
-      return true
+  const importSettings = (settingsJson: string): Result<void, Error> => {
+    const parseResult = tryCatch(
+      () => JSON.parse(settingsJson),
+      () => new Error('Failed to parse settings JSON'),
+    )
+
+    if (!parseResult.ok) {
+      return parseResult
     }
-    catch {
-      return false
-    }
+
+    settings.value = { ...DEFAULT_EDITOR_CONFIG, ...parseResult.value }
+    saveToLocalStorage()
+    return Ok(undefined)
   }
 
   const { clearAllData } = useDataReset()

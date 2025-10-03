@@ -281,7 +281,8 @@ function useEditorLifecycle(): {
 
   function initializeEditor(): void {
     if (!editor.value) {
-      throw new Error('Editor container element not found.')
+      console.error('Editor container element not found.')
+      return
     }
 
     const state = CMEditorState.create({

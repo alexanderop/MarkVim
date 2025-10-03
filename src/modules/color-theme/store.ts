@@ -1,7 +1,9 @@
+import type { Result } from '~/shared/utils/result'
 import { useCssVar, useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, watchEffect } from 'vue'
 import { z } from 'zod'
+import { Err, Ok, tryCatch } from '~/shared/utils/result'
 
 export interface OklchColor {
   l: number // Lightness: 0-1
@@ -187,36 +189,40 @@ export const useColorThemeStore = defineStore('color-theme', () => {
     return JSON.stringify(internalStore._theme, null, 2)
   }
 
-  function importTheme(themeJson: string): boolean {
-    try {
-      const parsedData = JSON.parse(themeJson)
-      const result = ColorThemeSchema.safeParse(parsedData)
+  function importTheme(themeJson: string): Result<void, Error> {
+    const parseResult = tryCatch(
+      () => JSON.parse(themeJson),
+      () => new Error('Invalid JSON format'),
+    )
 
-      if (!result.success) {
-        console.error('Invalid theme format:', result.error)
-        return false
-      }
-
-      const parsedTheme = result.data
-      const requiredKeys: (keyof ColorTheme)[] = ['background', 'foreground', 'accent', 'muted', 'border', 'alertNote', 'alertTip', 'alertImportant', 'alertWarning', 'alertCaution']
-      const isValid = requiredKeys.every(key =>
-        parsedTheme[key]
-        && typeof parsedTheme[key].l === 'number'
-        && typeof parsedTheme[key].c === 'number'
-        && typeof parsedTheme[key].h === 'number'
-        && (parsedTheme[key].a === undefined || typeof parsedTheme[key].a === 'number'),
-      )
-
-      if (!isValid) {
-        return false
-      }
-
-      internalStore._theme = parsedTheme
-      return true
+    if (!parseResult.ok) {
+      return parseResult
     }
-    catch {
-      return false
+
+    const parsedData = parseResult.value
+    const schemaResult = ColorThemeSchema.safeParse(parsedData)
+
+    if (!schemaResult.success) {
+      console.error('Invalid theme format:', schemaResult.error)
+      return Err(new Error('Invalid theme format'))
     }
+
+    const parsedTheme = schemaResult.data
+    const requiredKeys: (keyof ColorTheme)[] = ['background', 'foreground', 'accent', 'muted', 'border', 'alertNote', 'alertTip', 'alertImportant', 'alertWarning', 'alertCaution']
+    const isValid = requiredKeys.every(key =>
+      parsedTheme[key]
+      && typeof parsedTheme[key].l === 'number'
+      && typeof parsedTheme[key].c === 'number'
+      && typeof parsedTheme[key].h === 'number'
+      && (parsedTheme[key].a === undefined || typeof parsedTheme[key].a === 'number'),
+    )
+
+    if (!isValid) {
+      return Err(new Error('Theme is missing required keys or has invalid values'))
+    }
+
+    internalStore._theme = parsedTheme
+    return Ok(undefined)
   }
 
   return {

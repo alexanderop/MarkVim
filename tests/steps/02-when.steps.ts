@@ -18,6 +18,12 @@ When('the page is loaded', async function (this: MarkVimWorld) {
 
   // Now wait for the editor pane to be visible
   await expect(markVimPage.editorPane).toBeVisible()
+
+  // Wait for client-side hydration and sidebar to be in DOM
+  await markVimPage.page.waitForSelector('[data-testid="document-list"]', { state: 'attached', timeout: 5000 })
+
+  // Wait for shortcuts to be registered (onMounted hook)
+  await markVimPage.page.waitForTimeout(300)
 })
 
 When('I click on {word} mode', async function (this: MarkVimWorld, mode: string) {

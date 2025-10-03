@@ -17,6 +17,8 @@ Given('I navigate to the App', async function (this: MarkVimWorld) {
   const markVimPage = getMarkVimPage(this)
   await page.goto('http://localhost:3000')
   await markVimPage.waitForAppReady()
+  // Clear localStorage to ensure clean state for each test
+  await page.evaluate(() => localStorage.clear())
   // Set welcome as seen so tests go directly to the main interface
   await page.context().addCookies([
     {

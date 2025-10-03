@@ -1,5 +1,6 @@
 import { useAsyncState, useCssVar, useMutationObserver } from '@vueuse/core'
 import { computed, nextTick, type Ref } from 'vue'
+import { tryCatch, tryCatchAsync } from '~/shared/utils/result'
 
 export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
   setupMermaid: () => Promise<any>
@@ -38,8 +39,8 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
 
     const isCurrentlyDark = isDark()
 
-    try {
-      mermaid.default.initialize({
+    const initResult = tryCatch(
+      () => mermaid.default.initialize({
         startOnLoad: false,
         theme: isCurrentlyDark ? 'dark' : 'base',
         darkMode: isCurrentlyDark,
@@ -64,10 +65,12 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
           fillType2: fillType2.value,
           fillType3: fillType3.value,
         },
-      })
-    }
-    catch (error) {
-      console.error('Failed to initialize Mermaid:', error)
+      }),
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    if (!initResult.ok) {
+      console.error('Failed to initialize Mermaid:', initResult.error)
     }
   }
 
@@ -75,9 +78,12 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
     if (!mermaid?.default || !rootElement.value)
       return
 
-    try {
-      const nodes = rootElement.value.querySelectorAll('.mermaid') ?? []
-      if (nodes.length > 0) {
+    const nodes = rootElement.value.querySelectorAll('.mermaid') ?? []
+    if (nodes.length === 0)
+      return
+
+    const renderResult = await tryCatchAsync(
+      async () => {
         initializeMermaid()
 
         nodes.forEach((node) => {
@@ -99,10 +105,12 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
 
         const htmlNodes = Array.from(nodes).filter((node): node is HTMLElement => node instanceof HTMLElement)
         await mermaid.default.run({ nodes: htmlNodes })
-      }
-    }
-    catch (error) {
-      console.error('Failed to render Mermaid diagrams:', error)
+      },
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    if (!renderResult.ok) {
+      console.error('Failed to render Mermaid diagrams:', renderResult.error)
     }
   }
 

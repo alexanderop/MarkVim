@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { parseDocuments } from '~/modules/domain/api'
+import { tryCatch } from '~/shared/utils/result'
 import { defaultDocumentContent } from './defaultContent'
 import {
   createDefaultDocument,
@@ -78,23 +79,28 @@ export const useDocumentsStore = defineStore('documents', () => {
   }, {
     serializer: {
       read: (raw: string) => {
-        try {
-          const parsed = JSON.parse(raw)
-          const validatedDocs = parseDocuments(parsed.documents || [])
-          const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
-          const activeId = parsed.activeDocumentId && docs.some(d => d.id === parsed.activeDocumentId)
-            ? parsed.activeDocumentId
-            : docs[0]?.id || defaultDoc.id
-          return {
-            documents: docs,
-            activeDocumentId: activeId,
-          }
-        }
-        catch {
+        const parseResult = tryCatch(
+          () => JSON.parse(raw),
+          () => new Error('Failed to parse localStorage data'),
+        )
+
+        if (!parseResult.ok) {
           return {
             documents: [defaultDoc],
             activeDocumentId: defaultDoc.id,
           }
+        }
+
+        const parsed = parseResult.value
+        const validatedDocs = parseDocuments(parsed.documents || [])
+        const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
+        const activeId = parsed.activeDocumentId && docs.some(d => d.id === parsed.activeDocumentId)
+          ? parsed.activeDocumentId
+          : docs[0]?.id || defaultDoc.id
+
+        return {
+          documents: docs,
+          activeDocumentId: activeId,
         }
       },
       write: (value: DocumentsState) => JSON.stringify(value),

@@ -19,7 +19,6 @@ function handleCreateDocument(): void {
 
 <template>
   <aside
-    v-if="isVisible"
     data-testid="document-list"
     class="border-r border-[var(--border)] bg-[var(--background)] flex flex-col h-full w-72"
   >

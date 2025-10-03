@@ -29,6 +29,7 @@
 import type { OklchColor } from '~/modules/color-theme/api'
 import { computed, ref, watch } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
+import { tryCatchAsync } from '~/shared/utils/result'
 import OklchChannelSlider from './OklchChannelSlider.vue'
 
 const { label, description } = defineProps<{
@@ -215,11 +216,13 @@ const gamutWarningText = computed(() => {
 })
 
 async function copyToClipboard(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(colorPreview.value)
-  }
-  catch (error) {
-    console.warn('Failed to copy to clipboard:', error)
+  const result = await tryCatchAsync(
+    () => navigator.clipboard.writeText(colorPreview.value),
+    error => (error instanceof Error ? error : new Error(String(error))),
+  )
+
+  if (!result.ok) {
+    console.warn('Failed to copy to clipboard:', result.error)
   }
 }
 </script>

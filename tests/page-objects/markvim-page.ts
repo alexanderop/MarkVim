@@ -299,7 +299,7 @@ export class MarkVimPage {
 
   async openColorThemeWithKeyboard(): Promise<void> {
     await this.page.keyboard.press('KeyG')
-    await this.page.waitForTimeout(100) // Wait for sequential shortcut handler to detect first key
+    await this.page.waitForTimeout(200) // Wait for sequential shortcut handler to detect first key
     await this.page.keyboard.press('KeyC')
   }
 

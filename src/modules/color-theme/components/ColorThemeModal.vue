@@ -5,6 +5,7 @@ import { useColorThemeStore } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import BaseButton from '~/shared/components/BaseButton.vue'
 import BaseModal from '~/shared/components/BaseModal.vue'
+import { tryCatchAsync } from '~/shared/utils/result'
 import ColorThemeOklchColorPicker from './OklchColorPicker.vue'
 
 const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
@@ -35,10 +36,16 @@ function resetThemeToDefaults(): void {
 }
 
 async function handleExportTheme(): Promise<void> {
-  try {
-    const themeData = exportTheme()
-    await navigator.clipboard.writeText(themeData)
+  const themeData = exportTheme()
 
+  // Try to copy to clipboard
+  const copyResult = await tryCatchAsync(
+    () => navigator.clipboard.writeText(themeData),
+    error => (error instanceof Error ? error : new Error(String(error))),
+  )
+
+  if (copyResult.ok) {
+    // Success - show "Copied!" message
     const button = document.querySelector('[data-testid="export-theme-button"]')
     if (button) {
       const originalText = button.textContent
@@ -48,10 +55,10 @@ async function handleExportTheme(): Promise<void> {
       }, COPIED_MESSAGE_DURATION_MS)
     }
   }
-  catch (error) {
-    console.error('Failed to copy theme to clipboard:', error)
+  else {
+    // Failed - download as file instead
+    console.error('Failed to copy theme to clipboard:', copyResult.error)
 
-    const themeData = exportTheme()
     const blob = new Blob([themeData], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

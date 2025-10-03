@@ -1,6 +1,7 @@
 import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import { computed, type ComputedRef, onUnmounted, readonly, ref, type Ref } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
+import { tryCatch } from '~/shared/utils/result'
 
 // Percentage constants
 const FULL_WIDTH_PERCENTAGE = 100
@@ -101,12 +102,11 @@ export function useResizablePanes(initialLeftWidth: number = 50): {
 
     // Release pointer capture if event is available
     if (event && event.target instanceof Element) {
-      try {
-        event.target.releasePointerCapture(event.pointerId)
-      }
-      catch {
-        // Ignore errors if capture was already released
-      }
+      // Try to release pointer capture, ignore errors if already released
+      void tryCatch(
+        () => event.target instanceof Element && event.target.releasePointerCapture(event.pointerId),
+        () => new Error('Failed to release pointer capture'),
+      )
     }
   }
 

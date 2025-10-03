@@ -5,6 +5,7 @@ import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
 import BaseButton from '~/shared/components/BaseButton.vue'
 import BaseModal from '~/shared/components/BaseModal.vue'
+import { tryCatchAsync } from '~/shared/utils/result'
 
 const { document } = defineProps<{
   document: Document | null
@@ -78,15 +79,19 @@ async function copyToClipboard(): Promise<void> {
   if (!shareLink.value || !clipboardSupported.value)
     return
 
-  try {
-    await navigator.clipboard.writeText(shareLink.value)
+  const result = await tryCatchAsync(
+    () => navigator.clipboard.writeText(shareLink.value!),
+    error => (error instanceof Error ? error : new Error(String(error))),
+  )
+
+  if (result.ok) {
     copySuccess.value = true
     setTimeout(() => {
       copySuccess.value = false
     }, COPY_SUCCESS_DURATION_MS)
   }
-  catch (error) {
-    console.error('Failed to copy to clipboard:', error)
+  else {
+    console.error('Failed to copy to clipboard:', result.error)
   }
 }
 

@@ -11,6 +11,7 @@ import {
 } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
+import { tryCatchAsync } from '~/shared/utils/result'
 
 interface Emits {
   (e: 'import', document: Document): void
@@ -68,13 +69,12 @@ watch(
       return
     }
 
-    try {
-      const imported = await importFromUrl(url)
-      previewDocument.value = imported
-    }
-    catch {
-      previewDocument.value = null
-    }
+    const result = await tryCatchAsync(
+      () => importFromUrl(url),
+      () => new Error('Failed to import from URL'),
+    )
+
+    previewDocument.value = result.ok ? result.value : null
   },
 )
 

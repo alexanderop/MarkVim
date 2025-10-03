@@ -4,6 +4,7 @@ import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'
 import { z } from 'zod'
+import { Err, Ok, tryCatch, tryCatchAsync } from '~/shared/utils/result'
 
 export interface ShareableDocument {
   id: string
@@ -54,39 +55,48 @@ export function useDocumentShare(): {
       return null
     }
 
-    try {
-      const shareableDoc: ShareableDocument = {
-        id: document.id,
-        title: getDocumentTitle(document.content),
-        content: document.content,
-        createdAt: document.createdAt,
-        sharedAt: Date.now(),
+    const result = tryCatch(
+      () => {
+        const shareableDoc: ShareableDocument = {
+          id: document.id,
+          title: getDocumentTitle(document.content),
+          content: document.content,
+          createdAt: document.createdAt,
+          sharedAt: Date.now(),
+        }
+
+        const jsonString = JSON.stringify(shareableDoc)
+        const compressed = gzipSync(strToU8(jsonString), { level: GZIP_COMPRESSION_LEVEL })
+        const encodedData = btoa(String.fromCharCode(...compressed))
+
+        if (!encodedData) {
+          return Err(new Error('Failed to compress document data'))
+        }
+
+        if (encodedData.length > MAX_COMPRESSED_SIZE) {
+          return Err(new Error(`Document is too large to share via link (${Math.round(encodedData.length / BYTES_TO_KB_DIVISOR)}KB compressed). Try sharing a smaller document.`))
+        }
+
+        const baseUrl = window.location.origin + window.location.pathname
+        const shareUrl = `${baseUrl}#share=${encodedData}`
+
+        return Ok(shareUrl)
+      },
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    if (result.ok) {
+      const innerResult = result.value
+      if (innerResult.ok) {
+        return innerResult.value
       }
-
-      const jsonString = JSON.stringify(shareableDoc)
-      const compressed = gzipSync(strToU8(jsonString), { level: GZIP_COMPRESSION_LEVEL })
-      const encodedData = btoa(String.fromCharCode(...compressed))
-
-      if (!encodedData) {
-        shareError.value = 'Failed to compress document data'
-        return null
-      }
-
-      if (encodedData.length > MAX_COMPRESSED_SIZE) {
-        shareError.value = `Document is too large to share via link (${Math.round(encodedData.length / BYTES_TO_KB_DIVISOR)}KB compressed). Try sharing a smaller document.`
-        return null
-      }
-
-      const baseUrl = window.location.origin + window.location.pathname
-      const shareUrl = `${baseUrl}#share=${encodedData}`
-
-      return shareUrl
-    }
-    catch (error) {
-      shareError.value = 'Failed to generate share link'
-      console.error('Share generation error:', error)
+      shareError.value = innerResult.error.message
       return null
     }
+
+    shareError.value = 'Failed to generate share link'
+    console.error('Share generation error:', result.error)
+    return null
   }
 
   async function shareDocument(document: Document): Promise<boolean> {
@@ -96,72 +106,84 @@ export function useDocumentShare(): {
     isSharing.value = true
     shareError.value = null
 
-    try {
-      const shareUrl = generateShareLink(document)
+    const shareResult = await tryCatchAsync(
+      async () => {
+        const shareUrl = generateShareLink(document)
 
-      if (!shareUrl) {
-        return false
-      }
+        if (!shareUrl) {
+          return Ok(false)
+        }
 
-      if (clipboardSupported.value) {
-        await copyToClipboard(shareUrl)
-        return true
-      }
-      shareError.value = 'Clipboard access not supported in this browser'
-      return false
-    }
-    catch (error) {
+        if (clipboardSupported.value) {
+          await copyToClipboard(shareUrl)
+          return Ok(true)
+        }
+
+        shareError.value = 'Clipboard access not supported in this browser'
+        return Ok(false)
+      },
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    isSharing.value = false
+
+    if (!shareResult.ok) {
       shareError.value = 'Failed to copy share link to clipboard'
-      console.error('Share error:', error)
+      console.error('Share error:', shareResult.error)
       return false
     }
-    finally {
-      isSharing.value = false
-    }
+
+    return shareResult.value.ok ? shareResult.value.value : false
   }
 
   function parseShareUrl(url?: string): ShareableDocument | null {
     importError.value = null
 
-    try {
-      const targetUrl = url || window.location.href
-      const urlObj = new URL(targetUrl)
+    const parseResult = tryCatch(
+      () => {
+        const targetUrl = url || window.location.href
+        const urlObj = new URL(targetUrl)
 
-      const hash = urlObj.hash
-      if (!hash || !hash.startsWith('#share=')) {
-        return null
-      }
+        const hash = urlObj.hash
+        if (!hash || !hash.startsWith('#share=')) {
+          return null
+        }
 
-      const encodedData = hash.slice(SHARE_PREFIX_LENGTH)
-      if (!encodedData) {
-        importError.value = 'No share data found in URL'
-        return null
-      }
+        const encodedData = hash.slice(SHARE_PREFIX_LENGTH)
+        if (!encodedData) {
+          importError.value = 'No share data found in URL'
+          return null
+        }
 
-      const compressedData = Uint8Array.from(atob(encodedData), c => c.charCodeAt(0))
-      const decompressed = gunzipSync(compressedData)
-      const jsonString = strFromU8(decompressed)
+        const compressedData = Uint8Array.from(atob(encodedData), c => c.charCodeAt(0))
+        const decompressed = gunzipSync(compressedData)
+        const jsonString = strFromU8(decompressed)
 
-      if (!jsonString) {
-        importError.value = 'Failed to decode share data. The link may be corrupted.'
-        return null
-      }
+        if (!jsonString) {
+          importError.value = 'Failed to decode share data. The link may be corrupted.'
+          return null
+        }
 
-      const parsedData = JSON.parse(jsonString)
-      const result = ShareableDocumentSchema.safeParse(parsedData)
+        const parsedData = JSON.parse(jsonString)
+        const result = ShareableDocumentSchema.safeParse(parsedData)
 
-      if (!result.success) {
-        importError.value = 'Invalid document data in share link'
-        return null
-      }
+        if (!result.success) {
+          importError.value = 'Invalid document data in share link'
+          return null
+        }
 
-      return result.data
+        return result.data
+      },
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    if (parseResult.ok) {
+      return parseResult.value
     }
-    catch (error) {
-      importError.value = 'Failed to parse share link. The link may be invalid or corrupted.'
-      console.error('Import parsing error:', error)
-      return null
-    }
+
+    importError.value = 'Failed to parse share link. The link may be invalid or corrupted.'
+    console.error('Import parsing error:', parseResult.error)
+    return null
   }
 
   function importSharedDocument(shareableDoc: ShareableDocument): Document {
@@ -179,23 +201,28 @@ export function useDocumentShare(): {
     isImporting.value = true
     importError.value = null
 
-    try {
-      const shareableDoc = parseShareUrl(url)
-      if (!shareableDoc) {
-        return Promise.resolve(null)
-      }
+    const importResult = tryCatch(
+      () => {
+        const shareableDoc = parseShareUrl(url)
+        if (!shareableDoc) {
+          return null
+        }
 
-      const importedDoc = importSharedDocument(shareableDoc)
-      return Promise.resolve(importedDoc)
+        const importedDoc = importSharedDocument(shareableDoc)
+        return importedDoc
+      },
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    isImporting.value = false
+
+    if (importResult.ok) {
+      return Promise.resolve(importResult.value)
     }
-    catch (error) {
-      importError.value = 'Failed to import document from share link'
-      console.error('Import error:', error)
-      return Promise.resolve(null)
-    }
-    finally {
-      isImporting.value = false
-    }
+
+    importError.value = 'Failed to import document from share link'
+    console.error('Import error:', importResult.error)
+    return Promise.resolve(null)
   }
 
   function clearShareFromUrl(): void {
