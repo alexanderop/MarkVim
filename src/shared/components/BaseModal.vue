@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseButton from './BaseButton.vue'
+
 interface Emits {
   (e: 'close'): void
 }

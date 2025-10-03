@@ -30,6 +30,12 @@ pnpm lint:fix
 # Type checking
 pnpm typecheck
 
+# Detect unused exports, files, and dependencies
+pnpm knip
+
+# Check only for unused exports
+pnpm knip:exports
+
 # Run E2E tests (requires dev server running)
 pnpm test:e2e
 
@@ -131,5 +137,6 @@ Key dependencies include:
 - **VueUse** for composable utilities
 - **UnoCSS** for styling
 - **Reka UI** for base components
+- **Knip** for detecting unused exports, files, and dependencies
 
 When working with this codebase, prefer modifying existing modules over creating new files, and follow the established patterns for consistency.

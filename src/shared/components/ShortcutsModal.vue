@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '#components'
 import { onKeyUp } from '@vueuse/core'
 import { computed, onMounted, provide, ref } from 'vue'
 import { useShortcuts } from '~/modules/shortcuts/api'

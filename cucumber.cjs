@@ -1,3 +1,5 @@
+const process = require('node:process')
+
 module.exports = {
   default: {
     paths: ['tests/features/**/*.feature'],
@@ -13,7 +15,8 @@ module.exports = {
     formatOptions: {
       snippetInterface: 'async-await',
     },
-    parallel: 2,
+    // Reduce parallelism in CI to avoid resource contention
+    parallel: process.env.CI === 'true' ? 1 : 2,
     timeout: 15000,
   },
 }

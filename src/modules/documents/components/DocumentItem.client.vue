@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
+import { Icon } from '#components'
 import {
   ContextMenuContent,
   ContextMenuItem,

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
 import type { ViewMode } from '~/modules/layout/api'
+import { Icon } from '#components'
 import {
   DialogContent,
   DialogOverlay,

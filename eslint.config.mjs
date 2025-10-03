@@ -4,6 +4,7 @@ import importPlugin from 'eslint-plugin-import'
 import vueA11y from 'eslint-plugin-vuejs-accessibility'
 import withNuxt from './.nuxt/eslint.config.mjs'
 import noUnusedEvents from './eslint-rules/no-unused-events.js'
+import noUnusedModuleExports from './eslint-rules/no-unused-module-exports.js'
 
 // Generate comprehensive module boundary restrictions
 const modules = [
@@ -64,17 +65,20 @@ export default withNuxt(
       ],
     },
   },
-  // Custom event bus rules
+  // Custom local rules
   {
     plugins: {
       local: {
         rules: {
           'no-unused-events': noUnusedEvents,
+          'no-unused-module-exports': noUnusedModuleExports,
         },
       },
     },
     rules: {
       'local/no-unused-events': 'warn',
+      // Temporarily disabled - requires TypeScript type information configuration
+      // 'local/no-unused-module-exports': 'warn',
     },
   },
   // Additional rule overrides
@@ -159,8 +163,7 @@ export default withNuxt(
           'ServerPlaceholder',
           'NuxtLink',
           'NuxtLayout',
-          // Allow @nuxt/icon components
-          'Icon',
+          // Allow @nuxt/icon components (disabled - Icon must be manually imported since auto-imports are disabled)
           // Allow reka-ui components (globally registered)
           'Dialog.*',
           'ContextMenu.*',

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '#components'
 import { onMounted, ref } from 'vue'
 
 const emit = defineEmits<{

@@ -86,9 +86,11 @@ jobs:
         run: |
           pnpm run dev &
           SERVER_PID=$!
-          sleep 10
+          sleep 15
           pnpm run test:e2e:ci
           kill $SERVER_PID
+        env:
+          CI: true
 
       - name: Upload test results
         if: always()

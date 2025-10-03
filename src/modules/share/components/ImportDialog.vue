@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
+import { Icon } from '#components'
 import {
   DialogContent,
   DialogDescription,

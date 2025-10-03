@@ -6,14 +6,16 @@ import { ensurePage } from '../support/utils.js'
 
 Given('I navigate to {string}', async function (this: MarkVimWorld, url: string) {
   const page = await ensurePage(this)
+  const markVimPage = getMarkVimPage(this)
   await page.goto(url)
-  await page.waitForLoadState('networkidle')
+  await markVimPage.waitForAppReady()
 })
 
 Given('I navigate to the App', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
+  const markVimPage = getMarkVimPage(this)
   await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
+  await markVimPage.waitForAppReady()
   // Set welcome as seen so tests go directly to the main interface
   await page.context().addCookies([
     {
@@ -26,13 +28,14 @@ Given('I navigate to the App', async function (this: MarkVimWorld) {
   ])
   // Reload to apply the cookie setting
   await page.reload()
-  await page.waitForLoadState('networkidle')
+  await markVimPage.waitForAppReady()
 })
 
 Given('I am on the application page', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
+  const markVimPage = getMarkVimPage(this)
   await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
+  await markVimPage.waitForAppReady()
   // Set welcome as seen so tests go directly to the main interface
   await page.context().addCookies([
     {
@@ -45,7 +48,7 @@ Given('I am on the application page', async function (this: MarkVimWorld) {
   ])
   // Reload to apply the cookie setting
   await page.reload()
-  await page.waitForLoadState('networkidle')
+  await markVimPage.waitForAppReady()
 })
 
 Given('the keyboard shortcuts modal is open', async function (this: MarkVimWorld) {
@@ -195,6 +198,7 @@ Given('I have disabled synchronized scrolling in the settings', async function (
 // Welcome Screen Steps
 Given('I visit the MarkVim application for the first time', async function (this: MarkVimWorld) {
   const page = await ensurePage(this)
+  const markVimPage = getMarkVimPage(this)
   await page.evaluate(() => {
     try {
       localStorage.clear()
@@ -205,5 +209,5 @@ Given('I visit the MarkVim application for the first time', async function (this
   })
   await page.context().clearCookies()
   await page.goto('http://localhost:3000')
-  await page.waitForLoadState('networkidle')
+  await markVimPage.waitForAppReady()
 })

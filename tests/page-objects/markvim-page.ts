@@ -113,7 +113,24 @@ export class MarkVimPage {
 
   async navigate(): Promise<void> {
     await this.page.goto('http://localhost:3000')
-    await this.page.waitForLoadState('networkidle')
+    await this.waitForAppReady()
+  }
+
+  /**
+   * Wait for the application to be fully loaded and ready for interaction.
+   * This is more reliable than waitForLoadState('networkidle') in CI environments.
+   */
+  async waitForAppReady(): Promise<void> {
+    // Wait for essential UI elements to be present and visible
+    await expect(this.headerToolbar).toBeVisible({ timeout: 15000 })
+    await expect(this.editorPane).toBeVisible({ timeout: 15000 })
+    await expect(this.statusBar).toBeVisible({ timeout: 15000 })
+
+    // Also wait for DOM to be fully loaded
+    await this.page.waitForLoadState('domcontentloaded')
+
+    // Give a small buffer for any final hydration/rendering
+    await this.page.waitForTimeout(500)
   }
 
   async pressKey(key: string): Promise<void> {
@@ -343,7 +360,7 @@ export class MarkVimPage {
 
   async reloadPage(): Promise<void> {
     await this.page.reload()
-    await this.page.waitForLoadState('networkidle')
+    await this.waitForAppReady()
   }
 
   async clickKeyboardShortcutsButton(): Promise<void> {
@@ -675,7 +692,7 @@ export class MarkVimPage {
 
   async navigateToShareUrl(shareUrl: string): Promise<void> {
     await this.page.goto(shareUrl)
-    await this.page.waitForLoadState('networkidle')
+    await this.waitForAppReady()
   }
 
   verifyUrlFragment(expectedFragment: string): void {
@@ -1185,7 +1202,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
   async navigateToUrl(url: string): Promise<void> {
     await this.page.goto(url)
-    await this.page.waitForLoadState('networkidle')
+    await this.waitForAppReady()
   }
 
   async verifyActiveDocumentIsNotDefault(): Promise<void> {

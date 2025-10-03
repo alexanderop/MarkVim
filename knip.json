@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "nuxt": true,
+  "entry": [
+    "src/app/**/*.vue",
+    "src/shared/**/*.{ts,vue}"
+  ],
+  "project": [
+    "src/**/*.{ts,vue,js}",
+    "eslint-rules/**/*.{ts,js}"
+  ],
+  "ignore": [
+    "**/*.d.ts",
+    ".nuxt/**",
+    "dist/**",
+    "tests/**",
+    "src/modules/*/components/**",
+    "src/modules/*/composables/**",
+    "src/modules/*/internal/**",
+    "src/modules/*/store.ts",
+    "src/modules/*/events.ts"
+  ],
+  "paths": {
+    "~/*": ["./src/*"],
+    "@/*": ["./src/*"]
+  },
+  "ignoreDependencies": [
+    "#app",
+    "#components",
+    "#imports"
+  ]
+}
