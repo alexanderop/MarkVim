@@ -4,10 +4,9 @@ import { Icon } from '#components'
 import { useDocumentsStore } from '~/modules/documents/api'
 import DocumentItemClient from './DocumentItem.client.vue'
 
-const { documents, activeDocumentId, isVisible } = defineProps<{
+const { documents, activeDocumentId } = defineProps<{
   documents: DocType[]
   activeDocumentId: string
-  isVisible: boolean
 }>()
 
 const documentsStore = useDocumentsStore()
