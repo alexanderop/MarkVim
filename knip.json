@@ -27,10 +27,8 @@
     "@/*": ["./src/*"]
   },
   "ignoreDependencies": [
-    "vue-router",
     "@iconify-json/lucide",
     "@unocss/preset-typography",
-    "lint-staged",
     "ts-node"
   ],
   "ignoreExportsUsedInFile": true,
