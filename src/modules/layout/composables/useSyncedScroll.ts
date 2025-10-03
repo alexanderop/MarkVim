@@ -46,7 +46,7 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
     })
 
     // Reset sync flag after a brief delay
-    nextTick(() => {
+    void nextTick(() => {
       setTimeout(() => {
         isSyncing.value = false
       }, SYNC_RESET_DELAY_MS)
@@ -168,13 +168,13 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
     const handleEditorScroll = (): void => {
       if (isSyncing.value || !previewSyncEnabled.value)
         return
-      throttledSync(editorScroller, previewScroller)
+      void throttledSync(editorScroller, previewScroller)
     }
 
     const handlePreviewScroll = (): void => {
       if (isSyncing.value || !previewSyncEnabled.value)
         return
-      throttledSync(previewScroller, editorScroller)
+      void throttledSync(previewScroller, editorScroller)
     }
 
     // Use VueUse's useEventListener for automatic cleanup
@@ -187,19 +187,19 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
 
   // Watch for changes and setup sync
   watchEffect(() => {
-    setupScrollSync()
+    void setupScrollSync()
   })
 
   // Watch for container changes and re-setup
   watch([editorScrollContainer, previewScrollContainer], () => {
     if (previewSyncEnabled.value) {
-      setupScrollSync()
+      void setupScrollSync()
     }
   })
 
   // Watch for sync enabled state changes
   watch(previewSyncEnabled, (enabled) => {
-    enabled ? setupScrollSync() : cleanupEventListeners()
+    enabled ? void setupScrollSync() : cleanupEventListeners()
   })
 
   onUnmounted(() => {

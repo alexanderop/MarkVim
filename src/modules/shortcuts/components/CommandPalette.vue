@@ -198,7 +198,7 @@ function handleKeydown(event: KeyboardEvent): void {
 
 // Scroll selected item into view
 function scrollToSelected(): void {
-  nextTick(() => {
+  void nextTick(() => {
     if (!scrollContainer.value)
       return
 
@@ -225,7 +225,7 @@ function getCommandIndex(command: Command): number {
 // Watch for open state changes to reset state
 watch(() => open.value, (isOpen) => {
   if (isOpen) {
-    nextTick(() => {
+    void nextTick(() => {
       searchTerm.value = ''
       selectedIndex.value = 0
       inputRef.value?.focus()

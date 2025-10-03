@@ -116,7 +116,7 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
       immediate: false,
       onSuccess: () => {
         initializeMermaid()
-        renderDiagrams()
+        void renderDiagrams()
       },
     },
   )
@@ -124,7 +124,7 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
   const { stop } = useMutationObserver(
     () => (import.meta.client ? document.documentElement : null),
     () => {
-      nextTick(renderDiagrams)
+      void nextTick(renderDiagrams)
     },
     {
       attributes: true,

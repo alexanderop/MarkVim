@@ -79,7 +79,7 @@ function handleImportCancel(): void {
 }
 
 onMounted(() => {
-  detectShareInUrl()
+  void detectShareInUrl()
 })
 
 function openManualImport(): void {

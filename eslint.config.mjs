@@ -40,7 +40,23 @@ export default withNuxt(
       '**/*.md',
       '.claude/settings.local.json',
     ],
-  }),
+  })
+    // Enable type-aware linting for TypeScript source files only
+    .prepend({
+      files: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue'],
+      languageOptions: {
+        parserOptions: {
+          projectService: true,
+          tsconfigRootDir: import.meta.dirname,
+        },
+      },
+      rules: {
+        // Error handling rules (Rust-like enforcement)
+        'ts/no-floating-promises': 'error', // Force explicit handling of promises
+        'ts/switch-exhaustiveness-check': 'error', // Force exhaustive checking on discriminated unions
+        'ts/only-throw-error': 'error', // Only allow throwing Error instances
+      },
+    }),
   // Vue accessibility plugin
   {
     plugins: {

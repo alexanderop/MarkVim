@@ -39,7 +39,7 @@ onMounted(() => {
 // Watch for view mode changes and refocus when preview is visible
 watch(viewMode, () => {
   if (isPreviewVisible.value) {
-    nextTick(() => {
+    void nextTick(() => {
       focusScrollContainer()
     })
   }
