@@ -437,9 +437,7 @@ Then('the vim mode indicator should show {string}', async function (this: MarkVi
     await vimModeElement.textContent()
     // Vim mode indicator found
   }
-  else {
-    // Vim mode indicator not found - may be disabled or in different mode
-  }
+  // Vim mode indicator not found - may be disabled or in different mode
 
   // Continue the test regardless - the important part is the selection color
 })

@@ -33,8 +33,9 @@ function findSourceFiles(dir, files = []) {
           if (!entry.startsWith('.') && entry !== 'node_modules' && entry !== 'dist') {
             findSourceFiles(fullPath, files)
           }
+          continue
         }
-        else if (entry.endsWith('.ts') || entry.endsWith('.vue')) {
+        if (entry.endsWith('.ts') || entry.endsWith('.vue')) {
           files.push(fullPath)
         }
       }
@@ -229,9 +230,10 @@ export default {
               messageId: 'unusedEvent',
               data: { eventKey },
             })
+            return
           }
           // Report events that are emitted but never listened to
-          else if (isEmitted && !isListened) {
+          if (isEmitted && !isListened) {
             context.report({
               node: member,
               messageId: 'emittedNotListened',

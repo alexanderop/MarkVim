@@ -48,11 +48,10 @@ export class TestUtils {
 
       if (this.areBoxesEqual(previousBox, currentBox)) {
         stabilityCount++
+        continue
       }
-      else {
-        stabilityCount = 0
-        previousBox = currentBox
-      }
+      stabilityCount = 0
+      previousBox = currentBox
     }
   }
 

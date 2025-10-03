@@ -234,8 +234,9 @@ When('I change the font size to {int}', async function (this: MarkVimWorld, targ
       await increaseButton.click()
       await markVimPage.page.waitForTimeout(SHORT_WAIT_MS) // Small delay for UI updates
     }
+    return
   }
-  else if (difference < 0) {
+  if (difference < 0) {
     // Need to decrease font size
     const decreaseButton = markVimPage.page.locator('[data-testid="font-size-decrease"]')
     for (let i = 0; i < Math.abs(difference); i++) {

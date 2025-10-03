@@ -7,12 +7,9 @@ export function useVimMode(): {
   const currentVimMode = ref<string>('NORMAL')
 
   function handleVimModeChange(mode: string, subMode?: string): void {
-    if (subMode) {
-      currentVimMode.value = `${mode.toUpperCase()} (${subMode.toUpperCase()})`
-    }
-    else {
-      currentVimMode.value = mode.toUpperCase()
-    }
+    currentVimMode.value = subMode
+      ? `${mode.toUpperCase()} (${subMode.toUpperCase()})`
+      : mode.toUpperCase()
   }
 
   return {

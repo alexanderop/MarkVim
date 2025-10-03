@@ -66,6 +66,10 @@ export default withNuxt(
           selector: 'ThrowStatement',
           message: 'throw is forbidden. Return errors using Result<T, E> type instead.',
         },
+        {
+          selector: 'IfStatement[alternate]',
+          message: 'Avoid else statements. Use ternary operators or early returns instead.',
+        },
       ],
     },
   },
@@ -143,6 +147,14 @@ export default withNuxt(
       'no-debugger': 'error',
       // No else return rule
       'no-else-return': 'error',
+      // Disallow all else statements - use ternary or early returns instead
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'IfStatement[alternate]',
+          message: 'Avoid else statements. Use ternary operators or early returns instead.',
+        },
+      ],
       // Security rules
       'no-eval': 'error',
       'no-implied-eval': 'error',

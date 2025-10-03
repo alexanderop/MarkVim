@@ -97,10 +97,9 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
               element.innerHTML = originalContent
               element.removeAttribute('id')
             }
+            return
           }
-          else {
-            element.dataset.mermaidSource = element.textContent || ''
-          }
+          element.dataset.mermaidSource = element.textContent || ''
         })
 
         const htmlNodes = Array.from(nodes).filter((node): node is HTMLElement => node instanceof HTMLElement)

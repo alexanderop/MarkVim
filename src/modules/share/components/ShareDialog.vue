@@ -67,11 +67,10 @@ watch(
       copySuccess.value = false
       const link = generateShareLink(document)
       shareLink.value = link || ''
+      return
     }
-    else {
-      shareLink.value = ''
-      showAdvanced.value = false
-    }
+    shareLink.value = ''
+    showAdvanced.value = false
   },
 )
 
@@ -89,10 +88,9 @@ async function copyToClipboard(): Promise<void> {
     setTimeout(() => {
       copySuccess.value = false
     }, COPY_SUCCESS_DURATION_MS)
+    return
   }
-  else {
-    console.error('Failed to copy to clipboard:', result.error)
-  }
+  console.error('Failed to copy to clipboard:', result.error)
 }
 
 function handleClose(): void {

@@ -242,16 +242,13 @@ function useEditorExtensions(): {
           const currentKeyMap = cm.state.keyMap || ''
 
           // Map keyMap values to readable mode names
-          let modeName = 'NORMAL'
-          if (currentKeyMap === 'vim-insert') {
-            modeName = 'INSERT'
-          }
-          else if (currentKeyMap === 'vim-replace') {
-            modeName = 'REPLACE'
-          }
-          else if (currentKeyMap.startsWith('vim-visual')) {
-            modeName = 'VISUAL'
-          }
+          const modeName = currentKeyMap === 'vim-insert'
+            ? 'INSERT'
+            : currentKeyMap === 'vim-replace'
+              ? 'REPLACE'
+              : currentKeyMap.startsWith('vim-visual')
+                ? 'VISUAL'
+                : 'NORMAL'
 
           // Only emit if the mode has actually changed
           if (modeName !== previousVimMode) {

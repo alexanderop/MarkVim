@@ -75,10 +75,13 @@ export function handleDeleteDocument(
       const newDefaultDoc = createDefaultDocument(defaultContent)
       newDocs = [newDefaultDoc]
       newActiveId = newDefaultDoc.id
+      return {
+        ...state,
+        documents: newDocs,
+        activeDocumentId: newActiveId,
+      }
     }
-    else {
-      newActiveId = remainingDocs[0]?.id || ''
-    }
+    newActiveId = remainingDocs[0]?.id || ''
   }
 
   return {

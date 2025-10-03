@@ -147,10 +147,9 @@ function handleOklchInput(event: Event): void {
   if (parsedColor) {
     isValidInput.value = true
     currentColor.value = parsedColor
+    return
   }
-  else {
-    isValidInput.value = value === '' || value === colorPreview.value
-  }
+  isValidInput.value = value === '' || value === colorPreview.value
 }
 
 // Handle input blur to reset invalid inputs

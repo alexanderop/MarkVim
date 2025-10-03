@@ -84,7 +84,7 @@ async function handleImport(): Promise<void> {
   if (isAutoImport.value && autoImportDocument) {
     documentToImport = autoImportDocument
   }
-  else if (importUrl.value.trim()) {
+  if (!documentToImport && importUrl.value.trim()) {
     documentToImport = await importFromUrl(importUrl.value)
   }
 

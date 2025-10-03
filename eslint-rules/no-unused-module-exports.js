@@ -161,8 +161,9 @@ export default createRule({
             checkExportUsage(declarator.id.name, declarator.id, false)
           }
         }
+        return
       }
-      else if (
+      if (
         declaration.type === 'FunctionDeclaration'
         || declaration.type === 'ClassDeclaration'
         || declaration.type === 'TSInterfaceDeclaration'
@@ -183,13 +184,14 @@ export default createRule({
         // Handle: export { foo, bar }
         if (node.specifiers && node.specifiers.length > 0) {
           handleExportSpecifiers(node)
+          return
         }
         // Handle: export const foo = ...
         // Handle: export function foo() {}
         // Handle: export class Foo {}
         // Handle: export interface Foo {}
         // Handle: export type Foo = ...
-        else if (node.declaration) {
+        if (node.declaration) {
           handleExportDeclaration(node.declaration)
         }
       },

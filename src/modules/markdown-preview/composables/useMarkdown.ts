@@ -26,13 +26,12 @@ export function useMarkdown(markdownContent: Ref<string>): {
 
     if (renderResult.ok) {
       renderedMarkdown.value = renderResult.value
+      return
     }
-    else {
-      console.error('Failed to render markdown:', renderResult.error)
-      const MarkdownIt = (await import('markdown-it')).default
-      const basicMd = new MarkdownIt()
-      renderedMarkdown.value = basicMd.render(markdownContent.value)
-    }
+    console.error('Failed to render markdown:', renderResult.error)
+    const MarkdownIt = (await import('markdown-it')).default
+    const basicMd = new MarkdownIt()
+    renderedMarkdown.value = basicMd.render(markdownContent.value)
   }
 
   watch(markdownContent, updateMarkdown, { immediate: false })

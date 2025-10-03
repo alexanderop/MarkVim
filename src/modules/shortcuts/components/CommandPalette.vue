@@ -89,10 +89,9 @@ const groupedCommands = computed(() => {
     commands.forEach((command) => {
       if (recentIds.has(command.id)) {
         recentCommands.push(command)
+        return
       }
-      else {
-        otherCommands.push(command)
-      }
+      otherCommands.push(command)
     })
 
     const groups: { name: string, commands: Command[] }[] = []

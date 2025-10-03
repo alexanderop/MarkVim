@@ -54,21 +54,20 @@ async function handleExportTheme(): Promise<void> {
         button.textContent = originalText
       }, COPIED_MESSAGE_DURATION_MS)
     }
+    return
   }
-  else {
-    // Failed - download as file instead
-    console.error('Failed to copy theme to clipboard:', copyResult.error)
+  // Failed - download as file instead
+  console.error('Failed to copy theme to clipboard:', copyResult.error)
 
-    const blob = new Blob([themeData], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'markvim-theme.json'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+  const blob = new Blob([themeData], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'markvim-theme.json'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 function openColorPicker(colorDef: typeof colorDefinitions[0]): void {

@@ -375,12 +375,14 @@ export class MarkVimPage {
     if (expectedMode === 'editor') {
       await expect(this.editorPane).toBeVisible()
       await expect(this.previewPane).toBeHidden()
+      return
     }
-    else if (expectedMode === 'preview') {
+    if (expectedMode === 'preview') {
       await expect(this.previewPane).toBeVisible()
       await expect(this.editorPane).toBeHidden()
+      return
     }
-    else if (expectedMode === 'split') {
+    if (expectedMode === 'split') {
       await expect(this.editorPane).toBeVisible()
       await expect(this.previewPane).toBeVisible()
     }
@@ -469,11 +471,10 @@ export class MarkVimPage {
     // 2. No vim mode indicator (vim mode disabled) - which is expected after toggling
     if (vimModeCount > 0) {
       await expect(vimModeElement).toBeVisible({ timeout: 1000 })
+      return
     }
-    else {
-      // Vim mode was disabled, so no indicator should be present - this is correct behavior
-      expect(statusText).not.toMatch(/\b(NORMAL|INSERT|VISUAL|REPLACE)\b/)
-    }
+    // Vim mode was disabled, so no indicator should be present - this is correct behavior
+    expect(statusText).not.toMatch(/\b(NORMAL|INSERT|VISUAL|REPLACE)\b/)
   }
 
   async enableVimMode(): Promise<void> {
@@ -974,12 +975,8 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     const isEnabled = await this.isSyncScrollEnabled()
     const toggleState = await this.syncScrollToggle.getAttribute('data-state')
 
-    if (isEnabled) {
-      expect(toggleState).toBe('checked')
-    }
-    else {
-      expect(toggleState).toBe('unchecked')
-    }
+    const expectedState = isEnabled ? 'checked' : 'unchecked'
+    expect(toggleState).toBe(expectedState)
 
     await this.closeSettingsModal()
   }
@@ -1028,10 +1025,9 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       if (expectedDocumentCount !== undefined) {
         await this.verifyDocumentCount(expectedDocumentCount)
       }
+      return
     }
-    else {
-      await this.verifySidebarHidden()
-    }
+    await this.verifySidebarHidden()
   }
 
   // Complete document creation workflow
@@ -1049,17 +1045,16 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     if (method === 'keyboard') {
       await this.toggleSidebarWithKeyboard()
     }
-    else {
+    if (method === 'button') {
       await this.toggleSidebarWithButton()
     }
 
     // Verify the state changed
     if (wasVisible) {
       await this.verifySidebarHidden()
+      return
     }
-    else {
-      await this.verifySidebarVisible()
-    }
+    await this.verifySidebarVisible()
   }
 
   // Generic element state verification
