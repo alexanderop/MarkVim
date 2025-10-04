@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColorDefinition } from '../internal/color-definitions'
+import type { ColorDefinition } from '../utils/color-definitions'
 import { UButton } from '#components'
 
 const { colorDef, colorString } = defineProps<{

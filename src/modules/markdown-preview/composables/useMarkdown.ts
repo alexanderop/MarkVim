@@ -1,7 +1,7 @@
 import type MarkdownIt from 'markdown-it'
 import { onMounted, ref, type Ref, watch } from 'vue'
 import { tryCatchAsync } from '~/shared/utils/result'
-import { addDataTestIdToAlerts, createMarkdownRenderer } from '../internal/markdown'
+import { addDataTestIdToAlerts, createMarkdownRenderer } from '../utils/markdown'
 
 export function useMarkdown(markdownContent: Ref<string>): {
   renderedMarkdown: Ref<string>

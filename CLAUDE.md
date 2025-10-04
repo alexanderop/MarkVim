@@ -69,7 +69,21 @@ src/
 └── types/            # Type definitions
 ```
 
-**Modules (each keeps `api/`, `components/`, `composables/`, `internal/`, optional `store.ts`)**
+**Module Structure**
+
+Each module contains:
+* `api.ts` – **Public interface only.** Exports ONLY what can be used outside the module.
+* `components/` – Vue components
+* `composables/` – Composables (reactivity, wiring)
+* `utils/` – Pure functions, business logic, helpers
+* `store.ts` – Optional Pinia store
+
+**Rules**:
+1. No `internal/` folder. Use appropriate folders (`utils/`, `composables/`, etc.)
+2. `api.ts` exports ONLY what external modules need
+3. Internal implementation details stay private to the module
+
+**Modules**
 
 * color-theme – OKLCH theme picker (+ `store.ts`)
 * documents  – CRUD + localStorage (+ `store.ts`)
@@ -85,7 +99,7 @@ src/
 2. Business logic in composables
 3. Store persistence to localStorage
 4. Typed event bus (`src/shared/utils/eventBus.ts`)
-5. Feature modules own their API/components/composables/internal
+5. Feature modules own their own implementation details
 6. Responsive, mobile-first
 
 ---

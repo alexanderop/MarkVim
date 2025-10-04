@@ -14,7 +14,7 @@ import {
   handleResetDocuments,
   handleSelectDocument,
   handleUpdateDocument,
-} from './internal/updateHandlers'
+} from './utils/update-handlers'
 
 // --- THE MODEL ---
 // This interface represents the entire state of our documents module.
