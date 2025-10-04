@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ColorTheme } from '~/modules/color-theme/api'
+import { UButton } from '#components'
 import { ref } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
-import BaseButton from '~/shared/components/BaseButton.vue'
 import BaseModal from '~/shared/components/BaseModal.vue'
 import { tryCatchAsync } from '~/shared/utils/result'
 import ColorThemeOklchColorPicker from './OklchColorPicker.vue'
@@ -288,15 +288,17 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
 
     <template #footer>
       <div class="flex gap-2 w-full">
-        <BaseButton
+        <UButton
+          color="neutral"
           variant="ghost"
           size="sm"
           icon="lucide:rotate-ccw"
           @click="resetThemeToDefaults"
         >
           Reset Colors
-        </BaseButton>
-        <BaseButton
+        </UButton>
+        <UButton
+          color="neutral"
           variant="ghost"
           size="sm"
           icon="lucide:download"
@@ -304,7 +306,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
           @click="handleExportTheme"
         >
           Export Theme
-        </BaseButton>
+        </UButton>
       </div>
     </template>
   </BaseModal>
@@ -326,21 +328,23 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
     </div>
     <template #footer>
       <div class="flex justify-end gap-2 w-full">
-        <BaseButton
+        <UButton
+          color="neutral"
           variant="ghost"
           size="sm"
           @click="cancelColorChange"
         >
           Cancel
-        </BaseButton>
-        <BaseButton
-          variant="default"
+        </UButton>
+        <UButton
+          color="neutral"
+          variant="outline"
           size="sm"
           data-testid="accept-color-change-button"
           @click="acceptColorChange"
         >
           OK
-        </BaseButton>
+        </UButton>
       </div>
     </template>
   </BaseModal>

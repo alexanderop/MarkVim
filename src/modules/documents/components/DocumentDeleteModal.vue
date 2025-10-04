@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseButton from '~/shared/components/BaseButton.vue'
+import { UButton } from '#components'
 import BaseModal from '~/shared/components/BaseModal.vue'
 
 const {
@@ -36,22 +36,24 @@ const open = defineModel<boolean>('open', { default: false })
     </div>
 
     <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
-      <BaseButton
-        variant="default"
+      <UButton
+        color="neutral"
+        variant="outline"
         icon="lucide:x"
         data-testid="delete-cancel-btn"
         @click="$emit('cancel')"
       >
         Cancel
-      </BaseButton>
-      <BaseButton
-        variant="destructive"
+      </UButton>
+      <UButton
+        color="error"
+        variant="solid"
         icon="lucide:trash-2"
         data-testid="delete-confirm-btn"
         @click="$emit('confirm')"
       >
         Delete
-      </BaseButton>
+      </UButton>
     </div>
   </BaseModal>
 </template>

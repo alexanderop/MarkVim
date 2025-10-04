@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
-import { Icon } from '#components'
+import { Icon, UButton } from '#components'
 import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
-import BaseButton from '~/shared/components/BaseButton.vue'
 import BaseModal from '~/shared/components/BaseModal.vue'
 import { tryCatchAsync } from '~/shared/utils/result'
 
@@ -146,8 +145,9 @@ function handleClose(): void {
               class="flex-1 px-3 py-2 text-sm bg-gray-900/50 border border-gray-600 rounded-md text-gray-200 font-mono text-xs"
               data-testid="share-link-input"
             >
-            <BaseButton
-              variant="primary"
+            <UButton
+              color="primary"
+              variant="solid"
               size="sm"
               :icon="copySuccess ? 'lucide:check' : 'lucide:copy'"
               :class="[
@@ -160,7 +160,7 @@ function handleClose(): void {
               @click="copyToClipboard"
             >
               {{ copySuccess ? 'Copied!' : 'Copy' }}
-            </BaseButton>
+            </UButton>
           </div>
           <p class="text-xs text-gray-500">
             Anyone with this link can import this document into their MarkVim.
@@ -168,7 +168,8 @@ function handleClose(): void {
         </div>
 
         <!-- Advanced Stats Toggle -->
-        <BaseButton
+        <UButton
+          color="neutral"
           variant="ghost"
           size="sm"
           :icon="showAdvanced ? 'lucide:chevron-down' : 'lucide:chevron-right'"
@@ -177,7 +178,7 @@ function handleClose(): void {
           @click="showAdvanced = !showAdvanced"
         >
           {{ showAdvanced ? 'Hide' : 'Show' }} technical details
-        </BaseButton>
+        </UButton>
 
         <!-- Advanced Stats -->
         <div

@@ -26,8 +26,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/icon',
+    '@nuxt/ui',
     'reka-ui/nuxt',
-    '@unocss/nuxt',
     '@vueuse/nuxt',
     '@pinia/nuxt',
   ],

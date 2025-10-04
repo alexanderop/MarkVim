@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { UButton } from '#components'
 import { useEditorSettings } from '~/modules/editor/api'
-import BaseButton from './BaseButton.vue'
 
 const { settings, toggleVimMode } = useEditorSettings()
 </script>
@@ -16,7 +16,8 @@ const { settings, toggleVimMode } = useEditorSettings()
       </p>
     </div>
 
-    <BaseButton
+    <UButton
+      color="neutral"
       variant="ghost"
       class="rounded-full h-6 w-11 p-0 focus:ring-editor-active focus:ring-offset-surface-primary"
       :class="[
@@ -32,6 +33,6 @@ const { settings, toggleVimMode } = useEditorSettings()
           settings.vimMode ? 'translate-x-6' : 'translate-x-1',
         ]"
       />
-    </BaseButton>
+    </UButton>
   </div>
 </template>

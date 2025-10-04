@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import { UButton } from '#components'
 import { computed, ref } from 'vue'
 import { useEditorSettings } from '~/modules/editor/api'
 import { type FeatureName, useFeatureFlagsStore } from '~/modules/feature-flags/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
-import BaseButton from './BaseButton.vue'
 import BaseModal from './BaseModal.vue'
 import BaseSwitch from './BaseSwitch.vue'
 
@@ -85,13 +85,14 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     @close="closeSettings"
   >
     <template #trigger>
-      <BaseButton
-        variant="icon"
-        size="icon"
+      <UButton
+        color="neutral"
+        variant="ghost"
+        size="md"
         icon="lucide:settings"
         title="Settings (g s)"
         data-testid="settings-button"
-        icon-only
+        square
         @click="openSettings"
       />
     </template>
@@ -151,11 +152,12 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                 Font Size
               </h4>
               <div class="flex gap-2 items-center">
-                <BaseButton
+                <UButton
+                  color="neutral"
                   variant="ghost"
                   size="sm"
                   icon="heroicons:minus"
-                  icon-only
+                  square
                   data-testid="font-size-decrease"
                   @click="updateFontSize(settings.fontSize - 1)"
                 />
@@ -163,11 +165,12 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                   class="text-sm text-text-primary font-mono text-center min-w-[3rem]"
                   data-testid="font-size-display"
                 >{{ settings.fontSize }}px</span>
-                <BaseButton
+                <UButton
+                  color="neutral"
                   variant="ghost"
                   size="sm"
                   icon="heroicons:plus"
-                  icon-only
+                  square
                   data-testid="font-size-increase"
                   @click="updateFontSize(settings.fontSize + 1)"
                 />
@@ -299,23 +302,25 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
 
     <template #footer-right>
       <div class="flex gap-2 items-center">
-        <BaseButton
-          variant="default"
+        <UButton
+          color="neutral"
+          variant="outline"
           size="sm"
           icon="lucide:trash-2"
           data-testid="clear-data-button"
           @click="openClearDataModal"
         >
           Clear Local Data
-        </BaseButton>
-        <BaseButton
-          variant="default"
+        </UButton>
+        <UButton
+          color="neutral"
+          variant="outline"
           size="sm"
           icon="lucide:rotate-ccw"
           @click="handleResetToDefaults"
         >
           Reset to Defaults
-        </BaseButton>
+        </UButton>
       </div>
     </template>
   </BaseModal>
@@ -347,22 +352,24 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     </div>
 
     <div class="flex gap-3 items-center justify-end pt-4 border-t border-border">
-      <BaseButton
-        variant="default"
+      <UButton
+        color="neutral"
+        variant="outline"
         icon="lucide:x"
         data-testid="clear-data-cancel-btn"
         @click="closeClearDataModal"
       >
         Cancel
-      </BaseButton>
-      <BaseButton
-        variant="destructive"
+      </UButton>
+      <UButton
+        color="error"
+        variant="solid"
         icon="lucide:trash-2"
         data-testid="clear-data-confirm-btn"
         @click="confirmClearData"
       >
         Clear All Data
-      </BaseButton>
+      </UButton>
     </div>
   </BaseModal>
 </template>

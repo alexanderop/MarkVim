@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Icon } from '#components'
+import { Icon, UButton } from '#components'
 import { onKeyUp } from '@vueuse/core'
 import { computed, onMounted, provide, ref } from 'vue'
 import { useShortcuts } from '~/modules/shortcuts/api'
-import BaseButton from './BaseButton.vue'
 import BaseModal from './BaseModal.vue'
 
 const { shortcutsByCategory, formatKeys, registerShortcut, getDefaultIconForCategory } = useShortcuts()
@@ -60,14 +59,15 @@ const totalShortcuts = computed(() =>
     @close="closeModal"
   >
     <template #trigger>
-      <BaseButton
+      <UButton
         v-feature="'shortcuts'"
-        variant="icon"
-        size="icon"
+        color="neutral"
+        variant="ghost"
+        size="md"
         icon="lucide:keyboard"
         title="Keyboard shortcuts (Shift + ?)"
         data-testid="keyboard-shortcuts-button"
-        icon-only
+        square
         @click="openModal"
       />
     </template>

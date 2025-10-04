@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
+import { UButton } from '#components'
 import { computed, ref } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
-import BaseButton from '~/shared/components/BaseButton.vue'
 import ShareDialog from './ShareDialog.vue'
 
 const { document, disabled } = defineProps<{
@@ -30,14 +30,15 @@ const canShare = computed(() => {
 
 <template>
   <div>
-    <BaseButton
-      variant="icon"
-      size="icon"
+    <UButton
+      color="neutral"
+      variant="ghost"
+      size="md"
       :icon="isSharing ? 'lucide:loader-2' : 'lucide:share'"
       :title="canShare ? 'Share document' : 'Document too large to share'"
       :disabled="disabled || !document || isSharing || !canShare"
       data-testid="share-button"
-      icon-only
+      square
       :class="{ 'animate-spin': isSharing }"
       @click="handleShareClick"
     />

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/api'
+import { UButton } from '#components'
 import { emitAppEvent } from '@/shared/utils/eventBus'
 import { getDocumentTitle } from '~/modules/documents/api'
 import { useViewMode, type ViewMode } from '~/modules/layout/api'
 import { ShareButton } from '~/modules/share/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
-import BaseButton from '~/shared/components/BaseButton.vue'
 import SettingsModal from '~/shared/components/SettingsModal.vue'
 import ShortcutsModal from '~/shared/components/ShortcutsModal.vue'
 
@@ -42,9 +42,10 @@ function handleDeleteDocument(): void {
   >
     <!-- Left section -->
     <div class="flex gap-3 items-center">
-      <BaseButton
+      <UButton
         :icon="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
         :title="isSidebarVisible ? 'Hide sidebar' : 'Show sidebar'"
+        color="neutral"
         variant="ghost"
         size="sm"
         data-testid="sidebar-toggle"
@@ -52,7 +53,7 @@ function handleDeleteDocument(): void {
         @click="toggleSidebar"
       >
         <span class="hidden md:inline">{{ isSidebarVisible ? 'Hide' : 'Show' }}</span>
-      </BaseButton>
+      </UButton>
 
       <div class="flex gap-2 items-center">
         <h1 class="text-sm text-gray-100 tracking-tight font-medium w-32 md:w-48 truncate">
@@ -66,13 +67,14 @@ function handleDeleteDocument(): void {
       data-testid="view-mode-toggle"
       class="p-0.5 md:p-1 border border-subtle rounded-lg bg-surface-primary/60 flex items-center"
     >
-      <BaseButton
+      <UButton
         v-for="mode in [
           { key: 'editor', icon: 'lucide:edit-3', label: 'Editor', shortcut: '⌘1' },
           { key: 'split', icon: 'lucide:columns-2', label: 'Split', shortcut: '⌘2' },
           { key: 'preview', icon: 'lucide:eye', label: 'Preview', shortcut: '⌘3' },
         ]"
         :key="mode.key"
+        color="neutral"
         variant="ghost"
         size="sm"
         :icon="mode.icon"
@@ -90,7 +92,7 @@ function handleDeleteDocument(): void {
           :data-testid="`view-mode-${mode.key}-active`"
           class="rounded-md inset-0 absolute bg-white/5"
         />
-      </BaseButton>
+      </UButton>
     </div>
 
     <!-- Right section -->
@@ -100,27 +102,29 @@ function handleDeleteDocument(): void {
         :document="activeDocument"
       />
 
-      <BaseButton
+      <UButton
         v-feature="'documents'"
-        variant="icon"
-        size="icon"
+        color="neutral"
+        variant="ghost"
+        size="md"
         icon="lucide:trash-2"
         title="Delete note"
         data-testid="delete-document-btn"
         class="hover:text-error hover:bg-error/10 hidden md:flex"
-        icon-only
+        square
         @click="handleDeleteDocument"
       />
 
       <div class="bg-gray-700/50 h-4 w-px hidden md:block" />
 
       <div class="flex gap-0.5 md:gap-1 items-center">
-        <BaseButton
+        <UButton
           v-feature="'color-theme'"
+          color="neutral"
           variant="ghost"
           size="sm"
           icon="lucide:palette"
-          icon-only
+          square
           title="Color Theme"
           data-testid="color-theme-button"
           class="hidden md:flex"

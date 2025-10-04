@@ -1,43 +1,102 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  /* =============================================
+     ✨ FONT CONFIGURATION
+     =============================================*/
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'Monaco', 'Courier New', monospace;
+
+  /* =============================================
+     ✨ COLOR CONFIGURATION
+     =============================================*/
+  /* Map custom colors to Tailwind */
+  --color-background: oklch(12% 0.002 0);
+  --color-foreground: oklch(96% 0 0);
+  --color-accent: oklch(60% 0.18 240);
+  --color-muted: oklch(20% 0.002 0);
+  --color-border: oklch(25% 0.003 20);
+}
+
 /* =============================================
-   ✨ SIMPLIFIED COLOR TOKENS
+   ✨ LEGACY CSS VARIABLES (for backward compatibility)
    =============================================*/
 :root {
   /* Core 5 tokens - everything you need */
-  --background: oklch(12% 0.002 0);      
-  --foreground: oklch(96% 0 0);          
-  --accent: oklch(60% 0.18 240);         
-  --muted: oklch(20% 0.002 0);           
-  --border: oklch(25% 0.003 20);         
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+  --accent: var(--color-accent);
+  --muted: var(--color-muted);
+  --border: var(--color-border);
 
   /* =============================================
      ✨ FONT SYSTEM TOKENS
      =============================================*/
-  
+
   /* Base font size - adjustable via settings */
   --font-size-base: 14px;
-  
+
   /* Font families */
   --font-family-sans: 'Geist', sans-serif;
   --font-family-mono: 'Fira Code', monospace;
-  
+
   /* Font size scale based on base size */
-  --font-size-xs: calc(var(--font-size-base) * 0.75);    /* 12px when base is 16px */
-  --font-size-sm: calc(var(--font-size-base) * 0.875);   /* 14px when base is 16px */
-  --font-size-md: var(--font-size-base);                 /* 16px when base is 16px */
-  --font-size-lg: calc(var(--font-size-base) * 1.125);   /* 18px when base is 16px */
-  --font-size-xl: calc(var(--font-size-base) * 1.25);    /* 20px when base is 16px */
-  --font-size-2xl: calc(var(--font-size-base) * 1.5);    /* 24px when base is 16px */
-  
+  --font-size-xs: calc(var(--font-size-base) * 0.75);
+  --font-size-sm: calc(var(--font-size-base) * 0.875);
+  --font-size-md: var(--font-size-base);
+  --font-size-lg: calc(var(--font-size-base) * 1.125);
+  --font-size-xl: calc(var(--font-size-base) * 1.25);
+  --font-size-2xl: calc(var(--font-size-base) * 1.5);
+
   /* Line height scale */
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 }
 
+/* =============================================
+   ✨ GLOBAL STYLES (migrated from UnoCSS preflights)
+   =============================================*/
+body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-family-mono);
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
+}
+
+/* Shiki code blocks - let night-owl theme handle colors */
+.shiki,
+.shiki code,
+.shiki pre {
+  font-family: var(--font-family-mono) !important;
+  font-size: var(--font-size-base) !important;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
+  tab-size: 2;
+}
+
+/* CodeMirror editor */
+.cm-editor,
+.cm-editor .cm-content,
+.cm-editor .cm-line {
+  font-family: var(--font-family-mono) !important;
+  font-size: var(--font-size-base) !important;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
+}
+
 /* ──────────────────────────
-   4. Shiki Line Numbers
+   Shiki Line Numbers
    ──────────────────────────*/
-/* Enable line numbers for Shiki code blocks using CSS counters */
 .shiki {
   counter-reset: shiki-line-number;
   position: relative;
@@ -65,10 +124,102 @@
   line-height: inherit;
 }
 
-/* Hide line numbers for the last empty line if it exists */
 .shiki .line:last-child:empty::before {
   content: none;
   counter-increment: none;
+}
+
+/* =============================================
+   ✨ TYPOGRAPHY - PROSE STYLES (migrated from UnoCSS)
+   =============================================*/
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: var(--accent);
+}
+
+.prose .shiki {
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.prose .mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.prose .markdown-alert {
+  border-left-width: 4px;
+  border-left-style: solid;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  background-color: color-mix(in oklch, var(--background) 90%, transparent);
+  border-radius: 0.375rem;
+  padding: 1rem;
+}
+
+.prose .markdown-alert-note {
+  border-left-color: var(--alert-note);
+  background-color: color-mix(in oklch, var(--alert-note) 5%, var(--background));
+}
+
+.prose .markdown-alert-note .markdown-alert-title {
+  color: var(--foreground);
+}
+
+.prose .markdown-alert-note .markdown-alert-title svg {
+  fill: var(--foreground);
+}
+
+.prose .markdown-alert-tip {
+  border-left-color: var(--alert-tip);
+  background-color: color-mix(in oklch, var(--alert-tip) 5%, var(--background));
+}
+
+.prose .markdown-alert-tip .markdown-alert-title {
+  color: var(--foreground);
+}
+
+.prose .markdown-alert-tip .markdown-alert-title svg {
+  fill: var(--foreground);
+}
+
+.prose .markdown-alert-important {
+  border-left-color: var(--alert-important);
+  background-color: color-mix(in oklch, var(--alert-important) 5%, var(--background));
+}
+
+.prose .markdown-alert-important .markdown-alert-title {
+  color: var(--foreground);
+}
+
+.prose .markdown-alert-important .markdown-alert-title svg {
+  fill: var(--foreground);
+}
+
+.prose .markdown-alert-warning {
+  border-left-color: var(--alert-warning);
+  background-color: color-mix(in oklch, var(--alert-warning) 5%, var(--background));
+}
+
+.prose .markdown-alert-warning .markdown-alert-title {
+  color: var(--foreground);
+}
+
+.prose .markdown-alert-warning .markdown-alert-title svg {
+  fill: var(--foreground);
+}
+
+.prose .markdown-alert-caution {
+  border-left-color: var(--alert-caution);
+  background-color: color-mix(in oklch, var(--alert-caution) 5%, var(--background));
+}
+
+.prose .markdown-alert-caution .markdown-alert-title {
+  color: var(--foreground);
+}
+
+.prose .markdown-alert-caution .markdown-alert-title svg {
+  fill: var(--foreground);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════════════════════

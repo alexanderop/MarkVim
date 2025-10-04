@@ -17,6 +17,9 @@ pnpm build
 
 # Preview production build
 pnpm preview
+
+# Kill all running node/localhost server processes
+pnpm kill:servers
 ```
 
 ### Testing & Quality
@@ -137,13 +140,42 @@ The application uses a typed event bus (`src/shared/utils/eventBus.ts`) for cros
 - `settings:*` - Settings toggle events
 
 ### Component Auto-Import
-Nuxt is configured to auto-import components from:
-- All module component directories (`src/modules/*/components/`)
-- Shared components (`src/shared/components/`)
-- App components (`src/app/`)
+Nuxt is configured with `components: false` to disable automatic component registration. All components must be explicitly imported.
+
+**Local components** are imported directly:
+```ts
+import BaseModal from '~/shared/components/BaseModal.vue'
+```
+
+**Nuxt UI components** must be imported from `#components`:
+```ts
+import { UButton, UCard, UInput } from '#components'
+```
+
+**Why `#components` for Nuxt UI?**
+- Nuxt UI doesn't expose per-component ESM exports from `@nuxt/ui`
+- It relies on Nuxt's component registry system
+- `#components` gives explicit imports while using the registry
+- This is the only way to import Nuxt UI components when auto-imports are disabled
+
+**Examples:**
+```vue
+<script setup lang="ts">
+// ✅ Correct - Nuxt UI components from #components
+import { UButton, UModal } from '#components'
+
+// ✅ Correct - Local components with path
+import BaseModal from '~/shared/components/BaseModal.vue'
+
+// ❌ Wrong - This doesn't work
+import { UButton } from '@nuxt/ui'
+import UButton from '#ui/components/Button.vue'
+</script>
+```
 
 ### Dependencies Overview
 Key dependencies include:
+- **Nuxt UI** - Comprehensive UI component library (import from `#components`)
 - **CodeMirror 6** with vim extension (`@replit/codemirror-vim`)
 - **Mermaid** for diagram rendering
 - **Markdown-it** with plugins for footnotes and GitHub alerts

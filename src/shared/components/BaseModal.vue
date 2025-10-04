@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseButton from './BaseButton.vue'
+import { UButton } from '#components'
 
 interface Emits {
   (e: 'close'): void
@@ -76,11 +76,12 @@ const maxWidthClasses = {
                 v-if="showCloseButton"
                 as-child
               >
-                <BaseButton
-                  variant="icon"
-                  size="icon"
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  size="md"
                   icon="lucide:x"
-                  icon-only
+                  square
                   title="Close"
                   @click="handleClose"
                 />
