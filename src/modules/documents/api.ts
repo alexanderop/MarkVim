@@ -26,13 +26,9 @@ const TITLE_MAX_LENGTH = 50
 
 export function getDocumentTitle(content: string): string {
   const firstLine = content.split('\n')[0]?.trim() ?? ''
-  let title = ''
-  if (firstLine.startsWith('#')) {
-    title = firstLine.replace(/^#+\s*/, '') || 'Untitled'
-  }
-  else {
-    title = firstLine || 'Untitled'
-  }
+  const title = firstLine.startsWith('#')
+    ? firstLine.replace(/^#+\s*/, '') || 'Untitled'
+    : firstLine || 'Untitled'
 
   if (title.length > TITLE_MAX_LENGTH) {
     return `${title.slice(0, TITLE_MAX_LENGTH)}…`
