@@ -126,6 +126,79 @@ Each module under `src/modules/` follows a consistent structure:
 5. **Modular Structure**: Each module contains its own API, components, composables, and internal logic
 6. **Responsive Design**: Mobile-first with adaptive layouts
 
+### Inline Vue Composables Pattern
+
+A well-organized Vue component should read like a **table of contents** at the top, with implementation details hidden below. Use inline composables to group related logic into functions with descriptive names.
+
+**The Perfect Component Structure:**
+
+```vue
+<script setup lang="ts">
+// 1. Imports organized by category
+import { ref } from 'vue'
+import { useExternalComposable } from '@/composables/external'
+
+// 2. External/shared composables
+const { sharedState } = useExternalComposable()
+
+// 3. Component-specific logic - reads like a story
+const { count, increment, decrement } = useCounter()
+const { message, updateMessage } = useMessage()
+const { isValid, validate } = useValidation(count)
+
+// 4. Implementation details below (inline composables)
+function useCounter() {
+  const count = ref(0)
+
+  function increment() {
+    count.value++
+  }
+
+  function decrement() {
+    count.value--
+  }
+
+  return { count, increment, decrement }
+}
+
+function useMessage() {
+  const message = ref('')
+
+  function updateMessage(text: string) {
+    message.value = text
+  }
+
+  return { message, updateMessage }
+}
+
+function useValidation(count: Ref<number>) {
+  const isValid = computed(() => count.value > 0)
+
+  function validate() {
+    return isValid.value
+  }
+
+  return { isValid, validate }
+}
+</script>
+```
+
+**Why this works:**
+
+1. **Top section is easy to scan** - You see what the component does without reading implementation
+2. **Related logic grouped** - Counter state and counter functions stay together
+3. **Single responsibility** - Each composable does one thing
+4. **No file clutter** - Component-specific logic stays in the component
+
+**When to use inline composables:**
+- Component has multiple concerns (counter, messages, validation)
+- Logic is specific to this component only
+- You want better organization without creating new files
+
+**When to use separate files instead:**
+- Logic is reused across multiple components → create `composables/useCounter.ts`
+- Composable is complex and has its own tests
+
 ### State Management
 - Documents are managed by Pinia store (`src/modules/documents/store.ts`)
 - Color theme managed by Pinia store (`src/modules/color-theme/store.ts`)
