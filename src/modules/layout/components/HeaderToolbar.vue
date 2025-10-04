@@ -22,7 +22,7 @@ const { viewMode, activeDocumentTitle, activeDocument } = defineProps<{
 
 defineEmits<Emits>()
 
-const { openColorTheme } = useShortcuts()
+const { toggleColorTheme } = useShortcuts()
 const { isSidebarVisible, toggleSidebar } = useViewMode()
 
 function handleDeleteDocument(): void {
@@ -90,7 +90,7 @@ function handleDeleteDocument(): void {
         <div
           v-if="viewMode === mode.key"
           :data-testid="`view-mode-${mode.key}-active`"
-          class="rounded-md inset-0 absolute bg-white/5"
+          class="rounded-md inset-0 absolute bg-[var(--accent)]/10"
         />
       </UButton>
     </div>
@@ -128,7 +128,7 @@ function handleDeleteDocument(): void {
           title="Color Theme"
           data-testid="color-theme-button"
           class="hidden md:flex"
-          @click="openColorTheme"
+          @click="() => { toggleColorTheme(true) }"
         />
         <ShortcutsModal v-feature="'shortcuts'" />
         <SettingsModal />

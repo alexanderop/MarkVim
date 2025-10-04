@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import type { ColorTheme } from '~/modules/color-theme/api'
-import { UButton } from '#components'
+import { UButton, UModal } from '#components'
 import { ref } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
-import BaseModal from '~/shared/components/BaseModal.vue'
 import { tryCatchAsync } from '~/shared/utils/result'
 import ColorThemeOklchColorPicker from './OklchColorPicker.vue'
 
 const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
-const { showColorTheme, closeColorTheme } = useShortcuts()
+const { showColorTheme, toggleColorTheme } = useShortcuts()
+
+// Use defineModel with getter/setter to sync with store without duplicating state
+const isOpen = defineModel<boolean>('open', {
+  get: () => showColorTheme.value,
+  set: toggleColorTheme,
+})
 
 const showColorPickerModal = ref(false)
 const selectedColorKey = ref<keyof ColorTheme>('background')
@@ -166,125 +171,125 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
 </script>
 
 <template>
-  <BaseModal
-    :open="showColorTheme"
+  <UModal
+    v-model:open="isOpen"
     title="Color Theme"
     description="Customize your editor colors with OKLCH color space"
-    max-width="4xl"
+    :ui="{ content: 'max-w-4xl' }"
     data-testid="color-theme-modal"
-    @update:open="(open) => !open && closeColorTheme()"
-    @close="closeColorTheme"
   >
-    <div class="space-y-6">
-      <div>
-        <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
-          Current Theme
-        </h3>
+    <template #body>
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
+            Current Theme
+          </h3>
 
-        <div
-          class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md"
-          data-testid="color-palette-preview"
-        >
           <div
-            v-for="colorDef in colorDefinitions"
-            :key="colorDef.key"
-            class="flex flex-col items-center gap-1"
-            :data-testid="`color-preview-${colorDef.key}`"
+            class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md"
+            data-testid="color-palette-preview"
           >
             <div
-              class="w-8 h-8 rounded-md border border-border shadow-sm"
-              :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
-              :title="`${colorDef.label}: ${oklchToString(theme[colorDef.key])}`"
-            />
-            <span class="text-xs text-text-secondary font-medium">
-              {{ colorDef.label }}
-            </span>
+              v-for="colorDef in colorDefinitions"
+              :key="colorDef.key"
+              class="flex flex-col items-center gap-1"
+              :data-testid="`color-preview-${colorDef.key}`"
+            >
+              <div
+                class="w-8 h-8 rounded-md border border-border shadow-sm"
+                :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
+                :title="`${colorDef.label}: ${oklchToString(theme[colorDef.key])}`"
+              />
+              <span class="text-xs text-text-secondary font-medium">
+                {{ colorDef.label }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="max-h-[50vh] overflow-y-auto space-y-6">
+          <div data-testid="core-colors-section">
+            <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
+              Core Colors
+            </h3>
+            <div class="grid gap-3">
+              <UButton
+                v-for="colorDef in coreColors"
+                :key="colorDef.key"
+                variant="ghost"
+                class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
+                :data-testid="`color-button-${colorDef.key}`"
+                @click="openColorPicker(colorDef)"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="text-left">
+                    <div class="font-medium text-sm text-text-primary">
+                      {{ colorDef.label }}
+                    </div>
+                    <div class="text-xs text-text-secondary">
+                      {{ colorDef.description }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-6 h-6 rounded border border-border"
+                      :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
+                    />
+                    <code class="text-xs text-text-secondary font-mono">
+                      {{ oklchToString(theme[colorDef.key]) }}
+                    </code>
+                  </div>
+                  <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
+                </div>
+              </UButton>
+            </div>
+          </div>
+
+          <div data-testid="alert-colors-section">
+            <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
+              Alert Colors
+            </h3>
+            <div class="grid gap-3">
+              <UButton
+                v-for="colorDef in alertColors"
+                :key="colorDef.key"
+                variant="ghost"
+                class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
+                :data-testid="`color-button-${colorDef.key}`"
+                @click="openColorPicker(colorDef)"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="text-left">
+                    <div class="font-medium text-sm text-text-primary">
+                      {{ colorDef.label }}
+                    </div>
+                    <div class="text-xs text-text-secondary">
+                      {{ colorDef.description }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-6 h-6 rounded border border-border"
+                      :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
+                    />
+                    <code class="text-xs text-text-secondary font-mono">
+                      {{ oklchToString(theme[colorDef.key]) }}
+                    </code>
+                  </div>
+                  <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
+                </div>
+              </UButton>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="max-h-[50vh] overflow-y-auto space-y-6">
-        <div data-testid="core-colors-section">
-          <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
-            Core Colors
-          </h3>
-          <div class="grid gap-3">
-            <UButton
-              v-for="colorDef in coreColors"
-              :key="colorDef.key"
-              variant="ghost"
-              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
-              :data-testid="`color-button-${colorDef.key}`"
-              @click="openColorPicker(colorDef)"
-            >
-              <div class="flex items-center gap-3">
-                <div class="text-left">
-                  <div class="font-medium text-sm text-text-primary">
-                    {{ colorDef.label }}
-                  </div>
-                  <div class="text-xs text-text-secondary">
-                    {{ colorDef.description }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-6 h-6 rounded border border-border"
-                    :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
-                  />
-                  <code class="text-xs text-text-secondary font-mono">
-                    {{ oklchToString(theme[colorDef.key]) }}
-                  </code>
-                </div>
-                <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
-              </div>
-            </UButton>
-          </div>
-        </div>
-
-        <div data-testid="alert-colors-section">
-          <h3 class="text-xs text-text-secondary tracking-wider font-medium mb-3 uppercase">
-            Alert Colors
-          </h3>
-          <div class="grid gap-3">
-            <UButton
-              v-for="colorDef in alertColors"
-              :key="colorDef.key"
-              variant="ghost"
-              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
-              :data-testid="`color-button-${colorDef.key}`"
-              @click="openColorPicker(colorDef)"
-            >
-              <div class="flex items-center gap-3">
-                <div class="text-left">
-                  <div class="font-medium text-sm text-text-primary">
-                    {{ colorDef.label }}
-                  </div>
-                  <div class="text-xs text-text-secondary">
-                    {{ colorDef.description }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="w-6 h-6 rounded border border-border"
-                    :style="{ backgroundColor: oklchToString(theme[colorDef.key]) }"
-                  />
-                  <code class="text-xs text-text-secondary font-mono">
-                    {{ oklchToString(theme[colorDef.key]) }}
-                  </code>
-                </div>
-                <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
-              </div>
-            </UButton>
-          </div>
-        </div>
-      </div>
-    </div>
+    </template>
 
     <template #footer>
       <div class="flex gap-2 w-full">
@@ -309,23 +314,24 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
         </UButton>
       </div>
     </template>
-  </BaseModal>
+  </UModal>
 
-  <BaseModal
-    :open="showColorPickerModal"
+  <UModal
+    v-model:open="showColorPickerModal"
     :title="`Choose ${selectedColorData.label} Color`"
     :description="selectedColorData.description"
-    max-width="2xl"
-    @update:open="(open) => !open && cancelColorChange()"
-    @close="cancelColorChange"
+    :ui="{ content: 'max-w-2xl' }"
   >
-    <div class="p-4 border-t border-b border-border">
-      <ColorThemeOklchColorPicker
-        v-model="tempColor"
-        :label="selectedColorData.label"
-        :description="selectedColorData.description"
-      />
-    </div>
+    <template #body>
+      <div class="p-4 border-t border-b border-border">
+        <ColorThemeOklchColorPicker
+          v-model="tempColor"
+          :label="selectedColorData.label"
+          :description="selectedColorData.description"
+        />
+      </div>
+    </template>
+
     <template #footer>
       <div class="flex justify-end gap-2 w-full">
         <UButton
@@ -347,5 +353,5 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
         </UButton>
       </div>
     </template>
-  </BaseModal>
+  </UModal>
 </template>

@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
-import { Icon, UButton } from '#components'
-import {
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
-  DialogTitle,
-} from 'reka-ui'
+import { Icon, UButton, UModal } from '#components'
 import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
 import { tryCatchAsync } from '~/shared/utils/result'
@@ -113,142 +105,127 @@ function handleCancel(): void {
 </script>
 
 <template>
-  <DialogRoot
-    :open="open"
+  <UModal
+    v-model:open="open"
+    :title="isAutoImport ? 'Import Shared Document' : 'Import Document'"
+    :description="isAutoImport
+      ? 'A shared document was detected. Do you want to import it into your notes?'
+      : 'Paste a MarkVim share link to import a document into your notes.'"
+    :ui="{ content: 'w-full max-w-lg', body: 'space-y-4', footer: 'flex gap-2 justify-end' }"
+    data-testid="import-dialog"
     @update:open="(newOpen) => newOpen ? open = true : handleClose()"
   >
-    <DialogPortal>
-      <DialogOverlay class="bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50" />
-      <DialogContent
-        data-testid="import-dialog"
-        class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-gray-700 bg-gray-800 p-6 shadow-xl duration-200 rounded-lg"
+    <template #body>
+      <!-- Auto Import Preview -->
+      <div
+        v-if="isAutoImport && autoImportDocument"
+        class="space-y-3"
       >
-        <div class="flex flex-col space-y-1.5 text-center sm:text-left">
-          <DialogTitle class="text-lg font-semibold text-gray-100">
-            {{ isAutoImport ? 'Import Shared Document' : 'Import Document' }}
-          </DialogTitle>
-          <DialogDescription class="text-sm text-gray-400">
-            {{
-              isAutoImport
-                ? 'A shared document was detected. Do you want to import it into your notes?'
-                : 'Paste a MarkVim share link to import a document into your notes.'
-            }}
-          </DialogDescription>
-        </div>
-
-        <div class="space-y-4">
-          <!-- Auto Import Preview -->
-          <div
-            v-if="isAutoImport && autoImportDocument"
-            class="space-y-3"
-          >
-            <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-md">
-              <div class="flex items-start gap-2">
-                <Icon
-                  name="lucide:file-text"
-                  class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0"
-                />
-                <div class="space-y-1">
-                  <h4 class="text-sm font-medium text-blue-100">
-                    {{ documentTitle }}
-                  </h4>
-                  <p class="text-xs text-blue-200/80">
-                    {{ documentPreview }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Manual Import URL Input -->
-          <div
-            v-else
-            class="space-y-3"
-          >
-            <div class="space-y-2">
-              <label
-                for="import-url"
-                class="text-sm font-medium text-gray-200"
-              >
-                Share Link
-              </label>
-              <textarea
-                id="import-url"
-                v-model="importUrl"
-                placeholder="Paste MarkVim share link here..."
-                aria-label="MarkVim share link"
-                class="w-full px-3 py-2 text-sm bg-gray-900/50 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 resize-none"
-                rows="3"
-                data-testid="import-url-input"
-              />
-              <p class="text-xs text-gray-500">
-                The link should start with your MarkVim URL and contain #share= in it.
+        <div class="p-3 bg-[var(--accent)]/10 border border-[var(--accent)]/20 rounded-md">
+          <div class="flex items-start gap-2">
+            <Icon
+              name="lucide:file-text"
+              class="h-4 w-4 text-[var(--accent)] mt-0.5 flex-shrink-0"
+            />
+            <div class="space-y-1">
+              <h4 class="text-sm font-medium text-[var(--foreground)]">
+                {{ documentTitle }}
+              </h4>
+              <p class="text-xs text-[var(--foreground)] opacity-80">
+                {{ documentPreview }}
               </p>
             </div>
-
-            <!-- Manual Import Preview -->
-            <div
-              v-if="previewDocument"
-              class="p-3 bg-green-500/10 border border-green-500/20 rounded-md"
-            >
-              <div class="flex items-start gap-2">
-                <Icon
-                  name="lucide:check-circle"
-                  class="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0"
-                />
-                <div class="space-y-1">
-                  <h4 class="text-sm font-medium text-green-100">
-                    Ready to import: {{ documentTitle }}
-                  </h4>
-                  <p class="text-xs text-green-200/80">
-                    {{ documentPreview }}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Error State -->
-          <div
-            v-if="importError"
-            class="p-3 bg-red-500/10 border border-red-500/20 rounded-md"
+      <!-- Manual Import URL Input -->
+      <div
+        v-else
+        class="space-y-3"
+      >
+        <div class="space-y-2">
+          <label
+            for="import-url"
+            class="text-sm font-medium text-[var(--foreground)]"
           >
-            <div class="flex items-start gap-2">
-              <Icon
-                name="lucide:alert-circle"
-                class="h-4 w-4 text-error mt-0.5 flex-shrink-0"
-              />
-              <div class="text-sm text-error">
-                {{ importError }}
-              </div>
+            Share Link
+          </label>
+          <textarea
+            id="import-url"
+            v-model="importUrl"
+            placeholder="Paste MarkVim share link here..."
+            aria-label="MarkVim share link"
+            class="w-full px-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-md text-[var(--foreground)] placeholder-[var(--foreground)]/50 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/50"
+            rows="3"
+            data-testid="import-url-input"
+          />
+          <p class="text-xs text-[var(--foreground)]/50">
+            The link should start with your MarkVim URL and contain #share= in it.
+          </p>
+        </div>
+
+        <!-- Manual Import Preview -->
+        <div
+          v-if="previewDocument"
+          class="p-3 bg-[var(--alert-tip)]/10 border border-[var(--alert-tip)]/20 rounded-md"
+        >
+          <div class="flex items-start gap-2">
+            <Icon
+              name="lucide:check-circle"
+              class="h-4 w-4 text-[var(--alert-tip)] mt-0.5 flex-shrink-0"
+            />
+            <div class="space-y-1">
+              <h4 class="text-sm font-medium text-[var(--foreground)]">
+                Ready to import: {{ documentTitle }}
+              </h4>
+              <p class="text-xs text-[var(--foreground)] opacity-80">
+                {{ documentPreview }}
+              </p>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="flex gap-2 justify-end">
-          <UButton
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            data-testid="import-cancel-btn"
-            @click="handleCancel"
-          >
-            {{ isAutoImport ? 'Skip' : 'Cancel' }}
-          </UButton>
-          <UButton
-            color="primary"
-            variant="solid"
-            size="sm"
-            :icon="isImporting ? 'lucide:loader-2' : 'lucide:download'"
-            :class="{ 'animate-spin': isImporting }"
-            :disabled="isImporting || (!isAutoImport && !previewDocument)"
-            data-testid="import-confirm-btn"
-            @click="handleImport"
-          >
-            {{ isImporting ? 'Importing...' : 'Import' }}
-          </UButton>
+      <!-- Error State -->
+      <div
+        v-if="importError"
+        class="p-3 bg-[var(--alert-caution)]/10 border border-[var(--alert-caution)]/20 rounded-md"
+      >
+        <div class="flex items-start gap-2">
+          <Icon
+            name="lucide:alert-circle"
+            class="h-4 w-4 text-[var(--alert-caution)] mt-0.5 flex-shrink-0"
+          />
+          <div class="text-sm text-[var(--alert-caution)]">
+            {{ importError }}
+          </div>
         </div>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+      </div>
+    </template>
+
+    <template #footer>
+      <UButton
+        color="neutral"
+        variant="ghost"
+        size="sm"
+        data-testid="import-cancel-btn"
+        @click="handleCancel"
+      >
+        {{ isAutoImport ? 'Skip' : 'Cancel' }}
+      </UButton>
+      <UButton
+        color="primary"
+        variant="solid"
+        size="sm"
+        :icon="isImporting ? 'lucide:loader-2' : 'lucide:download'"
+        :class="{ 'animate-spin': isImporting }"
+        :disabled="isImporting || (!isAutoImport && !previewDocument)"
+        data-testid="import-confirm-btn"
+        @click="handleImport"
+      >
+        {{ isImporting ? 'Importing...' : 'Import' }}
+      </UButton>
+    </template>
+  </UModal>
 </template>

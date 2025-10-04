@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { OklchColor } from '~/modules/color-theme/api'
-import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { USlider } from '#components'
+import { computed } from 'vue'
 
 const { channel, fullColor, min, max, step } = defineProps<{
   channel: 'l' | 'c' | 'h' | 'a'
@@ -11,8 +11,6 @@ const { channel, fullColor, min, max, step } = defineProps<{
   step: number
 }>()
 const model = defineModel<number>({ required: true })
-
-const showTooltip = ref(false)
 
 // Percentage conversion factor (lightness and alpha are 0-1, displayed as 0-100%)
 const PERCENTAGE_FACTOR = 100
@@ -76,16 +74,6 @@ const trackGradient = computed(() => {
   return 'linear-gradient(to right, #000, #fff)'
 })
 
-const tooltipPosition = computed(() => {
-  return ((model.value - min) / (max - min)) * PERCENTAGE_FACTOR
-})
-
-function handleSliderChange(value: number[] | undefined): void {
-  if (value && value.length > 0 && value[0] !== undefined) {
-    model.value = value[0]
-  }
-}
-
 function handleInputChange(event: Event): void {
   if (!(event.target instanceof HTMLInputElement))
     return
@@ -143,44 +131,30 @@ function handleInputChange(event: Event): void {
     </div>
 
     <!-- Compact Slider -->
-    <div class="relative group">
-      <SliderRoot
-        :model-value="[model]"
-        :min="min"
-        :max="max"
-        :step="step"
-        class="relative flex items-center select-none touch-none w-full h-5"
-        @update:model-value="handleSliderChange"
-      >
-        <SliderTrack class="bg-border relative grow rounded-full h-2 overflow-hidden">
-          <div
-            class="absolute inset-0 rounded-full"
-            :style="{ background: trackGradient }"
-          />
-          <SliderRange class="absolute h-full bg-transparent" />
-        </SliderTrack>
-        <SliderThumb
-          class="block w-4 h-4 bg-white border-2 border-accent rounded-full shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 cursor-grab active:cursor-grabbing"
-          :style="{ transform: 'translateX(-50%)' }"
+    <div class="relative">
+      <div class="relative flex items-center select-none touch-none w-full">
+        <USlider
+          v-model="model"
+          :min="min"
+          :max="max"
+          :step="step"
+          color="primary"
+          size="sm"
+          :ui="{
+            root: 'w-full',
+            track: 'relative grow rounded-full h-2 overflow-hidden',
+            range: 'absolute h-full bg-transparent',
+          }"
+          :style="{ '--track-gradient': trackGradient }"
+          class="oklch-slider"
         />
-      </SliderRoot>
-
-      <!-- Compact tooltip -->
-      <div
-        v-if="showTooltip"
-        class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-10"
-        :style="{ left: `${tooltipPosition}%` }"
-      >
-        {{ displayValue }}{{ channelInfo.unit }}
-        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-gray-900" />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Additional styling for better visual feedback */
-.group:hover .group-hover\:opacity-100 {
-  opacity: 1;
+.oklch-slider :deep([class*="track"]) {
+  background: var(--track-gradient) !important;
 }
 </style>

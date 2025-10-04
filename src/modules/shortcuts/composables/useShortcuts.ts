@@ -1,5 +1,5 @@
 import { useState } from '#imports'
-import { useActiveElement, useMagicKeys, useMounted, whenever } from '@vueuse/core'
+import { useActiveElement, useMagicKeys, useMounted, useToggle, whenever } from '@vueuse/core'
 import { computed, type ComputedRef, type MaybeRefOrGetter, onMounted, readonly, ref, type Ref, toValue } from 'vue'
 
 /**
@@ -234,6 +234,58 @@ export function useShortcuts() {
     return commands
   })
 
+  // Convert keyboard shortcut string to array format for Nuxt UI
+  function parseKeysToArray(keys: string): string[] {
+    return keys.split('+').map(k => k.trim().toLowerCase())
+  }
+
+  // Get commands in Nuxt UI CommandPalette format
+  const commandPaletteItems = computed(() => {
+    const items: Array<{
+      id: string
+      label: string
+      suffix?: string
+      icon?: string
+      kbds?: string[]
+      onSelect: (e?: Event) => void
+      category: string
+    }> = []
+
+    // Add shortcuts as items
+    registeredShortcuts.value.forEach((shortcut) => {
+      items.push({
+        id: shortcut.id || `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
+        label: shortcut.description,
+        suffix: `Keyboard shortcut: ${formatKeys(shortcut.keys)}`,
+        icon: shortcut.icon || getDefaultIconForCategory(shortcut.category || 'General'),
+        kbds: parseKeysToArray(shortcut.keys),
+        onSelect: (e?: Event) => {
+          e?.preventDefault()
+          shortcut.action()
+        },
+        category: shortcut.category || 'General',
+      })
+    })
+
+    // Add app commands
+    appCommands.value.forEach((command) => {
+      items.push({
+        id: command.id || command.keys,
+        label: command.description,
+        suffix: command.description,
+        icon: command.icon || getDefaultIconForCategory(command.category || 'General'),
+        kbds: command.keys ? parseKeysToArray(command.keys) : undefined,
+        onSelect: (e?: Event) => {
+          e?.preventDefault()
+          command.action()
+        },
+        category: command.category || 'General',
+      })
+    })
+
+    return items
+  })
+
   // Helper function to get default icons for categories
   function getDefaultIconForCategory(category: string): string {
     const categoryIcons: Record<string, string> = {
@@ -292,33 +344,11 @@ export function useShortcuts() {
 
   // Settings shortcut functionality
   const showSettings = useState<boolean>('showSettings', () => false)
-
-  function openSettings(): void {
-    showSettings.value = true
-  }
-
-  function closeSettings(): void {
-    showSettings.value = false
-  }
-
-  function toggleSettings(): void {
-    showSettings.value = !showSettings.value
-  }
+  const toggleSettings = useToggle(showSettings)
 
   // Color theme shortcut functionality
   const showColorTheme = useState<boolean>('showColorTheme', () => false)
-
-  function openColorTheme(): void {
-    showColorTheme.value = true
-  }
-
-  function closeColorTheme(): void {
-    showColorTheme.value = false
-  }
-
-  function toggleColorTheme(): void {
-    showColorTheme.value = !showColorTheme.value
-  }
+  const toggleColorTheme = useToggle(showColorTheme)
 
   // Sequential key support (like Linear g+s shortcuts)
   function createSequentialShortcut(firstKey: string, secondKey: string, action: () => void, timeout = 1500): (() => void) {
@@ -380,10 +410,10 @@ export function useShortcuts() {
   // Pre-register settings shortcut (Linear style: g then s)
   onMounted(() => {
     // Create g->s sequence shortcut
-    createSequentialShortcut('g', 's', openSettings)
+    createSequentialShortcut('g', 's', () => toggleSettings(true))
 
     // Create g->c sequence shortcut for color theme
-    createSequentialShortcut('g', 'c', openColorTheme)
+    createSequentialShortcut('g', 'c', () => toggleColorTheme(true))
 
     // Create g->n sequence shortcut for new document
     createSequentialShortcut('g', 'n', createNewDocument)
@@ -392,7 +422,7 @@ export function useShortcuts() {
     registeredShortcuts.value.set('g s', {
       keys: 'g s',
       description: 'Open settings',
-      action: openSettings,
+      action: () => toggleSettings(true),
       category: 'Navigation',
       icon: 'lucide:settings',
     })
@@ -400,7 +430,7 @@ export function useShortcuts() {
     registeredShortcuts.value.set('g c', {
       keys: 'g c',
       description: 'Open color theme',
-      action: openColorTheme,
+      action: () => toggleColorTheme(true),
       category: 'Navigation',
       icon: 'lucide:palette',
     })
@@ -432,6 +462,7 @@ export function useShortcuts() {
     // State
     shortcutsByCategory,
     allCommands,
+    commandPaletteItems,
     registeredShortcuts: readonly(registeredShortcuts),
     appCommands: readonly(appCommands),
     notUsingInput,
@@ -444,13 +475,9 @@ export function useShortcuts() {
     getDefaultIconForCategory,
 
     // Settings functions
-    openSettings,
-    closeSettings,
     toggleSettings,
 
     // Color theme functions
-    openColorTheme,
-    closeColorTheme,
     toggleColorTheme,
 
     // New document functions

@@ -17,6 +17,24 @@
   --color-accent: oklch(60% 0.18 240);
   --color-muted: oklch(20% 0.002 0);
   --color-border: oklch(25% 0.003 20);
+
+  /* =============================================
+     ✨ PRIMARY COLOR OVERRIDE
+     Override Tailwind's default primary (green) with our dynamic accent color
+     Uses OKLCH from syntax to generate shades dynamically based on --accent
+     This ensures buttons respond to theme changes
+     =============================================*/
+  --color-primary-50: oklch(from var(--accent) 95% calc(c * 0.3) h);
+  --color-primary-100: oklch(from var(--accent) 90% calc(c * 0.45) h);
+  --color-primary-200: oklch(from var(--accent) 80% calc(c * 0.55) h);
+  --color-primary-300: oklch(from var(--accent) 70% calc(c * 0.75) h);
+  --color-primary-400: oklch(from var(--accent) 65% calc(c * 0.9) h);
+  --color-primary-500: var(--accent);  /* Base accent color */
+  --color-primary-600: oklch(from var(--accent) calc(l - 0.10) c h);
+  --color-primary-700: oklch(from var(--accent) calc(l - 0.20) calc(c * 0.9) h);
+  --color-primary-800: oklch(from var(--accent) calc(l - 0.30) calc(c * 0.65) h);
+  --color-primary-900: oklch(from var(--accent) calc(l - 0.40) calc(c * 0.45) h);
+  --color-primary-950: oklch(from var(--accent) calc(l - 0.45) calc(c * 0.25) h);
 }
 
 /* =============================================
@@ -29,6 +47,17 @@
   --accent: var(--color-accent);
   --muted: var(--color-muted);
   --border: var(--color-border);
+
+  /* =============================================
+     ✨ NUXT UI SEMANTIC COLOR OVERRIDE
+     Override Nuxt UI's semantic colors to use our dynamic theme colors
+     This makes all Nuxt UI components respond to theme changes
+     =============================================*/
+  --ui-primary: var(--accent) !important;
+  --ui-error: var(--alert-caution) !important;
+  --ui-success: var(--alert-tip) !important;
+  --ui-info: var(--alert-note) !important;
+  --ui-warning: var(--alert-warning) !important;
 
   /* =============================================
      ✨ FONT SYSTEM TOKENS

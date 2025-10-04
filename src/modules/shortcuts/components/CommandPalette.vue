@@ -1,370 +1,118 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
-import type { ViewMode } from '~/modules/layout/api'
-import { Icon, UButton } from '#components'
-import {
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
-} from 'reka-ui'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { UCommandPalette, UModal } from '#components'
+import { computed, ref } from 'vue'
 import { getDocumentTitle } from '~/modules/documents/api'
-import { type Command, useCommandHistory, useShortcuts } from '~/modules/shortcuts/api'
+import { useCommandHistory, useShortcuts } from '~/modules/shortcuts/api'
 
 const { documents = [] } = defineProps<{
-  position?: { x: number, y: number }
-  viewMode?: ViewMode
-  markdown?: string
   documents?: DocType[]
 }>()
 
 const emit = defineEmits<{
-  commandSelected: [command: Command]
   selectDocument: [id: string]
 }>()
 
 const open = defineModel<boolean>('open')
 
 const searchTerm = ref('')
-const selectedIndex = ref(0)
-const scrollContainer = ref<HTMLElement>()
-const inputRef = ref<HTMLInputElement>()
 
-// Get all commands from the useShortcuts composable
-const { allCommands } = useShortcuts()
-// getDocumentTitle is imported from api above
-const { trackCommandUsage, sortCommandsByHistory } = useCommandHistory()
+// Get command palette items from shortcuts composable
+const { commandPaletteItems } = useShortcuts()
+const { trackCommandUsage, commandHistory } = useCommandHistory()
 
 // Maximum number of recent commands to show
 const MAX_RECENT_COMMANDS = 8
 
-// Create a computed property to transform documents into commands
-const documentCommands = computed((): Command[] => {
+// Transform documents into command palette items
+const documentItems = computed(() => {
   return (documents || []).map(doc => ({
     id: `doc-${doc.id}`,
     label: getDocumentTitle(doc.content),
-    description: `Last updated: ${new Date(doc.updatedAt).toLocaleDateString()}`,
-    action: () => emit('selectDocument', doc.id),
-    group: 'Files',
+    suffix: `Last updated: ${new Date(doc.updatedAt).toLocaleDateString()}`,
     icon: 'lucide:file-text',
+    category: 'Files',
+    onSelect: (e?: Event) => {
+      e?.preventDefault()
+      emit('selectDocument', doc.id)
+      open.value = false
+    },
   }))
 })
 
-// Combine app commands with document commands
-const combinedCommands = computed(() => {
-  return [...documentCommands.value, ...allCommands.value]
-})
+// Create groups for command palette
+const groups = computed(() => {
+  const allItems = [...commandPaletteItems.value, ...documentItems.value]
+  const recentIds = new Set(commandHistory.value.slice(0, MAX_RECENT_COMMANDS))
 
-// Filter commands based on search term
-const filteredCommands = computed(() => {
-  if (!searchTerm.value) {
-    // When no search term, show commands sorted by usage history
-    return sortCommandsByHistory(combinedCommands.value)
-  }
+  // Separate recent and other items
+  const recentItems = allItems.filter(item => recentIds.has(item.id))
+  const otherItems = allItems.filter(item => !recentIds.has(item.id))
 
-  const term = searchTerm.value.toLowerCase()
-  const filtered = combinedCommands.value.filter(command =>
-    command.label.toLowerCase().includes(term)
-    || (command.description && command.description.toLowerCase().includes(term))
-    || (command.group && command.group.toLowerCase().includes(term))
-    || (command.shortcut && command.shortcut.toLowerCase().includes(term)),
-  )
+  const result: Array<{
+    id: string
+    label?: string
+    items: any[]
+  }> = []
 
-  // Also sort filtered results by history for better UX
-  return sortCommandsByHistory(filtered)
-})
-
-// Group filtered commands
-const groupedCommands = computed(() => {
-  const commands = filteredCommands.value
-  const { commandHistory } = useCommandHistory()
-
-  // If no search term and we have history, create a "Recently Used" section
-  if (!searchTerm.value && commandHistory.value.length > 0) {
-    const recentCommands: Command[] = []
-    const otherCommands: Command[] = []
-    const recentIds = new Set(commandHistory.value.slice(0, MAX_RECENT_COMMANDS))
-
-    commands.forEach((command) => {
-      if (recentIds.has(command.id)) {
-        recentCommands.push(command)
-        return
-      }
-      otherCommands.push(command)
+  // Add "Recently Used" group if we have recent items
+  if (recentItems.length > 0 && !searchTerm.value) {
+    result.push({
+      id: 'recent',
+      label: 'Recently Used',
+      items: recentItems,
     })
-
-    const groups: { name: string, commands: Command[] }[] = []
-
-    // Add recently used section if we have recent commands
-    if (recentCommands.length > 0) {
-      groups.push({ name: 'Recently Used', commands: recentCommands })
-    }
-
-    // Group other commands normally
-    const otherGroups = otherCommands.reduce((acc, command) => {
-      const group = command.group || 'Other'
-      if (!acc[group]) {
-        acc[group] = []
-      }
-      acc[group].push(command)
-      return acc
-    // eslint-disable-next-line ts/consistent-type-assertions
-    }, {} as Record<string, Command[]>)
-
-    const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
-
-    groupOrder
-      .filter(groupName => (otherGroups[groupName]?.length ?? 0) > 0)
-      .forEach((groupName) => {
-        const groupCommands = otherGroups[groupName]
-        if (groupCommands) {
-          groups.push({
-            name: groupName,
-            commands: groupCommands,
-          })
-        }
-      })
-
-    return groups
   }
 
-  // Regular grouping for search results or when no history
-  const groups = commands.reduce((acc, command) => {
-    const group = command.group || 'Other'
-    if (!acc[group]) {
-      acc[group] = []
+  // Group other items by category
+  const itemsByCategory: Record<string, any[]> = {}
+  otherItems.forEach((item) => {
+    const category = item.category || 'Other'
+    if (!itemsByCategory[category]) {
+      itemsByCategory[category] = []
     }
-    acc[group].push(command)
-    return acc
-  // eslint-disable-next-line ts/consistent-type-assertions
-  }, {} as Record<string, Command[]>)
+    itemsByCategory[category].push(item)
+  })
 
-  // Define group order - prioritize Files group
+  // Add groups in specific order
   const groupOrder = ['Files', 'File', 'View', 'Insert', 'Format', 'Navigation', 'Settings', 'Help', 'General', 'Other']
 
-  return groupOrder
-    .filter(groupName => (groups[groupName]?.length ?? 0) > 0)
-    .map((groupName) => {
-      const groupCommands = groups[groupName]
-      return {
-        name: groupName,
-        commands: groupCommands ?? [],
-      }
-    })
-})
-
-// Handle command selection
-function selectCommand(command: Command): void {
-  // Track command usage for history
-  trackCommandUsage(command.id)
-
-  emit('commandSelected', command)
-  open.value = false
-  command.action()
-  selectedIndex.value = 0
-  searchTerm.value = ''
-}
-
-// Keyboard navigation
-function handleKeydown(event: KeyboardEvent): void {
-  const totalCommands = filteredCommands.value.length
-
-  switch (event.key) {
-    case 'Escape':
-      open.value = false
-      break
-    case 'ArrowDown':
-      event.preventDefault()
-      selectedIndex.value = (selectedIndex.value + 1) % totalCommands
-      scrollToSelected()
-      break
-    case 'ArrowUp':
-      event.preventDefault()
-      selectedIndex.value = selectedIndex.value === 0 ? totalCommands - 1 : selectedIndex.value - 1
-      scrollToSelected()
-      break
-    case 'Enter': {
-      event.preventDefault()
-      const selectedCommand = filteredCommands.value[selectedIndex.value]
-      if (selectedCommand) {
-        selectCommand(selectedCommand)
-      }
-      break
-    }
-  }
-}
-
-// Scroll selected item into view
-function scrollToSelected(): void {
-  void nextTick(() => {
-    if (!scrollContainer.value)
-      return
-
-    const selectedElement = scrollContainer.value.querySelector(`[data-command-index="${selectedIndex.value}"]`)
-    if (selectedElement instanceof HTMLElement) {
-      selectedElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
+  groupOrder.forEach((category) => {
+    if (itemsByCategory[category]?.length) {
+      result.push({
+        id: category.toLowerCase(),
+        label: category,
+        items: itemsByCategory[category],
       })
     }
   })
-}
 
-// Get command at current index for styling
-function isSelected(command: Command): boolean {
-  return filteredCommands.value[selectedIndex.value]?.id === command.id
-}
+  return result
+})
 
-// Get index of command in filtered list
-function getCommandIndex(command: Command): number {
-  return filteredCommands.value.findIndex(cmd => cmd.id === command.id)
-}
-
-// Watch for open state changes to reset state
-watch(() => open.value, (isOpen) => {
-  if (isOpen) {
-    void nextTick(() => {
-      searchTerm.value = ''
-      selectedIndex.value = 0
-      inputRef.value?.focus()
-    })
+// Handle item selection to track usage
+function handleSelect(item: any): void {
+  if (item?.id) {
+    trackCommandUsage(item.id)
   }
-})
-
-// Reset selection when search changes
-watch(searchTerm, () => {
-  selectedIndex.value = 0
-})
-
-// Auto-focus management
-onMounted(() => {
-  document.addEventListener('keydown', handleGlobalKeydown)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('keydown', handleGlobalKeydown)
-})
-
-function handleGlobalKeydown(event: KeyboardEvent): void {
-  if (!open.value)
-    return
-
-  if (event.target === inputRef.value && !['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(event.key)) {
-    return
-  }
-
-  handleKeydown(event)
+  open.value = false
 }
 </script>
 
 <template>
-  <DialogRoot
-    :open="open"
-    @update:open="(newOpen) => open = newOpen"
+  <UModal
+    v-model:open="open"
+    :ui="{ content: 'max-w-2xl' }"
   >
-    <DialogPortal>
-      <DialogOverlay class="bg-black/70 inset-0 fixed z-50" />
-      <DialogContent
+    <template #content>
+      <UCommandPalette
+        v-model:search-term="searchTerm"
+        :groups="groups"
+        placeholder="Type a command or search..."
         data-testid="command-palette"
-        class="border border-subtle rounded-lg bg-surface-primary w-[550px] shadow-2xl shadow-black/40 ring-1 ring-white/10 left-1/2 top-1/3 fixed z-50 overflow-hidden -translate-x-1/2 -translate-y-1/2"
-      >
-        <!-- Search Input -->
-        <div class="px-4 py-3 border-b border-gray-700">
-          <input
-            id="command-search"
-            ref="inputRef"
-            v-model="searchTerm"
-            type="text"
-            placeholder="Type a command or search..."
-            aria-label="Search commands"
-            data-testid="command-palette-search"
-            class="text-base text-gray-100 outline-none bg-transparent w-full placeholder-gray-400"
-          >
-        </div>
-
-        <!-- Commands List -->
-        <div
-          ref="scrollContainer"
-          class="max-h-80 overflow-y-auto"
-        >
-          <template v-if="filteredCommands.length === 0">
-            <div class="text-sm text-gray-500 px-4 py-8 text-center">
-              No commands found
-            </div>
-          </template>
-
-          <template v-else>
-            <div
-              v-for="group in groupedCommands"
-              :key="group.name"
-              class="py-2"
-            >
-              <!-- Group Label -->
-              <div class="text-xs text-gray-400 tracking-wider font-medium px-4 py-2 uppercase">
-                {{ group.name }}
-              </div>
-
-              <!-- Commands in Group -->
-              <UButton
-                v-for="command in group.commands"
-                :key="command.id"
-                variant="ghost"
-                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between w-full text-left focus:outline-none focus:ring-0 rounded-none"
-                :class="[
-                  isSelected(command)
-                    ? 'bg-gray-700/50'
-                    : 'hover:bg-gray-800/50',
-                ]"
-                :aria-label="`Execute ${command.label} command`"
-                :data-command-index="getCommandIndex(command)"
-                @click="selectCommand(command)"
-              >
-                <div class="flex flex-1 gap-3 min-w-0 items-center">
-                  <!-- Icon -->
-                  <div
-                    v-if="command.icon"
-                    class="text-gray-300 text-center flex-shrink-0 w-5 h-5 flex items-center justify-center"
-                  >
-                    <Icon
-                      :name="command.icon"
-                      class="h-4 w-4"
-                    />
-                  </div>
-
-                  <!-- Content -->
-                  <div class="flex flex-1 flex-col min-w-0">
-                    <div class="text-sm text-gray-100 font-medium">
-                      {{ command.label }}
-                    </div>
-                    <div
-                      v-if="command.description"
-                      class="text-xs text-gray-400 truncate"
-                    >
-                      {{ command.description }}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Keyboard Shortcut -->
-                <div
-                  v-if="command.shortcut"
-                  class="text-xs text-gray-400 font-mono px-2 py-1 border border-gray-600 rounded bg-gray-800 flex-shrink-0"
-                >
-                  {{ command.shortcut }}
-                </div>
-              </UButton>
-            </div>
-          </template>
-        </div>
-
-        <!-- Footer hint -->
-        <div class="text-xs text-gray-500 px-4 py-2 border-t border-gray-700 flex justify-between">
-          <span>↑↓ to navigate</span>
-          <span>↵ to select</span>
-          <span>esc to close</span>
-        </div>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+        class="flex-1"
+        @update:model-value="handleSelect"
+      />
+    </template>
+  </UModal>
 </template>

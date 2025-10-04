@@ -82,7 +82,7 @@ const MAX_LIGHTNESS_GAMUT_CHECK = 0.95
 
 // Update input when color changes from sliders
 watch(colorPreview, (newValue) => {
-  if (document.activeElement?.getAttribute('data-testid') === 'oklch-string-input')
+  if (typeof document !== 'undefined' && document.activeElement?.getAttribute('data-testid') === 'oklch-string-input')
     return
   oklchInput.value = newValue
 }, { immediate: true })

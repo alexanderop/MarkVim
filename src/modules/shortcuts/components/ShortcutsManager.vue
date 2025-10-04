@@ -6,13 +6,8 @@ import { getDocumentTitle, useDocumentsStore } from '~/modules/documents/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import ShortcutsCommandPalette from './CommandPalette.vue'
 
-// Command palette state - moved from AppShell
+// Command palette state
 const commandPaletteOpen = ref(false)
-const commandPalettePosition = ref({ x: 0, y: 0 })
-
-// Command palette position constants
-const COMMAND_PALETTE_HALF_WIDTH = 200
-const VERTICAL_POSITION_DIVISOR = 3
 
 // Use documents store
 const documentsStore = useDocumentsStore()
@@ -34,11 +29,7 @@ function handleGlobalKeydown(event: KeyboardEvent): void {
 }
 
 function openCommandPalette(_event?: KeyboardEvent): void {
-  const centerX = window.innerWidth / 2 - COMMAND_PALETTE_HALF_WIDTH
-  const centerY = window.innerHeight / VERTICAL_POSITION_DIVISOR
-
-  commandPalettePosition.value = { x: centerX, y: centerY }
-  emitAppEvent('command-palette:open', { position: { x: centerX, y: centerY } })
+  emitAppEvent('command-palette:open', {})
 }
 
 function closeCommandPalette(): void {
@@ -55,10 +46,7 @@ function handleCreateDocument(): void {
 }
 
 // Listen to event bus events
-onAppEvent('command-palette:open', (payload) => {
-  if (payload?.position) {
-    commandPalettePosition.value = payload.position
-  }
+onAppEvent('command-palette:open', () => {
   commandPaletteOpen.value = true
 })
 
@@ -182,9 +170,7 @@ onBeforeUnmount(() => {
 <template>
   <ShortcutsCommandPalette
     v-model:open="commandPaletteOpen"
-    :position="commandPalettePosition"
     :documents="documents"
-    @command-selected="closeCommandPalette"
     @select-document="handleDocumentSelectFromPalette"
   />
 </template>

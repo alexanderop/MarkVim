@@ -52,6 +52,13 @@ pnpm test:e2e:with-server
 ### Git Hooks
 The project uses Husky with pre-commit hooks that automatically run `pnpm lint` on staged files.
 
+### Code Quality Requirements
+**IMPORTANT: After completing any task, you MUST:**
+1. Run `pnpm typecheck` to verify TypeScript types
+2. Run `pnpm lint` to verify ESLint rules
+3. Fix any errors before considering the task complete
+4. Update this CLAUDE.md file if you introduce new patterns or conventions
+
 ### Unused Exports Detection
 
 The project uses **Knip** for detecting unused exports in module API files. While ESLint has plugins for this (`import/no-unused-modules`), they have limitations with Vue Single File Components:
@@ -182,7 +189,83 @@ Key dependencies include:
 - **Shiki** for syntax highlighting
 - **VueUse** for composable utilities
 - **UnoCSS** for styling
-- **Reka UI** for base components
+- **Reka UI** for base components (use Nuxt UI when available)
 - **Knip** for detecting unused exports, files, and dependencies
+
+### Component Preferences
+When implementing UI features:
+1. **Prefer Nuxt UI components** over custom implementations or lower-level Reka UI components
+2. **Check Nuxt UI first**: Before building custom components, check if Nuxt UI provides a suitable component
+3. **Nuxt UI benefits**: Better accessibility, consistent styling, built-in features (fuzzy search, keyboard navigation, etc.)
+4. **Example**: Use `UCommandPalette` instead of building custom search with Reka UI Dialog
+
+**Nuxt UI has many powerful components available via the MCP server:**
+- `UCommandPalette` - Fuzzy search with Fuse.js, keyboard navigation, grouping
+- `UModal`, `UDrawer`, `USlideover` - Overlays with better UX than basic dialogs
+- `UButton`, `UInput`, `UKbd` - Consistent, accessible form elements
+- And many more - always check the Nuxt UI MCP before building custom
+
+### Color System Rules
+
+**CRITICAL: Never use hardcoded colors. All colors MUST be user-configurable via the theme system.**
+
+#### Available Theme Colors (CSS Variables)
+Use ONLY these dynamic CSS variables for colors:
+
+**Core Colors:**
+- `var(--accent)` - Primary interactive color (buttons, links, highlights)
+- `var(--foreground)` - Primary text color
+- `var(--background)` - Primary background color
+- `var(--muted)` - Secondary backgrounds, subtle surfaces
+- `var(--border)` - Borders, dividers, separators
+
+**Alert/Semantic Colors:**
+- `var(--alert-note)` - Info/note states (blue by default)
+- `var(--alert-tip)` - Success/tips (green by default)
+- `var(--alert-important)` - Important notices (purple by default)
+- `var(--alert-warning)` - Warnings (orange by default)
+- `var(--alert-caution)` - Errors/danger (red by default)
+
+**Nuxt UI Components:**
+Nuxt UI components automatically use theme colors via overrides in `src/shared/ui/tokens.css`:
+- `color="primary"` → uses `var(--accent)`
+- `color="error"` → uses `var(--alert-caution)`
+- `color="success"` → uses `var(--alert-tip)`
+- `color="info"` → uses `var(--alert-note)`
+- `color="warning"` → uses `var(--alert-warning)`
+
+#### Examples
+
+✅ **CORRECT:**
+```vue
+<!-- Backgrounds and borders -->
+<div class="bg-[var(--accent)]/10 border border-[var(--accent)]/20">
+  <span class="text-[var(--accent)]">Accent text</span>
+</div>
+
+<!-- Success state -->
+<div class="bg-[var(--alert-tip)]/10 text-[var(--alert-tip)]">
+  Success message
+</div>
+
+<!-- Nuxt UI components -->
+<UButton color="primary">Primary Button</UButton>
+<UButton color="error">Delete</UButton>
+```
+
+❌ **WRONG:**
+```vue
+<!-- Never use hardcoded Tailwind colors -->
+<div class="bg-blue-500 text-green-600 border-red-400">
+  Hardcoded colors
+</div>
+
+<!-- Never use hex colors -->
+<div style="color: #3b82f6; background: #10b981">
+  Hardcoded hex colors
+</div>
+```
+
+**Why?** Users can customize all theme colors. Hardcoded colors break this functionality and create visual inconsistencies.
 
 When working with this codebase, prefer modifying existing modules over creating new files, and follow the established patterns for consistency.
