@@ -498,7 +498,7 @@ onMounted(() => {
                   class="w-8 h-8 text-accent"
                 />
               </div>
-              <div class="flex-1">
+              <div class="flex-1 min-w-0">
                 <h3 class="text-xl sm:text-2xl font-semibold text-foreground mb-3">
                   GitHub Alerts & Callouts
                 </h3>
@@ -506,37 +506,36 @@ onMounted(() => {
                   Use GitHub-style alert callouts to highlight important information in your documentation.
                   Professional styling that matches modern documentation standards.
                 </p>
-                <div class="space-y-2 mb-4">
-                  <div class="bg-accent/10 border-l-4 border-accent pl-3 py-1 text-sm rounded-r">
-                    <span class="text-accent font-medium">[!NOTE]</span> Important information
-                  </div>
-                  <div
-                    class="border-l-4 pl-3 py-1 text-sm rounded-r"
-                    style="background: oklch(from var(--accent) l c 140 / 0.1); border-color: oklch(from var(--accent) l c 140);"
-                  >
-                    <span
-                      class="font-medium"
-                      style="color: oklch(from var(--accent) l c 140);"
-                    >[!TIP]</span> Helpful suggestion
-                  </div>
-                  <div
-                    class="border-l-4 pl-3 py-1 text-sm rounded-r"
-                    style="background: oklch(from var(--accent) l c 80 / 0.1); border-color: oklch(from var(--accent) l c 80);"
-                  >
-                    <span
-                      class="font-medium"
-                      style="color: oklch(from var(--accent) l c 80);"
-                    >[!WARNING]</span> Critical warning
-                  </div>
-                  <div
-                    class="border-l-4 pl-3 py-1 text-sm rounded-r"
-                    style="background: oklch(from var(--accent) l c 280 / 0.1); border-color: oklch(from var(--accent) l c 280);"
-                  >
-                    <span
-                      class="font-medium"
-                      style="color: oklch(from var(--accent) l c 280);"
-                    >[!IMPORTANT]</span> Key information
-                  </div>
+                <!-- Alert examples -->
+                <div class="bg-accent/10 border-l-4 border-accent pl-3 py-1 text-sm rounded-r mb-2">
+                  <span class="text-accent font-medium">[!NOTE]</span> Important information
+                </div>
+                <div
+                  class="border-l-4 pl-3 py-1 text-sm rounded-r mb-2"
+                  style="background: oklch(from var(--accent) l c 140 / 0.1); border-color: oklch(from var(--accent) l c 140);"
+                >
+                  <span
+                    class="font-medium"
+                    style="color: oklch(from var(--accent) l c 140);"
+                  >[!TIP]</span> Helpful suggestion
+                </div>
+                <div
+                  class="border-l-4 pl-3 py-1 text-sm rounded-r mb-2"
+                  style="background: oklch(from var(--accent) l c 80 / 0.1); border-color: oklch(from var(--accent) l c 80);"
+                >
+                  <span
+                    class="font-medium"
+                    style="color: oklch(from var(--accent) l c 80);"
+                  >[!WARNING]</span> Critical warning
+                </div>
+                <div
+                  class="border-l-4 pl-3 py-1 text-sm rounded-r mb-4"
+                  style="background: oklch(from var(--accent) l c 280 / 0.1); border-color: oklch(from var(--accent) l c 280);"
+                >
+                  <span
+                    class="font-medium"
+                    style="color: oklch(from var(--accent) l c 280);"
+                  >[!IMPORTANT]</span> Key information
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <span class="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium">Notes</span>

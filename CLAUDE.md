@@ -1,344 +1,278 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code (claude.ai/code) in this repo. Keep files small, predictable, and testable.
+
+---
 
 ## Common Development Commands
 
 ### Development
+
 ```bash
-# Install dependencies (required first)
-pnpm install
-
-# Start development server on http://localhost:3000
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
-
-# Kill all running node/localhost server processes
-pnpm kill:servers
+pnpm install            # Install dependencies (first)
+pnpm dev                # Start dev server at http://localhost:3000
+pnpm build              # Build for production
+pnpm preview            # Preview production build
+pnpm kill:servers       # Kill all running node/localhost servers
 ```
 
 ### Testing & Quality
+
 ```bash
-# Run linter
-pnpm lint
-
-# Fix linting issues automatically
-pnpm lint:fix
-
-# Type checking
-pnpm typecheck
-
-# Detect unused exports, files, and dependencies
-pnpm knip
-
-# Check only for unused exports (recommended for checking module API boundaries)
-pnpm knip:exports
-
-# Run E2E tests (requires dev server running)
-pnpm test:e2e
-
-# Run E2E tests with browser visible
-pnpm test:e2e:headed
-
-# Run E2E tests with automatic server start
-pnpm test:e2e:with-server
+pnpm lint               # Lint
+pnpm lint:fix           # Auto-fix lint issues
+pnpm typecheck          # Type checking
+pnpm knip               # Detect unused exports/files/deps
+pnpm knip:exports       # Only unused exports (API boundaries)
+pnpm test:e2e           # E2E (requires dev server)
+pnpm test:e2e:headed    # E2E with visible browser
+pnpm test:e2e:with-server  # E2E with auto server start
 ```
 
 ### Git Hooks
-The project uses Husky with pre-commit hooks that automatically run `pnpm lint` on staged files.
+
+Husky pre-commit runs `pnpm lint` on staged files.
 
 ### Code Quality Requirements
-**IMPORTANT: After completing any task, you MUST:**
-1. Run `pnpm typecheck` to verify TypeScript types
-2. Run `pnpm lint` to verify ESLint rules
-3. Fix any errors before considering the task complete
-4. Update this CLAUDE.md file if you introduce new patterns or conventions
+
+After any task, **must**:
+
+1. `pnpm typecheck`  2) `pnpm lint`  3) fix errors  4) update CLAUDE.md if you add patterns/conventions.
 
 ### Unused Exports Detection
 
-The project uses **Knip** for detecting unused exports in module API files. While ESLint has plugins for this (`import/no-unused-modules`), they have limitations with Vue Single File Components:
+Use **Knip** (see `knip.json`). ESLint's import plugin misreads Vue `<script>` imports and yields false positives; Knip handles Vue SFCs correctly.
 
-- **Issue**: ESLint's import plugin cannot parse imports from Vue `<script>` blocks, leading to false positives
-- **Solution**: Knip properly handles Vue SFCs and provides accurate unused export detection
+* Run before module-API refactors: `pnpm knip:exports`
+* Clean up unused code: `pnpm knip`
+* Use in CI to block unused exports
 
-**When to run Knip:**
-- Before refactoring module APIs: `pnpm knip:exports`
-- To clean up unused code: `pnpm knip` (checks exports, files, dependencies, etc.)
-- In CI/CD pipelines to prevent unused exports from being merged
-
-See `knip.json` for configuration details.
+---
 
 ## High-Level Architecture
 
-MarkVim is a Nuxt 3 Markdown editor with Vim mode support, built using a modular architecture:
+**MarkVim** = Nuxt 3 Markdown editor with Vim mode, modular.
 
-### Core Technologies
-- **Nuxt 3** - Vue.js meta-framework
-- **Pinia** - State management
-- **CodeMirror 6** - Editor component with vim extension
-- **UnoCSS** - Atomic CSS framework
-- **Playwright + Cucumber** - E2E testing
+**Core tech**: Nuxt 3, Pinia, CodeMirror 6 (vim), UnoCSS, Playwright + Cucumber.
 
-### Project Structure
-The application follows a modular architecture with organized directories:
+**Project structure**
 
 ```
 src/
-├── app/              # App-level components and layouts
-├── modules/          # Feature modules (see below)
-├── shared/           # Shared utilities and components
-│   ├── components/   # Reusable components
-│   ├── composables/  # Shared composables
-│   ├── ui/          # UI tokens and styles
-│   └── utils/       # Utility functions
-└── types/            # TypeScript type definitions
+├── app/              # App-level components/layouts
+├── modules/          # Feature modules
+├── shared/           # Shared utilities/components
+│   ├── components/
+│   ├── composables/
+│   ├── ui/
+│   └── utils/
+└── types/            # Type definitions
 ```
 
-### Module Structure
-Each module under `src/modules/` follows a consistent structure:
+**Modules (each keeps `api/`, `components/`, `composables/`, `internal/`, optional `store.ts`)**
 
-- **color-theme** - Theme customization with OKLCH color picker
-  - `api/`, `components/`, `composables/`, `internal/`, `store.ts`
-- **documents** - Document CRUD operations and persistence via localStorage  
-  - `api/`, `components/`, `composables/`, `internal/`, `store.ts`
-- **editor** - CodeMirror integration with vim mode support
-  - `api/`, `components/`, `composables/`, `internal/`
-- **layout** - App layout components (header, status bar, resizable panes)
-  - `api/`, `components/`, `composables/`, `internal/`
-- **markdown-preview** - Live preview with Mermaid diagram support
-  - `components/`, `composables/`
-- **share** - Document import/export functionality
-  - `components/`, `composables/`
-- **shortcuts** - Keyboard shortcuts and command palette
-  - `api/`, `components/`, `composables/`, `internal/`
+* color-theme – OKLCH theme picker (+ `store.ts`)
+* documents  – CRUD + localStorage (+ `store.ts`)
+* editor     – CodeMirror + vim
+* layout     – Header, status bar, resizable panes
+* markdown-preview – Live preview + Mermaid
+* share      – Import/export
+* shortcuts  – Shortcuts + command palette
 
-### Key Architectural Patterns
+**Key architectural choices**
 
-1. **Client-Only Rendering**: Document management components use `<ClientOnly>` to avoid hydration mismatches
-2. **Composables Pattern**: Business logic extracted into composables for reusability
-3. **Store Persistence**: Documents and settings persist to localStorage
-4. **Typed Event Bus**: Cross-component communication via typed event bus (`src/shared/utils/eventBus.ts`)
-5. **Modular Structure**: Each module contains its own API, components, composables, and internal logic
-6. **Responsive Design**: Mobile-first with adaptive layouts
+1. Client-only rendering where needed (`<ClientOnly>`)
+2. Business logic in composables
+3. Store persistence to localStorage
+4. Typed event bus (`src/shared/utils/eventBus.ts`)
+5. Feature modules own their API/components/composables/internal
+6. Responsive, mobile-first
 
-### Inline Vue Composables Pattern
+---
 
-A well-organized Vue component should read like a **table of contents** at the top, with implementation details hidden below. Use inline composables to group related logic into functions with descriptive names.
+## Vue Components & Composables Style Guide
 
-**The Perfect Component Structure:**
+Goal: top of file reads like a table of contents; details live below. Keep templates simple, logic testable, data flow clear.
+
+### Components
+
+* Separate behavior vs presentation: leaf UI = props in / events out; orchestration in parent views wiring composables → children.
+* Keep templates flat: large `v-if` branches → small child; complex `v-for` lists → list child.
+* Pass cohesive data: for app-specific children prefer one domain object over many scalars; for reusable libs keep props explicit.
+* Choose implementations by intent: map keys → `<component :is>` instead of big conditionals.
+* Split by concern: unrelated prop clusters → focused children (keep stable parent API). If a child is tightly coupled, inline it.
+* Template-driven reuse when needed: expose behavior + slots when consumer must own markup; otherwise prefer composables.
+
+### Composables
+
+* Thin and testable: heavy business rules in pure functions; composable handles reactivity/wiring. Inputs = values/refs; outputs = small, named.
+* Flexible inputs: accept values/refs/computed; normalize with `toValue` helpers. Prefer options object over long arg lists.
+* Control reactivity: introduce boundaries (snapshots/copies/computed) to prevent cascades.
+* Fit return shape to use case: minimal surface; advanced outputs behind flags or factory options.
+* Lightweight shared state: for local features, prefer module-scoped `reactive`/simple store composable over global store.
+
+### Ideal SFC layout
 
 ```vue
 <script setup lang="ts">
-// 1. Imports organized by category
-import { ref } from 'vue'
-import { useExternalComposable } from '@/composables/external'
+import { ref, computed, toValue, type Ref } from 'vue'
+import { useSomethingShared } from '@/shared/composables/useSomethingShared'
 
-// 2. External/shared composables
-const { sharedState } = useExternalComposable()
+// 1) Shared state
+const shared = useSomethingShared()
 
-// 3. Component-specific logic - reads like a story
-const { count, increment, decrement } = useCounter()
-const { message, updateMessage } = useMessage()
+// 2) Story at a glance
+const { count, inc, dec } = useCounter()
+const { message, setMessage } = useMessage()
 const { isValid, validate } = useValidation(count)
 
-// 4. Implementation details below (inline composables)
+// 3) Details below
 function useCounter() {
   const count = ref(0)
-
-  function increment() {
-    count.value++
-  }
-
-  function decrement() {
-    count.value--
-  }
-
-  return { count, increment, decrement }
+  const inc = () => { count.value++ }
+  const dec = () => { count.value-- }
+  return { count, inc, dec }
 }
-
 function useMessage() {
   const message = ref('')
-
-  function updateMessage(text: string) {
-    message.value = text
-  }
-
-  return { message, updateMessage }
+  const setMessage = (t: string) => { message.value = t }
+  return { message, setMessage }
 }
-
 function useValidation(count: Ref<number>) {
   const isValid = computed(() => count.value > 0)
-
-  function validate() {
-    return isValid.value
-  }
-
+  const validate = () => isValid.value
   return { isValid, validate }
 }
 </script>
 ```
 
-**Why this works:**
+Use inline local composables when logic is component-specific or evolving. Extract to shared composables when reused or deserving dedicated tests.
 
-1. **Top section is easy to scan** - You see what the component does without reading implementation
-2. **Related logic grouped** - Counter state and counter functions stay together
-3. **Single responsibility** - Each composable does one thing
-4. **No file clutter** - Component-specific logic stays in the component
+**PR checklist (Vue)**
 
-**When to use inline composables:**
-- Component has multiple concerns (counter, messages, validation)
-- Logic is specific to this component only
-- You want better organization without creating new files
+1. Leaf components only render/emit
+2. Big conditionals split out
+3. Big lists extracted
+4. Cohesive object props for app-specific children
+5. Unrelated concerns split
+6. Over-coupled child inlined
+7. Implementation selected via mapping + `<component :is>`
+8. Composables thin with pure functions
+9. Accept refs/values; normalize inputs
+10. Use options object
+11. Reactive boundaries in place
+12. Minimal return surface
 
-**When to use separate files instead:**
-- Logic is reused across multiple components → create `composables/useCounter.ts`
-- Composable is complex and has its own tests
+---
 
-### State Management
-- Documents are managed by Pinia store (`src/modules/documents/store.ts`)
-- Color theme managed by Pinia store (`src/modules/color-theme/store.ts`)
-- Active document syncs with editor in real-time via event bus
-- Settings and documents persist to localStorage
+## State Management
 
-### Testing Strategy
-- E2E tests use Cucumber for BDD-style scenarios
-- Page objects pattern for maintainable tests
-- Tests cover core workflows: editing, document management, theme switching
+* Documents: Pinia (`src/modules/documents/store.ts`)
+* Color theme: Pinia (`src/modules/color-theme/store.ts`)
+* Active document ↔ editor sync via event bus
+* Persist settings/documents to localStorage
 
-### Event System
-The application uses a typed event bus (`src/shared/utils/eventBus.ts`) for cross-component communication with events like:
-- `document:*` - Document lifecycle events (create, delete, select)
-- `editor:*` - Editor content and text insertion events  
-- `view:*` - View mode switching events
-- `command-palette:*` - Command palette open/close events
-- `vim-mode:*` - Vim mode change events
-- `settings:*` - Settings toggle events
+## Testing Strategy
 
-### Component Auto-Import
-Nuxt is configured with `components: false` to disable automatic component registration. All components must be explicitly imported.
+* E2E: Playwright + Cucumber, BDD scenarios, Page Objects
+* Cover: editing, document management, theme switching
 
-**Local components** are imported directly:
+## Event System
+
+Typed event bus (`src/shared/utils/eventBus.ts`) with events:
+
+* `document:*` (create/delete/select)
+* `editor:*` (content/insert)
+* `view:*` (mode switch)
+* `command-palette:*` (open/close)
+* `vim-mode:*` (mode changes)
+* `settings:*` (toggles)
+
+## Component Auto-Import
+
+Nuxt config: `components: false`. All components must be explicitly imported.
+
+**Local components**
+
 ```ts
 import BaseModal from '~/shared/components/BaseModal.vue'
 ```
 
-**Nuxt UI components** must be imported from `#components`:
+**Nuxt UI components** (must import from `#components`)
+
 ```ts
-import { UButton, UCard, UInput } from '#components'
+import { UButton, UCard, UInput, UModal } from '#components'
 ```
 
-**Why `#components` for Nuxt UI?**
-- Nuxt UI doesn't expose per-component ESM exports from `@nuxt/ui`
-- It relies on Nuxt's component registry system
-- `#components` gives explicit imports while using the registry
-- This is the only way to import Nuxt UI components when auto-imports are disabled
+**Why**: Nuxt UI uses the component registry, not per-component ESM exports. `#components` is the supported import path when auto-imports are disabled.
 
-**Examples:**
-```vue
-<script setup lang="ts">
-// ✅ Correct - Nuxt UI components from #components
-import { UButton, UModal } from '#components'
+**Anti-examples (do NOT do)**
 
-// ✅ Correct - Local components with path
-import BaseModal from '~/shared/components/BaseModal.vue'
-
-// ❌ Wrong - This doesn't work
-import { UButton } from '@nuxt/ui'
-import UButton from '#ui/components/Button.vue'
-</script>
+```ts
+// import { UButton } from '@nuxt/ui'
+// import UButton from '#ui/components/Button.vue'
 ```
 
-### Dependencies Overview
-Key dependencies include:
-- **Nuxt UI** - Comprehensive UI component library (import from `#components`)
-- **CodeMirror 6** with vim extension (`@replit/codemirror-vim`)
-- **Mermaid** for diagram rendering
-- **Markdown-it** with plugins for footnotes and GitHub alerts
-- **Shiki** for syntax highlighting
-- **VueUse** for composable utilities
-- **UnoCSS** for styling
-- **Reka UI** for base components (use Nuxt UI when available)
-- **Knip** for detecting unused exports, files, and dependencies
+## Dependencies Overview
 
-### Component Preferences
-When implementing UI features:
-1. **Prefer Nuxt UI components** over custom implementations or lower-level Reka UI components
-2. **Check Nuxt UI first**: Before building custom components, check if Nuxt UI provides a suitable component
-3. **Nuxt UI benefits**: Better accessibility, consistent styling, built-in features (fuzzy search, keyboard navigation, etc.)
-4. **Example**: Use `UCommandPalette` instead of building custom search with Reka UI Dialog
+* Nuxt UI (import via `#components`)
+* CodeMirror 6 + `@replit/codemirror-vim`
+* Mermaid
+* Markdown-it (+ footnotes + GitHub alerts)
+* Shiki
+* VueUse
+* UnoCSS
+* Reka UI (prefer Nuxt UI when possible)
+* Knip
 
-**Nuxt UI has many powerful components available via the MCP server:**
-- `UCommandPalette` - Fuzzy search with Fuse.js, keyboard navigation, grouping
-- `UModal`, `UDrawer`, `USlideover` - Overlays with better UX than basic dialogs
-- `UButton`, `UInput`, `UKbd` - Consistent, accessible form elements
-- And many more - always check the Nuxt UI MCP before building custom
+## Component Preferences
 
-### Color System Rules
+1. Prefer Nuxt UI over custom/Reka UI
+2. Check Nuxt UI first before building
+3. Benefits: a11y, consistent styling, built-ins (fuzzy search, keyboard nav, etc.)
+4. Example: use `UCommandPalette` instead of a custom dialog search
 
-**CRITICAL: Never use hardcoded colors. All colors MUST be user-configurable via the theme system.**
+**Nuxt UI via MCP offers**: `UCommandPalette`, `UModal`, `UDrawer`, `USlideover`, `UButton`, `UInput`, `UKbd`, etc. Always check MCP first.
 
-#### Available Theme Colors (CSS Variables)
-Use ONLY these dynamic CSS variables for colors:
+---
 
-**Core Colors:**
-- `var(--accent)` - Primary interactive color (buttons, links, highlights)
-- `var(--foreground)` - Primary text color
-- `var(--background)` - Primary background color
-- `var(--muted)` - Secondary backgrounds, subtle surfaces
-- `var(--border)` - Borders, dividers, separators
+## Color System Rules
 
-**Alert/Semantic Colors:**
-- `var(--alert-note)` - Info/note states (blue by default)
-- `var(--alert-tip)` - Success/tips (green by default)
-- `var(--alert-important)` - Important notices (purple by default)
-- `var(--alert-warning)` - Warnings (orange by default)
-- `var(--alert-caution)` - Errors/danger (red by default)
+**Critical: no hardcoded colors.** All colors must be user-configurable via theme.
 
-**Nuxt UI Components:**
-Nuxt UI components automatically use theme colors via overrides in `src/shared/ui/tokens.css`:
-- `color="primary"` → uses `var(--accent)`
-- `color="error"` → uses `var(--alert-caution)`
-- `color="success"` → uses `var(--alert-tip)`
-- `color="info"` → uses `var(--alert-note)`
-- `color="warning"` → uses `var(--alert-warning)`
+**CSS variables (use ONLY these)**
 
-#### Examples
+* `var(--accent)` – Primary interactive
+* `var(--foreground)` – Primary text
+* `var(--background)` – Primary background
+* `var(--muted)` – Subtle surfaces
+* `var(--border)` – Borders/dividers
+* `var(--alert-note)` – Info
+* `var(--alert-tip)` – Success
+* `var(--alert-important)` – Important
+* `var(--alert-warning)` – Warning
+* `var(--alert-caution)` – Error
 
-✅ **CORRECT:**
+**Examples (correct)**
+
 ```vue
-<!-- Backgrounds and borders -->
 <div class="bg-[var(--accent)]/10 border border-[var(--accent)]/20">
   <span class="text-[var(--accent)]">Accent text</span>
 </div>
-
-<!-- Success state -->
-<div class="bg-[var(--alert-tip)]/10 text-[var(--alert-tip)]">
-  Success message
-</div>
-
-<!-- Nuxt UI components -->
-<UButton color="primary">Primary Button</UButton>
+<div class="bg-[var(--alert-tip)]/10 text-[var(--alert-tip)]">Success</div>
+<UButton color="primary">Primary</UButton>
 <UButton color="error">Delete</UButton>
 ```
 
-❌ **WRONG:**
-```vue
-<!-- Never use hardcoded Tailwind colors -->
-<div class="bg-blue-500 text-green-600 border-red-400">
-  Hardcoded colors
-</div>
+**Examples (wrong)**
 
-<!-- Never use hex colors -->
-<div style="color: #3b82f6; background: #10b981">
-  Hardcoded hex colors
-</div>
+```vue
+<div class="bg-blue-500 text-green-600 border-red-400">Hardcoded</div>
+<div style="color:#3b82f6;background:#10b981">Hardcoded</div>
 ```
 
-**Why?** Users can customize all theme colors. Hardcoded colors break this functionality and create visual inconsistencies.
+**Why**: Users can customize theme colors; hardcoding breaks this and causes inconsistency.
 
-When working with this codebase, prefer modifying existing modules over creating new files, and follow the established patterns for consistency.
+---
+
+Prefer modifying existing modules over creating new files. Follow established patterns for consistency.

@@ -131,7 +131,7 @@ export default withNuxt(
       // Cyclomatic complexity rule
       // Default threshold is 20, but you can adjust based on your needs
       // Start with 'warn' to ease into it, then change to 'error'
-      'complexity': ['error', { max: 15 }],
+      'complexity': ['error', { max: 13 }],
       // Arrow spacing rule
       'arrow-spacing': 'error',
       // Dot notation rule
@@ -212,7 +212,7 @@ export default withNuxt(
         multiline: { max: 1 },
         singleline: { max: 1 },
       }],
-      'vue/max-template-depth': ['error', { maxDepth: 10 }],
+      'vue/max-template-depth': ['error', { maxDepth: 9 }],
       // Detect undefined components in templates (catches missing imports when auto-imports are disabled)
       // This rule helps catch runtime errors when components aren't properly imported
       'vue/no-undef-components': ['error', {
