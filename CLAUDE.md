@@ -103,6 +103,21 @@ Goal: top of file reads like a table of contents; details live below. Keep templ
 * Split by concern: unrelated prop clusters → focused children (keep stable parent API). If a child is tightly coupled, inline it.
 * Template-driven reuse when needed: expose behavior + slots when consumer must own markup; otherwise prefer composables.
 
+### Component Naming
+
+**Pattern**: `Module` → `ComponentType` → `Modifier`
+
+* Module components: prefix with module name (e.g., `DocumentList`, `EditorMarkdown`, `ShareButton`)
+* Order: highest-level (module) → general (type) → specific (modifier)
+* Groups related components alphabetically for easy discovery
+
+**Examples (correct)**
+- `DocumentModalDelete` (not `DocumentDeleteModal`)
+- `ColorThemeSliderChannel` (not `ColorThemeChannelSlider`)
+- `ShareDialogImport` (not `ShareImportDialog`)
+
+**Why**: Alphabetical grouping by module/type improves navigation and shows relationships at a glance.
+
 ### Composables
 
 * Thin and testable: heavy business rules in pure functions; composable handles reactivity/wiring. Inputs = values/refs; outputs = small, named.
