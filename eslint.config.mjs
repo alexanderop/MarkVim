@@ -96,6 +96,7 @@ export default withNuxt(
           patterns: restrictedPatterns,
         },
       ],
+      'import/no-duplicates': 'error',
     },
   },
   // Unused exports detection
