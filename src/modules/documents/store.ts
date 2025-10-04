@@ -1,7 +1,7 @@
 import type { Document } from '~/modules/domain/api'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
+import { computed, readonly } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 import { parseDocuments } from '~/modules/domain/api'
 import { tryCatch } from '~/shared/utils/result'
@@ -72,8 +72,8 @@ function update(currentState: DocumentsState, message: DocumentMessage): Documen
 export const useDocumentsStore = defineStore('documents', () => {
   const defaultDoc = createDefaultDocument(defaultDocumentContent)
 
-  // The state (Model) is initialized and synced with localStorage.
-  const state = useLocalStorage<DocumentsState>('markvim-documents', {
+  // Internal state (Model) is initialized and synced with localStorage.
+  const _state = useLocalStorage<DocumentsState>('markvim-documents', {
     documents: [defaultDoc],
     activeDocumentId: defaultDoc.id,
   }, {
@@ -109,16 +109,14 @@ export const useDocumentsStore = defineStore('documents', () => {
 
   const { onDataReset } = useDataReset()
 
-  // --- GETTERS (Selectors) ---
+  // --- Computed getters (derived state) ---
   const documents = computed(() => {
-    return [...state.value.documents].sort((a, b) => b.updatedAt - a.updatedAt)
+    return [..._state.value.documents].sort((a, b) => b.updatedAt - a.updatedAt)
   })
 
   const activeDocument = computed(() => {
-    return documents.value.find(doc => doc.id === state.value.activeDocumentId) ?? documents.value[0] ?? null
+    return documents.value.find(doc => doc.id === _state.value.activeDocumentId) ?? documents.value[0] ?? null
   })
-
-  const activeDocumentId = computed(() => state.value.activeDocumentId)
 
   const activeDocumentTitle = computed(() => {
     if (!activeDocument.value)
@@ -130,12 +128,12 @@ export const useDocumentsStore = defineStore('documents', () => {
     return firstLine || 'Untitled'
   })
 
-  // --- ACTION (The only way to mutate state) ---
+  // --- ACTIONS (The only way to mutate state) ---
   function dispatch(message: DocumentMessage): string | void {
     // Pass the current state and the message to our pure update function.
     // The result is the new state, which we assign back to our reactive state object.
-    const newState = update(state.value, message)
-    state.value = newState
+    const newState = update(_state.value, message)
+    _state.value = newState
 
     // Return the new active document ID for operations that create documents
     if (message.type === 'CREATE_DOCUMENT' || message.type === 'ADD_DOCUMENT' || message.type === 'IMPORT_DOCUMENT') {
@@ -157,13 +155,13 @@ export const useDocumentsStore = defineStore('documents', () => {
   }
 
   function getDocumentById(id: string): Document | undefined {
-    return state.value.documents.find(doc => doc.id === id)
+    return _state.value.documents.find(doc => doc.id === id)
   }
 
   return {
+    state: readonly(_state),
     documents,
     activeDocument,
-    activeDocumentId,
     activeDocumentTitle,
     dispatch,
     getDocumentTitle,

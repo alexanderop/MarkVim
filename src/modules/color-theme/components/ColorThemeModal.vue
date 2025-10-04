@@ -13,7 +13,7 @@ import ColorThemePicker from './ColorThemePicker.vue'
 const COPIED_MESSAGE_DURATION_MS = 2000
 
 // External composables
-const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
+const { theme, dispatch, exportTheme, oklchToString } = useColorThemeStore()
 const { showColorTheme, toggleColorTheme } = useShortcuts()
 
 // Modal state sync
@@ -55,7 +55,7 @@ function useColorPicker(): {
   }
 
   function acceptColorChange(): void {
-    updateColor(selectedColorKey.value, tempColor.value)
+    dispatch({ type: 'UPDATE_COLOR', payload: { colorKey: selectedColorKey.value, color: tempColor.value } })
     showColorPickerModal.value = false
   }
 
@@ -169,7 +169,7 @@ function useThemeActions(): { handleExportTheme: () => Promise<void> } {
           variant="ghost"
           size="sm"
           icon="lucide:rotate-ccw"
-          @click="resetToDefaults"
+          @click="dispatch({ type: 'RESET_TO_DEFAULTS' })"
         >
           Reset Colors
         </UButton>

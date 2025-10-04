@@ -9,7 +9,7 @@ export const vFeature = {
 
     // Initial check
     const updateVisibility = (): void => {
-      const isEnabled = store.flags[featureName] ?? true
+      const isEnabled = store.state.flags[featureName] ?? true
       el.style.display = isEnabled ? '' : 'none'
     }
 
@@ -17,7 +17,7 @@ export const vFeature = {
 
     // Watch for changes in feature flags
     const unwatch = watch(
-      () => store.flags[featureName],
+      () => store.state.flags[featureName],
       () => {
         updateVisibility()
       },
@@ -30,7 +30,7 @@ export const vFeature = {
   updated(el, binding) {
     const store = useFeatureFlagsStore()
     const featureName = binding.value
-    const isEnabled = store.flags[featureName] ?? true
+    const isEnabled = store.state.flags[featureName] ?? true
 
     el.style.display = isEnabled ? '' : 'none'
   },

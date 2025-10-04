@@ -34,7 +34,7 @@ const features = computed<Feature[]>(() => [
 ])
 
 function isFeatureEnabled(feature: FeatureName): boolean {
-  return featureFlagsStore.flags[feature]
+  return featureFlagsStore.state.flags[feature]
 }
 
 function toggleFeature(feature: FeatureName): void {

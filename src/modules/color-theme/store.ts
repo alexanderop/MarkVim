@@ -1,7 +1,7 @@
 import type { Result } from '~/shared/utils/result'
 import { useCssVar, useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { computed, watchEffect } from 'vue'
+import { readonly, watchEffect } from 'vue'
 import { z } from 'zod'
 import { Err, Ok, tryCatch } from '~/shared/utils/result'
 
@@ -24,6 +24,13 @@ export interface ColorTheme {
   alertWarning: OklchColor
   alertCaution: OklchColor
 }
+
+// --- THE MESSAGES ---
+// A union type of all possible actions that can change the state.
+export type ColorThemeMessage
+  = | { type: 'UPDATE_COLOR', payload: { colorKey: keyof ColorTheme, color: OklchColor } }
+    | { type: 'RESET_TO_DEFAULTS' }
+    | { type: 'IMPORT_THEME', payload: { theme: ColorTheme } }
 
 // Color constants
 const MAX_CHROMA = 0.4
@@ -67,21 +74,33 @@ export const DEFAULT_COLOR_THEME: ColorTheme = {
   alertCaution: { l: 0.65, c: 0.18, h: 20 }, // Red - Danger/Caution
 }
 
-// Private internal store (not exported)
-const _useColorThemeInternalStore = defineStore('color-theme-internal', () => {
-  const _theme = useLocalStorage<ColorTheme>('markvim-color-theme', DEFAULT_COLOR_THEME, {
-    mergeDefaults: true,
-  })
+// --- THE UPDATE FUNCTION (Reducer) ---
+// A pure function that calculates the next state based on the current state and a message.
+function update(currentTheme: ColorTheme, message: ColorThemeMessage): ColorTheme {
+  switch (message.type) {
+    case 'UPDATE_COLOR':
+      return {
+        ...currentTheme,
+        [message.payload.colorKey]: message.payload.color,
+      }
 
-  return {
-    _theme,
+    case 'RESET_TO_DEFAULTS':
+      return { ...DEFAULT_COLOR_THEME }
+
+    case 'IMPORT_THEME':
+      return { ...message.payload.theme }
+
+    default:
+      return currentTheme
   }
-})
+}
 
 // Public store (exported)
 export const useColorThemeStore = defineStore('color-theme', () => {
-  // Get internal store instance
-  const internalStore = _useColorThemeInternalStore()
+  // Internal state
+  const _theme = useLocalStorage<ColorTheme>('markvim-color-theme', DEFAULT_COLOR_THEME, {
+    mergeDefaults: true,
+  })
 
   // Helper function for converting OKLCH to string
   function oklchToString(color: OklchColor): string {
@@ -127,7 +146,7 @@ export const useColorThemeStore = defineStore('color-theme', () => {
 
   // Update CSS custom properties when theme changes
   watchEffect(() => {
-    const currentTheme = internalStore._theme
+    const currentTheme = _theme.value
 
     // Guard against undefined theme during initialization
     if (!currentTheme || !currentTheme.background) {
@@ -170,23 +189,19 @@ export const useColorThemeStore = defineStore('color-theme', () => {
     cmSelectionBackgroundVar.value = oklchToString({ ...currentTheme.muted, a: 0.3 })
   })
 
-  // Public API - computed properties
-  const theme = computed(() => internalStore._theme)
+  // --- PUBLIC API - Readonly state ---
+  const theme = readonly(_theme)
 
-  // Public API - actions
-  function updateColor(colorKey: keyof ColorTheme, color: OklchColor): void {
-    internalStore._theme = {
-      ...internalStore._theme,
-      [colorKey]: color,
-    }
+  // --- ACTIONS (The only way to mutate state) ---
+  function dispatch(message: ColorThemeMessage): void {
+    // Pass the current state and the message to our pure update function.
+    // The result is the new state, which we assign back to our reactive state object.
+    _theme.value = update(_theme.value, message)
   }
 
-  function resetToDefaults(): void {
-    internalStore._theme = { ...DEFAULT_COLOR_THEME }
-  }
-
+  // --- Helper functions (non-mutating) ---
   function exportTheme(): string {
-    return JSON.stringify(internalStore._theme, null, 2)
+    return JSON.stringify(_theme.value, null, 2)
   }
 
   function importTheme(themeJson: string): Result<void, Error> {
@@ -221,14 +236,14 @@ export const useColorThemeStore = defineStore('color-theme', () => {
       return Err(new Error('Theme is missing required keys or has invalid values'))
     }
 
-    internalStore._theme = parsedTheme
+    // Dispatch the validated theme
+    dispatch({ type: 'IMPORT_THEME', payload: { theme: parsedTheme } })
     return Ok(undefined)
   }
 
   return {
     theme,
-    updateColor,
-    resetToDefaults,
+    dispatch,
     exportTheme,
     importTheme,
     oklchToString,

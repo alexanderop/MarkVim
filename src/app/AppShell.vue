@@ -12,7 +12,7 @@ import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
 const documentsStore = useDocumentsStore()
-const { documents, activeDocument, activeDocumentId, activeDocumentTitle } = storeToRefs(documentsStore)
+const { documents, activeDocument, activeDocumentTitle, state: documentsState } = storeToRefs(documentsStore)
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
@@ -49,7 +49,7 @@ function handleContentUpdate(value: string): void {
           v-if="isSidebarVisible"
           v-feature="'documents'"
           :documents="documents"
-          :active-document-id="activeDocumentId"
+          :active-document-id="documentsState.activeDocumentId"
           :is-visible="isSidebarVisible"
           class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
           :class="[

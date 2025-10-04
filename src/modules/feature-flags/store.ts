@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
+import { readonly } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
 
 export type FeatureName
@@ -89,8 +89,8 @@ function update(currentState: FeatureFlagsState, message: FeatureFlagsMessage): 
 
 // Feature Flags store following The Elm Architecture (TEA) pattern
 export const useFeatureFlagsStore = defineStore('feature-flags', () => {
-  // The state (Model) is initialized and synced with localStorage.
-  const state = useLocalStorage<FeatureFlagsState>('markvim-feature-flags', {
+  // Internal state (Model) is initialized and synced with localStorage.
+  const _state = useLocalStorage<FeatureFlagsState>('markvim-feature-flags', {
     flags: DEFAULT_FEATURE_FLAGS,
   }, {
     mergeDefaults: true,
@@ -98,14 +98,11 @@ export const useFeatureFlagsStore = defineStore('feature-flags', () => {
 
   const { onDataReset } = useDataReset()
 
-  // --- GETTERS (Selectors) ---
-  const flags = computed(() => state.value.flags)
-
   // --- ACTIONS (The only way to mutate state) ---
   function dispatch(message: FeatureFlagsMessage): void {
     // Pass the current state and the message to our pure update function.
     // The result is the new state, which we assign back to our reactive state object.
-    state.value = update(state.value, message)
+    _state.value = update(_state.value, message)
   }
 
   // Data reset handling
@@ -114,7 +111,7 @@ export const useFeatureFlagsStore = defineStore('feature-flags', () => {
   })
 
   return {
-    flags,
+    state: readonly(_state),
     dispatch,
   }
 })
