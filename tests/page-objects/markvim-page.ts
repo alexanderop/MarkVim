@@ -26,27 +26,10 @@ export class MarkVimPage {
   readonly createDocumentBtn: Locator
   readonly sidebarToggleBtn: Locator
   readonly keyboardShortcutsButton: Locator
-  readonly keyboardShortcutsModal: Locator
-  readonly keyboardShortcutsModalTitle: Locator
   readonly settingsButton: Locator
-  readonly settingsModal: Locator
   readonly shareButton: Locator
-  readonly shareDialog: Locator
-  readonly shareLinkInput: Locator
-  readonly copyShareLinkBtn: Locator
-  readonly shareAdvancedToggle: Locator
-  readonly shareAdvancedStats: Locator
-  readonly shareDialogCloseBtn: Locator
-  readonly importDialog: Locator
-  readonly importUrlInput: Locator
-  readonly importConfirmBtn: Locator
-  readonly importCancelBtn: Locator
   readonly syncScrollToggle: Locator
   readonly deleteDocumentBtn: Locator
-  readonly deleteConfirmModal: Locator
-  readonly deleteConfirmBtn: Locator
-  readonly deleteCancelBtn: Locator
-  readonly colorThemeModal: Locator
   readonly colorThemeButton: Locator
   readonly colorPalettePreview: Locator
   readonly coreColorsSection: Locator
@@ -65,12 +48,6 @@ export class MarkVimPage {
   readonly featureToggleShare: Locator
   readonly featureToggleShortcuts: Locator
   readonly featureToggleVimMode: Locator
-
-  // Clear Data
-  readonly clearDataButton: Locator
-  readonly clearDataConfirmModal: Locator
-  readonly clearDataConfirmBtn: Locator
-  readonly clearDataCancelBtn: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -96,27 +73,10 @@ export class MarkVimPage {
     this.createDocumentBtn = page.locator('[data-testid="create-document-btn"]')
     this.sidebarToggleBtn = page.locator('[data-testid="sidebar-toggle"]')
     this.keyboardShortcutsButton = page.locator('[data-testid="keyboard-shortcuts-button"]')
-    this.keyboardShortcutsModal = page.locator('[data-testid="keyboard-shortcuts-modal"]')
-    this.keyboardShortcutsModalTitle = page.locator('[data-testid="keyboard-shortcuts-modal"] h2')
     this.settingsButton = page.locator('[data-testid="settings-button"]')
-    this.settingsModal = page.locator('[data-testid="settings-modal"]')
     this.shareButton = page.locator('[data-testid="share-button"]')
-    this.shareDialog = page.locator('[data-testid="share-dialog"]')
-    this.shareLinkInput = page.locator('[data-testid="share-link-input"]')
-    this.copyShareLinkBtn = page.locator('[data-testid="copy-share-link-btn"]')
-    this.shareAdvancedToggle = page.locator('[data-testid="share-advanced-toggle"]')
-    this.shareAdvancedStats = page.locator('[data-testid="share-advanced-stats"]')
-    this.shareDialogCloseBtn = page.locator('[data-testid="share-dialog-close-btn"]')
-    this.importDialog = page.locator('[data-testid="import-dialog"]')
-    this.importUrlInput = page.locator('[data-testid="import-url-input"]')
-    this.importConfirmBtn = page.locator('[data-testid="import-confirm-btn"]')
-    this.importCancelBtn = page.locator('[data-testid="import-cancel-btn"]')
     this.syncScrollToggle = page.locator('[data-testid="sync-scroll-toggle"]')
     this.deleteDocumentBtn = page.locator('[data-testid="delete-document-btn"]')
-    this.deleteConfirmModal = page.locator('[data-testid="delete-confirm-modal"]')
-    this.deleteConfirmBtn = page.locator('[data-testid="delete-confirm-btn"]')
-    this.deleteCancelBtn = page.locator('[data-testid="delete-cancel-btn"]')
-    this.colorThemeModal = page.locator('[data-testid="color-theme-modal"]')
     this.colorThemeButton = page.locator('[data-testid="color-theme-button"]')
     this.colorPalettePreview = page.locator('[data-testid="color-palette-preview"]')
     this.coreColorsSection = page.locator('[data-testid="core-colors-section"]')
@@ -131,10 +91,38 @@ export class MarkVimPage {
     this.featureToggleShare = page.locator('[data-testid="feature-share-toggle"]')
     this.featureToggleShortcuts = page.locator('[data-testid="feature-shortcuts-toggle"]')
     this.featureToggleVimMode = page.locator('[data-testid="feature-vim-mode-toggle"]')
-    this.clearDataButton = page.locator('[data-testid="clear-data-button"]')
-    this.clearDataConfirmModal = page.locator('[data-testid="clear-data-confirm-modal"]')
-    this.clearDataConfirmBtn = page.locator('[data-testid="clear-data-confirm-btn"]')
-    this.clearDataCancelBtn = page.locator('[data-testid="clear-data-cancel-btn"]')
+  }
+
+  // Helper methods for modals using accessibility-first locators
+  getKeyboardShortcutsModal(): Locator {
+    return this.page.getByRole('dialog', { name: 'Keyboard Shortcuts' })
+  }
+
+  private getSettingsModal(): Locator {
+    return this.page.getByRole('dialog', { name: 'Settings' })
+  }
+
+  private getClearDataModal(): Locator {
+    return this.page.getByRole('dialog', { name: 'Clear Local Data' })
+  }
+
+  private getShareDialog(): Locator {
+    return this.page.getByRole('dialog', { name: 'Share Document' })
+  }
+
+  private getImportDialog(): Locator {
+    // Try both possible titles
+    const importSharedDialog = this.page.getByRole('dialog', { name: 'Import Shared Document' })
+    const importDialog = this.page.getByRole('dialog', { name: 'Import Document' })
+    return importSharedDialog.or(importDialog)
+  }
+
+  private getDeleteModal(): Locator {
+    return this.page.getByRole('dialog', { name: 'Delete Document' })
+  }
+
+  getColorThemeModal(): Locator {
+    return this.page.getByRole('dialog', { name: 'Color Theme' })
   }
 
   async navigate(): Promise<void> {
@@ -330,11 +318,11 @@ export class MarkVimPage {
   }
 
   async verifySettingsModalVisible(): Promise<void> {
-    await expect(this.settingsModal).toBeVisible()
+    await expect(this.getSettingsModal()).toBeVisible()
   }
 
   async verifySettingsModalHidden(): Promise<void> {
-    await expect(this.settingsModal).not.toBeVisible()
+    await expect(this.getSettingsModal()).not.toBeVisible()
   }
 
   async toggleSidebarWithKeyboard(): Promise<void> {
@@ -402,12 +390,14 @@ export class MarkVimPage {
   }
 
   async getShortcutCategories(): Promise<string[]> {
-    const categoryElements = this.keyboardShortcutsModal.locator('h3')
+    const modal = this.getKeyboardShortcutsModal()
+    const categoryElements = modal.locator('h3')
     return await categoryElements.allTextContents()
   }
 
   async getAllDisplayedShortcuts(): Promise<Array<{ description: string, keys: string }>> {
-    const shortcutRows = this.keyboardShortcutsModal.locator('.space-y-2 > div')
+    const modal = this.getKeyboardShortcutsModal()
+    const shortcutRows = modal.locator('.space-y-2 > div')
     const shortcuts: Array<{ description: string, keys: string }> = []
 
     const count = await shortcutRows.count()
@@ -566,19 +556,23 @@ export class MarkVimPage {
   }
 
   async verifyShareDialogVisible(): Promise<void> {
-    await expect(this.shareDialog).toBeVisible()
+    await expect(this.getShareDialog()).toBeVisible()
   }
 
   async verifyShareDialogHidden(): Promise<void> {
-    await expect(this.shareDialog).not.toBeVisible()
+    await expect(this.getShareDialog()).not.toBeVisible()
   }
 
   async verifyShareLinkInputVisible(): Promise<void> {
-    await expect(this.shareLinkInput).toBeVisible()
+    const dialog = this.getShareDialog()
+    const shareLinkInput = dialog.locator('[data-testid="share-link-input"]')
+    await expect(shareLinkInput).toBeVisible()
   }
 
   async getShareLinkValue(): Promise<string> {
-    return await this.shareLinkInput.inputValue()
+    const dialog = this.getShareDialog()
+    const shareLinkInput = dialog.locator('[data-testid="share-link-input"]')
+    return await shareLinkInput.inputValue()
   }
 
   async verifyShareLinkContainsFragment(): Promise<void> {
@@ -589,23 +583,33 @@ export class MarkVimPage {
   async clickCopyShareLinkButton(): Promise<void> {
     // Grant clipboard permissions before clicking
     await this.page.context().grantPermissions(['clipboard-read', 'clipboard-write'])
-    await this.copyShareLinkBtn.click()
+    const dialog = this.getShareDialog()
+    const copyBtn = dialog.getByRole('button', { name: /Copy|Copied/ })
+    await copyBtn.click()
   }
 
   async verifyCopyButtonState(expectedText: string): Promise<void> {
-    await expect(this.copyShareLinkBtn).toContainText(expectedText)
+    const dialog = this.getShareDialog()
+    const copyBtn = dialog.getByRole('button', { name: /Copy|Copied/ })
+    await expect(copyBtn).toContainText(expectedText)
   }
 
   async clickAdvancedStatsToggle(): Promise<void> {
-    await this.shareAdvancedToggle.click()
+    const dialog = this.getShareDialog()
+    const toggle = dialog.getByRole('button', { name: /Show|Hide/ })
+    await toggle.click()
   }
 
   async verifyAdvancedStatsVisible(): Promise<void> {
-    await expect(this.shareAdvancedStats).toBeVisible()
+    const dialog = this.getShareDialog()
+    const stats = dialog.locator('[data-testid="share-advanced-stats"]')
+    await expect(stats).toBeVisible()
   }
 
   async verifyAdvancedStatsContainData(): Promise<void> {
-    const statsText = await this.shareAdvancedStats.textContent()
+    const dialog = this.getShareDialog()
+    const stats = dialog.locator('[data-testid="share-advanced-stats"]')
+    const statsText = await stats.textContent()
     expect(statsText).toContain('Original size:')
     expect(statsText).toContain('Compressed size:')
     expect(statsText).toContain('Compression ratio:')
@@ -613,35 +617,47 @@ export class MarkVimPage {
   }
 
   async clickShareDialogClose(): Promise<void> {
-    await this.shareDialogCloseBtn.click()
+    const dialog = this.getShareDialog()
+    const closeBtn = dialog.getByRole('button', { name: 'Close' })
+    await closeBtn.click()
   }
 
   async verifyImportDialogVisible(): Promise<void> {
-    await expect(this.importDialog).toBeVisible()
+    await expect(this.getImportDialog()).toBeVisible()
   }
 
   async verifyImportDialogHidden(): Promise<void> {
-    await expect(this.importDialog).not.toBeVisible()
+    await expect(this.getImportDialog()).not.toBeVisible()
   }
 
   async pasteIntoImportInput(url: string): Promise<void> {
-    await this.importUrlInput.fill(url)
+    const dialog = this.getImportDialog()
+    const urlInput = dialog.locator('[data-testid="import-url-input"]')
+    await urlInput.fill(url)
   }
 
   async clickImportConfirm(): Promise<void> {
-    await this.importConfirmBtn.click()
+    const dialog = this.getImportDialog()
+    const confirmBtn = dialog.getByRole('button', { name: /Import/ })
+    await confirmBtn.click()
   }
 
   async clickImportCancel(): Promise<void> {
-    await this.importCancelBtn.click()
+    const dialog = this.getImportDialog()
+    const cancelBtn = dialog.getByRole('button', { name: /Cancel|Skip/ })
+    await cancelBtn.click()
   }
 
   async verifyImportButtonEnabled(): Promise<void> {
-    await expect(this.importConfirmBtn).toBeEnabled()
+    const dialog = this.getImportDialog()
+    const confirmBtn = dialog.getByRole('button', { name: /Import/ })
+    await expect(confirmBtn).toBeEnabled()
   }
 
   async verifyImportButtonDisabled(): Promise<void> {
-    await expect(this.importConfirmBtn).toBeDisabled()
+    const dialog = this.getImportDialog()
+    const confirmBtn = dialog.getByRole('button', { name: /Import/ })
+    await expect(confirmBtn).toBeDisabled()
   }
 
   async createDocumentWithContent(content: string): Promise<void> {
@@ -806,23 +822,26 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     await this.page.waitForTimeout(300)
 
     // Check if modal is visible, if not try clicking the button
-    const isVisible = await this.settingsModal.isVisible()
+    const modal = this.getSettingsModal()
+    const isVisible = await modal.isVisible()
     if (!isVisible) {
       await this.settingsButton.click()
     }
 
-    await expect(this.settingsModal).toBeVisible()
+    await expect(modal).toBeVisible()
   }
 
   async closeSettingsModal(): Promise<void> {
     await this.page.keyboard.press('Escape')
-    await expect(this.settingsModal).not.toBeVisible()
+    await expect(this.getSettingsModal()).not.toBeVisible()
   }
 
   async enableSynchronizedScrolling(): Promise<void> {
     const isEnabled = await this.isSyncScrollEnabled()
     if (!isEnabled) {
-      await this.syncScrollToggle.click()
+      const modal = this.getSettingsModal()
+      const toggle = modal.getByRole('switch', { name: 'Synchronized Scrolling' })
+      await toggle.click()
       await this.page.waitForTimeout(1500) // Wait for state change and scroll sync setup (1000ms + buffer)
     }
   }
@@ -830,7 +849,9 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   async disableSynchronizedScrolling(): Promise<void> {
     const isEnabled = await this.isSyncScrollEnabled()
     if (isEnabled) {
-      await this.syncScrollToggle.click()
+      const modal = this.getSettingsModal()
+      const toggle = modal.getByRole('switch', { name: 'Synchronized Scrolling' })
+      await toggle.click()
     }
   }
 
@@ -973,7 +994,9 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     await this.openSettingsModal()
 
     const isEnabled = await this.isSyncScrollEnabled()
-    const toggleState = await this.syncScrollToggle.getAttribute('data-state')
+    const modal = this.getSettingsModal()
+    const toggle = modal.getByRole('switch', { name: 'Synchronized Scrolling' })
+    const toggleState = await toggle.getAttribute('data-state')
 
     const expectedState = isEnabled ? 'checked' : 'unchecked'
     expect(toggleState).toBe(expectedState)
@@ -1080,23 +1103,27 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyDeleteModalVisible(): Promise<void> {
-    await expect(this.deleteConfirmModal).toBeVisible()
+    await expect(this.getDeleteModal()).toBeVisible()
   }
 
   async verifyDeleteModalHidden(): Promise<void> {
-    await expect(this.deleteConfirmModal).not.toBeVisible()
+    await expect(this.getDeleteModal()).not.toBeVisible()
   }
 
   async clickDeleteConfirm(): Promise<void> {
-    await this.deleteConfirmBtn.click()
+    const modal = this.getDeleteModal()
+    const confirmBtn = modal.getByRole('button', { name: 'Delete' })
+    await confirmBtn.click()
   }
 
   async clickDeleteCancel(): Promise<void> {
-    await this.deleteCancelBtn.click()
+    const modal = this.getDeleteModal()
+    const cancelBtn = modal.getByRole('button', { name: 'Cancel' })
+    await cancelBtn.click()
   }
 
   async verifyDeleteModalContainsDocumentTitle(title: string): Promise<void> {
-    await expect(this.deleteConfirmModal).toContainText(title)
+    await expect(this.getDeleteModal()).toContainText(title)
   }
 
   async deleteDocumentAndVerify(expectedDocumentCount: number): Promise<void> {
@@ -1108,11 +1135,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyColorThemeModalVisible(): Promise<void> {
-    await expect(this.colorThemeModal).toBeVisible({ timeout: 5000 })
+    await expect(this.getColorThemeModal()).toBeVisible({ timeout: 5000 })
   }
 
   async verifyColorThemeModalHidden(): Promise<void> {
-    await expect(this.colorThemeModal).not.toBeVisible()
+    await expect(this.getColorThemeModal()).not.toBeVisible()
   }
 
   async verifyColorThemeModalDefaultColors(): Promise<void> {
@@ -1132,16 +1159,18 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       alertCaution: 'oklch(65.0% 0.180 20)',
     }
 
+    const modal = this.getColorThemeModal()
+
     // Verify core colors section is visible
-    await expect(this.coreColorsSection).toBeVisible()
+    await expect(modal.locator('[data-testid="core-colors-section"]')).toBeVisible()
 
     // Verify alert colors section is visible
-    await expect(this.alertColorsSection).toBeVisible()
+    await expect(modal.locator('[data-testid="alert-colors-section"]')).toBeVisible()
 
     // Verify specific colors by their data-testid attributes instead of OKLCH values
     // This avoids strict mode violations when multiple colors have the same OKLCH value
     for (const [colorName, expectedValue] of Object.entries(expectedColors)) {
-      const colorButton = this.page.locator(`[data-testid="color-button-${colorName}"]`)
+      const colorButton = modal.locator(`[data-testid="color-button-${colorName}"]`)
       await expect(colorButton).toBeVisible({ timeout: 3000 })
 
       // Verify the OKLCH value is displayed within this specific color button
@@ -1150,7 +1179,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     }
 
     // Verify color palette preview is visible
-    await expect(this.colorPalettePreview).toBeVisible()
+    await expect(modal.locator('[data-testid="color-palette-preview"]')).toBeVisible()
   }
 
   async openColorThemeModal(): Promise<void> {
@@ -1159,37 +1188,44 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async setColorPickerValue(colorName: string, colorValue: string): Promise<void> {
-    const colorButton = this.page.locator(`[data-testid="color-button-${colorName.toLowerCase()}"]`)
+    const modal = this.getColorThemeModal()
+    const colorButton = modal.locator(`[data-testid="color-button-${colorName.toLowerCase()}"]`)
     await colorButton.click()
-    await expect(this.oklchStringInput).toBeVisible()
-    await this.oklchStringInput.fill(colorValue)
+
+    // Now wait for the color picker modal to appear
+    const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
+    const oklchInput = colorPickerModal.locator('[data-testid="oklch-string-input"]')
+    await expect(oklchInput).toBeVisible()
+    await oklchInput.fill(colorValue)
   }
 
   async confirmColorChange(): Promise<void> {
-    await this.acceptColorChangeButton.click()
+    const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
+    const confirmBtn = colorPickerModal.getByRole('button', { name: 'OK' })
+    await confirmBtn.click()
     await this.page.waitForTimeout(500) // Wait for color propagation
   }
 
   async cancelColorChange(): Promise<void> {
-    const cancelButton = this.page.locator('[data-testid="cancel-color-change-button"]').or(
-      this.page.locator('button:has-text("Cancel")'),
-    )
-    await cancelButton.click()
+    const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
+    const cancelBtn = colorPickerModal.getByRole('button', { name: 'Cancel' })
+    await cancelBtn.click()
   }
 
   async adjustColorSlider(channel: 'l' | 'c' | 'h', value: number): Promise<void> {
-    const slider = this.page.locator(`[data-testid="oklch-slider-${channel}"]`)
+    const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
+    const slider = colorPickerModal.locator(`[data-testid="oklch-slider-${channel}"]`)
     await slider.fill(value.toString())
   }
 
   async verifyColorPickerModalVisible(): Promise<void> {
     // The color picker is now in a second modal
-    const colorPickerModal = this.page.locator('[role="dialog"]:has([data-testid="oklch-string-input"])')
+    const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
     await expect(colorPickerModal).toBeVisible()
   }
 
   async verifyColorPickerModalHidden(): Promise<void> {
-    const colorPickerModal = this.page.locator('[role="dialog"]:has([data-testid="oklch-string-input"])')
+    const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
     await expect(colorPickerModal).not.toBeVisible()
   }
 
@@ -1242,7 +1278,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   // Feature Flags Methods
   async disableFeature(featureName: string): Promise<void> {
     const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
-    const toggleButton = toggle.locator('button')
+    const toggleButton = toggle.locator('button[role="switch"]')
+
+    // Wait for the toggle to be visible first
+    await expect(toggleButton).toBeVisible({ timeout: 5000 })
+
     const isEnabled = await toggleButton.getAttribute('aria-checked')
 
     if (isEnabled === 'true') {
@@ -1253,7 +1293,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
   async enableFeature(featureName: string): Promise<void> {
     const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
-    const toggleButton = toggle.locator('button')
+    const toggleButton = toggle.locator('button[role="switch"]')
+
+    // Wait for the toggle to be visible first
+    await expect(toggleButton).toBeVisible({ timeout: 5000 })
+
     const isEnabled = await toggleButton.getAttribute('aria-checked')
 
     if (isEnabled === 'false') {
@@ -1264,13 +1308,13 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
   async verifyFeatureEnabled(featureName: string): Promise<void> {
     const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
-    const toggleButton = toggle.locator('button')
+    const toggleButton = toggle.locator('button[role="switch"]')
     await expect(toggleButton).toHaveAttribute('aria-checked', 'true')
   }
 
   async verifyFeatureDisabled(featureName: string): Promise<void> {
     const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
-    const toggleButton = toggle.locator('button')
+    const toggleButton = toggle.locator('button[role="switch"]')
     await expect(toggleButton).toHaveAttribute('aria-checked', 'false')
   }
 
@@ -1299,25 +1343,31 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async clickClearDataButton(): Promise<void> {
-    await this.clearDataButton.click()
+    const settingsModal = this.getSettingsModal()
+    const clearDataBtn = settingsModal.getByRole('button', { name: 'Clear Local Data' })
+    await clearDataBtn.click()
     await this.page.waitForTimeout(300) // Wait for confirmation modal to appear
   }
 
   async clickClearDataConfirm(): Promise<void> {
-    await this.clearDataConfirmBtn.click()
+    const modal = this.getClearDataModal()
+    const confirmBtn = modal.getByRole('button', { name: 'Clear All Data' })
+    await confirmBtn.click()
     await this.page.waitForTimeout(500) // Wait for data to be cleared and page to reload
   }
 
   async clickClearDataCancel(): Promise<void> {
-    await this.clearDataCancelBtn.click()
+    const modal = this.getClearDataModal()
+    const cancelBtn = modal.getByRole('button', { name: 'Cancel' })
+    await cancelBtn.click()
   }
 
   async verifyClearDataConfirmModalVisible(): Promise<void> {
-    await expect(this.clearDataConfirmModal).toBeVisible()
+    await expect(this.getClearDataModal()).toBeVisible()
   }
 
   async verifyClearDataConfirmModalHidden(): Promise<void> {
-    await expect(this.clearDataConfirmModal).not.toBeVisible()
+    await expect(this.getClearDataModal()).not.toBeVisible()
   }
 }
 

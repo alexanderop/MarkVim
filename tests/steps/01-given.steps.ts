@@ -57,7 +57,7 @@ Given('I am on the application page', async function (this: MarkVimWorld) {
 Given('the keyboard shortcuts modal is open', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.clickKeyboardShortcutsButton()
-  await expect(markVimPage.keyboardShortcutsModal).toBeVisible()
+  await expect(markVimPage.getKeyboardShortcutsModal()).toBeVisible()
 })
 
 Given('I have some data stored in localStorage', async function (this: MarkVimWorld) {

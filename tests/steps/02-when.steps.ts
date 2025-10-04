@@ -252,7 +252,7 @@ When('I change the font size to {int}', async function (this: MarkVimWorld, targ
 When('I open the color theme modal', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.colorThemeButton.click()
-  await expect(markVimPage.colorThemeModal).toBeVisible()
+  await expect(markVimPage.getColorThemeModal()).toBeVisible()
 })
 
 When('I click the {string} color setting to open the picker', async function (this: MarkVimWorld, colorName: string) {
