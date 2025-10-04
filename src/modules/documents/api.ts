@@ -5,9 +5,7 @@
  * Other modules should import from this API file, not directly from internal files.
  */
 
-export { default as DocumentList } from './components/DocumentList.client.vue'
-
-export { default as DocumentListSkeleton } from './components/DocumentListSkeleton.vue'
+export { default as DocumentList } from './components/DocumentList.vue'
 
 // Export components that are used externally
 export { default as DocumentManagerAction } from './components/DocumentManagerAction.vue'

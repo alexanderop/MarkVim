@@ -3,10 +3,10 @@ import { UButton } from '#components'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
-import { DocumentList, DocumentListSkeleton, DocumentManagerAction, useDocumentsStore } from '~/modules/documents/api'
-import { EditorMarkdown, EditorMarkdownSkeleton, useEditorSettings } from '~/modules/editor/api'
+import { DocumentList, DocumentManagerAction, useDocumentsStore } from '~/modules/documents/api'
+import { EditorMarkdown, useEditorSettings } from '~/modules/editor/api'
 import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
-import { MarkdownPreview, MarkdownPreviewSkeleton } from '~/modules/markdown-preview/api'
+import { MarkdownPreview } from '~/modules/markdown-preview/api'
 import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
@@ -44,32 +44,19 @@ function handleContentUpdate(value: string): void {
     />
 
     <div class="flex flex-1 relative overflow-hidden">
-      <ClientOnly>
-        <DocumentList
-          v-if="isSidebarVisible"
-          v-feature="'documents'"
-          :documents="documents"
-          :active-document-id="documentsState.activeDocumentId"
-          :is-visible="isSidebarVisible"
-          class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
-          :class="[
-            isSidebarVisible
-              ? 'transform translate-x-0 opacity-100'
-              : 'transform -translate-x-full opacity-0 pointer-events-none',
-          ]"
-        />
-        <template #fallback>
-          <DocumentListSkeleton
-            v-if="isSidebarVisible"
-            class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
-            :class="[
-              isSidebarVisible
-                ? 'transform translate-x-0 opacity-100'
-                : 'transform -translate-x-full opacity-0 pointer-events-none',
-            ]"
-          />
-        </template>
-      </ClientOnly>
+      <DocumentList
+        v-if="isSidebarVisible"
+        v-feature="'documents'"
+        :documents="documents"
+        :active-document-id="documentsState.activeDocumentId"
+        :is-visible="isSidebarVisible"
+        class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
+        :class="[
+          isSidebarVisible
+            ? 'transform translate-x-0 opacity-100'
+            : 'transform -translate-x-full opacity-0 pointer-events-none',
+        ]"
+      />
 
       <!-- Mobile overlay when sidebar is open -->
       <UButton
@@ -105,17 +92,12 @@ function handleContentUpdate(value: string): void {
               width: isSplitView && !isMobile ? `${leftPaneWidth}%` : '100%',
             }"
           >
-            <ClientOnly>
-              <EditorMarkdown
-                :content="activeDocument?.content || ''"
-                :settings="settings"
-                class="h-full"
-                @update:content="handleContentUpdate"
-              />
-              <template #fallback>
-                <EditorMarkdownSkeleton />
-              </template>
-            </ClientOnly>
+            <EditorMarkdown
+              :content="activeDocument?.content || ''"
+              :settings="settings"
+              class="h-full"
+              @update:content="handleContentUpdate"
+            />
           </div>
 
           <ResizableSplitter
@@ -142,15 +124,10 @@ function handleContentUpdate(value: string): void {
               width: isSplitView && !isMobile ? `${rightPaneWidth}%` : '100%',
             }"
           >
-            <ClientOnly>
-              <MarkdownPreview
-                :content="activeDocument?.content || ''"
-                class="h-full"
-              />
-              <template #fallback>
-                <MarkdownPreviewSkeleton />
-              </template>
-            </ClientOnly>
+            <MarkdownPreview
+              :content="activeDocument?.content || ''"
+              class="h-full"
+            />
           </div>
 
           <div
