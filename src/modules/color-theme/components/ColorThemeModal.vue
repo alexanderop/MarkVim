@@ -209,11 +209,11 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
             Core Colors
           </h3>
           <div class="grid gap-3">
-            <button
+            <UButton
               v-for="colorDef in coreColors"
               :key="colorDef.key"
-              type="button"
-              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
+              variant="ghost"
+              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
               :data-testid="`color-button-${colorDef.key}`"
               @click="openColorPicker(colorDef)"
             >
@@ -240,7 +240,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
                 </div>
                 <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
               </div>
-            </button>
+            </UButton>
           </div>
         </div>
 
@@ -249,11 +249,11 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
             Alert Colors
           </h3>
           <div class="grid gap-3">
-            <button
+            <UButton
               v-for="colorDef in alertColors"
               :key="colorDef.key"
-              type="button"
-              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group"
+              variant="ghost"
+              class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
               :data-testid="`color-button-${colorDef.key}`"
               @click="openColorPicker(colorDef)"
             >
@@ -280,7 +280,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
                 </div>
                 <span class="text-text-secondary group-hover:text-text-primary transition-colors">→</span>
               </div>
-            </button>
+            </UButton>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
-import { Icon } from '#components'
+import { Icon, UButton } from '#components'
 import {
   DialogContent,
   DialogDescription,
@@ -226,33 +226,27 @@ function handleCancel(): void {
         </div>
 
         <div class="flex gap-2 justify-end">
-          <button
-            type="button"
-            class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
             data-testid="import-cancel-btn"
             @click="handleCancel"
           >
             {{ isAutoImport ? 'Skip' : 'Cancel' }}
-          </button>
-          <button
-            type="button"
-            class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+          </UButton>
+          <UButton
+            color="primary"
+            variant="solid"
+            size="sm"
+            :icon="isImporting ? 'lucide:loader-2' : 'lucide:download'"
+            :class="{ 'animate-spin': isImporting }"
             :disabled="isImporting || (!isAutoImport && !previewDocument)"
             data-testid="import-confirm-btn"
             @click="handleImport"
           >
-            <Icon
-              v-if="isImporting"
-              name="lucide:loader-2"
-              class="h-3.5 w-3.5 animate-spin"
-            />
-            <Icon
-              v-else
-              name="lucide:download"
-              class="h-3.5 w-3.5"
-            />
             {{ isImporting ? 'Importing...' : 'Import' }}
-          </button>
+          </UButton>
         </div>
       </DialogContent>
     </DialogPortal>

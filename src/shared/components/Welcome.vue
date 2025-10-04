@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '#components'
+import { Icon, UButton } from '#components'
 import { onMounted, ref } from 'vue'
 
 const emit = defineEmits<{
@@ -217,29 +217,27 @@ onMounted(() => {
           class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           :class="{ 'animate-fade-in-up delay-500': isLoaded }"
         >
-          <button
-            type="button"
-            class="group bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 sm:px-12 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl transition-all duration-300 shadow-lg hover:shadow-xl border border-accent/20 min-w-64 hover:scale-105"
+          <UButton
+            color="primary"
+            variant="solid"
+            size="xl"
+            icon="lucide:edit-3"
+            class="font-semibold px-8 sm:px-12 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl shadow-lg min-w-64"
             data-testid="start-writing-button"
             @click="handleStartWriting"
           >
-            <Icon
-              name="lucide:edit-3"
-              class="w-5 h-5 mr-2 inline group-hover:rotate-12 transition-transform"
-            />
             Start Writing Now
-          </button>
-          <button
-            type="button"
-            class="group bg-transparent hover:bg-muted/50 text-foreground font-medium px-8 sm:px-12 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl transition-all duration-300 border border-border hover:border-accent/50 min-w-64"
+          </UButton>
+          <UButton
+            color="neutral"
+            variant="outline"
+            size="xl"
+            icon="lucide:arrow-down"
+            class="font-medium px-8 sm:px-12 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl min-w-64"
             @click="scrollToFeatures"
           >
-            <Icon
-              name="lucide:arrow-down"
-              class="w-5 h-5 mr-2 inline group-hover:translate-y-1 transition-transform"
-            />
             Explore Features
-          </button>
+          </UButton>
         </div>
 
         <!-- Quick Benefits -->
@@ -631,18 +629,17 @@ onMounted(() => {
           <p class="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join developers who've already discovered the joy of writing markdown with Vim power.
           </p>
-          <button
-            type="button"
-            class="group bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-12 py-5 rounded-2xl text-xl transition-all duration-300 shadow-lg hover:shadow-xl border border-accent/20 hover:scale-105"
+          <UButton
+            color="primary"
+            variant="solid"
+            size="xl"
+            icon="lucide:rocket"
+            class="font-semibold px-12 py-5 rounded-2xl text-xl shadow-lg"
             data-testid="start-writing-bottom-button"
             @click="handleStartWriting"
           >
-            <Icon
-              name="lucide:rocket"
-              class="w-6 h-6 mr-3 inline group-hover:translate-x-1 transition-transform"
-            />
             Start Your Writing Journey
-          </button>
+          </UButton>
           <div class="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
             <span class="flex items-center gap-1">
               <Icon

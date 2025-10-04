@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
-import { Icon } from '#components'
+import { Icon, UButton } from '#components'
 import {
   ContextMenuContent,
   ContextMenuItem,
@@ -70,9 +70,9 @@ function formatDate(timestamp: number): string {
   <ContextMenuRoot>
     <!-- Main document item -->
     <ContextMenuTrigger as-child>
-      <button
-        type="button"
-        class="px-3 py-3 md:py-3 border rounded-lg cursor-pointer transition-all duration-200 relative active:scale-[0.98] w-full text-left"
+      <UButton
+        variant="ghost"
+        class="px-3 py-3 md:py-3 border rounded-lg cursor-pointer transition-all duration-200 relative active:scale-[0.98] w-full text-left h-auto"
         :class="[
           isActive
             ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-30 shadow-lg'
@@ -147,7 +147,7 @@ function formatDate(timestamp: number): string {
             </p>
           </div>
         </div>
-      </button>
+      </UButton>
     </ContextMenuTrigger>
 
     <!-- Context Menu -->

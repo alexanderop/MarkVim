@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UButton } from '#components'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
@@ -71,10 +72,10 @@ function handleContentUpdate(value: string): void {
       </ClientOnly>
 
       <!-- Mobile overlay when sidebar is open -->
-      <button
+      <UButton
         v-if="isSidebarVisible && isMobile"
-        type="button"
-        class="bg-black/50 inset-0 fixed z-10 md:hidden cursor-default"
+        variant="ghost"
+        class="bg-black/50 inset-0 fixed z-10 md:hidden cursor-default p-0 rounded-none"
         aria-label="Close sidebar"
         @click="isSidebarVisible = false"
       />

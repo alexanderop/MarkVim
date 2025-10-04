@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
 import type { ViewMode } from '~/modules/layout/api'
-import { Icon } from '#components'
+import { Icon, UButton } from '#components'
 import {
   DialogContent,
   DialogOverlay,
@@ -306,11 +306,11 @@ function handleGlobalKeydown(event: KeyboardEvent): void {
               </div>
 
               <!-- Commands in Group -->
-              <button
+              <UButton
                 v-for="command in group.commands"
                 :key="command.id"
-                type="button"
-                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between w-full text-left focus:outline-none focus:ring-0"
+                variant="ghost"
+                class="px-4 py-3 flex cursor-pointer transition-colors items-center justify-between w-full text-left focus:outline-none focus:ring-0 rounded-none"
                 :class="[
                   isSelected(command)
                     ? 'bg-gray-700/50'
@@ -353,7 +353,7 @@ function handleGlobalKeydown(event: KeyboardEvent): void {
                 >
                   {{ command.shortcut }}
                 </div>
-              </button>
+              </UButton>
             </div>
           </template>
         </div>
