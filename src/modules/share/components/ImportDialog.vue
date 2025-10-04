@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import type { Document } from '~/modules/domain/api'
 import { Icon, UButton, UModal } from '#components'
 import { computed, ref, watch } from 'vue'
@@ -15,6 +16,8 @@ const { autoImportDocument } = defineProps<{
 }>()
 const emit = defineEmits<Emits>()
 const open = defineModel<boolean>('open', { required: true })
+
+// External composables
 const {
   importFromUrl,
   importError,
@@ -22,85 +25,132 @@ const {
   clearShareFromUrl,
 } = useDocumentShare()
 
+// Component logic
 const importUrl = ref('')
-const previewDocument = ref<Document | null>(null)
-
-const PREVIEW_MAX_LENGTH = 100
-
-const isAutoImport = computed(() => !!autoImportDocument)
-
-const documentTitle = computed(() => {
-  const doc = autoImportDocument || previewDocument.value
-  if (!doc)
-    return 'Untitled'
-
-  const firstLine = doc.content.split('\n')[0]?.trim() ?? ''
-  if (firstLine.startsWith('#')) {
-    return firstLine.replace(/^#+\s*/, '') || 'Untitled'
-  }
-  return firstLine || 'Untitled'
-})
-
-const documentPreview = computed(() => {
-  const doc = autoImportDocument || previewDocument.value
-  if (!doc)
-    return ''
-
-  const lines = doc.content.split('\n')
-  const firstNonHeaderLine = lines.find(line =>
-    line.trim() && !line.trim().startsWith('#'),
-  )
-  return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) || 'No content preview available'
-})
-
-watch(
-  () => importUrl.value,
-  async (url) => {
-    if (!url.trim()) {
-      previewDocument.value = null
-      return
-    }
-
-    const result = await tryCatchAsync(
-      () => importFromUrl(url),
-      () => new Error('Failed to import from URL'),
-    )
-
-    previewDocument.value = result.ok ? result.value : null
-  },
+const { previewDocument, isAutoImport, documentTitle, documentPreview } = useDocumentPreview(
+  autoImportDocument,
+  importUrl,
+  importFromUrl,
+)
+const { handleImport, handleClose, handleCancel } = useImportHandlers(
+  isAutoImport,
+  autoImportDocument,
+  importUrl,
+  previewDocument,
+  importFromUrl,
+  clearShareFromUrl,
+  emit,
+  open,
 )
 
-async function handleImport(): Promise<void> {
-  let documentToImport: Document | null = null
+// Inline composables
+function useDocumentPreview(
+  autoImportDocument: Document | null | undefined,
+  importUrl: Ref<string>,
+  importFromUrl: (url?: string) => Promise<Document | null>,
+): {
+    previewDocument: Ref<Document | null>
+    isAutoImport: Ref<boolean>
+    documentTitle: Ref<string>
+    documentPreview: Ref<string>
+  } {
+  const PREVIEW_MAX_LENGTH = 100
+  const previewDocument = ref<Document | null>(null)
 
-  if (isAutoImport.value && autoImportDocument) {
-    documentToImport = autoImportDocument
-  }
-  if (!documentToImport && importUrl.value.trim()) {
-    documentToImport = await importFromUrl(importUrl.value)
+  const isAutoImport = computed(() => !!autoImportDocument)
+
+  const documentTitle = computed(() => {
+    const doc = autoImportDocument || previewDocument.value
+    if (!doc)
+      return 'Untitled'
+
+    const firstLine = doc.content.split('\n')[0]?.trim() ?? ''
+    if (firstLine.startsWith('#')) {
+      return firstLine.replace(/^#+\s*/, '') || 'Untitled'
+    }
+    return firstLine || 'Untitled'
+  })
+
+  const documentPreview = computed(() => {
+    const doc = autoImportDocument || previewDocument.value
+    if (!doc)
+      return ''
+
+    const lines = doc.content.split('\n')
+    const firstNonHeaderLine = lines.find(line =>
+      line.trim() && !line.trim().startsWith('#'),
+    )
+    return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) || 'No content preview available'
+  })
+
+  watch(
+    () => importUrl.value,
+    async (url) => {
+      if (!url.trim()) {
+        previewDocument.value = null
+        return
+      }
+
+      const result = await tryCatchAsync(
+        () => importFromUrl(url),
+        () => new Error('Failed to import from URL'),
+      )
+
+      previewDocument.value = result.ok ? result.value : null
+    },
+  )
+
+  return { previewDocument, isAutoImport, documentTitle, documentPreview }
+}
+
+function useImportHandlers(
+  isAutoImport: Ref<boolean>,
+  autoImportDocument: Document | null | undefined,
+  importUrl: Ref<string>,
+  previewDocument: Ref<Document | null>,
+  importFromUrl: (url?: string) => Promise<Document | null>,
+  clearShareFromUrl: () => void,
+  emit: any,
+  open: Ref<boolean>,
+): {
+    handleImport: () => Promise<void>
+    handleClose: () => void
+    handleCancel: () => void
+  } {
+  async function handleImport(): Promise<void> {
+    let documentToImport: Document | null = null
+
+    if (isAutoImport.value && autoImportDocument) {
+      documentToImport = autoImportDocument
+    }
+    if (!documentToImport && importUrl.value.trim()) {
+      documentToImport = await importFromUrl(importUrl.value)
+    }
+
+    if (documentToImport) {
+      emit('import', documentToImport)
+      if (isAutoImport.value) {
+        clearShareFromUrl()
+      }
+      handleClose()
+    }
   }
 
-  if (documentToImport) {
-    emit('import', documentToImport)
+  function handleClose(): void {
+    open.value = false
+    importUrl.value = ''
+    previewDocument.value = null
+  }
+
+  function handleCancel(): void {
+    emit('cancel')
     if (isAutoImport.value) {
       clearShareFromUrl()
     }
     handleClose()
   }
-}
 
-function handleClose(): void {
-  open.value = false
-  importUrl.value = ''
-  previewDocument.value = null
-}
-
-function handleCancel(): void {
-  emit('cancel')
-  if (isAutoImport.value) {
-    clearShareFromUrl()
-  }
-  handleClose()
+  return { handleImport, handleClose, handleCancel }
 }
 </script>
 

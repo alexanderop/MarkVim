@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColorTheme } from '~/modules/color-theme/api'
+import type { ColorTheme, OklchColor } from '~/modules/color-theme/api'
 import { UButton, UCard, UModal } from '#components'
 import { ref } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
@@ -7,6 +7,7 @@ import { useShortcuts } from '~/modules/shortcuts/api'
 import { tryCatchAsync } from '~/shared/utils/result'
 import ColorThemeOklchColorPicker from './OklchColorPicker.vue'
 
+// External composables
 const { theme, updateColor, resetToDefaults, exportTheme, oklchToString } = useColorThemeStore()
 const { showColorTheme, toggleColorTheme } = useShortcuts()
 
@@ -16,83 +17,11 @@ const isOpen = defineModel<boolean>('open', {
   set: toggleColorTheme,
 })
 
-const showColorPickerModal = ref(false)
-const selectedColorKey = ref<keyof ColorTheme>('background')
-const selectedColorData = ref<{
-  key: keyof ColorTheme
-  label: string
-  description: string
-  icon: string
-}>({
-  key: 'background',
-  label: 'Background',
-  description: 'Main application background color',
-  icon: 'lucide:layout',
-})
+// Component logic
+const { showColorPickerModal, selectedColorData, tempColor, openColorPicker, acceptColorChange, cancelColorChange } = useColorPicker(theme, updateColor)
+const { resetThemeToDefaults, handleExportTheme } = useThemeActions(resetToDefaults, exportTheme)
 
-// Temporary color state for preview (doesn't update main theme until OK is clicked)
-const tempColor = ref({ l: 0.7, c: 0.15, h: 200, a: 1 })
-
-// Duration to show "Copied!" message in milliseconds
-const COPIED_MESSAGE_DURATION_MS = 2000
-
-function resetThemeToDefaults(): void {
-  resetToDefaults()
-}
-
-async function handleExportTheme(): Promise<void> {
-  const themeData = exportTheme()
-
-  // Try to copy to clipboard
-  const copyResult = await tryCatchAsync(
-    () => navigator.clipboard.writeText(themeData),
-    error => (error instanceof Error ? error : new Error(String(error))),
-  )
-
-  if (copyResult.ok) {
-    // Success - show "Copied!" message
-    const button = document.querySelector('[data-testid="export-theme-button"]')
-    if (button) {
-      const originalText = button.textContent
-      button.textContent = 'Copied!'
-      setTimeout(() => {
-        button.textContent = originalText
-      }, COPIED_MESSAGE_DURATION_MS)
-    }
-    return
-  }
-  // Failed - download as file instead
-  console.error('Failed to copy theme to clipboard:', copyResult.error)
-
-  const blob = new Blob([themeData], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'markvim-theme.json'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-}
-
-function openColorPicker(colorDef: typeof colorDefinitions[0]): void {
-  selectedColorKey.value = colorDef.key
-  selectedColorData.value = colorDef
-  // Initialize temp color with current theme color, ensuring alpha defaults to 1
-  const currentColor = theme[colorDef.key]
-  tempColor.value = { ...currentColor, a: currentColor.a ?? 1 }
-  showColorPickerModal.value = true
-}
-
-function acceptColorChange(): void {
-  updateColor(selectedColorKey.value, tempColor.value)
-  showColorPickerModal.value = false
-}
-
-function cancelColorChange(): void {
-  showColorPickerModal.value = false
-}
-
+// Color configuration
 const colorDefinitions = [
   {
     key: 'background' as const,
@@ -168,6 +97,119 @@ const colorDefinitions = [
 
 const coreColors = colorDefinitions.filter(def => def.category === 'core')
 const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
+
+// Inline composables
+function useColorPicker(
+  theme: ColorTheme,
+  updateColor: (key: keyof ColorTheme, color: OklchColor) => void,
+): {
+    showColorPickerModal: import('vue').Ref<boolean>
+    selectedColorData: import('vue').Ref<{
+      key: keyof ColorTheme
+      label: string
+      description: string
+      icon: string
+    }>
+    tempColor: import('vue').Ref<{ l: number, c: number, h: number, a: number }>
+    openColorPicker: (colorDef: typeof colorDefinitions[0]) => void
+    acceptColorChange: () => void
+    cancelColorChange: () => void
+  } {
+  const showColorPickerModal = ref(false)
+  const selectedColorKey = ref<keyof ColorTheme>('background')
+  const selectedColorData = ref<{
+    key: keyof ColorTheme
+    label: string
+    description: string
+    icon: string
+  }>({
+    key: 'background',
+    label: 'Background',
+    description: 'Main application background color',
+    icon: 'lucide:layout',
+  })
+
+  // Temporary color state for preview (doesn't update main theme until OK is clicked)
+  const tempColor = ref({ l: 0.7, c: 0.15, h: 200, a: 1 })
+
+  function openColorPicker(colorDef: typeof colorDefinitions[0]): void {
+    selectedColorKey.value = colorDef.key
+    selectedColorData.value = colorDef
+    // Initialize temp color with current theme color, ensuring alpha defaults to 1
+    const currentColor = theme[colorDef.key]
+    tempColor.value = { ...currentColor, a: currentColor.a ?? 1 }
+    showColorPickerModal.value = true
+  }
+
+  function acceptColorChange(): void {
+    updateColor(selectedColorKey.value, tempColor.value)
+    showColorPickerModal.value = false
+  }
+
+  function cancelColorChange(): void {
+    showColorPickerModal.value = false
+  }
+
+  return {
+    showColorPickerModal,
+    selectedColorData,
+    tempColor,
+    openColorPicker,
+    acceptColorChange,
+    cancelColorChange,
+  }
+}
+
+function useThemeActions(
+  resetToDefaults: () => void,
+  exportTheme: () => string,
+): {
+    resetThemeToDefaults: () => void
+    handleExportTheme: () => Promise<void>
+  } {
+  const COPIED_MESSAGE_DURATION_MS = 2000
+
+  function resetThemeToDefaults(): void {
+    resetToDefaults()
+  }
+
+  async function handleExportTheme(): Promise<void> {
+    const themeData = exportTheme()
+
+    // Try to copy to clipboard
+    const copyResult = await tryCatchAsync(
+      () => navigator.clipboard.writeText(themeData),
+      error => (error instanceof Error ? error : new Error(String(error))),
+    )
+
+    if (copyResult.ok) {
+      // Success - show "Copied!" message
+      const button = document.querySelector('[data-testid="export-theme-button"]')
+      if (button) {
+        const originalText = button.textContent
+        button.textContent = 'Copied!'
+        setTimeout(() => {
+          button.textContent = originalText
+        }, COPIED_MESSAGE_DURATION_MS)
+      }
+      return
+    }
+    // Failed - download as file instead
+    console.error('Failed to copy theme to clipboard:', copyResult.error)
+
+    const blob = new Blob([themeData], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'markvim-theme.json'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  return { resetThemeToDefaults, handleExportTheme }
+}
 </script>
 
 <template>
