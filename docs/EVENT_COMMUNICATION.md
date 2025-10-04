@@ -48,6 +48,59 @@ Each module defines its own events in an `events.ts` file and exports them via t
 - Events as part of the module's public contract
 - No circular dependencies
 
+### Event Bus Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Event Bus Core"
+        EB[Event Bus<br/>eventBus.ts]
+        AE[AppEvents Interface<br/>Aggregates All Events]
+    end
+
+    subgraph "Module Events"
+        DE[DocumentsEvents<br/>documents/events.ts]
+        EE[EditorEvents<br/>editor/events.ts]
+        LE[LayoutEvents<br/>layout/events.ts]
+        SE[ShortcutsEvents<br/>shortcuts/events.ts]
+        SH[SharedEvents<br/>shared/events.ts]
+    end
+
+    subgraph "Modules (Publishers & Subscribers)"
+        DM[Documents Module]
+        EM[Editor Module]
+        LM[Layout Module]
+        SM[Shortcuts Module]
+        CM[Components]
+    end
+
+    DE --> AE
+    EE --> AE
+    LE --> AE
+    SE --> AE
+    SH --> AE
+    AE --> EB
+
+    DM -->|emitAppEvent| EB
+    EM -->|emitAppEvent| EB
+    LM -->|emitAppEvent| EB
+    SM -->|emitAppEvent| EB
+    CM -->|emitAppEvent| EB
+
+    EB -->|onAppEvent| DM
+    EB -->|onAppEvent| EM
+    EB -->|onAppEvent| LM
+    EB -->|onAppEvent| SM
+    EB -->|onAppEvent| CM
+
+    style EB fill:#4a90e2,stroke:#2e5c8a,color:#fff
+    style AE fill:#50c878,stroke:#2e7d4e,color:#fff
+    style DM fill:#ff9800,stroke:#c66900
+    style EM fill:#ff9800,stroke:#c66900
+    style LM fill:#ff9800,stroke:#c66900
+    style SM fill:#ff9800,stroke:#c66900
+    style CM fill:#ff9800,stroke:#c66900
+```
+
 ## Module Event Definitions
 
 ### Documents Module Events
@@ -165,6 +218,46 @@ export interface SharedEvents {
   // Data management
   'data:reset': undefined
 }
+```
+
+### Module Event Ownership
+
+This diagram shows which modules own which events and what data they carry:
+
+```mermaid
+graph LR
+    subgraph "Documents Module"
+        D1["document:delete<br/>{documentId, documentTitle}"]
+        D2["document:select<br/>{documentId}"]
+    end
+
+    subgraph "Layout Module"
+        L1["view:set<br/>{viewMode}"]
+        L2["sidebar:toggle<br/>undefined"]
+    end
+
+    subgraph "Shortcuts Module"
+        S1["command-palette:open<br/>{position?}"]
+        S2["command-palette:close<br/>undefined"]
+    end
+
+    subgraph "Shared Events"
+        SH1["settings:toggle-vim<br/>undefined"]
+        SH2["settings:toggle-line-numbers<br/>undefined"]
+        SH3["settings:toggle-preview-sync<br/>undefined"]
+        SH4["data:reset<br/>undefined"]
+    end
+
+    style D1 fill:#e3f2fd,stroke:#1976d2
+    style D2 fill:#e3f2fd,stroke:#1976d2
+    style L1 fill:#f3e5f5,stroke:#7b1fa2
+    style L2 fill:#f3e5f5,stroke:#7b1fa2
+    style S1 fill:#fff3e0,stroke:#f57c00
+    style S2 fill:#fff3e0,stroke:#f57c00
+    style SH1 fill:#e8f5e9,stroke:#388e3c
+    style SH2 fill:#e8f5e9,stroke:#388e3c
+    style SH3 fill:#e8f5e9,stroke:#388e3c
+    style SH4 fill:#e8f5e9,stroke:#388e3c
 ```
 
 ## Communication Patterns
@@ -291,8 +384,23 @@ registerShortcuts([
 3. **Documents store** listens to `document:create`, creates new document, and sets it as active
 4. **Layout module** listens to `document:select` and closes sidebar on mobile
 
-```
-User Input → ShortcutsManager → Event Bus → Documents Store → Layout Module
+```mermaid
+sequenceDiagram
+    actor User
+    participant SM as ShortcutsManager
+    participant EB as Event Bus
+    participant DS as Documents Store
+    participant LM as Layout Module
+    participant UI as UI Components
+
+    User->>SM: Press Cmd+N
+    SM->>SM: handleCreateDocument()
+    SM->>DS: dispatch({type: 'CREATE_DOCUMENT'})
+    DS->>DS: Create new document
+    DS->>DS: Set as active
+    Note over DS: Document created<br/>and activated
+    DS-->>UI: Reactive update
+    UI-->>User: Show new document
 ```
 
 ### Flow 2: Switching View Modes
@@ -302,8 +410,21 @@ User Input → ShortcutsManager → Event Bus → Documents Store → Layout Mod
 3. **Layout module** listens to `view:set` and updates the view mode
 4. View components reactively update based on new view mode
 
-```
-User Input → ShortcutsManager → Event Bus → Layout Module → UI Update
+```mermaid
+sequenceDiagram
+    actor User
+    participant SM as ShortcutsManager
+    participant EB as Event Bus
+    participant LM as Layout Module<br/>(useViewMode)
+    participant UI as UI Components
+
+    User->>SM: Press "1" key
+    SM->>EB: emitAppEvent('view:set',<br/>{viewMode: 'editor'})
+    EB->>LM: onAppEvent handler triggered
+    LM->>LM: setViewMode('editor')
+    Note over LM: viewMode.value = 'editor'<br/>saved to localStorage
+    LM-->>UI: Reactive update
+    UI-->>User: Show editor-only view
 ```
 
 ### Flow 3: Document Selection
@@ -314,19 +435,61 @@ User Input → ShortcutsManager → Event Bus → Layout Module → UI Update
 4. **Layout module** listens to `document:select` and closes sidebar on mobile
 5. **Editor** reactively updates to show the newly selected document's content
 
-```
-User Click → DocumentItem → Event Bus → [Documents Store, Layout Module] → UI Update
+```mermaid
+sequenceDiagram
+    actor User
+    participant DI as DocumentItem
+    participant EB as Event Bus
+    participant DS as Documents Store
+    participant LM as Layout Module
+    participant ED as Editor
+
+    User->>DI: Click document
+    DI->>EB: emitAppEvent('document:select',<br/>{documentId: '123'})
+
+    par Parallel Event Handling
+        EB->>DS: onAppEvent handler
+        DS->>DS: dispatch({type: 'SELECT_DOCUMENT',<br/>payload: {documentId: '123'}})
+        Note over DS: activeDocumentId updated
+    and
+        EB->>LM: onAppEvent handler
+        alt Mobile device
+            LM->>LM: isSidebarVisible = false
+            Note over LM: Sidebar closed on mobile
+        end
+    end
+
+    DS-->>ED: Reactive update (activeDocument)
+    ED-->>User: Show selected document
 ```
 
-### Flow 4: Editor Content Synchronization
+### Flow 4: Command Palette Interaction
 
-1. User types in the editor
-2. **MarkdownEditor** emits `editor:content-update` event with current content
-3. **Documents store** can listen to this event for real-time synchronization (if needed)
-4. Parent component receives Vue `update:content` event and saves to store
+This shows bidirectional communication where the shortcuts module both emits and listens to its own events:
 
-```
-User Types → MarkdownEditor → [Event Bus, Vue Event] → Documents Store
+```mermaid
+sequenceDiagram
+    actor User
+    participant SM as ShortcutsManager
+    participant EB as Event Bus
+    participant CP as Command Palette<br/>Component
+    participant DS as Documents Store
+
+    User->>SM: Press Cmd+K
+    SM->>EB: emitAppEvent('command-palette:open', {})
+    EB->>SM: onAppEvent handler
+    SM->>CP: commandPaletteOpen = true
+    CP-->>User: Show palette
+
+    User->>CP: Select "Create Document"
+    CP->>EB: emitAppEvent('document:select',<br/>{documentId: 'new'})
+    EB->>DS: onAppEvent handler
+    DS->>DS: Create & select document
+
+    CP->>EB: emitAppEvent('command-palette:close')
+    EB->>SM: onAppEvent handler
+    SM->>CP: commandPaletteOpen = false
+    CP-->>User: Hide palette
 ```
 
 ## Benefits of This Architecture
@@ -433,6 +596,127 @@ Use browser DevTools to trace event emissions:
 2. Follow the call stack to see who emitted the event
 3. Inspect payload data
 
+## Complete Event Flow Ecosystem
+
+This diagram shows all modules and their event interactions:
+
+```mermaid
+graph TB
+    subgraph "User Interactions"
+        U1[Keyboard Shortcuts]
+        U2[Click Actions]
+        U3[Menu Items]
+    end
+
+    subgraph "Event Bus"
+        EB[Typed Event Bus<br/>emitAppEvent / onAppEvent]
+    end
+
+    subgraph "Modules"
+        SM[Shortcuts Module<br/>---<br/>EMITS:<br/>- command-palette:*<br/>- view:set<br/>- sidebar:toggle<br/>- settings:*<br/>---<br/>LISTENS:<br/>- command-palette:*]
+
+        DM[Documents Module<br/>---<br/>EMITS:<br/>- document:select<br/>- document:delete<br/>---<br/>LISTENS:<br/>- (none via events)<br/>- (uses TEA dispatch)]
+
+        LM[Layout Module<br/>---<br/>LISTENS:<br/>- view:set<br/>- sidebar:toggle<br/>- document:select]
+
+        EM[Editor Module<br/>---<br/>LISTENS:<br/>- settings:toggle-vim<br/>- settings:toggle-line-numbers]
+
+        COMP[UI Components<br/>DocumentItem, etc.<br/>---<br/>EMITS:<br/>- document:select<br/>- document:delete]
+    end
+
+    subgraph "State Stores"
+        DS[Documents Store<br/>Pinia + TEA]
+        LS[Layout State<br/>useViewMode]
+        ES[Editor Settings]
+    end
+
+    U1 --> SM
+    U2 --> COMP
+    U3 --> COMP
+
+    SM -.->|emitAppEvent| EB
+    COMP -.->|emitAppEvent| EB
+    DM -.->|emitAppEvent| EB
+
+    EB -.->|onAppEvent| SM
+    EB -.->|onAppEvent| DM
+    EB -.->|onAppEvent| LM
+    EB -.->|onAppEvent| EM
+
+    DM <--> DS
+    LM <--> LS
+    EM <--> ES
+
+    style EB fill:#4a90e2,stroke:#2e5c8a,color:#fff,stroke-width:3px
+    style SM fill:#fff3e0,stroke:#f57c00
+    style DM fill:#e3f2fd,stroke:#1976d2
+    style LM fill:#f3e5f5,stroke:#7b1fa2
+    style EM fill:#e8f5e9,stroke:#388e3c
+    style COMP fill:#ffebee,stroke:#c62828
+    style DS fill:#e1f5fe,stroke:#0277bd
+    style LS fill:#f1f8e9,stroke:#558b2f
+    style ES fill:#fce4ec,stroke:#c2185b
+```
+
+## Current State vs Ideal State
+
+### Current Reality (Mixed Pattern)
+
+```mermaid
+graph LR
+    subgraph "Current Implementation"
+        SM[Shortcuts Module]
+        SHM[Share Module]
+        DS[Documents Store]
+        EB[Event Bus]
+
+        SM -.->|❌ Direct dispatch| DS
+        SHM -.->|❌ Direct dispatch| DS
+        SM -.->|⚠️ Some events| EB
+
+        style DS fill:#ffcccc,stroke:#cc0000
+        style EB fill:#ccccff,stroke:#0000cc
+    end
+```
+
+**Issues:**
+- ❌ Many modules bypass event bus
+- ❌ Direct store imports create coupling
+- ❌ Incomplete event definitions
+- ❌ Stores don't listen to events
+
+### Ideal State (Event-Driven)
+
+```mermaid
+graph LR
+    subgraph "Target Architecture"
+        SM2[Shortcuts Module]
+        SHM2[Share Module]
+        EB2[Event Bus]
+        DL[Event Listeners]
+        DS2[Documents Store]
+
+        SM2 -->|✅ Events only| EB2
+        SHM2 -->|✅ Events only| EB2
+        EB2 --> DL
+        DL --> DS2
+
+        style DS2 fill:#ccffcc,stroke:#00cc00
+        style EB2 fill:#ccccff,stroke:#0000cc
+        style DL fill:#ffffcc,stroke:#cccc00
+    end
+```
+
+**Benefits:**
+- ✅ Complete decoupling
+- ✅ Clear event contracts
+- ✅ Easy testing & mocking
+- ✅ Independent modules
+
+> 📖 **For detailed analysis and migration plan**, see [EVENT_DRIVEN_IMPROVEMENTS.md](./EVENT_DRIVEN_IMPROVEMENTS.md)
+
+---
+
 ## Summary
 
 The event bus architecture in MarkVim provides a clean, type-safe way for modules to communicate. Key points:
@@ -442,5 +726,16 @@ The event bus architecture in MarkVim provides a clean, type-safe way for module
 - **Type-safe**: TypeScript ensures compile-time correctness
 - **Decoupled**: Modules interact through events, not direct dependencies
 - **Maintainable**: Clear contracts make the system easy to understand and modify
+- **Bidirectional**: Modules can both emit and listen to events
+- **Parallel Processing**: Multiple listeners can react to the same event independently
 
 This pattern enables MarkVim's modular architecture while maintaining clean separation of concerns and type safety throughout the application.
+
+### Current Challenges
+
+While the architecture is well-designed, implementation shows:
+- **Mixed patterns**: Some modules use events, others use direct store access
+- **Incomplete events**: Missing definitions for common operations
+- **Documentation gap**: Documented events that don't exist in code
+
+See [EVENT_DRIVEN_IMPROVEMENTS.md](./EVENT_DRIVEN_IMPROVEMENTS.md) for detailed analysis and improvement roadmap.

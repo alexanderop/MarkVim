@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
 import { onMounted, ref } from 'vue'
-import { useDocumentsStore } from '~/modules/documents/api'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useViewMode } from '~/modules/layout/api'
 import { useDocumentShare } from '~/modules/share/api'
 import ShareDialogImport from './ShareDialogImport.vue'
@@ -12,7 +12,6 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const documentsStore = useDocumentsStore()
 const { parseShareUrl, clearShareFromUrl } = useDocumentShare()
 const { setViewMode } = useViewMode()
 
@@ -50,8 +49,8 @@ function useAutoImportDetection(): { detectShareInUrl: () => Promise<void> } {
 const { detectShareInUrl } = useAutoImportDetection()
 
 function handleAutoImport(document: Document): void {
-  // Import via store dispatch
-  documentsStore.dispatch({ type: 'ADD_DOCUMENT', payload: { content: document.content } })
+  // Import via event
+  emitAppEvent('document:import', { content: document.content })
 
   // Switch to preview mode
   setViewMode('preview')
@@ -62,8 +61,8 @@ function handleAutoImport(document: Document): void {
 }
 
 function handleImportConfirm(document: Document): void {
-  // Import via store dispatch
-  documentsStore.dispatch({ type: 'ADD_DOCUMENT', payload: { content: document.content } })
+  // Import via event
+  emitAppEvent('document:import', { content: document.content })
 
   emit('documentImported', document)
 

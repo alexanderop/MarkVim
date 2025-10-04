@@ -2,6 +2,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { readonly } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
+import { onAppEvent } from '@/shared/utils/eventBus'
 
 export type FeatureName
   = | 'documents'
@@ -110,8 +111,25 @@ export const useFeatureFlagsStore = defineStore('feature-flags', () => {
     dispatch({ type: 'RESET_TO_DEFAULTS' })
   })
 
+  // EVENT LISTENERS - Enable event-driven communication
+  // External modules should emit events, not call dispatch directly
+  onAppEvent('feature:toggle', (payload) => {
+    dispatch({ type: 'TOGGLE_FEATURE', payload })
+  })
+
+  onAppEvent('feature:enable', (payload) => {
+    dispatch({ type: 'ENABLE_FEATURE', payload })
+  })
+
+  onAppEvent('feature:disable', (payload) => {
+    dispatch({ type: 'DISABLE_FEATURE', payload })
+  })
+
+  onAppEvent('feature:reset', () => {
+    dispatch({ type: 'RESET_TO_DEFAULTS' })
+  })
+
   return {
     state: readonly(_state),
-    dispatch,
   }
 })

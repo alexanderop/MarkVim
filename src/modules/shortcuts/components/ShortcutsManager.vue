@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle, useDocumentsStore } from '~/modules/documents/api'
+import { getDocumentTitle, useDocumentsState } from '~/modules/documents/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import ShortcutsPaletteCommand from './ShortcutsPaletteCommand.vue'
 
 // Command palette state
 const commandPaletteOpen = ref(false)
 
-// Use documents store
-const documentsStore = useDocumentsStore()
-const { documents, activeDocument } = storeToRefs(documentsStore)
+// Use documents state
+const { documents, activeDocument } = useDocumentsState()
 
 // Get required composables
 const { registerShortcuts, registerAppCommand, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
@@ -42,7 +40,7 @@ function handleDocumentSelectFromPalette(id: string): void {
 }
 
 function handleCreateDocument(): void {
-  documentsStore.dispatch({ type: 'CREATE_DOCUMENT' })
+  emitAppEvent('document:create')
 }
 
 // Listen to event bus events

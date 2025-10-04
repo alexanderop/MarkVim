@@ -3,7 +3,8 @@ import type { ColorDefinition } from '../utils/color-definitions'
 import type { ColorTheme } from '~/modules/color-theme/api'
 import { UButton, UCard, UModal } from '#components'
 import { ref } from 'vue'
-import { useColorThemeStore } from '~/modules/color-theme/api'
+import { emitAppEvent } from '@/shared/utils/eventBus'
+import { useColorThemeState } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import { alertColors, colorDefinitions, coreColors } from '../utils/color-definitions'
 import { copyToClipboard, downloadAsFile, showTemporaryButtonMessage } from '../utils/export-utils'
@@ -13,7 +14,7 @@ import ColorThemePicker from './ColorThemePicker.vue'
 const COPIED_MESSAGE_DURATION_MS = 2000
 
 // External composables
-const { theme, dispatch, exportTheme, oklchToString } = useColorThemeStore()
+const { theme, exportTheme, oklchToString } = useColorThemeState()
 const { showColorTheme, toggleColorTheme } = useShortcuts()
 
 // Modal state sync
@@ -49,13 +50,13 @@ function useColorPicker(): {
   function openColorPicker(colorDef: ColorDefinition): void {
     selectedColorKey.value = colorDef.key
     selectedColorData.value = colorDef
-    const currentColor = theme[colorDef.key]
+    const currentColor = theme.value[colorDef.key]
     tempColor.value = { ...currentColor, a: currentColor.a ?? 1 }
     showColorPickerModal.value = true
   }
 
   function acceptColorChange(): void {
-    dispatch({ type: 'UPDATE_COLOR', payload: { colorKey: selectedColorKey.value, color: tempColor.value } })
+    emitAppEvent('theme:color:update', { colorKey: selectedColorKey.value, color: tempColor.value })
     showColorPickerModal.value = false
   }
 
@@ -169,7 +170,7 @@ function useThemeActions(): { handleExportTheme: () => Promise<void> } {
           variant="ghost"
           size="sm"
           icon="lucide:rotate-ccw"
-          @click="dispatch({ type: 'RESET_TO_DEFAULTS' })"
+          @click="emitAppEvent('theme:reset')"
         >
           Reset Colors
         </UButton>

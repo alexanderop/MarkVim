@@ -28,7 +28,7 @@
 
 import type { OklchColor } from '~/modules/color-theme/api'
 import { computed, ref, watch } from 'vue'
-import { useColorThemeStore } from '~/modules/color-theme/api'
+import { useColorThemeState } from '~/modules/color-theme/api'
 import { tryCatchAsync } from '~/shared/utils/result'
 import ColorThemeSliderChannel from './ColorThemeSliderChannel.vue'
 
@@ -38,7 +38,7 @@ const { label, description } = defineProps<{
 }>()
 const currentColor = defineModel<OklchColor>({ required: true })
 
-const { oklchToString } = useColorThemeStore()
+const { oklchToString } = useColorThemeState()
 
 const colorPreview = computed(() => oklchToString(currentColor.value))
 

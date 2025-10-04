@@ -1,6 +1,8 @@
 import type { SharedEvents } from '../events'
+import type { ColorThemeEvents } from '~/modules/color-theme/api'
 import type { DocumentsEvents } from '~/modules/documents/api'
 import type { EditorEvents } from '~/modules/editor/api'
+import type { FeatureFlagsEvents } from '~/modules/feature-flags/api'
 import type { LayoutEvents } from '~/modules/layout/api'
 import type { ShortcutsEvents } from '~/modules/shortcuts/api'
 import { tryOnScopeDispose, useEventBus } from '@vueuse/core'
@@ -23,6 +25,8 @@ export interface AppEvents extends
   EditorEvents,
   LayoutEvents,
   ShortcutsEvents,
+  ColorThemeEvents,
+  FeatureFlagsEvents,
   SharedEvents {}
 
 export type AppEventKey = keyof AppEvents

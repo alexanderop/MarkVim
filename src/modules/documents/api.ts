@@ -5,21 +5,39 @@
  * Other modules should import from this API file, not directly from internal files.
  */
 
+import { storeToRefs } from 'pinia'
+import { useDocumentsStore } from './store'
+
 export { default as DocumentList } from './components/DocumentList.vue'
 
 // Export components that are used externally
 export { default as DocumentManagerAction } from './components/DocumentManagerAction.vue'
 // Export events
 export type { DocumentsEvents } from './events'
-// Export store and TEA types
-export { useDocumentsStore } from './store'
 export type { DocumentMessage, DocumentsState } from './store'
-
-// Note: useDocumentsStore follows The Elm Architecture (TEA) pattern with dispatch method
 // Export types
 export type { Document } from '~/modules/domain/api'
 
-// Export utilities that might be needed by other modules
+/**
+ * Read-only access to documents state.
+ * External modules can only read state, not mutate it.
+ * To change documents, emit events via emitAppEvent.
+ */
+export function useDocumentsState(): ReturnType<typeof useDocumentsStore> {
+  const store = useDocumentsStore()
+  const { documents, activeDocument, activeDocumentTitle, state } = storeToRefs(store)
+
+  return {
+    documents,
+    activeDocument,
+    activeDocumentTitle,
+    state,
+    getDocumentTitle: store.getDocumentTitle,
+    getDocumentById: store.getDocumentById,
+  }
+}
+
+// Export utility function
 const TITLE_MAX_LENGTH = 50
 
 export function getDocumentTitle(content: string): string {

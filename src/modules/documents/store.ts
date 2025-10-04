@@ -3,6 +3,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, readonly } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
+import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 import { parseDocuments } from '~/modules/domain/api'
 import { tryCatch } from '~/shared/utils/result'
 import { defaultDocumentContent } from './defaultContent'
@@ -146,6 +147,43 @@ export const useDocumentsStore = defineStore('documents', () => {
     dispatch({ type: 'RESET_DOCUMENTS' })
   })
 
+  // EVENT LISTENERS - Enable event-driven communication
+  // External modules should emit events, not call dispatch directly
+  onAppEvent('document:create', () => {
+    const newDocId = dispatch({ type: 'CREATE_DOCUMENT' })
+    if (newDocId) {
+      emitAppEvent('document:created', { documentId: newDocId })
+    }
+  })
+
+  onAppEvent('document:select', (payload) => {
+    dispatch({ type: 'SELECT_DOCUMENT', payload })
+  })
+
+  onAppEvent('document:update', (payload) => {
+    dispatch({ type: 'UPDATE_DOCUMENT', payload })
+    emitAppEvent('document:updated', { documentId: payload.documentId })
+  })
+
+  onAppEvent('document:delete:confirmed', (payload) => {
+    dispatch({ type: 'DELETE_DOCUMENT', payload })
+    emitAppEvent('document:deleted', { documentId: payload.documentId })
+  })
+
+  onAppEvent('document:import', (payload) => {
+    const newDocId = dispatch({ type: 'ADD_DOCUMENT', payload })
+    if (newDocId) {
+      emitAppEvent('document:created', { documentId: newDocId })
+    }
+  })
+
+  onAppEvent('document:add', (payload) => {
+    const newDocId = dispatch({ type: 'ADD_DOCUMENT', payload })
+    if (newDocId) {
+      emitAppEvent('document:created', { documentId: newDocId })
+    }
+  })
+
   function getDocumentTitle(content: string): string {
     const firstLine = content.split('\n')[0]?.trim() ?? ''
     if (firstLine.startsWith('#')) {
@@ -163,7 +201,6 @@ export const useDocumentsStore = defineStore('documents', () => {
     documents,
     activeDocument,
     activeDocumentTitle,
-    dispatch,
     getDocumentTitle,
     getDocumentById,
   }

@@ -2,14 +2,15 @@
 import type { Ref } from 'vue'
 import { UButton, UCheckbox, UKbd, UModal, URadioGroup } from '#components'
 import { computed, ref } from 'vue'
+import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useEditorSettings } from '~/modules/editor/api'
-import { type FeatureName, useFeatureFlagsStore } from '~/modules/feature-flags/api'
+import { type FeatureName, useFeatureFlagsState } from '~/modules/feature-flags/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import BaseSwitch from './BaseSwitch.vue'
 
 const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()
 const { showSettings, toggleSettings } = useShortcuts()
-const featureFlagsStore = useFeatureFlagsStore()
+const { state: featureFlagsState } = useFeatureFlagsState()
 
 // Use defineModel with getter/setter to sync with store without duplicating state
 const isOpen = defineModel<boolean>('open', {
@@ -34,16 +35,16 @@ const features = computed<Feature[]>(() => [
 ])
 
 function isFeatureEnabled(feature: FeatureName): boolean {
-  return featureFlagsStore.state.flags[feature]
+  return featureFlagsState.value.flags[feature]
 }
 
 function toggleFeature(feature: FeatureName): void {
-  featureFlagsStore.dispatch({ type: 'TOGGLE_FEATURE', payload: { feature } })
+  emitAppEvent('feature:toggle', { feature })
 }
 
 function handleResetToDefaults(): void {
   resetToDefaults()
-  featureFlagsStore.dispatch({ type: 'RESET_TO_DEFAULTS' })
+  emitAppEvent('feature:reset')
 }
 
 function useClearDataModal(): {

@@ -225,24 +225,126 @@ Use inline local composables when logic is component-specific or evolving. Extra
 
 * Documents: Pinia (`src/modules/documents/store.ts`)
 * Color theme: Pinia (`src/modules/color-theme/store.ts`)
+* Feature flags: Pinia (`src/modules/feature-flags/store.ts`)
+* **Pattern:** Stores export read-only state via `use[Module]State()` composables
+* **Mutations:** ALL state changes happen via events (stores listen internally)
 * Active document ↔ editor sync via event bus
 * Persist settings/documents to localStorage
+
+**Store API Pattern:**
+
+```typescript
+// ❌ Old pattern (don't use)
+export { useDocumentsStore } from './store'
+
+// ✅ New pattern (event-driven)
+export function useDocumentsState() {
+  const store = useDocumentsStore()
+  const { documents, activeDocument } = storeToRefs(store)
+  return { documents, activeDocument }
+}
+```
 
 ## Testing Strategy
 
 * E2E: Playwright + Cucumber, BDD scenarios, Page Objects
 * Cover: editing, document management, theme switching
 
-## Event System
+## Event System & Cross-Module Communication
 
-Typed event bus (`src/shared/utils/eventBus.ts`) with events:
+**CRITICAL: All cross-module communication MUST use events.**
 
-* `document:*` (create/delete/select)
-* `editor:*` (content/insert)
-* `view:*` (mode switch)
-* `command-palette:*` (open/close)
-* `vim-mode:*` (mode changes)
-* `settings:*` (toggles)
+### Typed Event Bus
+
+Centralized event bus (`src/shared/utils/eventBus.ts`) aggregates all module events with full type safety.
+
+**Event Categories:**
+* `document:*` - Document lifecycle (create/update/delete/select/import)
+* `editor:*` - Editor operations (content updates, text insertion, vim mode)
+* `theme:*` - Color theme operations (update/reset/import)
+* `feature:*` - Feature flags (toggle/enable/disable/reset)
+* `view:*` - Layout view modes (set/toggle)
+* `sidebar:*` - Sidebar visibility (toggle)
+* `command-palette:*` - Command palette (open/close)
+* `settings:*` - Settings toggles (vim/line-numbers/preview-sync)
+
+### Cross-Module Communication Rules
+
+**✅ Correct: Event-Driven Communication**
+
+```typescript
+// External module triggering document creation
+import { emitAppEvent } from '@/shared/utils/eventBus'
+
+function createNewDocument(): void {
+  emitAppEvent('document:create')
+}
+
+function deleteDocument(id: string): void {
+  emitAppEvent('document:delete:confirmed', { documentId: id })
+}
+
+function importDocument(content: string): void {
+  emitAppEvent('document:import', { content })
+}
+```
+
+**❌ Incorrect: Direct Store Mutation**
+
+```typescript
+// ❌ NEVER call dispatch on stores
+import { useDocumentsStore } from '~/modules/documents/api'
+
+const store = useDocumentsStore()
+store.dispatch({ ... })  // WRONG! Stores don't expose dispatch
+```
+
+### Store Access Pattern
+
+**Stores export read-only state only.** They do NOT export dispatch functions.
+
+**For Reading State:** Use the module's state composable
+
+```typescript
+// ✅ Read-only access to state
+import { useDocumentsState } from '~/modules/documents/api'
+
+const { documents, activeDocument } = useDocumentsState()
+// Can read, but cannot mutate
+```
+
+**For Mutations:** ALWAYS use events (even within the same module)
+
+```typescript
+// ✅ Mutate via events (works everywhere)
+import { emitAppEvent } from '@/shared/utils/eventBus'
+
+emitAppEvent('document:create')
+emitAppEvent('document:update', { documentId: '123', content: 'new' })
+emitAppEvent('theme:color:update', { colorKey: 'accent', color: { l: 0.6, c: 0.2, h: 240 } })
+emitAppEvent('feature:toggle', { feature: 'vim-mode' })
+```
+
+**Why this pattern?**
+1. Consistent mutation path: all changes go through events
+2. Better debugging: all state changes visible in event bus
+3. Loose coupling: modules don't depend on each other's internals
+4. Prevents accidental mutations from components
+
+### Event Naming Convention
+
+Pattern: `<resource>:<action>[:<qualifier>]`
+
+* Resources (singular): `document`, `editor`, `theme`, `view`, `sidebar`
+* Actions: `create`, `update`, `delete`, `select`, `toggle`, `open`, `close`
+* Qualifiers: `confirmed`, `complete`, `updated`
+
+Examples:
+* `document:create` - Request to create
+* `document:created` - Creation complete
+* `document:delete:confirmed` - Deletion confirmed
+* `theme:color:update` - Update color
+* `view:mode:set` - Set view mode
 
 ## Component Auto-Import
 

@@ -5,6 +5,29 @@
  */
 
 export interface EditorEvents {
-  // No events currently defined
-  // Future events can be added here as needed
+  // ========================================
+  // Content Change Events
+  // ========================================
+  /** Emitted when editor content changes. */
+  'editor:content:update': {
+    documentId: string
+    content: string
+  }
+
+  // ========================================
+  // Text Insertion Events
+  // ========================================
+  /** Request to insert text at cursor position. */
+  'editor:text:insert': {
+    text: string
+  }
+
+  // ========================================
+  // Vim Mode Events
+  // ========================================
+  /** Emitted when vim mode changes. */
+  'editor:vim:mode:change': {
+    mode: string
+    subMode?: string
+  }
 }

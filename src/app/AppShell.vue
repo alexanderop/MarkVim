@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { UButton } from '#components'
-import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
-import { DocumentList, DocumentManagerAction, useDocumentsStore } from '~/modules/documents/api'
+import { emitAppEvent } from '@/shared/utils/eventBus'
+import { ColorThemeModal, useColorThemeState } from '~/modules/color-theme/api'
+import { DocumentList, DocumentManagerAction, useDocumentsState } from '~/modules/documents/api'
 import { EditorMarkdown, useEditorSettings } from '~/modules/editor/api'
 import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview } from '~/modules/markdown-preview/api'
@@ -11,21 +11,20 @@ import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
-const documentsStore = useDocumentsStore()
-const { documents, activeDocument, activeDocumentTitle, state: documentsState } = storeToRefs(documentsStore)
+const { documents, activeDocument, activeDocumentTitle, state: documentsState } = useDocumentsState()
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
 const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode, isSidebarVisible, isMobile } = useViewMode()
 
-useColorThemeStore()
+useColorThemeState()
 
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
 function handleContentUpdate(value: string): void {
   if (activeDocument.value) {
-    documentsStore.dispatch({ type: 'UPDATE_DOCUMENT', payload: { documentId: activeDocument.value.id, content: value } })
+    emitAppEvent('document:update', { documentId: activeDocument.value.id, content: value })
   }
 }
 </script>

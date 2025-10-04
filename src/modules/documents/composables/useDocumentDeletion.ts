@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
-import { getDocumentTitle, useDocumentsStore } from '~/modules/documents/api'
+import { emitAppEvent } from '@/shared/utils/eventBus'
+import { getDocumentTitle } from '~/modules/documents/api'
 
 export function useDocumentDeletion(): {
   deleteModalOpen: Ref<boolean>
@@ -11,7 +12,6 @@ export function useDocumentDeletion(): {
 } {
   const deleteModalOpen = ref(false)
   const documentToDelete = ref<{ id: string, title: string } | null>(null)
-  const documentsStore = useDocumentsStore()
 
   const handleDeleteDocument = (documentId: string, documentContent: string): void => {
     const title = getDocumentTitle(documentContent)
@@ -21,7 +21,7 @@ export function useDocumentDeletion(): {
 
   const confirmDeleteDocument = (): void => {
     if (documentToDelete.value) {
-      documentsStore.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: documentToDelete.value.id } })
+      emitAppEvent('document:delete:confirmed', { documentId: documentToDelete.value.id })
       deleteModalOpen.value = false
       documentToDelete.value = null
     }
