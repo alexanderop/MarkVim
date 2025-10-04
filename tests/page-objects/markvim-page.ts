@@ -1277,8 +1277,23 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
   // Feature Flags Methods
   async disableFeature(featureName: string): Promise<void> {
-    const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
-    const toggleButton = toggle.locator('button[role="switch"]')
+    // Map feature names to their labels in the UI
+    const featureLabelMap: Record<string, string> = {
+      'documents': 'Documents',
+      'editor': 'Editor',
+      'markdown-preview': 'Markdown Preview',
+      'vim-mode': 'Vim Mode Support',
+      'color-theme': 'Color Theme',
+      'share': 'Share',
+      'shortcuts': 'Shortcuts',
+    }
+
+    const label = featureLabelMap[featureName]
+    if (!label) {
+      throw new Error(`Unknown feature: ${featureName}`)
+    }
+
+    const toggleButton = this.page.getByRole('switch', { name: label })
 
     // Wait for the toggle to be visible first
     await expect(toggleButton).toBeVisible({ timeout: 5000 })
@@ -1292,8 +1307,23 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async enableFeature(featureName: string): Promise<void> {
-    const toggle = this.page.locator(`[data-testid="feature-${featureName}-toggle"]`)
-    const toggleButton = toggle.locator('button[role="switch"]')
+    // Map feature names to their labels in the UI
+    const featureLabelMap: Record<string, string> = {
+      'documents': 'Documents',
+      'editor': 'Editor',
+      'markdown-preview': 'Markdown Preview',
+      'vim-mode': 'Vim Mode Support',
+      'color-theme': 'Color Theme',
+      'share': 'Share',
+      'shortcuts': 'Shortcuts',
+    }
+
+    const label = featureLabelMap[featureName]
+    if (!label) {
+      throw new Error(`Unknown feature: ${featureName}`)
+    }
+
+    const toggleButton = this.page.getByRole('switch', { name: label })
 
     // Wait for the toggle to be visible first
     await expect(toggleButton).toBeVisible({ timeout: 5000 })

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/documents/api'
 import { UButton } from '#components'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
 import { getDocumentTitle } from '~/modules/documents/api'
+import { useFeatureFlagsStore } from '~/modules/feature-flags/api'
 import { useViewMode, type ViewMode } from '~/modules/layout/api'
 import { ShareButton } from '~/modules/share/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
@@ -24,6 +27,9 @@ defineEmits<Emits>()
 
 const { toggleColorTheme } = useShortcuts()
 const { isSidebarVisible, toggleSidebar } = useViewMode()
+const featureFlagsStore = useFeatureFlagsStore()
+const { state: featureFlags } = storeToRefs(featureFlagsStore)
+const isDocumentsFeatureEnabled = computed(() => featureFlags.value.flags.documents)
 
 function handleDeleteDocument(): void {
   if (activeDocument) {
@@ -103,7 +109,7 @@ function handleDeleteDocument(): void {
       />
 
       <UButton
-        v-feature="'documents'"
+        v-if="isDocumentsFeatureEnabled"
         color="neutral"
         variant="ghost"
         size="md"

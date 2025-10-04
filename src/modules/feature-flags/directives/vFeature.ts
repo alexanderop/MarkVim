@@ -10,7 +10,11 @@ export const vFeature = {
     // Initial check
     const updateVisibility = (): void => {
       const isEnabled = store.state.flags[featureName] ?? true
-      el.style.display = isEnabled ? '' : 'none'
+      if (isEnabled) {
+        el.style.removeProperty('display')
+        return
+      }
+      el.style.setProperty('display', 'none', 'important')
     }
 
     updateVisibility()
@@ -32,7 +36,11 @@ export const vFeature = {
     const featureName = binding.value
     const isEnabled = store.state.flags[featureName] ?? true
 
-    el.style.display = isEnabled ? '' : 'none'
+    if (isEnabled) {
+      el.style.removeProperty('display')
+      return
+    }
+    el.style.setProperty('display', 'none', 'important')
   },
 
   unmounted(el) {

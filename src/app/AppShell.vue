@@ -46,7 +46,6 @@ function handleContentUpdate(value: string): void {
     <div class="flex flex-1 relative overflow-hidden">
       <DocumentList
         v-if="isSidebarVisible"
-        v-feature="'documents'"
         :documents="documents"
         :active-document-id="documentsState.activeDocumentId"
         :is-visible="isSidebarVisible"

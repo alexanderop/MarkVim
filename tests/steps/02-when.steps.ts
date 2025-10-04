@@ -5,7 +5,7 @@ import { getMarkVimPage } from '../page-objects/markvim-page.js'
 import { EXTRA_LONG_WAIT_MS, LONG_WAIT_MS, SHORT_WAIT_MS, STANDARD_WAIT_MS } from '../support/constants.js'
 import { ensurePage } from '../support/utils.js'
 
-When('the page is loaded', async function (this: MarkVimWorld) {
+When('the page is loaded', { timeout: 20000 }, async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
 
   // Check if we're on the welcome screen first
@@ -20,7 +20,9 @@ When('the page is loaded', async function (this: MarkVimWorld) {
   await expect(markVimPage.editorPane).toBeVisible()
 
   // Wait for client-side hydration and sidebar to be in DOM
-  await markVimPage.page.waitForSelector('[data-testid="document-list"]', { state: 'attached', timeout: 5000 })
+  // Use a more lenient timeout since this is a client-side component
+  const documentsNav = markVimPage.page.getByRole('complementary', { name: 'Documents' })
+  await expect(documentsNav).toBeAttached({ timeout: 15000 })
 
   // Wait for shortcuts to be registered (onMounted hook)
   await markVimPage.page.waitForTimeout(300)

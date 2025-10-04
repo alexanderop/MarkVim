@@ -7,6 +7,10 @@ const { label, description, id } = defineProps<{
   id?: string
 }>()
 
+defineOptions({
+  inheritAttrs: false,
+})
+
 const model = defineModel<boolean>()
 </script>
 
@@ -18,5 +22,6 @@ const model = defineModel<boolean>()
     :description="description"
     color="primary"
     size="sm"
+    v-bind="$attrs"
   />
 </template>

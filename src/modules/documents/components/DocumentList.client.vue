@@ -2,6 +2,7 @@
 import type { Document as DocType } from '~/modules/documents/api'
 import { Icon, UButton } from '#components'
 import { useDocumentsStore } from '~/modules/documents/api'
+import { vFeature } from '~/modules/feature-flags/api'
 import DocumentItemClient from './DocumentItem.client.vue'
 
 const { documents, activeDocumentId } = defineProps<{
@@ -18,6 +19,8 @@ function handleCreateDocument(): void {
 
 <template>
   <aside
+    v-feature="'documents'"
+    aria-label="Documents"
     data-testid="document-list"
     class="border-r border-[var(--border)] bg-[var(--background)] flex flex-col h-full w-72"
   >
