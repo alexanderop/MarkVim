@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { UButton, UModal } from '#components'
+import { UButton, UCheckbox, UModal, URadioGroup } from '#components'
 import { computed, ref } from 'vue'
 import { useEditorSettings } from '~/modules/editor/api'
 import { type FeatureName, useFeatureFlagsStore } from '~/modules/feature-flags/api'
@@ -191,107 +191,50 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
             <!-- Line Numbers -->
             <div class="p-3 border border-border rounded-md bg-surface-primary">
               <div class="space-y-2">
-                <div class="flex gap-2 items-center">
-                  <input
-                    id="line-numbers"
-                    v-model="settings.lineNumbers"
-                    type="checkbox"
-                    class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
-                  >
-                  <label
-                    for="line-numbers"
-                    class="text-sm text-text-primary font-medium"
-                  >Show Line Numbers</label>
-                </div>
+                <UCheckbox
+                  v-model="settings.lineNumbers"
+                  label="Show Line Numbers"
+                  size="sm"
+                  color="primary"
+                />
 
-                <div
+                <URadioGroup
                   v-if="settings.lineNumbers"
-                  class="ml-5 space-y-1"
-                >
-                  <div class="flex gap-4">
-                    <div class="flex gap-1 items-center">
-                      <input
-                        id="line-mode-absolute"
-                        v-model="settings.lineNumberMode"
-                        type="radio"
-                        value="absolute"
-                        class="border-border h-3 w-3 text-accent focus:ring-accent"
-                      >
-                      <label
-                        for="line-mode-absolute"
-                        class="text-xs text-text-primary"
-                      >Absolute</label>
-                    </div>
-                    <div class="flex gap-1 items-center">
-                      <input
-                        id="line-mode-relative"
-                        v-model="settings.lineNumberMode"
-                        type="radio"
-                        value="relative"
-                        class="border-border h-3 w-3 text-accent focus:ring-accent"
-                      >
-                      <label
-                        for="line-mode-relative"
-                        class="text-xs text-text-primary"
-                      >Relative</label>
-                    </div>
-                    <div class="flex gap-1 items-center">
-                      <input
-                        id="line-mode-both"
-                        v-model="settings.lineNumberMode"
-                        type="radio"
-                        value="both"
-                        class="border-border h-3 w-3 text-accent focus:ring-accent"
-                      >
-                      <label
-                        for="line-mode-both"
-                        class="text-xs text-text-primary"
-                      >Hybrid</label>
-                    </div>
-                  </div>
-                </div>
+                  v-model="settings.lineNumberMode"
+                  orientation="horizontal"
+                  size="xs"
+                  color="primary"
+                  class="ml-5"
+                  :items="[
+                    { label: 'Absolute', value: 'absolute' },
+                    { label: 'Relative', value: 'relative' },
+                    { label: 'Hybrid', value: 'both' },
+                  ]"
+                />
               </div>
             </div>
 
             <!-- Other Settings -->
             <div class="p-3 border border-border rounded-md bg-surface-primary">
               <div class="gap-3 grid grid-cols-3">
-                <div class="flex gap-2 items-center">
-                  <input
-                    id="line-wrapping"
-                    v-model="settings.lineWrapping"
-                    type="checkbox"
-                    class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
-                  >
-                  <label
-                    for="line-wrapping"
-                    class="text-xs text-text-primary"
-                  >Line Wrapping</label>
-                </div>
-                <div class="flex gap-2 items-center">
-                  <input
-                    id="auto-save"
-                    v-model="settings.autoSave"
-                    type="checkbox"
-                    class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
-                  >
-                  <label
-                    for="auto-save"
-                    class="text-xs text-text-primary"
-                  >Auto Save</label>
-                </div>
-                <div class="flex gap-2 items-center">
-                  <input
-                    id="live-preview"
-                    v-model="settings.livePreview"
-                    type="checkbox"
-                    class="border-border rounded h-3 w-3 text-accent focus:ring-accent"
-                  >
-                  <label
-                    for="live-preview"
-                    class="text-xs text-text-primary"
-                  >Live Preview</label>
-                </div>
+                <UCheckbox
+                  v-model="settings.lineWrapping"
+                  label="Line Wrapping"
+                  size="xs"
+                  color="primary"
+                />
+                <UCheckbox
+                  v-model="settings.autoSave"
+                  label="Auto Save"
+                  size="xs"
+                  color="primary"
+                />
+                <UCheckbox
+                  v-model="settings.livePreview"
+                  label="Live Preview"
+                  size="xs"
+                  color="primary"
+                />
               </div>
             </div>
           </div>
