@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UKbd } from '#components'
 import { useVimMode } from '~/modules/editor/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 
@@ -41,28 +42,44 @@ const { formatKeys } = useShortcuts()
 
     <div class="text-xs text-text-secondary gap-4 hidden items-center md:flex">
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
+        <UKbd
+          size="sm"
+          color="neutral"
+          class="font-mono text-text-muted"
+        >
           {{ formatKeys('1') }}
-        </kbd>
+        </UKbd>
         <span>Editor</span>
       </div>
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
+        <UKbd
+          size="sm"
+          color="neutral"
+          class="font-mono text-text-muted"
+        >
           {{ formatKeys('2') }}
-        </kbd>
+        </UKbd>
         <span>Split</span>
       </div>
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
+        <UKbd
+          size="sm"
+          color="neutral"
+          class="font-mono text-text-muted"
+        >
           {{ formatKeys('3') }}
-        </kbd>
+        </UKbd>
         <span>Preview</span>
       </div>
       <div class="bg-border h-3 w-px" />
       <div class="flex gap-3 items-center">
-        <kbd class="text-xs text-text-muted font-mono px-1.5 py-0.5 border border-border rounded bg-surface-primary">
+        <UKbd
+          size="sm"
+          color="neutral"
+          class="font-mono text-text-muted"
+        >
           {{ formatKeys('⌘K') }}
-        </kbd>
+        </UKbd>
         <span>Commands</span>
       </div>
     </div>

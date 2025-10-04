@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon, UButton, UModal } from '#components'
+import { Icon, UButton, UKbd, UModal } from '#components'
 import { computed, onMounted, provide, ref } from 'vue'
 import { useShortcuts } from '~/modules/shortcuts/api'
 
@@ -90,16 +90,18 @@ const totalShortcuts = computed(() =>
 
               <!-- Keyboard shortcuts -->
               <div class="flex items-center space-x-1 ml-4">
-                <kbd
+                <UKbd
                   v-for="(key, index) in formatKeys(shortcut.keys).split(/(?=[⌘⌃⌥⇧])|(?<=\w)(?=[⌘⌃⌥⇧])/)"
                   :key="index"
-                  class="text-xs text-text-primary font-mono px-1.5 border border-border rounded bg-surface-primary inline-flex h-6 min-w-[1.5rem] shadow-sm items-center justify-center"
+                  size="lg"
+                  color="neutral"
+                  class="font-mono shadow-sm"
                   :class="[
                     key.match(/[⌘⌃⌥⇧]/) ? 'min-w-[1.25rem] px-1' : '',
                   ]"
                 >
                   {{ key }}
-                </kbd>
+                </UKbd>
               </div>
             </div>
           </div>
@@ -110,7 +112,13 @@ const totalShortcuts = computed(() =>
     <template #footer>
       <div class="flex justify-between items-center w-full text-xs text-text-tertiary">
         <div>
-          Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-primary inline-flex h-5 min-w-[1.5rem] items-center justify-center">⎋</kbd> to close
+          Press <UKbd
+            size="md"
+            color="neutral"
+            class="font-mono"
+          >
+            ⎋
+          </UKbd> to close
         </div>
         <div>
           {{ totalShortcuts }} shortcuts available

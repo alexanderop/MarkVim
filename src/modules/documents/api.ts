@@ -22,10 +22,20 @@ export type { DocumentMessage, DocumentsState } from './store'
 export type { Document } from '~/modules/domain/api'
 
 // Export utilities that might be needed by other modules
+const TITLE_MAX_LENGTH = 50
+
 export function getDocumentTitle(content: string): string {
   const firstLine = content.split('\n')[0]?.trim() ?? ''
+  let title = ''
   if (firstLine.startsWith('#')) {
-    return firstLine.replace(/^#+\s*/, '') || 'Untitled'
+    title = firstLine.replace(/^#+\s*/, '') || 'Untitled'
   }
-  return firstLine || 'Untitled'
+  else {
+    title = firstLine || 'Untitled'
+  }
+
+  if (title.length > TITLE_MAX_LENGTH) {
+    return `${title.slice(0, TITLE_MAX_LENGTH)}…`
+  }
+  return title
 }

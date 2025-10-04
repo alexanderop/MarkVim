@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon, UButton, UCard } from '#components'
+import { Icon, UButton, UCard, UKbd, ULink } from '#components'
 import { onMounted, ref } from 'vue'
 
 const emit = defineEmits<{
@@ -150,69 +150,70 @@ onMounted(() => {
           class="flex items-center justify-center gap-3 sm:gap-4 mb-12"
           :class="{ 'animate-fade-in-up delay-400': isLoaded }"
         >
-          <a
-            href="https://github.com/alexanderop/MarkVim"
+          <ULink
+            to="https://github.com/alexanderop/MarkVim"
             target="_blank"
-            rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="MarkVim on GitHub"
             aria-label="MarkVim on GitHub"
+            raw
           >
             <Icon
               name="lucide:github"
               class="w-5 h-5"
             />
-          </a>
-          <a
-            href="https://linkedin.com/in/alexanderopalic"
+          </ULink>
+          <ULink
+            to="https://linkedin.com/in/alexanderopalic"
             target="_blank"
-            rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="LinkedIn"
             aria-label="LinkedIn"
+            raw
           >
             <Icon
               name="lucide:linkedin"
               class="w-5 h-5"
             />
-          </a>
-          <a
-            href="https://x.com/alexanderopalic"
+          </ULink>
+          <ULink
+            to="https://x.com/alexanderopalic"
             target="_blank"
-            rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="X (Twitter)"
             aria-label="X (Twitter)"
+            raw
           >
             <Icon
               name="lucide:twitter"
               class="w-5 h-5"
             />
-          </a>
-          <a
-            href="https://bsky.app/profile/alexanderopalic"
+          </ULink>
+          <ULink
+            to="https://bsky.app/profile/alexanderopalic"
             target="_blank"
-            rel="noopener noreferrer"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="BlueSky"
             aria-label="BlueSky"
+            raw
           >
             <Icon
               name="lucide:cloud"
               class="w-5 h-5"
             />
-          </a>
-          <a
-            href="mailto:alex@alexop.dev"
+          </ULink>
+          <ULink
+            to="mailto:alex@alexop.dev"
             class="p-3 sm:p-4 text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-muted/50 hover:scale-110"
             title="Email"
             aria-label="Email"
+            raw
           >
             <Icon
               name="lucide:mail"
               class="w-5 h-5"
             />
-          </a>
+          </ULink>
         </div>
 
         <!-- Primary CTAs -->
@@ -572,12 +573,40 @@ onMounted(() => {
             </h3>
             <p class="text-muted-foreground leading-relaxed mb-4">
               Comprehensive keyboard shortcuts for every action.
-              Press <kbd class="bg-muted px-2 py-1 rounded text-sm font-mono">Ctrl+K</kbd> to see them all.
+              Press <UKbd
+                size="sm"
+                color="neutral"
+                class="font-mono"
+                variant="soft"
+              >
+                Ctrl+K
+              </UKbd> to see them all.
             </p>
             <div class="flex flex-wrap justify-center gap-1">
-              <kbd class="bg-muted px-2 py-1 rounded text-xs font-mono">Ctrl+S</kbd>
-              <kbd class="bg-muted px-2 py-1 rounded text-xs font-mono">Ctrl+K</kbd>
-              <kbd class="bg-muted px-2 py-1 rounded text-xs font-mono">Ctrl+P</kbd>
+              <UKbd
+                size="sm"
+                color="neutral"
+                class="font-mono"
+                variant="soft"
+              >
+                Ctrl+S
+              </UKbd>
+              <UKbd
+                size="sm"
+                color="neutral"
+                class="font-mono"
+                variant="soft"
+              >
+                Ctrl+K
+              </UKbd>
+              <UKbd
+                size="sm"
+                color="neutral"
+                class="font-mono"
+                variant="soft"
+              >
+                Ctrl+P
+              </UKbd>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { UButton, UCheckbox, UModal, URadioGroup } from '#components'
+import { UButton, UCheckbox, UKbd, UModal, URadioGroup } from '#components'
 import { computed, ref } from 'vue'
 import { useEditorSettings } from '~/modules/editor/api'
 import { type FeatureName, useFeatureFlagsStore } from '~/modules/feature-flags/api'
@@ -245,7 +245,13 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     <template #footer>
       <div class="flex justify-between items-center w-full">
         <div class="text-xs text-text-tertiary">
-          Press <kbd class="text-xs text-text-primary font-mono px-1 border border-border rounded bg-surface-primary inline-flex h-4 min-w-[1rem] items-center justify-center">⎋</kbd> to close
+          Press <UKbd
+            size="sm"
+            color="neutral"
+            class="font-mono"
+          >
+            ⎋
+          </UKbd> to close
         </div>
         <div class="flex gap-2 items-center">
           <UButton

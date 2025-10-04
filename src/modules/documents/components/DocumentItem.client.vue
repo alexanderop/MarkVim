@@ -20,7 +20,7 @@ const SECONDS_IN_MINUTE = 60
 const MINUTES_IN_HOUR = 60
 const HOURS_IN_DAY = 24
 const DAYS_IN_WEEK = 7
-const PREVIEW_MAX_LENGTH = 60
+const PREVIEW_MAX_LENGTH = 20
 
 function handleDocumentClick(): void {
   emitAppEvent('document:select', { documentId: document.id })
@@ -42,7 +42,11 @@ function getDocumentPreview(content: string): string {
   const firstNonHeaderLine = lines.find(line =>
     line.trim() && !line.trim().startsWith('#'),
   )
-  return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) || 'No content'
+  const preview = firstNonHeaderLine?.trim() || ''
+  if (!preview)
+    return 'No content'
+
+  return preview.slice(0, PREVIEW_MAX_LENGTH)
 }
 
 function formatDate(timestamp: number): string {
@@ -85,7 +89,7 @@ const contextMenuItems = computed<ContextMenuItem[][]>(() => [
       class="px-3 py-3 md:py-3 border rounded-lg cursor-pointer transition-all duration-200 relative active:scale-[0.98] w-full text-left h-auto"
       :class="[
         isActive
-          ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-30 shadow-lg'
+          ? 'bg-[var(--accent)] bg-opacity-10 border-[var(--accent)] border-opacity-15 shadow-sm'
           : 'border-transparent hover:bg-[var(--muted)] hover:border-[var(--border)]',
       ]"
       :aria-label="`Select document: ${getDocumentTitle(document.content)}`"
