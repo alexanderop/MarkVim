@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ColorTheme } from '~/modules/color-theme/api'
-import { UButton, UModal } from '#components'
+import { UButton, UCard, UModal } from '#components'
 import { ref } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
@@ -185,8 +185,9 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
             Current Theme
           </h3>
 
-          <div
-            class="flex gap-2 mb-4 p-3 bg-surface-primary border border-border rounded-md"
+          <UCard
+            variant="outline"
+            :ui="{ root: 'bg-surface-primary mb-4', body: 'p-3 flex gap-2' }"
             data-testid="color-palette-preview"
           >
             <div
@@ -204,7 +205,7 @@ const alertColors = colorDefinitions.filter(def => def.category === 'alerts')
                 {{ colorDef.label }}
               </span>
             </div>
-          </div>
+          </UCard>
         </div>
 
         <div class="max-h-[50vh] overflow-y-auto space-y-6">

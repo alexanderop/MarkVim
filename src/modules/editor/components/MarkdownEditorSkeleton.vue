@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '#components'
+import { Icon, USkeleton } from '#components'
 </script>
 
 <template>
@@ -26,23 +26,23 @@ import { Icon } from '#components'
       <div class="space-y-3">
         <!-- Header line skeleton -->
         <div class="flex items-center space-x-2">
-          <div class="bg-[var(--muted)] h-6 w-6 rounded animate-pulse" />
-          <div class="bg-[var(--muted)] h-6 w-48 rounded animate-pulse" />
+          <USkeleton class="h-6 w-6" />
+          <USkeleton class="h-6 w-48" />
         </div>
 
         <!-- Content lines skeleton -->
         <div class="space-y-2 pt-4">
-          <div class="bg-[var(--muted)] h-4 w-full rounded animate-pulse" />
-          <div class="bg-[var(--muted)] h-4 w-5/6 rounded animate-pulse" />
-          <div class="bg-[var(--muted)] h-4 w-4/5 rounded animate-pulse" />
-          <div class="bg-[var(--muted)] h-4 w-3/4 rounded animate-pulse" />
+          <USkeleton class="h-4 w-full" />
+          <USkeleton class="h-4 w-5/6" />
+          <USkeleton class="h-4 w-4/5" />
+          <USkeleton class="h-4 w-3/4" />
         </div>
 
         <!-- More content skeleton -->
         <div class="space-y-2 pt-6">
-          <div class="bg-[var(--muted)] h-4 w-3/5 rounded animate-pulse" />
-          <div class="bg-[var(--muted)] h-4 w-4/5 rounded animate-pulse" />
-          <div class="bg-[var(--muted)] h-4 w-2/3 rounded animate-pulse" />
+          <USkeleton class="h-4 w-3/5" />
+          <USkeleton class="h-4 w-4/5" />
+          <USkeleton class="h-4 w-2/3" />
         </div>
       </div>
     </div>

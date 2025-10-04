@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { UButton } from '#components'
+import { UButton, UCard } from '#components'
 import { useEditorSettings } from '~/modules/editor/api'
 
 const { settings, toggleVimMode } = useEditorSettings()
 </script>
 
 <template>
-  <div class="p-4 border border-editor-border rounded-lg bg-surface-primary flex items-center justify-between">
+  <UCard
+    variant="outline"
+    :ui="{ root: 'bg-surface-primary', body: 'p-4 flex items-center justify-between' }"
+  >
     <div class="flex flex-col">
       <h3 class="text-text-primary font-medium">
         Vim Mode
@@ -34,5 +37,5 @@ const { settings, toggleVimMode } = useEditorSettings()
         ]"
       />
     </UButton>
-  </div>
+  </UCard>
 </template>

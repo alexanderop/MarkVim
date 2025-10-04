@@ -6,7 +6,7 @@ import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
 import { DocumentActionManager, DocumentList, DocumentListSkeleton, useDocumentsStore } from '~/modules/documents/api'
 import { MarkdownEditor, MarkdownEditorSkeleton, useEditorSettings } from '~/modules/editor/api'
 import { HeaderToolbar, StatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
-import { MarkdownPreview } from '~/modules/markdown-preview/api'
+import { MarkdownPreview, MarkdownPreviewSkeleton } from '~/modules/markdown-preview/api'
 import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
@@ -142,10 +142,15 @@ function handleContentUpdate(value: string): void {
               width: isSplitView && !isMobile ? `${rightPaneWidth}%` : '100%',
             }"
           >
-            <MarkdownPreview
-              :content="activeDocument?.content || ''"
-              class="h-full"
-            />
+            <ClientOnly>
+              <MarkdownPreview
+                :content="activeDocument?.content || ''"
+                class="h-full"
+              />
+              <template #fallback>
+                <MarkdownPreviewSkeleton />
+              </template>
+            </ClientOnly>
           </div>
 
           <div

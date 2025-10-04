@@ -7,6 +7,7 @@
 
 // Export components that are used externally
 export { default as MarkdownPreview } from './components/MarkdownPreview.vue'
+export { default as MarkdownPreviewSkeleton } from './components/MarkdownPreviewSkeleton.vue'
 // Export composables that other modules might need
 export { useMarkdown } from './composables/useMarkdown'
 

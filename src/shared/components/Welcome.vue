@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon, UButton } from '#components'
+import { Icon, UButton, UCard } from '#components'
 import { onMounted, ref } from 'vue'
 
 const emit = defineEmits<{
@@ -103,12 +103,15 @@ onMounted(() => {
           </p>
 
           <!-- Dynamic Feature Highlight -->
-          <div class="bg-accent/5 border border-accent/20 rounded-2xl p-4 max-w-2xl mx-auto">
+          <UCard
+            variant="subtle"
+            :ui="{ root: 'bg-accent/5 border border-accent/20 rounded-2xl max-w-2xl mx-auto', body: 'p-4' }"
+          >
             <p class="text-accent font-medium text-lg">
               ✨ Now featuring:
               <span class="transition-all duration-500">{{ features[currentFeatureIndex] }}</span>
             </p>
-          </div>
+          </UCard>
         </div>
 
         <!-- Social Proof Stats -->
@@ -299,7 +302,10 @@ onMounted(() => {
         </div>
 
         <!-- Problem/Solution -->
-        <div class="bg-muted/30 border border-border rounded-3xl p-8 sm:p-12 mb-16 sm:mb-20">
+        <UCard
+          variant="subtle"
+          :ui="{ root: 'mb-16 sm:mb-20 rounded-3xl', body: 'p-8 sm:p-12' }"
+        >
           <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
               <h3 class="text-2xl sm:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
@@ -380,12 +386,15 @@ onMounted(() => {
               </ul>
             </div>
           </div>
-        </div>
+        </UCard>
 
         <!-- Feature Grid -->
         <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 mb-16 sm:mb-20">
           <!-- Vim Modal Editing -->
-          <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
+          <UCard
+            variant="subtle"
+            :ui="{ root: 'group backdrop-blur-sm rounded-3xl hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30', body: 'p-6 sm:p-8' }"
+          >
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <Icon
@@ -410,10 +419,13 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-          </div>
+          </UCard>
 
           <!-- Live Preview -->
-          <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
+          <UCard
+            variant="subtle"
+            :ui="{ root: 'group backdrop-blur-sm rounded-3xl hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30', body: 'p-6 sm:p-8' }"
+          >
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <Icon
@@ -436,10 +448,13 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-          </div>
+          </UCard>
 
           <!-- Mermaid Diagrams -->
-          <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
+          <UCard
+            variant="subtle"
+            :ui="{ root: 'group backdrop-blur-sm rounded-3xl hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30', body: 'p-6 sm:p-8' }"
+          >
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <Icon
@@ -468,10 +483,13 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-          </div>
+          </UCard>
 
           <!-- GitHub Alerts -->
-          <div class="group bg-muted/20 backdrop-blur-sm border border-border rounded-3xl p-6 sm:p-8 hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30">
+          <UCard
+            variant="subtle"
+            :ui="{ root: 'group backdrop-blur-sm rounded-3xl hover:shadow-2xl hover:shadow-accent/10 transition-all duration-500 hover:border-accent/30', body: 'p-6 sm:p-8' }"
+          >
             <div class="flex items-start gap-4">
               <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <Icon
@@ -536,7 +554,7 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-          </div>
+          </UCard>
         </div>
 
         <!-- Additional Features -->
@@ -599,7 +617,10 @@ onMounted(() => {
         </div>
 
         <!-- Testimonial/Creator Note -->
-        <div class="bg-accent/5 border border-accent/20 rounded-3xl p-8 sm:p-12 mb-16 sm:mb-20">
+        <UCard
+          variant="subtle"
+          :ui="{ root: 'bg-accent/5 border border-accent/20 rounded-3xl mb-16 sm:mb-20', body: 'p-8 sm:p-12' }"
+        >
           <div class="max-w-4xl mx-auto text-center">
             <blockquote class="text-lg sm:text-xl text-foreground mb-6 italic leading-relaxed">
               "I built MarkVim because I was frustrated with existing markdown editors. As a developer who lives in Vim,
@@ -619,7 +640,7 @@ onMounted(() => {
               </div>
             </div>
           </div>
-        </div>
+        </UCard>
 
         <!-- Final CTA -->
         <div class="text-center">

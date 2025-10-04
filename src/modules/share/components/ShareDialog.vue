@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Document } from '~/modules/domain/api'
-import { Icon, UButton, UModal } from '#components'
+import { Icon, UButton, UCard, UModal } from '#components'
 import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'
 import { tryCatchAsync } from '~/shared/utils/result'
@@ -103,9 +103,10 @@ async function copyToClipboard(): Promise<void> {
     <template #body>
       <div class="space-y-4">
         <!-- Error State -->
-        <div
+        <UCard
           v-if="shareError"
-          class="p-3 bg-red-500/10 border border-red-500/20 rounded-md"
+          variant="outline"
+          :ui="{ root: 'bg-red-500/10 border-red-500/20', body: 'p-3' }"
         >
           <div class="flex items-start gap-2">
             <Icon
@@ -116,7 +117,7 @@ async function copyToClipboard(): Promise<void> {
               {{ shareError }}
             </div>
           </div>
-        </div>
+        </UCard>
 
         <!-- Share Link -->
         <div
@@ -175,10 +176,11 @@ async function copyToClipboard(): Promise<void> {
           </UButton>
 
           <!-- Advanced Stats -->
-          <div
+          <UCard
             v-if="showAdvanced && shareStats"
+            variant="subtle"
+            :ui="{ root: 'bg-gray-900/30', body: 'p-3 space-y-2' }"
             data-testid="share-advanced-stats"
-            class="p-3 bg-gray-900/30 rounded-md space-y-2"
           >
             <div class="text-xs text-gray-400 space-y-1">
               <div class="flex justify-between">
@@ -204,7 +206,7 @@ async function copyToClipboard(): Promise<void> {
                 No server storage is used.
               </p>
             </div>
-          </div>
+          </UCard>
         </div>
 
         <!-- No Document State -->

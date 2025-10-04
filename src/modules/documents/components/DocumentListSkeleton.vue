@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { USkeleton } from '#components'
+</script>
+
 <template>
   <aside
     data-testid="document-list-skeleton"
@@ -6,10 +10,10 @@
     <!-- Header -->
     <div class="px-4 border-b border-[var(--border)] flex h-14 items-center justify-between">
       <div class="flex gap-3 items-center">
-        <div class="rounded bg-[var(--muted)] h-5 w-12 animate-pulse" />
-        <div class="rounded-full bg-[var(--muted)] flex h-5 w-5 items-center justify-center animate-pulse" />
+        <USkeleton class="h-5 w-12" />
+        <USkeleton class="h-5 w-5 rounded-full" />
       </div>
-      <div class="rounded-md bg-[var(--muted)] h-7 w-7 animate-pulse" />
+      <USkeleton class="h-7 w-7 rounded-md" />
     </div>
 
     <!-- Document List Skeleton -->
@@ -24,16 +28,16 @@
             <div class="flex gap-3 items-start">
               <!-- Document icon skeleton -->
               <div class="mt-0.5 flex-shrink-0">
-                <div class="rounded-md bg-[var(--muted)] h-6 w-6 animate-pulse" />
+                <USkeleton class="h-6 w-6 rounded-md" />
               </div>
 
               <!-- Content skeleton -->
               <div class="flex-1 min-w-0">
                 <div class="mb-1 flex gap-2 items-center justify-between">
-                  <div class="rounded bg-[var(--muted)] h-4 w-20 animate-pulse" />
-                  <div class="rounded bg-[var(--muted)] h-3 w-12 animate-pulse" />
+                  <USkeleton class="h-4 w-20" />
+                  <USkeleton class="h-3 w-12" />
                 </div>
-                <div class="rounded bg-[var(--muted)] h-3 w-32 animate-pulse" />
+                <USkeleton class="h-3 w-32" />
               </div>
             </div>
           </div>
