@@ -6,8 +6,8 @@
  */
 
 // Export components that are used externally
-export { default as HeaderToolbar } from './components/HeaderToolbar.vue'
-export { default as StatusBar } from './components/StatusBar.vue'
+export { default as LayoutHeader } from './components/LayoutHeader.vue'
+export { default as LayoutStatusBar } from './components/LayoutStatusBar.vue'
 export { useResizablePanes } from './composables/useResizablePanes'
 
 export { useSyncedScroll } from './composables/useSyncedScroll'

@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useDocumentsStore } from '~/modules/documents/api'
 import { useViewMode } from '~/modules/layout/api'
 import { useDocumentShare } from '~/modules/share/api'
-import ShareImportDialog from './ImportDialog.vue'
+import ShareDialogImport from './ShareDialogImport.vue'
 
 interface Emits {
   (e: 'documentImported', document: Document): void
@@ -93,7 +93,7 @@ defineExpose({
 </script>
 
 <template>
-  <ShareImportDialog
+  <ShareDialogImport
     v-model:open="showImportDialog"
     :auto-import-document="autoImportDocument"
     @import="handleImportConfirm"

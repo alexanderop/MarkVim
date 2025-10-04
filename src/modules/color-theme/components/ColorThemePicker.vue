@@ -30,7 +30,7 @@ import type { OklchColor } from '~/modules/color-theme/api'
 import { computed, ref, watch } from 'vue'
 import { useColorThemeStore } from '~/modules/color-theme/api'
 import { tryCatchAsync } from '~/shared/utils/result'
-import OklchChannelSlider from './OklchChannelSlider.vue'
+import ColorThemeSliderChannel from './ColorThemeSliderChannel.vue'
 
 const { label, description } = defineProps<{
   label: string
@@ -326,7 +326,7 @@ async function copyToClipboard(): Promise<void> {
       </h5>
 
       <!-- Lightness -->
-      <OklchChannelSlider
+      <ColorThemeSliderChannel
         :model-value="currentColor.l"
         channel="l"
         :full-color="currentColor"
@@ -337,7 +337,7 @@ async function copyToClipboard(): Promise<void> {
       />
 
       <!-- Chroma -->
-      <OklchChannelSlider
+      <ColorThemeSliderChannel
         :model-value="currentColor.c"
         channel="c"
         :full-color="currentColor"
@@ -348,7 +348,7 @@ async function copyToClipboard(): Promise<void> {
       />
 
       <!-- Hue -->
-      <OklchChannelSlider
+      <ColorThemeSliderChannel
         :model-value="currentColor.h"
         channel="h"
         :full-color="currentColor"
@@ -359,7 +359,7 @@ async function copyToClipboard(): Promise<void> {
       />
 
       <!-- Alpha -->
-      <OklchChannelSlider
+      <ColorThemeSliderChannel
         :model-value="currentColor.a ?? 1"
         channel="a"
         :full-color="currentColor"

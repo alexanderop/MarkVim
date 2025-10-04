@@ -3,9 +3,9 @@ import { UButton } from '#components'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { ColorThemeModal, useColorThemeStore } from '~/modules/color-theme/api'
-import { DocumentActionManager, DocumentList, DocumentListSkeleton, useDocumentsStore } from '~/modules/documents/api'
-import { MarkdownEditor, MarkdownEditorSkeleton, useEditorSettings } from '~/modules/editor/api'
-import { HeaderToolbar, StatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
+import { DocumentList, DocumentListSkeleton, DocumentManagerAction, useDocumentsStore } from '~/modules/documents/api'
+import { EditorMarkdown, EditorMarkdownSkeleton, useEditorSettings } from '~/modules/editor/api'
+import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview, MarkdownPreviewSkeleton } from '~/modules/markdown-preview/api'
 import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
@@ -35,7 +35,7 @@ function handleContentUpdate(value: string): void {
     ref="containerRef"
     class="flex flex-col h-[100dvh] w-screen overflow-hidden"
   >
-    <HeaderToolbar
+    <LayoutHeader
       :view-mode="viewMode"
       :is-mobile="isMobile"
       :active-document-title="activeDocumentTitle"
@@ -106,14 +106,14 @@ function handleContentUpdate(value: string): void {
             }"
           >
             <ClientOnly>
-              <MarkdownEditor
+              <EditorMarkdown
                 :content="activeDocument?.content || ''"
                 :settings="settings"
                 class="h-full"
                 @update:content="handleContentUpdate"
               />
               <template #fallback>
-                <MarkdownEditorSkeleton />
+                <EditorMarkdownSkeleton />
               </template>
             </ClientOnly>
           </div>
@@ -161,7 +161,7 @@ function handleContentUpdate(value: string): void {
       </div>
     </div>
 
-    <StatusBar
+    <LayoutStatusBar
       :line-count="activeDocument?.content.split('\n').length || 0"
       :character-count="activeDocument?.content.length || 0"
       :show-vim-mode="settings.vimMode"
@@ -169,7 +169,7 @@ function handleContentUpdate(value: string): void {
 
     <ShortcutsManager v-feature="'shortcuts'" />
 
-    <DocumentActionManager v-feature="'documents'" />
+    <DocumentManagerAction v-feature="'documents'" />
 
     <ShareManager v-feature="'share'" />
 

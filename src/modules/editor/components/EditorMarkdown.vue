@@ -4,7 +4,7 @@ import { Icon } from '#components'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
 import { useMediaQuery } from '@vueuse/core'
 import { useVimMode } from '~/modules/editor/api'
-import EditorMyCodeMirror from './MyCodeMirror.vue'
+import EditorCodeMirror from './EditorCodeMirror.vue'
 
 const { content, settings } = defineProps<{
   content: string
@@ -45,7 +45,7 @@ function handleContentUpdate(value: string): void {
 
     <!-- Editor container -->
     <div class="flex-1 min-h-0">
-      <EditorMyCodeMirror
+      <EditorCodeMirror
         :key="`editor-${'dark'}`"
         :model-value="content"
         :extensions="[markdownLang()]"

@@ -4,7 +4,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 import { getDocumentTitle, useDocumentsStore } from '~/modules/documents/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
-import ShortcutsCommandPalette from './CommandPalette.vue'
+import ShortcutsPaletteCommand from './ShortcutsPaletteCommand.vue'
 
 // Command palette state
 const commandPaletteOpen = ref(false)
@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <ShortcutsCommandPalette
+  <ShortcutsPaletteCommand
     v-model:open="commandPaletteOpen"
     :documents="documents"
     @select-document="handleDocumentSelectFromPalette"

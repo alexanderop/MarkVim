@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { onAppEvent } from '@/shared/utils/eventBus'
 import { useDocumentsStore } from '~/modules/documents/api'
-import DocumentsDocumentDeleteModal from './DocumentDeleteModal.vue'
+import DocumentModalDelete from './DocumentModalDelete.vue'
 
 const deleteModalOpen = ref(false)
 const documentToDelete = ref<{ id: string, title: string } | null>(null)
@@ -38,7 +38,7 @@ onAppEvent('document:select', handleSelectDocument)
 </script>
 
 <template>
-  <DocumentsDocumentDeleteModal
+  <DocumentModalDelete
     v-model:open="deleteModalOpen"
     :document-title="documentToDelete?.title || ''"
     @confirm="confirmDeleteDocument"

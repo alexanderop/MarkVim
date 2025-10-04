@@ -7,8 +7,8 @@ import { useColorThemeStore } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import { alertColors, colorDefinitions, coreColors } from '../internal/color-definitions'
 import { copyToClipboard, downloadAsFile, showTemporaryButtonMessage } from '../internal/export-utils'
-import ColorButton from './ColorButton.vue'
-import ColorThemeOklchColorPicker from './OklchColorPicker.vue'
+import ColorThemeButton from './ColorThemeButton.vue'
+import ColorThemePicker from './ColorThemePicker.vue'
 
 const COPIED_MESSAGE_DURATION_MS = 2000
 
@@ -134,7 +134,7 @@ function useThemeActions(): { handleExportTheme: () => Promise<void> } {
               Core Colors
             </h3>
             <div class="grid gap-3">
-              <ColorButton
+              <ColorThemeButton
                 v-for="colorDef in coreColors"
                 :key="colorDef.key"
                 :color-def="colorDef"
@@ -149,7 +149,7 @@ function useThemeActions(): { handleExportTheme: () => Promise<void> } {
               Alert Colors
             </h3>
             <div class="grid gap-3">
-              <ColorButton
+              <ColorThemeButton
                 v-for="colorDef in alertColors"
                 :key="colorDef.key"
                 :color-def="colorDef"
@@ -195,7 +195,7 @@ function useThemeActions(): { handleExportTheme: () => Promise<void> } {
   >
     <template #body>
       <div class="p-4 border-t border-b border-border">
-        <ColorThemeOklchColorPicker
+        <ColorThemePicker
           v-model="tempColor"
           :label="selectedColorData.label"
           :description="selectedColorData.description"

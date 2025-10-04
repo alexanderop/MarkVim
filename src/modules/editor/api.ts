@@ -6,8 +6,8 @@
  */
 
 // Export components that are used externally
-export { default as MarkdownEditor } from './components/MarkdownEditor.vue'
-export { default as MarkdownEditorSkeleton } from './components/MarkdownEditorSkeleton.vue'
+export { default as EditorMarkdown } from './components/EditorMarkdown.vue'
+export { default as EditorMarkdownSkeleton } from './components/EditorMarkdownSkeleton.vue'
 
 export { type EditorSettings, useEditorSettings } from './composables/useEditorSettings'
 // Export composables that other modules might need
