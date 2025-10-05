@@ -32,10 +32,16 @@ pnpm test:e2e:with-server  # E2E with auto server start
 **Running Specific E2E Tests** (recommended when fixing issues - running all 39 scenarios takes 2-3 minutes):
 
 ```bash
-# Run entire feature file (same pattern as CI matrix)
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/documents.feature
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/smoke.test.feature
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/sharing.feature
+# Run individual feature file (shortcuts available)
+pnpm test:e2e:documents
+pnpm test:e2e:smoke
+pnpm test:e2e:sharing
+pnpm test:e2e:accessibility
+pnpm test:e2e:color
+pnpm test:e2e:theme
+pnpm test:e2e:editing
+pnpm test:e2e:scroll-sync
+pnpm test:e2e:document-persistence
 
 # Run with dev server included
 pnpm test:e2e:with-server tests/features/documents.feature
@@ -47,14 +53,15 @@ NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/documents.featu
 **Fail-Fast Configuration**: E2E tests are configured to stop on first failure (`failFast: true` in `cucumber.js`). This speeds up development by letting you fix one issue at a time instead of running the entire suite.
 
 **Available feature files** (matches CI matrix for fast isolation):
-- `smoke.test.feature` - Basic smoke tests
-- `documents.feature` - Document management
-- `editing.feature` - Editor/preview functionality
-- `color.feature` - Color theme features
-- `theme.feature` - Theme system
-- `sharing.feature` - Share functionality
-- `scroll-sync.feature` - Scroll synchronization
-- `document-persistence.feature` - Persistence features
+- `pnpm test:e2e:smoke` - Basic smoke tests
+- `pnpm test:e2e:documents` - Document management
+- `pnpm test:e2e:editing` - Editor/preview functionality
+- `pnpm test:e2e:color` - Color theme features
+- `pnpm test:e2e:theme` - Theme system
+- `pnpm test:e2e:sharing` - Share functionality
+- `pnpm test:e2e:scroll-sync` - Scroll synchronization
+- `pnpm test:e2e:document-persistence` - Persistence features
+- `pnpm test:e2e:accessibility` - Accessibility compliance
 
 ### Git Hooks
 
