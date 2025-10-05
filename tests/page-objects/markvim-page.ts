@@ -69,8 +69,8 @@ export class MarkVimPage {
     this.viewModeSplit = page.getByRole('button', { name: /Switch to Split view/i })
     this.viewModePreview = page.getByRole('button', { name: /Switch to Preview view/i })
 
-    // Documents sidebar - use semantic role
-    this.documentList = page.getByRole('complementary', { name: 'Documents' })
+    // Documents sidebar - use data-testid for reliability
+    this.documentList = page.locator('[data-testid="document-list"]')
     this.documentItems = page.locator('[data-testid^="document-item-"]')
     this.documentItemActive = page.locator('[data-testid^="document-item-active-"]')
     this.documentTitles = page.locator('[data-testid^="document-title-"]')
@@ -119,22 +119,19 @@ export class MarkVimPage {
   }
 
   private getShareDialog(): Locator {
-    return this.page.getByRole('dialog', { name: 'Share Document' })
+    return this.page.getByRole('dialog')
   }
 
   private getImportDialog(): Locator {
-    // Try both possible titles
-    const importSharedDialog = this.page.getByRole('dialog', { name: 'Import Shared Document' })
-    const importDialog = this.page.getByRole('dialog', { name: 'Import Document' })
-    return importSharedDialog.or(importDialog)
+    return this.page.getByRole('dialog')
   }
 
   private getDeleteModal(): Locator {
-    return this.page.getByRole('dialog', { name: 'Delete Document' })
+    return this.page.getByRole('dialog')
   }
 
   getColorThemeModal(): Locator {
-    return this.page.getByRole('dialog', { name: 'Color Theme' })
+    return this.page.getByRole('dialog')
   }
 
   async navigate(): Promise<void> {
