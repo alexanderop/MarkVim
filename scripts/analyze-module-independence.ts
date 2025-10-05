@@ -50,13 +50,74 @@ export interface ModuleAnalysis {
   eventsListenedTo: Map<string, number>
   externalImports: Set<string>
   sharedImports: Map<string, number>
+  typeImports: Map<string, number>
   linesOfCode: number
   hasApiFile: boolean
   hasEventsFile: boolean
   hasStoreFile: boolean
   independenceScore: number
   category: Category
+  // New analysis fields
+  apiSurface: ApiSurfaceAnalysis
+  storeComplexity: StoreComplexityAnalysis
+  componentCoupling: ComponentCouplingAnalysis
+  bundleSize: BundleSizeAnalysis
+  eventFlow: EventFlowAnalysis
+  facadeViolations: FacadeViolation[]
+  crossModuleTypes: Set<string>
 }
+
+export interface ApiSurfaceAnalysis {
+  totalExports: number
+  usedExternally: Set<string>
+  unusedExports: Set<string>
+  usageRate: number
+}
+
+export interface StoreComplexityAnalysis {
+  hasStore: boolean
+  actions: number
+  getters: number
+  state: number
+  mutations: number
+}
+
+export interface ComponentCouplingAnalysis {
+  componentCount: number
+  totalProps: number
+  totalEmits: number
+  averagePropsPerComponent: number
+  averageEmitsPerComponent: number
+}
+
+export interface BundleSizeAnalysis {
+  estimatedKb: number
+  fileCount: number
+  largestFiles: Array<{ path: string, loc: number }>
+}
+
+export interface EventFlowAnalysis {
+  emitters: Map<string, string[]>
+  listeners: Map<string, string[]>
+  orphanedEmits: Set<string>
+  orphanedListeners: Set<string>
+}
+
+export interface FacadeViolation {
+  file: string
+  line: number
+  importedStore: string
+}
+
+/** Display constants for new features */
+const NEW_FEATURE_CONSTANTS = {
+  API_USAGE_EXCELLENT: 80,
+  API_USAGE_FAIR: 50,
+  TOP_FILES_LIMIT: 3,
+  TOP_UNUSED_LIMIT: 3,
+  TOP_CROSS_TYPES_LIMIT: 3,
+  BLOAT_PERCENTAGE: 100,
+} as const
 
 export type DependencyGraph = Record<string, string[]>
 
@@ -94,12 +155,16 @@ export interface FileRecord {
   moduleName: string
   /** Shared import segments discovered within the file */
   sharedImports: Map<string, number>
+  /** Type imports from ~/types/ */
+  typeImports: Map<string, number>
 }
 
 export interface SharedSurfaceStats {
   totalLoc: number
   totalFiles: number
   directories: Array<{ name: string, loc: number, files: number }>
+  bloatWarning: boolean
+  bloatRatio: number
 }
 
 /** Core constants (pure defaults) */
@@ -176,7 +241,10 @@ const STRICT_MODE_DEFAULTS = {
 } as const
 
 const SHARED_IMPORT_PREFIXES = ['~/shared/', '~/shared', '@/shared/', '@/shared'] as const
+const TYPE_IMPORT_PREFIXES = ['~/types/', '~/types', '@/types/', '@/types'] as const
 const PERCENT_BASE = 100
+const SHARED_BLOAT_THRESHOLD = 0.3 // Warn if shared is >30% of total codebase
+const KB_PER_LOC = 0.03 // Rough estimate: 30 bytes per LOC
 
 /** Utility pure helpers */
 function sanitizeId(name: string): string {
@@ -267,6 +335,47 @@ function collectSharedImports(
   return result
 }
 
+function collectTypeImports(
+  scriptText: string,
+  virtualFilename: string,
+  aliasPrefixes: readonly string[],
+): Map<string, number> {
+  const result = new Map<string, number>()
+  const add = (specifier?: string): void => {
+    if (!specifier)
+      return
+    const segment = extractSharedSegment(specifier, aliasPrefixes)
+    if (!segment)
+      return
+    result.set(segment, (result.get(segment) ?? 0) + 1)
+  }
+
+  const scriptKind
+    = virtualFilename.endsWith('.tsx')
+      ? ts.ScriptKind.TSX
+      : virtualFilename.endsWith('.ts')
+        ? ts.ScriptKind.TS
+        : ts.ScriptKind.TS
+
+  const src = ts.createSourceFile(virtualFilename, scriptText, ts.ScriptTarget.Latest, true, scriptKind)
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isImportDeclaration(node)) {
+      if (ts.isStringLiteralLike(node.moduleSpecifier))
+        add(node.moduleSpecifier.text)
+    }
+    else if (ts.isExportDeclaration(node)) {
+      if (node.moduleSpecifier && ts.isStringLiteralLike(node.moduleSpecifier))
+        add(node.moduleSpecifier.text)
+    }
+
+    ts.forEachChild(node, visit)
+  }
+
+  visit(src)
+  return result
+}
+
 function _normalizeRatioInput(input?: number): number | undefined {
   if (input == null || Number.isNaN(input))
     return undefined
@@ -300,9 +409,13 @@ function determineCategory(moduleName: string, map?: Record<Category, string[]>)
 function analyzeEvents(scriptText: string, virtualFilename: string): {
   emitted: Map<string, number>
   listened: Map<string, number>
+  emittedLocations: Map<string, number[]>
+  listenedLocations: Map<string, number[]>
 } {
   const emitted = new Map<string, number>()
   const listened = new Map<string, number>()
+  const emittedLocations = new Map<string, number[]>()
+  const listenedLocations = new Map<string, number[]>()
 
   const scriptKind
     = virtualFilename.endsWith('.tsx')
@@ -317,18 +430,276 @@ function analyzeEvents(scriptText: string, virtualFilename: string): {
     if (!ts.isCallExpression(node))
       continue
     const arg = node.arguments?.[0]
-    if (arg && ts.isStringLiteralLike(arg))
+    if (arg && ts.isStringLiteralLike(arg)) {
       emitted.set(arg.text, (emitted.get(arg.text) ?? 0) + 1)
+      const line = src.getLineAndCharacterOfPosition(node.getStart()).line + 1
+      if (!emittedLocations.has(arg.text))
+        emittedLocations.set(arg.text, [])
+      emittedLocations.get(arg.text)!.push(line)
+    }
   }
   for (const node of tsquery(src, `CallExpression:has(Identifier[name="onAppEvent"])`)) {
     if (!ts.isCallExpression(node))
       continue
     const arg = node.arguments?.[0]
-    if (arg && ts.isStringLiteralLike(arg))
+    if (arg && ts.isStringLiteralLike(arg)) {
       listened.set(arg.text, (listened.get(arg.text) ?? 0) + 1)
+      const line = src.getLineAndCharacterOfPosition(node.getStart()).line + 1
+      if (!listenedLocations.has(arg.text))
+        listenedLocations.set(arg.text, [])
+      listenedLocations.get(arg.text)!.push(line)
+    }
   }
 
-  return { emitted, listened }
+  return { emitted, listened, emittedLocations, listenedLocations }
+}
+
+/** Analyze API surface from api.ts file (pure) */
+function analyzeApiSurface(
+  scriptText: string,
+  virtualFilename: string,
+  moduleFiles: FileRecord[],
+  allFiles: FileRecord[],
+): ApiSurfaceAnalysis {
+  const scriptKind = virtualFilename.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS
+  const src = ts.createSourceFile(virtualFilename, scriptText, ts.ScriptTarget.Latest, true, scriptKind)
+
+  const exports = new Set<string>()
+  const usedExternally = new Set<string>()
+
+  // Collect all exports from api.ts
+  const collectExportDeclaration = (node: ts.ExportDeclaration): void => {
+    if (node.exportClause && ts.isNamedExports(node.exportClause)) {
+      for (const element of node.exportClause.elements)
+        exports.add(element.name.text)
+    }
+  }
+
+  const collectFunctionExport = (node: ts.FunctionDeclaration): void => {
+    if (node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword) && node.name)
+      exports.add(node.name.text)
+  }
+
+  const collectVariableExport = (node: ts.VariableStatement): void => {
+    if (node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      for (const decl of node.declarationList.declarations) {
+        if (ts.isIdentifier(decl.name))
+          exports.add(decl.name.text)
+      }
+    }
+  }
+
+  const collectExports = (node: ts.Node): void => {
+    if (ts.isExportDeclaration(node))
+      collectExportDeclaration(node)
+    else if (ts.isFunctionDeclaration(node))
+      collectFunctionExport(node)
+    else if (ts.isVariableStatement(node))
+      collectVariableExport(node)
+    ts.forEachChild(node, collectExports)
+  }
+  collectExports(src)
+
+  // Check usage in external modules (files not in the same module)
+  const moduleName = moduleFiles[0]?.moduleName
+  const externalFiles = allFiles.filter(f => f.moduleName !== moduleName)
+
+  // Helper to check imports in a file
+  const checkFileImports = (file: FileRecord): void => {
+    const fileSrc = ts.createSourceFile(file.filePath, file.script, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+    const visitImports = (node: ts.Node): void => {
+      if (ts.isImportDeclaration(node) && ts.isStringLiteralLike(node.moduleSpecifier)) {
+        const importPath = node.moduleSpecifier.text
+        if (importPath.includes(`/modules/${moduleName}/`)) {
+          if (node.importClause?.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
+            for (const element of node.importClause.namedBindings.elements) {
+              if (exports.has(element.name.text))
+                usedExternally.add(element.name.text)
+            }
+          }
+        }
+      }
+      ts.forEachChild(node, visitImports)
+    }
+    visitImports(fileSrc)
+  }
+
+  for (const file of externalFiles)
+    checkFileImports(file)
+
+  const unusedExports = new Set([...exports].filter(e => !usedExternally.has(e)))
+  const usageRate = exports.size > 0 ? (usedExternally.size / exports.size) * PERCENT_BASE : PERCENT_BASE
+
+  return {
+    totalExports: exports.size,
+    usedExternally,
+    unusedExports,
+    usageRate,
+  }
+}
+
+/** Analyze Pinia store complexity (pure) */
+function analyzeStoreComplexity(scriptText: string, virtualFilename: string): StoreComplexityAnalysis {
+  if (!scriptText)
+    return { hasStore: false, actions: 0, getters: 0, state: 0, mutations: 0 }
+
+  const scriptKind = virtualFilename.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS
+  const src = ts.createSourceFile(virtualFilename, scriptText, ts.ScriptTarget.Latest, true, scriptKind)
+
+  let actions = 0
+  let getters = 0
+  let state = 0
+
+  const visit = (node: ts.Node): void => {
+    // Count state properties
+    if (ts.isCallExpression(node)) {
+      const expr = node.expression
+      if (ts.isIdentifier(expr) && (expr.text === 'ref' || expr.text === 'reactive' || expr.text === 'computed'))
+        state++
+      if (ts.isIdentifier(expr) && expr.text === 'computed')
+        getters++
+    }
+    // Count functions (potential actions)
+    if (ts.isFunctionDeclaration(node) || ts.isMethodDeclaration(node))
+      actions++
+
+    ts.forEachChild(node, visit)
+  }
+  visit(src)
+
+  return {
+    hasStore: true,
+    actions,
+    getters,
+    state,
+    mutations: 0, // Pinia doesn't have mutations, TEA uses dispatch
+  }
+}
+
+/** Analyze component coupling via props/events (pure) */
+// eslint-disable-next-line complexity
+function analyzeComponentCoupling(moduleFiles: FileRecord[]): ComponentCouplingAnalysis {
+  let componentCount = 0
+  let totalProps = 0
+  let totalEmits = 0
+
+  for (const file of moduleFiles) {
+    if (!file.filePath.endsWith('.vue'))
+      continue
+
+    componentCount++
+
+    // Use tsquery to find defineProps and defineEmits
+    const scriptKind = ts.ScriptKind.TS
+    const src = ts.createSourceFile(file.filePath, file.script, ts.ScriptTarget.Latest, true, scriptKind)
+
+    for (const node of tsquery(src, `CallExpression:has(Identifier[name="defineProps"])`)) {
+      if (ts.isCallExpression(node)) {
+        const typeArg = node.typeArguments?.[0]
+        if (typeArg && ts.isTypeLiteralNode(typeArg))
+          totalProps += typeArg.members.length
+      }
+    }
+
+    for (const node of tsquery(src, `CallExpression:has(Identifier[name="defineEmits"])`)) {
+      if (ts.isCallExpression(node)) {
+        const typeArg = node.typeArguments?.[0]
+        if (typeArg && ts.isTypeLiteralNode(typeArg))
+          totalEmits += typeArg.members.length
+      }
+    }
+  }
+
+  return {
+    componentCount,
+    totalProps,
+    totalEmits,
+    averagePropsPerComponent: componentCount > 0 ? totalProps / componentCount : 0,
+    averageEmitsPerComponent: componentCount > 0 ? totalEmits / componentCount : 0,
+  }
+}
+
+/** Estimate bundle size (pure) */
+function analyzeBundleSize(moduleFiles: FileRecord[]): BundleSizeAnalysis {
+  let totalLoc = 0
+  const fileMetrics: Array<{ path: string, loc: number }> = []
+
+  for (const file of moduleFiles) {
+    const loc = countSloc(file.script, file.filePath)
+    totalLoc += loc
+    fileMetrics.push({ path: file.filePath, loc })
+  }
+
+  const largestFiles = fileMetrics
+    .sort((a, b) => b.loc - a.loc)
+    .slice(0, DISPLAY_CONSTANTS.SHARED_TOP_LIMIT)
+
+  return {
+    estimatedKb: totalLoc * KB_PER_LOC,
+    fileCount: moduleFiles.length,
+    largestFiles,
+  }
+}
+
+/** Detect facade pattern violations (pure) */
+function detectFacadeViolations(moduleFiles: FileRecord[], allFiles: FileRecord[]): FacadeViolation[] {
+  const violations: FacadeViolation[] = []
+  const moduleName = moduleFiles[0]?.moduleName
+  const externalFiles = allFiles.filter(f => f.moduleName !== moduleName)
+
+  for (const file of externalFiles) {
+    const scriptKind = ts.ScriptKind.TS
+    const src = ts.createSourceFile(file.filePath, file.script, ts.ScriptTarget.Latest, true, scriptKind)
+
+    const visit = (node: ts.Node): void => {
+      if (ts.isImportDeclaration(node) && ts.isStringLiteralLike(node.moduleSpecifier)) {
+        const importPath = node.moduleSpecifier.text
+        // Check if importing directly from store.ts (not via api.ts)
+        if (importPath.includes(`/modules/${moduleName}/store`)) {
+          const line = src.getLineAndCharacterOfPosition(node.getStart()).line + 1
+          violations.push({
+            file: file.filePath,
+            line,
+            importedStore: `${moduleName}/store`,
+          })
+        }
+      }
+      ts.forEachChild(node, visit)
+    }
+    visit(src)
+  }
+
+  return violations
+}
+
+/** Detect cross-module type dependencies (pure) */
+function detectCrossModuleTypes(moduleFiles: FileRecord[], _allFiles: FileRecord[]): Set<string> {
+  const crossTypes = new Set<string>()
+  const moduleName = moduleFiles[0]?.moduleName
+
+  for (const file of moduleFiles) {
+    const scriptKind = ts.ScriptKind.TS
+    const src = ts.createSourceFile(file.filePath, file.script, ts.ScriptTarget.Latest, true, scriptKind)
+
+    const visit = (node: ts.Node): void => {
+      if (ts.isImportDeclaration(node) && ts.isStringLiteralLike(node.moduleSpecifier)) {
+        const importPath = node.moduleSpecifier.text
+        // Check if importing types from another module
+        const moduleMatch = importPath.match(/\/modules\/([^/]+)\//)
+        if (moduleMatch && moduleMatch[1] !== moduleName) {
+          if (node.importClause?.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
+            for (const element of node.importClause.namedBindings.elements) {
+              crossTypes.add(`${moduleMatch[1]}.${element.name.text}`)
+            }
+          }
+        }
+      }
+      ts.forEachChild(node, visit)
+    }
+    visit(src)
+  }
+
+  return crossTypes
 }
 
 /** Aggregate module analysis from file records (pure) */
@@ -353,12 +724,18 @@ function buildModuleAnalyses(
     const emitted = new Map<string, number>()
     const listened = new Map<string, number>()
     const sharedImports = new Map<string, number>()
+    const typeImports = new Map<string, number>()
+    const emittedLocations = new Map<string, number[]>()
+    const listenedLocations = new Map<string, number[]>()
+    let apiFileContent = ''
 
     for (const fr of moduleFiles) {
       loc += countSloc(fr.script, fr.filePath)
       const b = fr.base
-      if (b === 'api.ts' || b === 'api.tsx')
+      if (b === 'api.ts' || b === 'api.tsx') {
         hasApi = true
+        apiFileContent = fr.script
+      }
       if (b === 'events.ts' || b === 'events.tsx')
         hasEvents = true
       if (b === 'store.ts' || b === 'store.tsx')
@@ -367,10 +744,53 @@ function buildModuleAnalyses(
       const ev = analyzeEvents(fr.script, fr.filePath)
       for (const [k, v] of ev.emitted) emitted.set(k, (emitted.get(k) ?? 0) + v)
       for (const [k, v] of ev.listened) listened.set(k, (listened.get(k) ?? 0) + v)
+      for (const [k, v] of ev.emittedLocations) {
+        if (!emittedLocations.has(k))
+          emittedLocations.set(k, [])
+        emittedLocations.get(k)!.push(...v)
+      }
+      for (const [k, v] of ev.listenedLocations) {
+        if (!listenedLocations.has(k))
+          listenedLocations.set(k, [])
+        listenedLocations.get(k)!.push(...v)
+      }
 
       // Aggregate shared imports
       for (const [k, v] of fr.sharedImports) sharedImports.set(k, (sharedImports.get(k) ?? 0) + v)
+      // Aggregate type imports
+      for (const [k, v] of fr.typeImports) typeImports.set(k, (typeImports.get(k) ?? 0) + v)
     }
+
+    // Build event flow analysis
+    const eventFlow: EventFlowAnalysis = {
+      emitters: new Map(Array.from(emitted.keys()).map(e => [e, emittedLocations.get(e)?.map(String) ?? []])),
+      listeners: new Map(Array.from(listened.keys()).map(e => [e, listenedLocations.get(e)?.map(String) ?? []])),
+      orphanedEmits: new Set([...emitted.keys()].filter(e => !listened.has(e))),
+      orphanedListeners: new Set([...listened.keys()].filter(e => !emitted.has(e))),
+    }
+
+    // Analyze API surface if api.ts exists
+    const apiSurface = hasApi && apiFileContent
+      ? analyzeApiSurface(apiFileContent, 'api.ts', moduleFiles, files)
+      : { totalExports: 0, usedExternally: new Set(), unusedExports: new Set(), usageRate: 100 }
+
+    // Analyze store complexity if store exists
+    const storeFile = moduleFiles.find(f => f.base === 'store.ts' || f.base === 'store.tsx')
+    const storeComplexity = storeFile
+      ? analyzeStoreComplexity(storeFile.script, storeFile.filePath)
+      : { hasStore: false, actions: 0, getters: 0, state: 0, mutations: 0 }
+
+    // Analyze component coupling
+    const componentCoupling = analyzeComponentCoupling(moduleFiles)
+
+    // Analyze bundle size
+    const bundleSize = analyzeBundleSize(moduleFiles)
+
+    // Detect facade violations
+    const facadeViolations = detectFacadeViolations(moduleFiles, files)
+
+    // Detect cross-module types
+    const crossModuleTypes = detectCrossModuleTypes(moduleFiles, files)
 
     analyses.push({
       name,
@@ -379,12 +799,20 @@ function buildModuleAnalyses(
       eventsListenedTo: listened,
       externalImports: new Set<string>(), // shell fills from graph
       sharedImports,
+      typeImports,
       linesOfCode: loc,
       hasApiFile: hasApi,
       hasEventsFile: hasEvents,
       hasStoreFile: hasStore,
       independenceScore: 0, // core will compute later
       category: determineCategory(name, categories),
+      apiSurface,
+      storeComplexity,
+      componentCoupling,
+      bundleSize,
+      eventFlow,
+      facadeViolations,
+      crossModuleTypes,
     })
   }
 
@@ -539,10 +967,30 @@ function renderJSON(analyses: ModuleAnalysis[], sharedStats: SharedSurfaceStats 
       eventsListenedTo: Array.from(a.eventsListenedTo.entries()).sort(([e1], [e2]) => e1.localeCompare(e2)),
       externalImports: Array.from(a.externalImports).sort(),
       sharedImports: Array.from(a.sharedImports.entries()).sort(([e1], [e2]) => e1.localeCompare(e2)),
+      typeImports: Array.from(a.typeImports.entries()).sort(([e1], [e2]) => e1.localeCompare(e2)),
       linesOfCode: a.linesOfCode,
       hasApiFile: a.hasApiFile,
       hasEventsFile: a.hasEventsFile,
       hasStoreFile: a.hasStoreFile,
+      apiSurface: {
+        totalExports: a.apiSurface.totalExports,
+        usedExternally: Array.from(a.apiSurface.usedExternally).sort(),
+        unusedExports: Array.from(a.apiSurface.unusedExports).sort(),
+        usageRate: a.apiSurface.usageRate,
+      },
+      storeComplexity: a.storeComplexity,
+      componentCoupling: a.componentCoupling,
+      bundleSize: {
+        estimatedKb: a.bundleSize.estimatedKb,
+        fileCount: a.bundleSize.fileCount,
+        largestFiles: a.bundleSize.largestFiles.slice(0, NEW_FEATURE_CONSTANTS.TOP_FILES_LIMIT),
+      },
+      eventFlow: {
+        orphanedEmits: Array.from(a.eventFlow.orphanedEmits).sort(),
+        orphanedListeners: Array.from(a.eventFlow.orphanedListeners).sort(),
+      },
+      facadeViolations: a.facadeViolations,
+      crossModuleTypes: Array.from(a.crossModuleTypes).sort(),
     })),
     sharedSurface: sharedStats || undefined,
   }
@@ -625,6 +1073,40 @@ function renderTextReport(
     lines.push(colors.gray(`   Category: ${a.category}`))
     lines.push(colors.gray(`   Events emitted: ${a.eventsEmitted.size}, listened: ${a.eventsListenedTo.size}`))
     lines.push(colors.gray(`   External imports: ${a.externalImports.size}, LOC: ${a.linesOfCode}`))
+
+    // API Surface
+    if (a.apiSurface.totalExports > 0) {
+      const usageColor = a.apiSurface.usageRate >= NEW_FEATURE_CONSTANTS.API_USAGE_EXCELLENT
+        ? colors.green
+        : a.apiSurface.usageRate >= NEW_FEATURE_CONSTANTS.API_USAGE_FAIR
+          ? colors.yellow
+          : colors.red
+      lines.push(colors.gray(`   API: ${a.apiSurface.totalExports} exports, ${usageColor(`${a.apiSurface.usageRate.toFixed(0)}% used externally`)}`))
+      if (a.apiSurface.unusedExports.size > 0) {
+        const unused = Array.from(a.apiSurface.unusedExports).slice(0, NEW_FEATURE_CONSTANTS.TOP_UNUSED_LIMIT).join(', ')
+        lines.push(colors.gray(`   Unused exports: ${unused}${a.apiSurface.unusedExports.size > NEW_FEATURE_CONSTANTS.TOP_UNUSED_LIMIT ? '...' : ''}`))
+      }
+    }
+
+    // Store Complexity
+    if (a.storeComplexity.hasStore) {
+      lines.push(colors.gray(`   Store: ${a.storeComplexity.actions} actions, ${a.storeComplexity.getters} getters, ${a.storeComplexity.state} state`))
+    }
+
+    // Component Coupling
+    if (a.componentCoupling.componentCount > 0) {
+      lines.push(colors.gray(`   Components: ${a.componentCoupling.componentCount} (avg ${a.componentCoupling.averagePropsPerComponent.toFixed(1)} props, ${a.componentCoupling.averageEmitsPerComponent.toFixed(1)} emits)`))
+    }
+
+    // Bundle Size
+    lines.push(colors.gray(`   Bundle: ~${a.bundleSize.estimatedKb.toFixed(1)}KB (${a.bundleSize.fileCount} files)`))
+
+    // Type Dependencies
+    if (a.typeImports.size > 0) {
+      const typeTotal = Array.from(a.typeImports.values()).reduce((s, v) => s + v, 0)
+      lines.push(colors.gray(`   Type imports: ${a.typeImports.size} areas, ${typeTotal} total`))
+    }
+
     if (a.sharedImports.size) {
       const sharedTotal = Array.from(a.sharedImports.values()).reduce((s, v) => s + v, 0)
       const sharedList = Array.from(a.sharedImports.entries())
@@ -636,6 +1118,18 @@ function renderTextReport(
     }
     if (a.externalImports.size)
       lines.push(colors.gray(`   Depends on: ${Array.from(a.externalImports).sort().join(', ')}`))
+
+    // Facade Violations
+    if (a.facadeViolations.length > 0) {
+      lines.push(colors.red(`   ⚠ Facade violations: ${a.facadeViolations.length}`))
+    }
+
+    // Cross-Module Types
+    if (a.crossModuleTypes.size > 0) {
+      const crossList = Array.from(a.crossModuleTypes).slice(0, NEW_FEATURE_CONSTANTS.TOP_CROSS_TYPES_LIMIT).join(', ')
+      lines.push(colors.yellow(`   ⚠ Cross-module types: ${crossList}${a.crossModuleTypes.size > NEW_FEATURE_CONSTANTS.TOP_CROSS_TYPES_LIMIT ? '...' : ''}`))
+    }
+
     lines.push('')
   }
 
@@ -652,9 +1146,54 @@ function renderTextReport(
     lines.push(`\n${colors.bright(colors.cyan('Shared Surface Area:'))}`)
     lines.push(`  Total Files: ${sharedStats.totalFiles}`)
     lines.push(`  Total LOC: ${sharedStats.totalLoc}`)
+    lines.push(`  Bloat Ratio: ${(sharedStats.bloatRatio * NEW_FEATURE_CONSTANTS.BLOAT_PERCENTAGE).toFixed(1)}%`)
+    if (sharedStats.bloatWarning) {
+      lines.push(colors.red(`  ⚠ Warning: Shared folder exceeds ${(SHARED_BLOAT_THRESHOLD * NEW_FEATURE_CONSTANTS.BLOAT_PERCENTAGE)}% of total codebase`))
+    }
     lines.push(`  Directories:`)
     for (const dir of sharedStats.directories) {
       lines.push(colors.gray(`    - ${dir.name}: ${dir.files} files, ${dir.loc} LOC`))
+    }
+  }
+
+  // Event Flow Analysis
+  const orphanedEmitsTotal = analyses.reduce((s, a) => s + a.eventFlow.orphanedEmits.size, 0)
+  const orphanedListenersTotal = analyses.reduce((s, a) => s + a.eventFlow.orphanedListeners.size, 0)
+  if (orphanedEmitsTotal > 0 || orphanedListenersTotal > 0) {
+    lines.push(`\n${colors.bright(colors.cyan('Event Flow Analysis:'))}`)
+    if (orphanedEmitsTotal > 0) {
+      lines.push(colors.yellow(`  ⚠ Orphaned Emits (no listeners): ${orphanedEmitsTotal}`))
+      for (const a of analyses) {
+        if (a.eventFlow.orphanedEmits.size > 0) {
+          const orphans = Array.from(a.eventFlow.orphanedEmits).join(', ')
+          lines.push(colors.gray(`    - ${a.name}: ${orphans}`))
+        }
+      }
+    }
+    if (orphanedListenersTotal > 0) {
+      lines.push(colors.yellow(`  ⚠ Orphaned Listeners (no emitters): ${orphanedListenersTotal}`))
+      for (const a of analyses) {
+        if (a.eventFlow.orphanedListeners.size > 0) {
+          const orphans = Array.from(a.eventFlow.orphanedListeners).join(', ')
+          lines.push(colors.gray(`    - ${a.name}: ${orphans}`))
+        }
+      }
+    }
+  }
+
+  // Facade Pattern Compliance
+  const totalViolations = analyses.reduce((s, a) => s + a.facadeViolations.length, 0)
+  if (totalViolations > 0) {
+    lines.push(`\n${colors.bright(colors.red('Facade Pattern Violations:'))}`)
+    lines.push(colors.red(`  ⚠ ${totalViolations} direct store imports detected (should use api.ts)`))
+    for (const a of analyses) {
+      if (a.facadeViolations.length > 0) {
+        lines.push(colors.red(`    - ${a.name}: ${a.facadeViolations.length} violations`))
+        for (const v of a.facadeViolations.slice(0, NEW_FEATURE_CONSTANTS.TOP_FILES_LIMIT)) {
+          const relativePath = v.file.split('/').slice(-NEW_FEATURE_CONSTANTS.TOP_FILES_LIMIT).join('/')
+          lines.push(colors.gray(`      ${relativePath}:${v.line} imports ${v.importedStore}`))
+        }
+      }
     }
   }
 
@@ -843,12 +1382,15 @@ function extractScript(filename: string, code: string): string {
 async function analyzeSharedFolder(
   sharedDirAbs: string,
   ignoreGlobs: string[],
+  totalModuleLoc: number,
 ): Promise<SharedSurfaceStats> {
   if (!existsSync(sharedDirAbs)) {
     return {
       totalLoc: 0,
       totalFiles: 0,
       directories: [],
+      bloatWarning: false,
+      bloatRatio: 0,
     }
   }
 
@@ -876,8 +1418,11 @@ async function analyzeSharedFolder(
 
   const totalLoc = directories.reduce((sum, d) => sum + d.loc, 0)
   const totalFiles = directories.reduce((sum, d) => sum + d.files, 0)
+  const totalCodebase = totalLoc + totalModuleLoc
+  const bloatRatio = totalCodebase > 0 ? totalLoc / totalCodebase : 0
+  const bloatWarning = bloatRatio > SHARED_BLOAT_THRESHOLD
 
-  return { totalLoc, totalFiles, directories }
+  return { totalLoc, totalFiles, directories, bloatWarning, bloatRatio }
 }
 
 /** Build edges via dependency-cruiser or regex fallback (I/O wrapper) */
@@ -1037,18 +1582,21 @@ async function main(): Promise<void> {
   // Read files and build FileRecords (imperative)
   const filePaths = await fg([`${modulesDirAbs}/**/*.{ts,tsx,js,vue}`], { ignore })
   const sharedAliases = userConfig.sharedAliases ?? SHARED_IMPORT_PREFIXES
+  const typeAliases = TYPE_IMPORT_PREFIXES
   const files: FileRecord[] = filePaths.map((fp) => {
     const raw = safeRead(fp)
     const script = extractScript(fp, raw)
     const rel = relative(modulesDirAbs, fp)
     const moduleName = rel.split(sep)[0]
     const sharedImports = collectSharedImports(script, fp, sharedAliases)
+    const typeImports = collectTypeImports(script, fp, typeAliases)
     return {
       filePath: fp,
       script,
       base: fp.split(sep).pop() || '',
       moduleName,
       sharedImports,
+      typeImports,
     }
   }).filter(f => moduleNames.includes(f.moduleName))
 
@@ -1071,7 +1619,8 @@ async function main(): Promise<void> {
 
   // Analyze shared folder
   const sharedDirAbs = join(process.cwd(), 'src/shared')
-  const sharedStats = await analyzeSharedFolder(sharedDirAbs, ignore)
+  const totalModuleLoc = analyses.reduce((sum, a) => sum + a.linesOfCode, 0)
+  const sharedStats = await analyzeSharedFolder(sharedDirAbs, ignore, totalModuleLoc)
 
   // Baseline saving (if requested)
   if (opts.saveBaseline) {
