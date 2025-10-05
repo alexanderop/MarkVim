@@ -77,10 +77,23 @@ jobs:
             echo "No baseline found, skipping baseline check"
           fi
 
-  # Job 4: End-to-End tests (the longest job)
+  # Job 4: End-to-End tests (parallelized by feature)
   e2e:
-    name: E2E Tests
+    name: E2E Tests (${{ matrix.feature }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Run all features even if one fails
+      matrix:
+        feature:
+          - smoke.test
+          - documents
+          - editing
+          - color
+          - theme
+          - feature-flags
+          - sharing
+          - scroll-sync
+          - document-persistence
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -114,7 +127,7 @@ jobs:
           pnpm run dev &
           SERVER_PID=$!
           sleep 15
-          pnpm run test:e2e:ci
+          NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/${{ matrix.feature }}.feature
           kill $SERVER_PID
         env:
           CI: true
@@ -123,6 +136,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.feature }}
           path: playwright-report/
           retention-days: 7
