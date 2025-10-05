@@ -484,6 +484,15 @@ Then('the page should display the content of the shared note', async function (t
 
 Then('the document list should contain {int} documents', async function (this: MarkVimWorld, expectedCount: number) {
   const markVimPage = await getMarkVimPage(this)
+
+  // Check if sidebar is hidden and show it if needed
+  const isSidebarVisible = await markVimPage.documentList.isVisible().catch(() => false)
+  if (!isSidebarVisible) {
+    await markVimPage.toggleSidebarWithButton()
+  }
+
+  // Give extra time for documents to load from localStorage
+  await markVimPage.page.waitForTimeout(1000)
   await markVimPage.verifyDocumentCount(expectedCount)
 })
 

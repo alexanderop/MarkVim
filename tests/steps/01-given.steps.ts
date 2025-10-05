@@ -55,8 +55,11 @@ Given('I am on the application page', async function (this: MarkVimWorld) {
 })
 
 Given('the keyboard shortcuts modal is open', async function (this: MarkVimWorld) {
-  const markVimPage = await getMarkVimPage(this)
-  await markVimPage.clickKeyboardShortcutsButton()
+  const page = await ensurePage(this)
+  const markVimPage = getMarkVimPage(this)
+  await page.goto('http://localhost:3000')
+  await markVimPage.waitForAppReady()
+  await markVimPage.openKeyboardShortcutsModal()
   await expect(markVimPage.getKeyboardShortcutsModal()).toBeVisible()
 })
 

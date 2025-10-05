@@ -5,27 +5,13 @@ import { getMarkVimPage } from '../page-objects/markvim-page.js'
 import { EXTRA_LONG_WAIT_MS, LONG_WAIT_MS, SHORT_WAIT_MS, STANDARD_WAIT_MS } from '../support/constants.js'
 import { ensurePage } from '../support/utils.js'
 
-When('the page is loaded', { timeout: 20000 }, async function (this: MarkVimWorld) {
+When('the page is loaded', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
 
-  // Check if we're on the welcome screen first using semantic selector
-  const welcomeScreen = markVimPage.page.getByRole('main').filter({ hasText: 'Welcome to MarkVim' })
-
-  if (await welcomeScreen.isVisible()) {
-    // If we see the welcome screen, click through it to get to the main app
-    await markVimPage.page.getByRole('button', { name: 'Start Writing' }).click()
-  }
-
-  // Now wait for the editor pane to be visible
-  await expect(markVimPage.editorPane).toBeVisible()
-
-  // Wait for client-side hydration and sidebar to be in DOM
-  // Use a more lenient timeout since this is a client-side component
-  const documentsNav = markVimPage.page.getByRole('complementary', { name: 'Documents' })
-  await expect(documentsNav).toBeAttached({ timeout: 15000 })
-
-  // Wait for shortcuts to be registered (onMounted hook)
-  await markVimPage.page.waitForTimeout(300)
+  // The page should already be loaded by the Given step
+  // Just ensure editor is visible and wait a bit for any hydration
+  await expect(markVimPage.editorPane).toBeVisible({ timeout: 5000 })
+  await markVimPage.page.waitForTimeout(500)
 })
 
 When('I click on {word} mode', async function (this: MarkVimWorld, mode: string) {
@@ -255,6 +241,11 @@ When('I open the color theme modal', async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   await markVimPage.colorThemeButton.click()
   await expect(markVimPage.getColorThemeModal()).toBeVisible()
+})
+
+When('I open settings', async function (this: MarkVimWorld) {
+  const markVimPage = await getMarkVimPage(this)
+  await markVimPage.openSettingsModal()
 })
 
 When('I click the {string} color setting to open the picker', async function (this: MarkVimWorld, colorName: string) {

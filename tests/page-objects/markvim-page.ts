@@ -80,7 +80,7 @@ export class MarkVimPage {
     // Interactive buttons - use accessible names
     this.createDocumentBtn = page.getByRole('button', { name: /Create new document/i })
     this.sidebarToggleBtn = page.getByRole('button', { name: /(Hide|Show) sidebar/i })
-    this.keyboardShortcutsButton = page.locator('[data-testid="keyboard-shortcuts-button"]')
+    this.keyboardShortcutsButton = page.getByRole('button', { name: /Keyboard shortcuts/i })
     this.settingsButton = page.getByRole('button', { name: /Open settings/i })
     this.shareButton = page.getByRole('button', { name: /Share document/i })
     this.syncScrollToggle = page.locator('[data-testid="sync-scroll-toggle"]')
