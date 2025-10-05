@@ -374,9 +374,16 @@ export class MarkVimPage {
   }
 
   async verifyCurrentViewMode(expectedMode: string): Promise<void> {
-    // Check for the active indicator element which is more reliable
+    // First wait for the state to be saved in localStorage (more reliable)
+    await this.page.waitForFunction(
+      mode => localStorage.getItem('markvim-view-mode') === mode,
+      expectedMode,
+      { timeout: 10000 },
+    )
+
+    // Then check for the active indicator element
     const activeIndicator = this.page.locator(`[data-testid="view-mode-${expectedMode}-active"]`)
-    await expect(activeIndicator).toBeVisible()
+    await expect(activeIndicator).toBeVisible({ timeout: 10000 })
 
     // Also verify the UI state matches the expected mode
     if (expectedMode === 'editor') {
