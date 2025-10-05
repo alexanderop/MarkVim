@@ -33,7 +33,7 @@ module.exports = {
         pathNot: '^src/modules/([^/]+)/',
       },
       to: {
-        path: '^src/modules/([^/]+)/(store|composables|utils|components)/',
+        path: '^src/modules/([^/]+)/(store\\.ts$|composables/|utils/|components/)',
       },
     },
 
@@ -106,7 +106,7 @@ module.exports = {
     },
 
     /* ====================================================================
-     * Type Safety Rules
+     * Dead Code Detection
      * ==================================================================== */
 
     {
@@ -114,8 +114,7 @@ module.exports = {
       comment:
         'Orphan modules (not imported anywhere) indicate dead code or missing integration.',
       severity: 'warn',
-      from: {},
-      to: {
+      from: {
         orphan: true,
         pathNot: [
           // Entry points that are expected orphans
@@ -125,8 +124,27 @@ module.exports = {
           'nuxt\\.config\\.ts$',
           '^scripts/',
           '^tests/',
+          // Type definitions and ambient modules
+          '\\.d\\.ts$',
+          // Event definitions (imported dynamically)
+          '/events\\.ts$',
+          '^src/shared/events',
+          // Shared utilities (may be imported via auto-imports)
+          '^src/shared/utils/',
+          '^src/shared/composables/',
+          '^src/shared/components/',
+          '^src/shared/services/',
+          '^src/shared/contracts/',
+          '^src/shared/schemas/',
+          '^src/shared/types/',
+          // Plugins (loaded by Nuxt)
+          '^src/plugins/',
+          // Module-specific files (may be imported via auto-imports or dynamically)
+          '^src/modules/.*/types\\.ts$',
+          '^src/modules/.*/composables/',
         ],
       },
+      to: {},
     },
   ],
 
@@ -138,9 +156,6 @@ module.exports = {
 
     /* Module system support */
     moduleSystems: ['es6', 'cjs'],
-
-    /* Extensions to analyze */
-    extensions: ['.js', '.ts', '.vue', '.json'],
 
     /* What to include in analysis */
     includeOnly: '^src/',
