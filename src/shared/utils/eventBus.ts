@@ -36,6 +36,10 @@ function busFor<K extends AppEventKey>(key: K): ReturnType<typeof useEventBus<Ap
   return useEventBus<AppEvents[K]>(key)
 }
 
+// Wildcard handler storage
+type WildcardHandler = <K extends AppEventKey>(key: K, payload: AppEvents[K]) => void
+const wildcardHandlers = new Set<WildcardHandler>()
+
 /**
  * Emit a typed event.
  * Overloads make `payload` optional when it is `undefined` in the type.
@@ -46,7 +50,13 @@ export function emitAppEvent<K extends AppEventKey>(
 ): void {
   const bus = busFor(key)
   // eslint-disable-next-line ts/consistent-type-assertions
-  bus.emit(args[0] as AppEvents[K])
+  const payload = args[0] as AppEvents[K]
+  bus.emit(payload)
+
+  // Call wildcard handlers
+  wildcardHandlers.forEach((handler) => {
+    handler(key, payload)
+  })
 }
 
 /**
@@ -75,6 +85,42 @@ export function onceAppEvent<K extends AppEventKey>(
     off()
     handler(p)
   })
+  tryOnScopeDispose(off)
+  return off
+}
+
+/**
+ * Listen to ALL events (wildcard).
+ * Handler receives both the event key and payload.
+ * Auto-unsubscribes on scope dispose.
+ *
+ * Useful for debugging, analytics, logging, etc.
+ *
+ * @example
+ * // Log all events in development
+ * if (import.meta.env.DEV) {
+ *   onAnyAppEvent((key, payload) => {
+ *     console.log(`[EVENT] ${key}`, payload)
+ *   })
+ * }
+ *
+ * @example
+ * // Track all document events to analytics
+ * onAnyAppEvent((key, payload) => {
+ *   if (key.startsWith('document:')) {
+ *     analytics.track(key, payload)
+ *   }
+ * })
+ */
+export function onAnyAppEvent(
+  handler: WildcardHandler,
+): (() => void) {
+  wildcardHandlers.add(handler)
+
+  const off = (): void => {
+    wildcardHandlers.delete(handler)
+  }
+
   tryOnScopeDispose(off)
   return off
 }

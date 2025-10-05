@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle, useDocumentsState } from '~/modules/documents/api'
+import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
+import { useEditorSettings } from '~/modules/editor/api'
+import { useViewMode } from '~/modules/layout/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import ShortcutsPaletteCommand from './ShortcutsPaletteCommand.vue'
 
 // Command palette state
 const commandPaletteOpen = ref(false)
 
-// Use documents state
-const { documents, activeDocument } = useDocumentsState()
+// Use documents state and actions
+const { documents, activeDocument, createDocument, selectDocument } = useDocuments()
+
+// Use view mode actions
+const { setViewMode, toggleSidebar } = useViewMode()
+
+// Use editor settings actions
+const { toggleVimMode, toggleLineNumbers, togglePreviewSync } = useEditorSettings()
 
 // Get required composables
 const { registerShortcuts, registerAppCommand, setNewDocumentAction, createSequentialShortcut } = useShortcuts()
@@ -35,12 +43,12 @@ function closeCommandPalette(): void {
 }
 
 function handleDocumentSelectFromPalette(id: string): void {
-  emitAppEvent('document:select', { documentId: id })
+  selectDocument(id)
   closeCommandPalette()
 }
 
 function handleCreateDocument(): void {
-  emitAppEvent('document:create')
+  createDocument()
 }
 
 // Listen to event bus events
@@ -60,35 +68,35 @@ onMounted(() => {
 
   // Create g->t sequence shortcut for toggling sidebar
   createSequentialShortcut('g', 't', () => {
-    emitAppEvent('sidebar:toggle')
+    toggleSidebar()
   })
 
   registerShortcuts([
     {
       keys: 'g t',
       description: 'Toggle sidebar',
-      action: () => emitAppEvent('sidebar:toggle'),
+      action: () => toggleSidebar(),
       category: 'View',
       icon: 'lucide:panel-left',
     },
     {
       keys: '1',
       description: 'Switch to Editor only',
-      action: () => emitAppEvent('view:set', { viewMode: 'editor' }),
+      action: () => setViewMode('editor'),
       category: 'View',
       icon: 'lucide:edit-3',
     },
     {
       keys: '2',
       description: 'Switch to Split view',
-      action: () => emitAppEvent('view:set', { viewMode: 'split' }),
+      action: () => setViewMode('split'),
       category: 'View',
       icon: 'lucide:columns-2',
     },
     {
       keys: '3',
       description: 'Switch to Preview only',
-      action: () => emitAppEvent('view:set', { viewMode: 'preview' }),
+      action: () => setViewMode('preview'),
       category: 'View',
       icon: 'lucide:eye',
     },
@@ -129,21 +137,21 @@ onMounted(() => {
     {
       keys: 'v',
       description: 'Toggle Vim Mode',
-      action: () => emitAppEvent('settings:toggle-vim'),
+      action: () => toggleVimMode(),
       category: 'Settings',
       icon: 'lucide:terminal',
     },
     {
       keys: 'l',
       description: 'Toggle Line Numbers',
-      action: () => emitAppEvent('settings:toggle-line-numbers'),
+      action: () => toggleLineNumbers(),
       category: 'Settings',
       icon: 'lucide:hash',
     },
     {
       keys: 'p',
       description: 'Toggle Preview Sync',
-      action: () => emitAppEvent('settings:toggle-preview-sync'),
+      action: () => togglePreviewSync(),
       category: 'Settings',
       icon: 'lucide:link-2',
     },

@@ -4,6 +4,7 @@ import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'
 import { z } from 'zod'
+import { getDocumentTitle } from '~/modules/documents/api'
 import { Err, Ok, tryCatch, tryCatchAsync } from '~/shared/utils/result'
 
 export interface ShareableDocument {
@@ -34,7 +35,6 @@ export function useDocumentShare(): {
   importFromUrl: (url?: string) => Promise<Document | null>
   clearShareFromUrl: () => void
   getShareStats: (document: Document) => { originalSize: number, compressedSize: number, compressionRatio: number, canShare: boolean }
-  getDocumentTitle: (content: string) => string
 } {
   const { copy: copyToClipboard, isSupported: clipboardSupported } = useClipboard()
   const isSharing = ref(false)
@@ -232,14 +232,6 @@ export function useDocumentShare(): {
     }
   }
 
-  function getDocumentTitle(content: string): string {
-    const firstLine = content.split('\n')[0]?.trim() ?? ''
-    if (firstLine.startsWith('#')) {
-      return firstLine.replace(/^#+\s*/, '') || 'Untitled'
-    }
-    return firstLine || 'Untitled'
-  }
-
   function getShareStats(document: Document): {
     originalSize: number
     compressedSize: number
@@ -284,7 +276,5 @@ export function useDocumentShare(): {
     importFromUrl,
     clearShareFromUrl,
     getShareStats,
-
-    getDocumentTitle,
   }
 }

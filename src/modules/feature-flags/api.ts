@@ -7,7 +7,7 @@
 
 import type { Ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { type FeatureFlagsState, useFeatureFlagsStore } from './store'
+import { type FeatureFlagsState, type FeatureName, useFeatureFlagsStore } from './store'
 
 // Export directive
 export { vFeature } from './directives/vFeature'
@@ -18,17 +18,36 @@ export type { FeatureFlags, FeatureFlagsMessage, FeatureFlagsState, FeatureName 
 export type { FeatureDirective, FeatureElement } from '@/types/directives'
 
 /**
- * Read-only access to feature flags state.
- * External modules can only read state, not mutate it.
- * To change feature flags, emit events via emitAppEvent.
+ * Public facade for feature flags module.
+ * Provides read-only state access and action methods for mutations.
+ * Use this composable from any module (same or cross-module).
  */
-export function useFeatureFlagsState(): {
+export function useFeatureFlags(): {
+  // Readonly state
   state: Ref<FeatureFlagsState>
+  // Actions
+  toggleFeature: (feature: FeatureName) => void
+  enableFeature: (feature: FeatureName) => void
+  disableFeature: (feature: FeatureName) => void
+  resetFeatures: () => void
 } {
   const store = useFeatureFlagsStore()
   const { state } = storeToRefs(store)
 
   return {
+    // Readonly state
     state,
+    // Actions
+    toggleFeature: (feature: FeatureName) => store.dispatch({ type: 'TOGGLE_FEATURE', payload: { feature } }),
+    enableFeature: (feature: FeatureName) => store.dispatch({ type: 'ENABLE_FEATURE', payload: { feature } }),
+    disableFeature: (feature: FeatureName) => store.dispatch({ type: 'DISABLE_FEATURE', payload: { feature } }),
+    resetFeatures: () => store.dispatch({ type: 'RESET_TO_DEFAULTS' }),
   }
+}
+
+/**
+ * @deprecated Use useFeatureFlags() instead
+ */
+export function useFeatureFlagsState(): ReturnType<typeof useFeatureFlags> {
+  return useFeatureFlags()
 }

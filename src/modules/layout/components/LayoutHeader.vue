@@ -4,7 +4,7 @@ import { UButton } from '#components'
 import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
 import { getDocumentTitle } from '~/modules/documents/api'
-import { useFeatureFlagsState } from '~/modules/feature-flags/api'
+import { useFeatureFlags } from '~/modules/feature-flags/api'
 import { useViewMode, type ViewMode } from '~/modules/layout/api'
 import { ShareButton } from '~/modules/share/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
@@ -26,7 +26,7 @@ defineEmits<Emits>()
 
 const { toggleColorTheme } = useShortcuts()
 const { isSidebarVisible, toggleSidebar } = useViewMode()
-const { state: featureFlags } = useFeatureFlagsState()
+const { state: featureFlags } = useFeatureFlags()
 const isDocumentsFeatureEnabled = computed(() => featureFlags.value.flags.documents)
 
 function handleDeleteDocument(): void {

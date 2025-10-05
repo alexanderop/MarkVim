@@ -4,7 +4,6 @@ import { useLocalStorage, useMediaQuery, useMounted } from '@vueuse/core'
 import { computed, readonly, ref, watch, watchEffect } from 'vue'
 import { z } from 'zod'
 import { useDataReset } from '@/shared/composables/useDataReset'
-import { onAppEvent } from '@/shared/utils/eventBus'
 
 export type ViewMode = 'split' | 'editor' | 'preview'
 
@@ -87,23 +86,6 @@ export function useViewMode(): {
   function toggleSidebar(): void {
     isSidebarVisible.value = !isSidebarVisible.value
   }
-
-  // Listen for view:set events from the event bus
-  onAppEvent('view:set', (payload) => {
-    setViewMode(payload.viewMode)
-  })
-
-  // Listen for sidebar:toggle events from the event bus
-  onAppEvent('sidebar:toggle', () => {
-    toggleSidebar()
-  })
-
-  // Close sidebar on mobile when a document is selected
-  onAppEvent('document:select', () => {
-    if (isMobile.value) {
-      isSidebarVisible.value = false
-    }
-  })
 
   return {
     viewMode: readonly(viewMode),

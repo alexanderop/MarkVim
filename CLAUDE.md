@@ -226,125 +226,175 @@ Use inline local composables when logic is component-specific or evolving. Extra
 * Documents: Pinia (`src/modules/documents/store.ts`)
 * Color theme: Pinia (`src/modules/color-theme/store.ts`)
 * Feature flags: Pinia (`src/modules/feature-flags/store.ts`)
-* **Pattern:** Stores export read-only state via `use[Module]State()` composables
-* **Mutations:** ALL state changes happen via events (stores listen internally)
-* Active document ↔ editor sync via event bus
+* **Pattern:** Modules expose public facades via `use[Module]()` composables
+* **Mutations:** ALL state changes happen via facade action methods
+* Active document ↔ editor sync via direct facade calls
 * Persist settings/documents to localStorage
 
-**Store API Pattern:**
+**Facade API Pattern:**
 
 ```typescript
-// ❌ Old pattern (don't use)
+// ❌ Wrong: Don't export stores
 export { useDocumentsStore } from './store'
 
-// ✅ New pattern (event-driven)
-export function useDocumentsState() {
+// ✅ Correct: Facade pattern
+export function useDocuments() {
   const store = useDocumentsStore()
   const { documents, activeDocument } = storeToRefs(store)
-  return { documents, activeDocument }
+
+  return {
+    // Readonly state
+    documents,
+    activeDocument,
+
+    // Actions
+    createDocument: () => store.dispatch({ type: 'CREATE_DOCUMENT' }),
+    selectDocument: (id: string) => store.dispatch({ type: 'SELECT_DOCUMENT', payload: { documentId: id } }),
+    updateDocument: (id: string, content: string) => store.dispatch({ type: 'UPDATE_DOCUMENT', payload: { documentId: id, content } }),
+    deleteDocument: (id: string) => store.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: id } }),
+  }
 }
 ```
+
+See **State Management & Module Communication Pattern** section below for full details.
 
 ## Testing Strategy
 
 * E2E: Playwright + Cucumber, BDD scenarios, Page Objects
 * Cover: editing, document management, theme switching
 
-## Event System & Cross-Module Communication
+## State Management & Module Communication Pattern
 
-**CRITICAL: All cross-module communication MUST use events.**
+**CRITICAL: All modules expose public facades via `api.ts`. All state mutations happen through facade actions.**
 
-### Typed Event Bus
+### Facade Pattern Overview
 
-Centralized event bus (`src/shared/utils/eventBus.ts`) aggregates all module events with full type safety.
+Each module's internal implementation (Pinia stores or composables) is private. Only the public API (`api.ts`) is exposed. This creates clear boundaries and enforces proper encapsulation.
 
-**Event Categories:**
-* `document:*` - Document lifecycle (create/update/delete/select/import)
-* `editor:*` - Editor operations (content updates, text insertion, vim mode)
-* `theme:*` - Color theme operations (update/reset/import)
-* `feature:*` - Feature flags (toggle/enable/disable/reset)
-* `view:*` - Layout view modes (set/toggle)
-* `sidebar:*` - Sidebar visibility (toggle)
-* `command-palette:*` - Command palette (open/close)
-* `settings:*` - Settings toggles (vim/line-numbers/preview-sync)
+**Key Principles:**
+1. Stores/composables are internal implementation details
+2. Public API exposes readonly state + action methods
+3. Same-module and cross-module code both use the same facade
+4. No events for state mutations (events only for UI notifications)
 
-### Cross-Module Communication Rules
+### Public Facade Structure
 
-**✅ Correct: Event-Driven Communication**
+Every module's `api.ts` exports a composable that provides:
+- **Readonly state** - via `storeToRefs()` or computed refs
+- **Helper methods** - pure functions for common operations
+- **Action methods** - wrappers around internal dispatch/mutations
+
+**Example: Documents Module**
 
 ```typescript
-// External module triggering document creation
-import { emitAppEvent } from '@/shared/utils/eventBus'
+// modules/documents/api.ts - PUBLIC FACADE
+export function useDocuments() {
+  const store = useDocumentsStore() // Internal store
+  const { documents, activeDocument } = storeToRefs(store)
 
-function createNewDocument(): void {
-  emitAppEvent('document:create')
-}
+  return {
+    // Readonly state
+    documents,
+    activeDocument,
 
-function deleteDocument(id: string): void {
-  emitAppEvent('document:delete:confirmed', { documentId: id })
-}
+    // Helper methods
+    getDocumentTitle: store.getDocumentTitle,
+    getDocumentById: store.getDocumentById,
 
-function importDocument(content: string): void {
-  emitAppEvent('document:import', { content })
+    // Actions
+    createDocument: (content?: string) => store.dispatch({ type: 'CREATE_DOCUMENT', payload: content ? { content } : undefined }),
+    selectDocument: (id: string) => store.dispatch({ type: 'SELECT_DOCUMENT', payload: { documentId: id } }),
+    updateDocument: (id: string, content: string) => store.dispatch({ type: 'UPDATE_DOCUMENT', payload: { documentId: id, content } }),
+    deleteDocument: (id: string) => store.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: id } }),
+    importDocument: (content: string) => store.dispatch({ type: 'ADD_DOCUMENT', payload: { content } }),
+  }
 }
 ```
 
-**❌ Incorrect: Direct Store Mutation**
+### Usage Pattern (All Modules)
+
+**✅ Correct: Use facade from any module**
 
 ```typescript
-// ❌ NEVER call dispatch on stores
-import { useDocumentsStore } from '~/modules/documents/api'
+// Any component or composable (same module or different)
+import { useDocuments } from '~/modules/documents/api'
+import { useColorTheme } from '~/modules/color-theme/api'
+import { useFeatureFlags } from '~/modules/feature-flags/api'
+
+const { documents, activeDocument, createDocument, selectDocument, deleteDocument } = useDocuments()
+const { theme, updateColor, resetTheme } = useColorTheme()
+const { state: featureFlags, toggleFeature, resetFeatures } = useFeatureFlags()
+
+// Direct action calls
+createDocument()
+selectDocument('doc-id-123')
+updateColor('accent', { l: 0.6, c: 0.2, h: 240 })
+toggleFeature('vim-mode')
+```
+
+**❌ Incorrect: Direct store access**
+
+```typescript
+// ❌ NEVER import stores directly
+import { useDocumentsStore } from '~/modules/documents/store'
 
 const store = useDocumentsStore()
-store.dispatch({ ... })  // WRONG! Stores don't expose dispatch
+store.dispatch({ ... })  // WRONG! Bypasses facade
 ```
 
-### Store Access Pattern
-
-**Stores export read-only state only.** They do NOT export dispatch functions.
-
-**For Reading State:** Use the module's state composable
+**❌ Incorrect: Events for state mutations**
 
 ```typescript
-// ✅ Read-only access to state
-import { useDocumentsState } from '~/modules/documents/api'
-
-const { documents, activeDocument } = useDocumentsState()
-// Can read, but cannot mutate
-```
-
-**For Mutations:** ALWAYS use events (even within the same module)
-
-```typescript
-// ✅ Mutate via events (works everywhere)
+// ❌ NEVER use events for state mutations
 import { emitAppEvent } from '@/shared/utils/eventBus'
 
-emitAppEvent('document:create')
-emitAppEvent('document:update', { documentId: '123', content: 'new' })
-emitAppEvent('theme:color:update', { colorKey: 'accent', color: { l: 0.6, c: 0.2, h: 240 } })
-emitAppEvent('feature:toggle', { feature: 'vim-mode' })
+emitAppEvent('document:create')  // WRONG! Use facade actions instead
 ```
 
-**Why this pattern?**
-1. Consistent mutation path: all changes go through events
-2. Better debugging: all state changes visible in event bus
-3. Loose coupling: modules don't depend on each other's internals
-4. Prevents accidental mutations from components
+### Internal Store Pattern (Pinia + TEA)
 
-### Event Naming Convention
+Stores use The Elm Architecture internally but are **never** exported from `api.ts`:
 
-Pattern: `<resource>:<action>[:<qualifier>]`
+```typescript
+// modules/documents/store.ts - INTERNAL ONLY
+export const useDocumentsStore = defineStore('documents', () => {
+  const _state = useLocalStorage<DocumentsState>(...)
 
-* Resources (singular): `document`, `editor`, `theme`, `view`, `sidebar`
-* Actions: `create`, `update`, `delete`, `select`, `toggle`, `open`, `close`
-* Qualifiers: `confirmed`, `complete`, `updated`
+  function dispatch(message: DocumentMessage) {
+    _state.value = update(_state.value, message)
+  }
 
-Examples:
-* `document:create` - Request to create
-* `document:created` - Creation complete
-* `document:delete:confirmed` - Deletion confirmed
-* `theme:color:update` - Update color
-* `view:mode:set` - Set view mode
+  return {
+    state: readonly(_state),
+    documents,
+    activeDocument,
+    dispatch,  // Exposed to facade only
+  }
+})
+```
+
+### When to Use Events
+
+Events are **only** for notifications or UI coordination, not for state mutations:
+
+**✅ Use events for:**
+- Modal/dialog triggers: `document:delete` (opens confirmation modal)
+- UI notifications: `command-palette:open`, `command-palette:close`
+- Side effects: `document:created`, `document:updated` (for logging, analytics, etc.)
+
+**❌ Do NOT use events for:**
+- State mutations (use facade actions instead)
+- Cross-module data changes
+- Triggering store updates
+
+### Benefits of Facade Pattern
+
+1. **Clear API boundaries** - Only intended functionality is exposed
+2. **Direct function calls** - Easier to trace than event emissions
+3. **Type-safe mutations** - TypeScript ensures correct parameters
+4. **Refactor safety** - Internal implementation can change without affecting consumers
+5. **TEA benefits preserved** - Pure update functions, predictable state changes
+6. **Better tooling** - IDE autocomplete, go-to-definition, find-all-references work perfectly
 
 ## Component Auto-Import
 

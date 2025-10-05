@@ -4,7 +4,6 @@ import { useState } from '#imports'
 import { useCssVar, useMounted } from '@vueuse/core'
 import { watch, watchEffect } from 'vue'
 import { useDataReset } from '@/shared/composables/useDataReset'
-import { onAppEvent } from '@/shared/utils/eventBus'
 import { Ok, tryCatch } from '~/shared/utils/result'
 
 export interface EditorSettings {
@@ -178,19 +177,6 @@ export function useEditorSettings(): {
   watch(settings, () => {
     saveToLocalStorage()
   }, { deep: true })
-
-  // Listen for settings events from the event bus
-  onAppEvent('settings:toggle-vim', () => {
-    toggleVimMode()
-  })
-
-  onAppEvent('settings:toggle-line-numbers', () => {
-    toggleLineNumbers()
-  })
-
-  onAppEvent('settings:toggle-preview-sync', () => {
-    togglePreviewSync()
-  })
 
   return {
     settings,

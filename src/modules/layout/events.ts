@@ -5,11 +5,5 @@
  */
 
 export interface LayoutEvents {
-  /** Switch the main view mode. */
-  'view:set': {
-    viewMode: 'editor' | 'split' | 'preview'
-  }
-
-  /** Toggle the sidebar. */
-  'sidebar:toggle': undefined
+  // No events currently defined
 }

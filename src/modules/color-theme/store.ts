@@ -3,7 +3,6 @@ import { useCssVar, useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { readonly, watchEffect } from 'vue'
 import { z } from 'zod'
-import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 import { Err, Ok, tryCatch } from '~/shared/utils/result'
 
 export interface OklchColor {
@@ -205,7 +204,7 @@ export const useColorThemeStore = defineStore('color-theme', () => {
     return JSON.stringify(_theme.value, null, 2)
   }
 
-  function importTheme(themeJson: string): Result<void, Error> {
+  function validateAndImportTheme(themeJson: string): Result<void, Error> {
     const parseResult = tryCatch(
       () => JSON.parse(themeJson),
       () => new Error('Invalid JSON format'),
@@ -242,27 +241,11 @@ export const useColorThemeStore = defineStore('color-theme', () => {
     return Ok(undefined)
   }
 
-  // EVENT LISTENERS - Enable event-driven communication
-  // External modules should emit events, not call dispatch directly
-  onAppEvent('theme:color:update', (payload) => {
-    dispatch({ type: 'UPDATE_COLOR', payload })
-    emitAppEvent('theme:color:updated', payload)
-  })
-
-  onAppEvent('theme:reset', () => {
-    dispatch({ type: 'RESET_TO_DEFAULTS' })
-    emitAppEvent('theme:reset:complete', { theme: DEFAULT_COLOR_THEME })
-  })
-
-  onAppEvent('theme:import', (payload) => {
-    dispatch({ type: 'IMPORT_THEME', payload })
-    emitAppEvent('theme:imported', { theme: payload.theme })
-  })
-
   return {
     theme,
     exportTheme,
-    importTheme,
+    validateAndImportTheme,
     oklchToString,
+    dispatch,
   }
 })

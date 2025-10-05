@@ -4,7 +4,7 @@ import type { Document as DocType } from '~/modules/documents/api'
 import { Icon, UButton, UContextMenu } from '#components'
 import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle } from '~/modules/documents/api'
+import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
 
 interface Props {
   document: DocType
@@ -13,6 +13,8 @@ interface Props {
 }
 
 const { document, isActive, index } = defineProps<Props>()
+
+const { selectDocument } = useDocuments()
 
 // Time conversion constants
 const MILLISECONDS_IN_SECOND = 1000
@@ -23,14 +25,15 @@ const DAYS_IN_WEEK = 7
 const PREVIEW_MAX_LENGTH = 20
 
 function handleDocumentClick(): void {
-  emitAppEvent('document:select', { documentId: document.id })
+  selectDocument(document.id)
 }
 
 function handleSelectDocument(): void {
-  emitAppEvent('document:select', { documentId: document.id })
+  selectDocument(document.id)
 }
 
 function handleDeleteDocument(): void {
+  // Emit event for modal handling (not state mutation)
   emitAppEvent('document:delete', {
     documentId: document.id,
     documentTitle: getDocumentTitle(document.content),

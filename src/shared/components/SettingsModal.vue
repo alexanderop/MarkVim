@@ -2,15 +2,14 @@
 import type { Ref } from 'vue'
 import { UButton, UCheckbox, UKbd, UModal, URadioGroup } from '#components'
 import { computed, ref } from 'vue'
-import { emitAppEvent } from '@/shared/utils/eventBus'
 import { useEditorSettings } from '~/modules/editor/api'
-import { type FeatureName, useFeatureFlagsState } from '~/modules/feature-flags/api'
+import { type FeatureName, useFeatureFlags } from '~/modules/feature-flags/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import BaseSwitch from './BaseSwitch.vue'
 
 const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()
 const { showSettings, toggleSettings } = useShortcuts()
-const { state: featureFlagsState } = useFeatureFlagsState()
+const { state: featureFlagsState, toggleFeature, resetFeatures } = useFeatureFlags()
 
 // Use defineModel with getter/setter to sync with store without duplicating state
 const isOpen = defineModel<boolean>('open', {
@@ -38,13 +37,13 @@ function isFeatureEnabled(feature: FeatureName): boolean {
   return featureFlagsState.value.flags[feature]
 }
 
-function toggleFeature(feature: FeatureName): void {
-  emitAppEvent('feature:toggle', { feature })
+function handleToggleFeature(feature: FeatureName): void {
+  toggleFeature(feature)
 }
 
 function handleResetToDefaults(): void {
   resetToDefaults()
-  emitAppEvent('feature:reset')
+  resetFeatures()
 }
 
 function useClearDataModal(): {
@@ -137,7 +136,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
               :label="feature.label"
               :description="feature.description"
               :data-testid="`feature-${feature.key}-toggle`"
-              @update:model-value="toggleFeature(feature.key)"
+              @update:model-value="handleToggleFeature(feature.key)"
             />
           </div>
         </div>

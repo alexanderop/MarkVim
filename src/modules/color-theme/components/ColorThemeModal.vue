@@ -3,8 +3,7 @@ import type { ColorDefinition } from '../utils/color-definitions'
 import type { ColorTheme } from '~/modules/color-theme/api'
 import { UButton, UCard, UModal } from '#components'
 import { ref } from 'vue'
-import { emitAppEvent } from '@/shared/utils/eventBus'
-import { useColorThemeState } from '~/modules/color-theme/api'
+import { useColorTheme } from '~/modules/color-theme/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
 import { alertColors, colorDefinitions, coreColors } from '../utils/color-definitions'
 import { copyToClipboard, downloadAsFile, showTemporaryButtonMessage } from '../utils/export-utils'
@@ -14,7 +13,7 @@ import ColorThemePicker from './ColorThemePicker.vue'
 const COPIED_MESSAGE_DURATION_MS = 2000
 
 // External composables
-const { theme, exportTheme, oklchToString } = useColorThemeState()
+const { theme, exportTheme, oklchToString, updateColor, resetTheme } = useColorTheme()
 const { showColorTheme, toggleColorTheme } = useShortcuts()
 
 // Modal state sync
@@ -56,7 +55,7 @@ function useColorPicker(): {
   }
 
   function acceptColorChange(): void {
-    emitAppEvent('theme:color:update', { colorKey: selectedColorKey.value, color: tempColor.value })
+    updateColor(selectedColorKey.value, tempColor.value)
     showColorPickerModal.value = false
   }
 
@@ -170,7 +169,7 @@ function useThemeActions(): { handleExportTheme: () => Promise<void> } {
           variant="ghost"
           size="sm"
           icon="lucide:rotate-ccw"
-          @click="emitAppEvent('theme:reset')"
+          @click="resetTheme"
         >
           Reset Colors
         </UButton>

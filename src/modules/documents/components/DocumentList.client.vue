@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Document as DocType } from '~/modules/documents/api'
 import { Icon, UButton } from '#components'
-import { emitAppEvent } from '@/shared/utils/eventBus'
+import { useDocuments } from '~/modules/documents/api'
 import { vFeature } from '~/modules/feature-flags/api'
 import DocumentItemClient from './DocumentItem.client.vue'
 
@@ -10,8 +10,10 @@ const { documents, activeDocumentId } = defineProps<{
   activeDocumentId: string
 }>()
 
+const { createDocument } = useDocuments()
+
 function handleCreateDocument(): void {
-  emitAppEvent('document:create')
+  createDocument()
 }
 </script>
 

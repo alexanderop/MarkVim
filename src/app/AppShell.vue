@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { UButton } from '#components'
 import { computed } from 'vue'
-import { emitAppEvent } from '@/shared/utils/eventBus'
-import { ColorThemeModal, useColorThemeState } from '~/modules/color-theme/api'
-import { DocumentList, DocumentManagerAction, useDocumentsState } from '~/modules/documents/api'
+import { ColorThemeModal, useColorTheme } from '~/modules/color-theme/api'
+import { DocumentList, DocumentManagerAction, useDocuments } from '~/modules/documents/api'
 import { EditorMarkdown, useEditorSettings } from '~/modules/editor/api'
 import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview } from '~/modules/markdown-preview/api'
@@ -11,20 +10,20 @@ import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
-const { documents, activeDocument, activeDocumentTitle, state: documentsState } = useDocumentsState()
+const { documents, activeDocument, activeDocumentTitle, activeDocumentId, updateDocument } = useDocuments()
 
 const { leftPaneWidth, rightPaneWidth, isDragging, containerRef, startDrag } = useResizablePanes()
 const { settings } = useEditorSettings()
 const { viewMode, isPreviewVisible, isSplitView, isEditorVisible, setViewMode, isSidebarVisible, isMobile } = useViewMode()
 
-useColorThemeState()
+useColorTheme()
 
 const previewSyncEnabled = computed(() => settings.value.previewSync && isSplitView.value)
 const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previewSyncEnabled)
 
 function handleContentUpdate(value: string): void {
   if (activeDocument.value) {
-    emitAppEvent('document:update', { documentId: activeDocument.value.id, content: value })
+    updateDocument(activeDocument.value.id, value)
   }
 }
 </script>
@@ -46,7 +45,7 @@ function handleContentUpdate(value: string): void {
       <DocumentList
         v-if="isSidebarVisible"
         :documents="documents"
-        :active-document-id="documentsState.activeDocumentId"
+        :active-document-id="activeDocumentId"
         :is-visible="isSidebarVisible"
         class="w-72 transition-all duration-300 ease-out fixed md:relative h-full z-20 md:z-auto bg-surface-primary shadow-2xl md:shadow-none"
         :class="[

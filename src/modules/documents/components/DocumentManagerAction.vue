@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
+import { onAppEvent } from '@/shared/utils/eventBus'
+import { useDocuments } from '~/modules/documents/api'
 import DocumentModalDelete from './DocumentModalDelete.vue'
+
+const { deleteDocument } = useDocuments()
 
 const deleteModalOpen = ref(false)
 const documentToDelete = ref<{ id: string, title: string } | null>(null)
@@ -13,7 +16,7 @@ function handleDeleteDocument(payload: { documentId: string, documentTitle: stri
 
 function confirmDeleteDocument(): void {
   if (documentToDelete.value) {
-    emitAppEvent('document:delete:confirmed', { documentId: documentToDelete.value.id })
+    deleteDocument(documentToDelete.value.id)
     deleteModalOpen.value = false
     documentToDelete.value = null
   }
@@ -24,7 +27,7 @@ function cancelDeleteDocument(): void {
   documentToDelete.value = null
 }
 
-// Listen for events from the typed event bus
+// Listen for delete request events (for modal confirmation)
 onAppEvent('document:delete', handleDeleteDocument)
 </script>
 
