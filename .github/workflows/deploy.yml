@@ -7,47 +7,33 @@ on:
     branches:
       - main
 
+env:
+  NODE_VERSION: '22'
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        id: node-modules-cache
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - uses: ./.github/actions/pnpm-install
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            modules-${{ runner.os }}-
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
-
-      - name: Cache build
-        uses: actions/cache@v4
-        id: build-cache
-        with:
-          path: |
-            .nuxt
-            .output
-          key: build-${{ runner.os }}-${{ hashFiles('**/*.vue', '**/*.ts', '**/*.js', 'nuxt.config.ts', 'package.json') }}
-          restore-keys: |
-            build-${{ runner.os }}-
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Build application
         run: NUXT_APP_BASE_URL=/MarkVim/ pnpm run build --preset github_pages
-        if: steps.build-cache.outputs.cache-hit != 'true'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -68,6 +54,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     # Specify runner + deployment step
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

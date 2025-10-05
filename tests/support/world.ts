@@ -17,6 +17,7 @@ export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
   sharedLink?: string
+  consoleLogs?: string[]
   init: () => Promise<void>
   cleanup: () => Promise<void>
 }
@@ -36,9 +37,11 @@ class CustomWorld extends World implements MarkVimWorld {
           headless: !process.env.HEADED,
         })
       }
-      if (!this.page) {
-        this.page = await this.browser.newPage()
-      }
+      // Create fresh context with clean state for better test isolation
+      const context = await this.browser.newContext({
+        viewport: { width: 1280, height: 720 },
+      })
+      this.page = await context.newPage()
     }
     catch (error) {
       console.error('Failed to initialize browser/page:', error)
@@ -49,7 +52,9 @@ class CustomWorld extends World implements MarkVimWorld {
   async cleanup(): Promise<void> {
     try {
       if (this.page) {
+        const context = this.page.context()
         await this.page.close()
+        await context.close()
         this.page = undefined
       }
       if (this.browser) {

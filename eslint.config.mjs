@@ -56,6 +56,8 @@ export default withNuxt(
       'ts/no-floating-promises': 'error', // Force explicit handling of promises
       'ts/switch-exhaustiveness-check': 'error', // Force exhaustive checking on discriminated unions
       'ts/only-throw-error': 'error', // Only allow throwing Error instances
+      'ts/no-unnecessary-condition': 'warn', // Catch always true/false conditions
+      'ts/prefer-nullish-coalescing': 'warn', // Use ?? over || for null checks
       'no-restricted-syntax': [
         'error',
         {
@@ -136,10 +138,14 @@ export default withNuxt(
       'arrow-spacing': 'error',
       // Dot notation rule
       'dot-notation': 'off',
+      // Max depth rule - limit nesting depth to keep functions readable
+      'max-depth': ['error', { max: 3 }],
       // Max params rule
       'max-params': 'off',
       // No array constructor rule
       'no-array-constructor': 'error',
+      // No await in loop - suggest Promise.all instead for performance
+      'no-await-in-loop': 'error',
       // No confusing arrow rule
       'no-confusing-arrow': 'error',
       // Console rule
@@ -215,6 +221,7 @@ export default withNuxt(
       'vue/max-template-depth': ['error', { maxDepth: 9 }],
       // Detect undefined components in templates (catches missing imports when auto-imports are disabled)
       // This rule helps catch runtime errors when components aren't properly imported
+      'vue/no-unused-refs': 'error',
       'vue/no-undef-components': ['error', {
         ignorePatterns: [
           // Allow Nuxt built-in components
@@ -277,11 +284,20 @@ export default withNuxt(
       }],
     },
   },
-  // Disable no-magic-numbers for test files
+  // Disable strict rules for test files
   {
     files: ['tests/**/*.ts', 'tests/**/*.js'],
     rules: {
       'no-magic-numbers': 'off',
+      'no-await-in-loop': 'off', // Sequential operations are legitimate in tests
+      'max-depth': 'off', // Test setup can be more nested
+    },
+  },
+  // Disable strict rules for tooling/scripts
+  {
+    files: ['scripts/**/*.ts', 'eslint-rules/**/*.js'],
+    rules: {
+      'max-depth': 'off', // Scripts can have deeper nesting
     },
   },
 )

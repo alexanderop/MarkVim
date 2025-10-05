@@ -27,6 +27,10 @@
     "analyze:modules:ci": "tsx scripts/analyze-module-independence.ts --strict --baseline .baseline-modules.json",
     "analyze:modules:update-baseline": "tsx scripts/analyze-module-independence.ts --save-baseline .baseline-modules.json",
     "analyze:modules:strict": "tsx scripts/analyze-module-independence.ts --strict",
+    "depcruise": "depcruise --config .dependency-cruiser.cjs src",
+    "depcruise:ci": "depcruise --config .dependency-cruiser.cjs --output-type err src",
+    "depcruise:archi": "depcruise --config .dependency-cruiser.cjs --output-type archi src",
+    "depcruise:graph:modules": "depcruise --config .dependency-cruiser.cjs --output-type dot --include-only '^src/modules' src",
     "prepare": "husky",
     "knip": "knip",
     "knip:exports": "knip --exports"

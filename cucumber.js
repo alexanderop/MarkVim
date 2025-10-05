@@ -4,7 +4,4 @@ export default {
     'tests/steps/**/*.ts',
     'tests/support/**/*.ts',
   ],
-  paths: [
-    'tests/features/**/*.feature',
-  ],
 }

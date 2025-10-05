@@ -1,4 +1,4 @@
-import type { DocumentsState } from '../store'
+import type { DocumentsState } from '../types'
 import type { Document } from '~/shared/types/Document'
 
 // Use a consistent default document ID

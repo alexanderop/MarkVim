@@ -76,44 +76,36 @@ Use **Knip** (see `knip.json`). ESLint's import plugin misreads Vue `<script>` i
 
 ### Architecture Fitness Function
 
-**Automated architectural governance** that enforces module independence and prevents coupling regressions.
+**Automated architectural governance** using **Dependency Cruiser** to enforce architectural boundaries and validate import rules.
 
 ```bash
-# Analysis (reporting only)
+# Validate all dependency rules (fitness function)
+pnpm depcruise                    # Validate and show violations
+pnpm depcruise:ci                 # CI format (used in GitHub Actions)
+
+# Generate visualizations
+pnpm depcruise:graph:modules      # Module dependency graph (DOT format)
+pnpm depcruise:archi              # Architecture diagram
+```
+
+**Enforced rules** (configured in `.dependency-cruiser.cjs`):
+
+1. **Module boundaries**: Modules can only import via `api.ts` facades
+2. **No cross-module imports**: Direct implementation imports forbidden
+3. **Shared code boundaries**: Only `~/shared/*`, `~/types/*` allowed
+4. **No circular dependencies**: Prevents circular imports
+5. **Layer architecture**: Components → composables → utils (one-way)
+
+**CI Integration**: Runs automatically on all PRs via `.github/workflows/ci.yml` (Dependency Rules job)
+
+**Optional Development Tools**:
+
+Module Independence Analyzer provides additional insights during development (not used in CI):
+
+```bash
 pnpm analyze:modules              # Text report with recommendations
 pnpm analyze:modules:json         # JSON output
 pnpm analyze:modules:mermaid      # Mermaid diagram
-
-# Fitness function (enforces thresholds)
-pnpm analyze:modules:strict       # Strict mode (fails on violations)
-pnpm analyze:modules:ci           # CI mode (strict + baseline check)
-
-# Baseline management
-pnpm analyze:modules:update-baseline  # Save current scores as baseline
-```
-
-**Thresholds** (configured in `.independencerc.json`):
-- `average: 80` - Minimum average independence score (0-100%)
-- `minScore: 70` - Minimum score for any individual module
-- `maxImports: 5` - Maximum external module dependencies
-- `failOnCycle: true` - Fail if circular dependencies detected
-
-**Baseline tracking**: Prevents regressions by comparing current scores against a saved baseline. The CI job fails if any module's score drops >5% from baseline.
-
-**How it works**:
-1. Analyzes all modules in `src/modules/`
-2. Scores based on: external imports, event coupling, lines of code, API design
-3. Detects circular dependencies via graph analysis
-4. Enforces thresholds in strict/CI mode
-5. Compares against baseline to prevent regressions
-
-**CI Integration**: Runs automatically on PRs via `.github/workflows/ci.yml` (Architecture Fitness job)
-
-**When to update baseline**: After intentional architectural changes that improve or accept new coupling trade-offs:
-```bash
-pnpm analyze:modules:update-baseline
-git add .baseline-modules.json
-git commit -m "chore: update architecture baseline"
 ```
 
 ---

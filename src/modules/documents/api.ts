@@ -18,7 +18,7 @@ export { default as DocumentManagerAction } from './components/DocumentManagerAc
 // Export events
 export type { DocumentsEvents } from './events'
 // Export types
-export type { DocumentMessage, DocumentsState } from './store'
+export type { DocumentMessage, DocumentsState } from './types'
 export { getDocumentTitle } from './utils/document-title'
 export type { Document } from '~/shared/types/Document'
 
