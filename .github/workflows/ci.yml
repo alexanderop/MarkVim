@@ -87,7 +87,6 @@ jobs:
           - editing
           - color
           - theme
-          - feature-flags
           - sharing
           - scroll-sync
           - document-persistence

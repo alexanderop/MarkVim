@@ -122,11 +122,3 @@ export async function createMarkdownRenderer(): Promise<MarkdownIt> {
   markdownInstance.use(markdownItGitHubAlerts)
   return markdownInstance
 }
-
-export function generateShikiCSS(): string {
-  return ''
-}
-
-export function resetShikiCSS(): void {
-  // No-op since we're not using custom CSS classes anymore
-}
