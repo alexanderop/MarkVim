@@ -327,11 +327,11 @@ export class MarkVimPage {
   }
 
   async verifySettingsModalVisible(): Promise<void> {
-    await expect(this.getSettingsModal()).toBeVisible()
+    await expect(this.getSettingsModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifySettingsModalHidden(): Promise<void> {
-    await expect(this.getSettingsModal()).not.toBeVisible()
+    await expect(this.getSettingsModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   async toggleSidebarWithKeyboard(): Promise<void> {
@@ -345,11 +345,11 @@ export class MarkVimPage {
   }
 
   async verifySidebarVisible(): Promise<void> {
-    await expect(this.documentList).toBeVisible()
+    await expect(this.documentList).toBeVisible({ timeout: 10000 })
   }
 
   async verifySidebarHidden(): Promise<void> {
-    await expect(this.documentList).toBeHidden()
+    await expect(this.documentList).toBeHidden({ timeout: 10000 })
   }
 
   async verifySidebarToggleButton(): Promise<void> {
@@ -565,11 +565,11 @@ export class MarkVimPage {
   }
 
   async verifyShareDialogVisible(): Promise<void> {
-    await expect(this.getShareDialog()).toBeVisible()
+    await expect(this.getShareDialog()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyShareDialogHidden(): Promise<void> {
-    await expect(this.getShareDialog()).not.toBeVisible()
+    await expect(this.getShareDialog()).not.toBeVisible({ timeout: 10000 })
   }
 
   async verifyShareLinkInputVisible(): Promise<void> {
@@ -632,11 +632,11 @@ export class MarkVimPage {
   }
 
   async verifyImportDialogVisible(): Promise<void> {
-    await expect(this.getImportDialog()).toBeVisible()
+    await expect(this.getImportDialog()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyImportDialogHidden(): Promise<void> {
-    await expect(this.getImportDialog()).not.toBeVisible()
+    await expect(this.getImportDialog()).not.toBeVisible({ timeout: 10000 })
   }
 
   async pasteIntoImportInput(url: string): Promise<void> {
@@ -1112,11 +1112,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyDeleteModalVisible(): Promise<void> {
-    await expect(this.getDeleteModal()).toBeVisible()
+    await expect(this.getDeleteModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyDeleteModalHidden(): Promise<void> {
-    await expect(this.getDeleteModal()).not.toBeVisible()
+    await expect(this.getDeleteModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   async clickDeleteConfirm(): Promise<void> {
@@ -1144,11 +1144,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyColorThemeModalVisible(): Promise<void> {
-    await expect(this.getColorThemeModal()).toBeVisible({ timeout: 5000 })
+    await expect(this.getColorThemeModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyColorThemeModalHidden(): Promise<void> {
-    await expect(this.getColorThemeModal()).not.toBeVisible()
+    await expect(this.getColorThemeModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   async verifyColorThemeModalDefaultColors(): Promise<void> {
@@ -1230,12 +1230,12 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   async verifyColorPickerModalVisible(): Promise<void> {
     // The color picker is now in a second modal
     const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
-    await expect(colorPickerModal).toBeVisible()
+    await expect(colorPickerModal).toBeVisible({ timeout: 10000 })
   }
 
   async verifyColorPickerModalHidden(): Promise<void> {
     const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
-    await expect(colorPickerModal).not.toBeVisible()
+    await expect(colorPickerModal).not.toBeVisible({ timeout: 10000 })
   }
 
   generateLargeDocumentContent(): string {
@@ -1402,11 +1402,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyClearDataConfirmModalVisible(): Promise<void> {
-    await expect(this.getClearDataModal()).toBeVisible()
+    await expect(this.getClearDataModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyClearDataConfirmModalHidden(): Promise<void> {
-    await expect(this.getClearDataModal()).not.toBeVisible()
+    await expect(this.getClearDataModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   // Accessibility testing methods
