@@ -1,689 +1,1162 @@
 #!/usr/bin/env tsx
 /**
- * Module Independence Analyzer
+ * Module Independence Analyzer — v4 (Functional Core, Imperative Shell)
  *
- * Analyzes MarkVim modules and scores their independence based on:
- * - Event emissions
- * - Event listeners
- * - External imports
- * - Lines of code (SLOC)
+ * Functional Core:
+ *   - Pure types, analyzers, scoring, graph ops, and renderers
+ * Imperative Shell:
+ *   - CLI, config loading, filesystem walking, reading files, writing files, printing
  *
- * Based on single-spa best practices for microfrontend readiness.
+ * Libraries:
+ *   fast-glob, cosmiconfig, @phenomnomnominal/tsquery, typescript, sloc,
+ *   @vue/compiler-sfc, commander, picocolors, (optional) dependency-cruiser
  */
 
 /* eslint-disable no-console */
-/* eslint-disable no-magic-numbers */
 /* eslint-disable no-restricted-syntax */
 
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { join, relative, sep } from 'node:path'
 import process from 'node:process'
+import { tsquery } from '@phenomnomnominal/tsquery'
 import { parse as parseSFC } from '@vue/compiler-sfc'
 import { Command } from 'commander'
-import { Project, SyntaxKind } from 'ts-morph'
+import { cosmiconfig } from 'cosmiconfig'
+import fg from 'fast-glob'
+import pc from 'picocolors'
+import sloc from 'sloc'
+import * as ts from 'typescript'
 
-interface ModuleAnalysis {
+// Optional: we only use if installed
+let cruise: ((paths: string[], options: any) => Promise<any>) | undefined
+try {
+  // eslint-disable-next-line ts/no-require-imports
+  cruise = require('dependency-cruiser').cruise
+}
+catch {
+  /* noop */
+}
+
+/* ======================================================================================
+ * Functional Core (pure)
+ * ==================================================================================== */
+
+type Category = 'feature' | 'utility' | 'ui-component'
+
+export interface ModuleAnalysis {
   name: string
   path: string
-  eventsEmitted: Map<string, number> // event name -> count
-  eventsListenedTo: Map<string, number> // event name -> count
+  eventsEmitted: Map<string, number>
+  eventsListenedTo: Map<string, number>
   externalImports: Set<string>
-  linesOfCode: number // SLOC (source lines of code)
+  sharedImports: Map<string, number>
+  linesOfCode: number
   hasApiFile: boolean
   hasEventsFile: boolean
   hasStoreFile: boolean
   independenceScore: number
-  category: 'feature' | 'utility' | 'ui-component'
+  category: Category
 }
 
-interface DependencyGraph {
-  [moduleName: string]: string[]
-}
+export type DependencyGraph = Record<string, string[]>
 
-const MODULES_DIR = join(process.cwd(), 'src/modules')
-
-// Directories to skip during analysis
-const SKIP_DIRS = new Set([
-  'node_modules',
-  'dist',
-  '.output',
-  '.nuxt',
-  'coverage',
-  '__tests__',
-  '__mocks__',
-  'stories',
-  'storybook',
-  'e2e',
-  'playwright-report',
-  '.playwright',
-])
-
-// Color codes for terminal output
-const colors = {
-  reset: '\x1B[0m',
-  bright: '\x1B[1m',
-  green: '\x1B[32m',
-  yellow: '\x1B[33m',
-  red: '\x1B[31m',
-  cyan: '\x1B[36m',
-  gray: '\x1B[90m',
-}
-
-/**
- * Count Source Lines of Code (SLOC) - excludes comments and blank lines
- */
-function sloc(text: string): number {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove block comments
-    .split('\n')
-    .map(l => l.replace(/\/\/.*$/, '').trim()) // Remove line comments and trim
-    .filter(l => l.length > 0)
-    .length
-}
-
-/**
- * Extract script content from Vue SFC files
- */
-function extractScript(filename: string, code: string): string {
-  if (!filename.endsWith('.vue'))
-    return code
-
-  try {
-    const sfc = parseSFC(code)
-    return sfc.descriptor.scriptSetup?.content ?? sfc.descriptor.script?.content ?? ''
+export interface ConfigShape {
+  aliases?: Record<string, string>
+  moduleAlias?: string
+  sharedAliases?: string[]
+  categories?: Record<Category, string[]>
+  thresholds?: {
+    average?: number
+    minScore?: number
+    failOnCycle?: boolean
+    maxImports?: number
+    maxSharedRatio?: number
   }
-  catch {
-    return code // Fallback to original content if parsing fails
-  }
+  ignore?: string[]
 }
 
-function analyzeModule(moduleName: string, modulePath: string, useAST = true): ModuleAnalysis {
-  const analysis: ModuleAnalysis = {
-    name: moduleName,
-    path: modulePath,
-    eventsEmitted: new Map(),
-    eventsListenedTo: new Map(),
-    externalImports: new Set(),
-    linesOfCode: 0,
-    hasApiFile: false,
-    hasEventsFile: false,
-    hasStoreFile: false,
-    independenceScore: 0,
-    category: determineCategory(moduleName),
-  }
-
-  // Check for key files
-  analysis.hasApiFile = existsSync(join(modulePath, 'api.ts'))
-  analysis.hasEventsFile = existsSync(join(modulePath, 'events.ts'))
-  analysis.hasStoreFile = existsSync(join(modulePath, 'store.ts'))
-
-  // Collect all files first
-  const files: Array<{ path: string, code: string }> = []
-  collectFiles(modulePath, files)
-
-  // Use AST-based analysis or fallback to regex
-  if (useAST) {
-    analyzeWithAST(files, analysis)
-  }
-  else {
-    analyzeWithRegex(files, analysis)
-  }
-
-  // Calculate independence score
-  analysis.independenceScore = calculateIndependenceScore(analysis)
-
-  return analysis
+export interface BaselineData {
+  timestamp: string
+  analyses: Array<{
+    name: string
+    score: number
+  }>
 }
 
-function determineCategory(moduleName: string): 'feature' | 'utility' | 'ui-component' {
-  const utilities = ['domain', 'feature-flags']
-  const uiComponents = ['layout', 'markdown-preview']
+export interface FileRecord {
+  /** Absolute path */
+  filePath: string
+  /** Script content (already extracted for .vue) */
+  script: string
+  /** Basename of the file (e.g. api.ts) */
+  base: string
+  /** Module name the file belongs to */
+  moduleName: string
+  /** Shared import segments discovered within the file */
+  sharedImports: Map<string, number>
+}
 
-  if (utilities.includes(moduleName))
+export interface SharedSurfaceStats {
+  totalLoc: number
+  totalFiles: number
+  directories: Array<{ name: string, loc: number, files: number }>
+}
+
+/** Core constants (pure defaults) */
+const DEFAULTS = {
+  moduleAlias: '~/modules/',
+  ignore: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/.output/**',
+    '**/.nuxt/**',
+    '**/coverage/**',
+    '**/__tests__/**',
+    '**/__mocks__/**',
+    '**/stories/**',
+    '**/storybook/**',
+    '**/e2e/**',
+    '**/playwright-report/**',
+    '**/.playwright/**',
+  ],
+}
+
+/** Scoring constants */
+const SCORE_CONSTANTS = {
+  BASE_SCORE: 100,
+  UI_COMPONENT_EMIT_WEIGHT: 0.5,
+  NORMAL_EMIT_WEIGHT: 1,
+  EMIT_SIZE_MULTIPLIER: 2,
+  MAX_EMIT_PENALTY: 20,
+  LISTEN_SIZE_MULTIPLIER: 3,
+  MAX_LISTEN_PENALTY: 25,
+  IMPORT_MULTIPLIER: 5,
+  MAX_IMPORT_PENALTY: 30,
+  SHARED_UNIQUE_MULTIPLIER: 3,
+  SHARED_TOTAL_MULTIPLIER: 1,
+  MAX_SHARED_PENALTY: 20,
+  API_FILE_BONUS: 5,
+  EVENTS_FILE_BONUS: 5,
+  BOTH_FILES_BONUS: 5,
+  LOC_THRESHOLD: 800,
+  LOC_DIVISOR: 100,
+  LOC_MULTIPLIER: 5,
+  MAX_LOC_PENALTY: 20,
+  UTILITY_BONUS: 10,
+  SYMMETRIC_PENALTY: 2,
+} as const
+
+/** Threshold constants */
+const THRESHOLD_CONSTANTS = {
+  EXCELLENT: 90,
+  GOOD: 70,
+  FAIR: 50,
+  MICROFRONTEND_READY: 80,
+  GETTING_CLOSE: 60,
+} as const
+
+/** Display constants */
+const DISPLAY_CONSTANTS = {
+  STARS_DIVISOR: 20,
+  TOP_DEPS_LIMIT: 3,
+  NOISIEST_EVENTS_LIMIT: 3,
+  HIGH_COUPLING_THRESHOLD: 2,
+  SHARED_USAGE_THRESHOLD: 5,
+  SHARED_TOP_LIMIT: 5,
+} as const
+
+/** Strict mode defaults (for CI/fitness function) */
+const STRICT_MODE_DEFAULTS = {
+  AVERAGE_THRESHOLD: 80,
+  MIN_SCORE_THRESHOLD: 70,
+  MAX_IMPORTS_THRESHOLD: 5,
+  FAIL_ON_CYCLE: true,
+  BASELINE_TOLERANCE: 5,
+  MAX_SHARED_RATIO: 0.3,
+} as const
+
+const SHARED_IMPORT_PREFIXES = ['~/shared/', '~/shared', '@/shared/', '@/shared'] as const
+const PERCENT_BASE = 100
+
+/** Utility pure helpers */
+function sanitizeId(name: string): string {
+  return name.replace(/\W/g, '_')
+}
+
+function countSloc(scriptText: string, ext: string): number {
+  const lang
+    = ext.endsWith('.ts') || ext.endsWith('.tsx') || ext.endsWith('.vue')
+      ? 'ts'
+      : ext.endsWith('.js')
+        ? 'js'
+        : 'ts'
+  const res = sloc(scriptText, lang)
+  return res.source || 0
+}
+
+function extractSharedSegment(importPath: string, aliasPrefixes: readonly string[]): string | null {
+  for (const prefix of aliasPrefixes) {
+    const normalized = prefix.endsWith('/') ? prefix : `${prefix}/`
+    const bare = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix
+    if (importPath === bare || importPath === normalized.slice(0, -1))
+      return 'root'
+    if (importPath.startsWith(normalized)) {
+      const remainder = importPath.slice(normalized.length)
+      const segment = remainder.split('/')[0]
+      return segment || 'root'
+    }
+  }
+  return null
+}
+
+function collectSharedImports(
+  scriptText: string,
+  virtualFilename: string,
+  aliasPrefixes: readonly string[],
+): Map<string, number> {
+  const result = new Map<string, number>()
+  const add = (specifier?: string): void => {
+    if (!specifier)
+      return
+    const segment = extractSharedSegment(specifier, aliasPrefixes)
+    if (!segment)
+      return
+    result.set(segment, (result.get(segment) ?? 0) + 1)
+  }
+
+  const scriptKind
+    = virtualFilename.endsWith('.tsx')
+      ? ts.ScriptKind.TSX
+      : virtualFilename.endsWith('.ts')
+        ? ts.ScriptKind.TS
+        : ts.ScriptKind.TS
+
+  const src = ts.createSourceFile(virtualFilename, scriptText, ts.ScriptTarget.Latest, true, scriptKind)
+
+  const processCallExpression = (node: ts.CallExpression): void => {
+    const expr = node.expression
+    if (expr.kind === ts.SyntaxKind.ImportKeyword || (ts.isIdentifier(expr) && expr.text === 'import')) {
+      const arg = node.arguments[0]
+      if (arg && ts.isStringLiteralLike(arg))
+        add(arg.text)
+    }
+    else if (ts.isIdentifier(expr) && expr.text === 'require') {
+      const arg = node.arguments[0]
+      if (arg && ts.isStringLiteralLike(arg))
+        add(arg.text)
+    }
+  }
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isImportDeclaration(node)) {
+      if (ts.isStringLiteralLike(node.moduleSpecifier))
+        add(node.moduleSpecifier.text)
+    }
+    else if (ts.isExportDeclaration(node)) {
+      if (node.moduleSpecifier && ts.isStringLiteralLike(node.moduleSpecifier))
+        add(node.moduleSpecifier.text)
+    }
+    else if (ts.isCallExpression(node)) {
+      processCallExpression(node)
+    }
+
+    ts.forEachChild(node, visit)
+  }
+
+  visit(src)
+  return result
+}
+
+function _normalizeRatioInput(input?: number): number | undefined {
+  if (input == null || Number.isNaN(input))
+    return undefined
+  const ratio = input > 1 ? input / PERCENT_BASE : input
+  if (!Number.isFinite(ratio))
+    return undefined
+  return Math.min(1, Math.max(0, ratio))
+}
+
+function determineCategory(moduleName: string, map?: Record<Category, string[]>): Category {
+  if (map) {
+    // eslint-disable-next-line ts/consistent-type-assertions
+    const categoryEntries: Array<[Category, string[]]> = Object.entries(map) as Array<[Category, string[]]>
+    for (const [cat, list] of categoryEntries) {
+      if (list?.includes(moduleName))
+        return cat
+    }
+  }
+  // fallback heuristics
+  const utilities = new Set(['domain', 'feature-flags'])
+  const uiComponents = new Set(['layout', 'markdown-preview'])
+  if (utilities.has(moduleName))
     return 'utility'
-  if (uiComponents.includes(moduleName))
+  if (uiComponents.has(moduleName))
     return 'ui-component'
   return 'feature'
 }
 
-/**
- * Recursively collect all TypeScript and Vue files from a directory
- */
-function collectFiles(
-  dirPath: string,
-  files: Array<{ path: string, code: string }>,
-): void {
-  try {
-    const entries = readdirSync(dirPath)
+/** Analyze events using TypeScript AST + tsquery (pure) */
+// eslint-disable-next-line complexity
+function analyzeEvents(scriptText: string, virtualFilename: string): {
+  emitted: Map<string, number>
+  listened: Map<string, number>
+} {
+  const emitted = new Map<string, number>()
+  const listened = new Map<string, number>()
 
-    for (const entry of entries) {
-      const fullPath = join(dirPath, entry)
-      let stat
-      try {
-        stat = statSync(fullPath)
-      }
-      catch {
-        continue // Skip files we can't access
-      }
+  const scriptKind
+    = virtualFilename.endsWith('.tsx')
+      ? ts.ScriptKind.TSX
+      : virtualFilename.endsWith('.ts')
+        ? ts.ScriptKind.TS
+        : ts.ScriptKind.TS
 
-      if (stat.isDirectory()) {
-        if (SKIP_DIRS.has(entry))
-          continue
-        collectFiles(fullPath, files)
-      }
-      else if (entry.endsWith('.ts') || entry.endsWith('.vue')) {
-        try {
-          const code = readFileSync(fullPath, 'utf-8')
-          files.push({ path: fullPath, code })
-        }
-        catch {
-          // Skip files we can't read
-        }
-      }
-    }
+  const src = ts.createSourceFile(virtualFilename, scriptText, ts.ScriptTarget.Latest, true, scriptKind)
+
+  for (const node of tsquery(src, `CallExpression:has(Identifier[name="emitAppEvent"])`)) {
+    if (!ts.isCallExpression(node))
+      continue
+    const arg = node.arguments?.[0]
+    if (arg && ts.isStringLiteralLike(arg))
+      emitted.set(arg.text, (emitted.get(arg.text) ?? 0) + 1)
   }
-  catch {
-    // Skip directories we can't read
+  for (const node of tsquery(src, `CallExpression:has(Identifier[name="onAppEvent"])`)) {
+    if (!ts.isCallExpression(node))
+      continue
+    const arg = node.arguments?.[0]
+    if (arg && ts.isStringLiteralLike(arg))
+      listened.set(arg.text, (listened.get(arg.text) ?? 0) + 1)
   }
+
+  return { emitted, listened }
 }
 
-/**
- * Analyze files using AST parsing for accuracy
- */
-function analyzeWithAST(
-  files: Array<{ path: string, code: string }>,
-  analysis: ModuleAnalysis,
-  moduleAlias = '~/modules/',
-): void {
-  const project = new Project({
-    useInMemoryFileSystem: true,
-    compilerOptions: { allowJs: true, noLib: true },
-  })
-
-  // Add all files to the project
+/** Aggregate module analysis from file records (pure) */
+// eslint-disable-next-line complexity
+function buildModuleAnalyses(
+  files: FileRecord[],
+  categories?: Record<Category, string[]>,
+): ModuleAnalysis[] {
+  const byModule = new Map<string, FileRecord[]>()
   for (const f of files) {
-    const scriptContent = extractScript(f.path, f.code)
-    analysis.linesOfCode += sloc(scriptContent)
-    project.createSourceFile(f.path, scriptContent, { overwrite: true })
+    if (!byModule.has(f.moduleName))
+      byModule.set(f.moduleName, [])
+    byModule.get(f.moduleName)!.push(f)
   }
 
-  // Analyze each source file
-  for (const sf of project.getSourceFiles()) {
-    // Find imports from other modules
-    sf.getImportDeclarations().forEach((imp) => {
-      const spec = imp.getModuleSpecifierValue()
-      if (spec.startsWith(moduleAlias)) {
-        const imported = spec.slice(moduleAlias.length).split('/')[0]
-        if (imported !== analysis.name) {
-          analysis.externalImports.add(imported)
-        }
-      }
-    })
+  const analyses: ModuleAnalysis[] = []
+  for (const [name, moduleFiles] of byModule.entries()) {
+    let loc = 0
+    let hasApi = false
+    let hasEvents = false
+    let hasStore = false
+    const emitted = new Map<string, number>()
+    const listened = new Map<string, number>()
+    const sharedImports = new Map<string, number>()
 
-    // Find emitAppEvent and onAppEvent calls
-    sf.forEachDescendant((node) => {
-      if (node.getKind() !== SyntaxKind.CallExpression)
-        return
+    for (const fr of moduleFiles) {
+      loc += countSloc(fr.script, fr.filePath)
+      const b = fr.base
+      if (b === 'api.ts' || b === 'api.tsx')
+        hasApi = true
+      if (b === 'events.ts' || b === 'events.tsx')
+        hasEvents = true
+      if (b === 'store.ts' || b === 'store.tsx')
+        hasStore = true
 
-      const ce = node.asKind(SyntaxKind.CallExpression)!
-      const callee = ce.getExpression().getText()
+      const ev = analyzeEvents(fr.script, fr.filePath)
+      for (const [k, v] of ev.emitted) emitted.set(k, (emitted.get(k) ?? 0) + v)
+      for (const [k, v] of ev.listened) listened.set(k, (listened.get(k) ?? 0) + v)
 
-      // Check for emitAppEvent
-      if (callee === 'emitAppEvent' || callee.endsWith('.emitAppEvent')) {
-        const args = ce.getArguments()
-        if (args.length > 0) {
-          const eventName = args[0].getText().replace(/^['"`]|['"`]$/g, '')
-          const count = analysis.eventsEmitted.get(eventName) ?? 0
-          analysis.eventsEmitted.set(eventName, count + 1)
-        }
-      }
+      // Aggregate shared imports
+      for (const [k, v] of fr.sharedImports) sharedImports.set(k, (sharedImports.get(k) ?? 0) + v)
+    }
 
-      // Check for onAppEvent
-      if (callee === 'onAppEvent' || callee.endsWith('.onAppEvent')) {
-        const args = ce.getArguments()
-        if (args.length > 0) {
-          const eventName = args[0].getText().replace(/^['"`]|['"`]$/g, '')
-          const count = analysis.eventsListenedTo.get(eventName) ?? 0
-          analysis.eventsListenedTo.set(eventName, count + 1)
-        }
-      }
+    analyses.push({
+      name,
+      path: '', // shell fills if needed for display
+      eventsEmitted: emitted,
+      eventsListenedTo: listened,
+      externalImports: new Set<string>(), // shell fills from graph
+      sharedImports,
+      linesOfCode: loc,
+      hasApiFile: hasApi,
+      hasEventsFile: hasEvents,
+      hasStoreFile: hasStore,
+      independenceScore: 0, // core will compute later
+      category: determineCategory(name, categories),
     })
   }
+
+  return analyses
 }
 
-/**
- * Fallback regex-based analysis (more lenient but less accurate)
- */
-function analyzeWithRegex(
-  files: Array<{ path: string, code: string }>,
-  analysis: ModuleAnalysis,
-  moduleAlias = '~/modules/',
-): void {
-  // Hardened regex patterns
-  const emitRegex = /emitAppEvent\s*\(\s*(['"`])([\s\S]*?)\1/g
-  const listenRegex = /onAppEvent\s*\(\s*(['"`])([\s\S]*?)\1/g
-  const importRegex = new RegExp(`import[^'"]*from\\s+['"]${moduleAlias.replace(/[/~]/g, '\\$&')}([^/'"]+)`, 'g')
-
-  for (const f of files) {
-    const scriptContent = extractScript(f.path, f.code)
-    analysis.linesOfCode += sloc(scriptContent)
-
-    // Find event emissions
-    let emitMatch = emitRegex.exec(scriptContent)
-    while (emitMatch !== null) {
-      const eventName = emitMatch[2]
-      const count = analysis.eventsEmitted.get(eventName) ?? 0
-      analysis.eventsEmitted.set(eventName, count + 1)
-      emitMatch = emitRegex.exec(scriptContent)
-    }
-
-    // Find event listeners
-    let listenMatch = listenRegex.exec(scriptContent)
-    while (listenMatch !== null) {
-      const eventName = listenMatch[2]
-      const count = analysis.eventsListenedTo.get(eventName) ?? 0
-      analysis.eventsListenedTo.set(eventName, count + 1)
-      listenMatch = listenRegex.exec(scriptContent)
-    }
-
-    // Find imports
-    let importMatch = importRegex.exec(scriptContent)
-    while (importMatch !== null) {
-      const imported = importMatch[1]
-      if (imported !== analysis.name) {
-        analysis.externalImports.add(imported)
-      }
-      importMatch = importRegex.exec(scriptContent)
-    }
+/** Build dependency graph from edges (pure) */
+function assembleGraph(moduleNames: string[], edges: Array<{ from: string, to: string }>): DependencyGraph {
+  const g: Record<string, Set<string>> = {}
+  for (const m of moduleNames) g[m] = new Set()
+  for (const { from, to } of edges) {
+    if (from !== to && g[from] && g[to])
+      g[from].add(to)
   }
+  const out: DependencyGraph = {}
+  for (const [k, v] of Object.entries(g)) out[k] = Array.from(v)
+  return out
 }
 
-function calculateIndependenceScore(analysis: ModuleAnalysis): number {
-  // Scoring algorithm based on single-spa principles
-  let score = 100
-
-  // Penalty for event emissions (creates coupling)
-  // Use log-scaled frequency weighting
-  const emitCount = Array.from(analysis.eventsEmitted.values()).reduce((sum, count) => sum + count, 0)
-  score -= Math.min(20, 2 * analysis.eventsEmitted.size + Math.log1p(emitCount))
-
-  // Penalty for event listeners (depends on other modules)
-  const listenCount = Array.from(analysis.eventsListenedTo.values()).reduce((sum, count) => sum + count, 0)
-  score -= Math.min(25, 3 * analysis.eventsListenedTo.size + Math.log1p(listenCount))
-
-  // Penalty for external imports (direct coupling)
-  score -= Math.min(30, analysis.externalImports.size * 5)
-
-  // Bonus for having api.ts (good public interface)
-  if (analysis.hasApiFile)
-    score += 5
-
-  // Bonus for having events.ts (clear event contract)
-  if (analysis.hasEventsFile)
-    score += 5
-
-  // Smooth size penalty (sigmoid-like)
-  if (analysis.linesOfCode > 800) {
-    const excess = analysis.linesOfCode - 800
-    score -= Math.min(20, Math.log1p(excess / 100) * 5)
-  }
-
-  // Utility modules should have higher scores
-  if (analysis.category === 'utility') {
-    score += 10
-  }
-
-  // Clamp between 0 and 100
-  return Math.max(0, Math.min(100, score))
-}
-
-function getScoreColor(score: number): string {
-  if (score >= 90)
-    return colors.green
-  if (score >= 70)
-    return colors.cyan
-  if (score >= 50)
-    return colors.yellow
-  return colors.red
-}
-
-function getStars(score: number): string {
-  const numStars = Math.ceil(score / 20)
-  return '⭐'.repeat(numStars)
-}
-
-function buildDependencyGraph(analyses: ModuleAnalysis[]): DependencyGraph {
-  const graph: DependencyGraph = {}
-
-  for (const analysis of analyses) {
-    graph[analysis.name] = Array.from(analysis.externalImports)
-  }
-
-  return graph
-}
-
-/**
- * Normalize a cycle to canonical form for deduplication
- */
+/** Cycle detection (pure) */
 function canonicalCycle(cycle: string[]): string {
-  const core = cycle.slice(0, -1) // Remove duplicate end node
-  if (core.length === 0)
+  const core = cycle.slice(0, -1)
+  if (!core.length)
     return ''
-
-  // Find the rotation that starts with the lexicographically smallest element
-  let minIndex = 0
+  let min = 0
   for (let i = 1; i < core.length; i++) {
-    if (core[i] < core[minIndex]) {
-      minIndex = i
-    }
+    if (core[i] < core[min])
+      min = i
   }
-
-  const rotated = core.slice(minIndex).concat(core.slice(0, minIndex))
-  return rotated.join('->')
+  const rot = core.slice(min).concat(core.slice(0, min))
+  return rot.join('->')
 }
-
-function findCircularDependencies(graph: DependencyGraph): string[][] {
-  const cycleSet = new Set<string>()
+function findCycles(graph: DependencyGraph): string[][] {
+  const cycles = new Set<string>()
   const visited = new Set<string>()
-  const recursionStack = new Set<string>()
+  const stack = new Set<string>()
 
-  function dfs(node: string, path: string[]): void {
-    visited.add(node)
-    recursionStack.add(node)
-    path.push(node)
-
-    for (const neighbor of graph[node] || []) {
-      // Only process neighbors that exist in the graph
-      if (!Object.hasOwn(graph, neighbor))
+  function dfs(n: string, path: string[]): void {
+    visited.add(n)
+    stack.add(n)
+    path.push(n)
+    for (const m of graph[n] || []) {
+      if (!(m in graph))
         continue
-
-      if (!visited.has(neighbor)) {
-        dfs(neighbor, [...path])
+      if (!visited.has(m)) {
+        dfs(m, [...path])
       }
-      else if (recursionStack.has(neighbor)) {
-        // Found a cycle
-        const cycleStart = path.indexOf(neighbor)
-        if (cycleStart !== -1) {
-          const cycle = [...path.slice(cycleStart), neighbor]
-          const canonical = canonicalCycle(cycle)
-          if (canonical) {
-            cycleSet.add(canonical)
-          }
+      else if (stack.has(m)) {
+        const start = path.indexOf(m)
+        if (start >= 0) {
+          const cyc = [...path.slice(start), m]
+          const key = canonicalCycle(cyc)
+          if (key)
+            cycles.add(key)
         }
       }
     }
-
-    recursionStack.delete(node)
+    stack.delete(n)
   }
 
-  for (const node of Object.keys(graph)) {
-    if (!visited.has(node)) {
-      dfs(node, [])
-    }
+  for (const n of Object.keys(graph)) {
+    if (!visited.has(n))
+      dfs(n, [])
   }
-
-  // Convert back to arrays
-  return Array.from(cycleSet).map((s) => {
+  return Array.from(cycles).map((s) => {
     const nodes = s.split('->')
-    return [...nodes, nodes[0]] // Add first node at end to close cycle
+    return [...nodes, nodes[0]]
   })
 }
 
-function printReport(analyses: ModuleAnalysis[]): void {
-  console.log(`\n${colors.bright}${colors.cyan}┌─────────────────────────────────────────────────────┐`)
-  console.log(`│  MarkVim Module Independence Analysis              │`)
-  console.log(`│  Based on single-spa best practices                │`)
-  console.log(`└─────────────────────────────────────────────────────┘${colors.reset}\n`)
+/** Scoring (pure) */
+function scoreModule(a: ModuleAnalysis): number {
+  let score = SCORE_CONSTANTS.BASE_SCORE
+  const emitCount = Array.from(a.eventsEmitted.values()).reduce((s, v) => s + v, 0)
+  const listenCount = Array.from(a.eventsListenedTo.values()).reduce((s, v) => s + v, 0)
 
-  // Sort by score (lowest first to highlight issues)
-  const sorted = [...analyses].sort((a, b) => a.independenceScore - b.independenceScore)
+  const emitWeight = a.category === 'ui-component'
+    ? SCORE_CONSTANTS.UI_COMPONENT_EMIT_WEIGHT
+    : SCORE_CONSTANTS.NORMAL_EMIT_WEIGHT
+  score -= Math.min(
+    SCORE_CONSTANTS.MAX_EMIT_PENALTY,
+    emitWeight * (SCORE_CONSTANTS.EMIT_SIZE_MULTIPLIER * a.eventsEmitted.size + Math.log1p(emitCount)),
+  )
+  score -= Math.min(
+    SCORE_CONSTANTS.MAX_LISTEN_PENALTY,
+    SCORE_CONSTANTS.LISTEN_SIZE_MULTIPLIER * a.eventsListenedTo.size + Math.log1p(listenCount),
+  )
+  score -= Math.min(
+    SCORE_CONSTANTS.MAX_IMPORT_PENALTY,
+    a.externalImports.size * SCORE_CONSTANTS.IMPORT_MULTIPLIER,
+  )
 
-  console.log(`${colors.bright}Module Independence Scores:${colors.reset}\n`)
+  // Penalty for shared imports (diversity and total count)
+  const sharedCount = Array.from(a.sharedImports.values()).reduce((s, v) => s + v, 0)
+  score -= Math.min(
+    SCORE_CONSTANTS.MAX_SHARED_PENALTY,
+    SCORE_CONSTANTS.SHARED_UNIQUE_MULTIPLIER * a.sharedImports.size + SCORE_CONSTANTS.SHARED_TOTAL_MULTIPLIER * Math.log1p(sharedCount),
+  )
 
-  for (const analysis of sorted) {
-    const scoreColor = getScoreColor(analysis.independenceScore)
-    const stars = getStars(analysis.independenceScore)
+  if (a.hasApiFile)
+    score += SCORE_CONSTANTS.API_FILE_BONUS
+  if (a.hasEventsFile)
+    score += SCORE_CONSTANTS.EVENTS_FILE_BONUS
+  if (a.hasApiFile && a.hasEventsFile)
+    score += SCORE_CONSTANTS.BOTH_FILES_BONUS
 
-    console.log(`${scoreColor}${stars} ${analysis.name.padEnd(20)} ${analysis.independenceScore}%${colors.reset}`)
-    console.log(`${colors.gray}   Category: ${analysis.category}${colors.reset}`)
-    console.log(`${colors.gray}   Events emitted: ${analysis.eventsEmitted.size}, listened: ${analysis.eventsListenedTo.size}${colors.reset}`)
-    console.log(`${colors.gray}   External imports: ${analysis.externalImports.size}, LOC: ${analysis.linesOfCode}${colors.reset}`)
-
-    if (analysis.externalImports.size > 0) {
-      console.log(`${colors.gray}   Depends on: ${Array.from(analysis.externalImports).join(', ')}${colors.reset}`)
-    }
-
-    console.log()
+  if (a.linesOfCode > SCORE_CONSTANTS.LOC_THRESHOLD) {
+    const excess = a.linesOfCode - SCORE_CONSTANTS.LOC_THRESHOLD
+    score -= Math.min(
+      SCORE_CONSTANTS.MAX_LOC_PENALTY,
+      Math.log1p(excess / SCORE_CONSTANTS.LOC_DIVISOR) * SCORE_CONSTANTS.LOC_MULTIPLIER,
+    )
   }
+  if (a.category === 'utility')
+    score += SCORE_CONSTANTS.UTILITY_BONUS
 
-  // Overall statistics
-  const avgScore = analyses.length > 0 ? analyses.reduce((sum, a) => sum + a.independenceScore, 0) / analyses.length : 0
-  const totalEvents = analyses.reduce((sum, a) => sum + a.eventsEmitted.size + a.eventsListenedTo.size, 0)
-
-  console.log(`${colors.bright}Overall Statistics:${colors.reset}`)
-  console.log(`  Average Independence Score: ${getScoreColor(avgScore)}${avgScore.toFixed(1)}%${colors.reset}`)
-  console.log(`  Total Modules: ${analyses.length}`)
-  console.log(`  Total Events: ${totalEvents}`)
-  console.log(`  Utility Modules: ${analyses.filter(a => a.category === 'utility').length}`)
-  console.log(`  Feature Modules: ${analyses.filter(a => a.category === 'feature').length}`)
-  console.log(`  UI Component Modules: ${analyses.filter(a => a.category === 'ui-component').length}`)
-
-  // Recommendations
-  console.log(`\n${colors.bright}${colors.yellow}Recommendations:${colors.reset}`)
-
-  const lowScoreModules = analyses.filter(a => a.independenceScore < 70)
-  if (lowScoreModules.length > 0) {
-    console.log(`\n${colors.yellow}⚠ Low Independence Modules (< 70%):${colors.reset}`)
-    for (const module of lowScoreModules) {
-      console.log(`  - ${module.name}: Consider reducing external imports or event coupling`)
-    }
-  }
-
-  const highCoupling = analyses.filter(a => a.externalImports.size > 2)
-  if (highCoupling.length > 0) {
-    console.log(`\n${colors.yellow}⚠ High Coupling Modules (> 2 external imports):${colors.reset}`)
-    for (const module of highCoupling) {
-      console.log(`  - ${module.name}: Imports from ${Array.from(module.externalImports).join(', ')}`)
-    }
-  }
-
-  // Check for circular dependencies
-  const graph = buildDependencyGraph(analyses)
-  const cycles = findCircularDependencies(graph)
-
-  if (cycles.length > 0) {
-    console.log(`\n${colors.red}⚠ Circular Dependencies Detected:${colors.reset}`)
-    for (const cycle of cycles) {
-      console.log(`  - ${cycle.join(' → ')}`)
-    }
-  }
-  else {
-    console.log(`\n${colors.green}✓ No circular dependencies detected${colors.reset}`)
-  }
-
-  // Microfrontend readiness
-  const readyModules = analyses.filter(a => a.independenceScore >= 80)
-  const readinessPercent = (readyModules.length / analyses.length) * 100
-
-  console.log(`\n${colors.bright}${colors.cyan}Microfrontend Readiness:${colors.reset}`)
-  console.log(`  ${readyModules.length}/${analyses.length} modules (${readinessPercent.toFixed(0)}%) are 80%+ independent`)
-
-  if (readinessPercent >= 80) {
-    console.log(`  ${colors.green}✓ Project is microfrontend-ready!${colors.reset}`)
-  }
-  else if (readinessPercent >= 60) {
-    console.log(`  ${colors.yellow}⚠ Getting close! Focus on reducing coupling.${colors.reset}`)
-  }
-  else {
-    console.log(`  ${colors.red}⚠ Needs work to be microfrontend-ready.${colors.reset}`)
-  }
-
-  console.log()
+  return Math.max(0, Math.min(SCORE_CONSTANTS.BASE_SCORE, score))
 }
 
-/**
- * Generate Mermaid graph visualization
- */
-function toMermaid(graph: DependencyGraph, analyses: ModuleAnalysis[]): string {
-  const lines = ['graph LR']
-
-  // Add nodes with styling based on independence score
-  for (const analysis of analyses) {
-    const score = Math.round(analysis.independenceScore)
-    let style = 'default'
-    if (score >= 90)
-      style = 'green'
-    else if (score >= 70)
-      style = 'cyan'
-    else if (score >= 50)
-      style = 'yellow'
-    else style = 'red'
-
-    lines.push(`  ${analysis.name}["${analysis.name}<br/>${score}%"]`)
-    lines.push(`  class ${analysis.name} ${style}`)
-  }
-
-  // Add edges
-  for (const [from, targets] of Object.entries(graph)) {
-    for (const to of targets) {
-      lines.push(`  ${from} --> ${to}`)
+/** Apply scoring + optional symmetric-edge penalty (pure) */
+function finalizeScores(analyses: ModuleAnalysis[], graph: DependencyGraph): ModuleAnalysis[] {
+  const symmetricPairs = new Set<string>()
+  for (const [from, tos] of Object.entries(graph)) {
+    for (const to of tos) {
+      if ((graph[to] ?? []).includes(from)) {
+        const key = [from, to].sort().join('::')
+        symmetricPairs.add(key)
+      }
     }
   }
-
-  // Define styles
-  lines.push('')
-  lines.push('  classDef green fill:#22c55e,stroke:#16a34a,color:#fff')
-  lines.push('  classDef cyan fill:#06b6d4,stroke:#0891b2,color:#fff')
-  lines.push('  classDef yellow fill:#eab308,stroke:#ca8a04,color:#000')
-  lines.push('  classDef red fill:#ef4444,stroke:#dc2626,color:#fff')
-
-  return lines.join('\n')
+  return analyses.map((a) => {
+    let s = scoreModule(a)
+    // small penalty for bidirectional import relationships
+    for (const key of symmetricPairs) {
+      const [x, y] = key.split('::')
+      if (a.name === x || a.name === y)
+        s = Math.max(0, s - SCORE_CONSTANTS.SYMMETRIC_PENALTY)
+    }
+    return { ...a, independenceScore: s }
+  })
 }
 
-/**
- * Export analysis to JSON
- */
-function toJSON(analyses: ModuleAnalysis[]): string {
-  const jsonOutput = {
+/** Renderers (pure) */
+function renderJSON(analyses: ModuleAnalysis[], sharedStats: SharedSurfaceStats | null): string {
+  const out = {
     timestamp: new Date().toISOString(),
     analyses: analyses.map(a => ({
       name: a.name,
       category: a.category,
       score: a.independenceScore,
-      eventsEmitted: Array.from(a.eventsEmitted.entries()),
-      eventsListenedTo: Array.from(a.eventsListenedTo.entries()),
-      externalImports: Array.from(a.externalImports),
+      eventsEmitted: Array.from(a.eventsEmitted.entries()).sort(([e1], [e2]) => e1.localeCompare(e2)),
+      eventsListenedTo: Array.from(a.eventsListenedTo.entries()).sort(([e1], [e2]) => e1.localeCompare(e2)),
+      externalImports: Array.from(a.externalImports).sort(),
+      sharedImports: Array.from(a.sharedImports.entries()).sort(([e1], [e2]) => e1.localeCompare(e2)),
       linesOfCode: a.linesOfCode,
       hasApiFile: a.hasApiFile,
       hasEventsFile: a.hasEventsFile,
       hasStoreFile: a.hasStoreFile,
     })),
+    sharedSurface: sharedStats || undefined,
   }
-  return JSON.stringify(jsonOutput, null, 2)
+  return JSON.stringify(out, null, 2)
 }
 
-/**
- * Generate output based on format
- */
-function generateOutput(
-  format: string,
+function renderCSV(analyses: ModuleAnalysis[]): string {
+  const rows = [
+    'name,category,score,externalImports,eventsEmitted,eventsListened,loc',
+    ...analyses.map(a => [
+      a.name,
+      a.category,
+      a.independenceScore.toFixed(1),
+      a.externalImports.size,
+      a.eventsEmitted.size,
+      a.eventsListenedTo.size,
+      a.linesOfCode,
+    ].join(',')),
+  ]
+  return rows.join('\n')
+}
+
+function renderMermaid(graph: DependencyGraph, analyses: ModuleAnalysis[]): string {
+  const id = (n: string): string => sanitizeId(n)
+  const lines = ['graph LR']
+  for (const a of analyses) {
+    const s = Math.round(a.independenceScore)
+    let cls = 'red'
+    if (s >= THRESHOLD_CONSTANTS.EXCELLENT)
+      cls = 'green'
+    else if (s >= THRESHOLD_CONSTANTS.GOOD)
+      cls = 'cyan'
+    else if (s >= THRESHOLD_CONSTANTS.FAIR)
+      cls = 'yellow'
+    lines.push(`  ${id(a.name)}["${a.name}<br/>${s}%"]`)
+    lines.push(`  class ${id(a.name)} ${cls}`)
+  }
+  for (const [from, tos] of Object.entries(graph)) {
+    for (const to of tos) lines.push(`  ${id(from)} --> ${id(to)}`)
+  }
+  lines.push('')
+  lines.push('  classDef green fill:#22c55e,stroke:#16a34a,color:#fff')
+  lines.push('  classDef cyan fill:#06b6d4,stroke:#0891b2,color:#fff')
+  lines.push('  classDef yellow fill:#eab308,stroke:#ca8a04,color:#000')
+  lines.push('  classDef red fill:#ef4444,stroke:#dc2626,color:#fff')
+  return ['```mermaid', ...lines, '```'].join('\n')
+}
+
+// eslint-disable-next-line complexity
+function renderTextReport(
   analyses: ModuleAnalysis[],
   graph: DependencyGraph,
-  shouldCapture: boolean,
+  sharedStats: SharedSurfaceStats | null,
+  colors: { bright: (s: string) => string, cyan: (s: string) => string, gray: (s: string) => string, green: (s: string) => string, yellow: (s: string) => string, red: (s: string) => string },
 ): string {
-  switch (format) {
-    case 'json':
-      return toJSON(analyses)
+  const sorted = [...analyses].sort((a, b) => a.independenceScore - b.independenceScore)
+  const avg = analyses.length ? analyses.reduce((s, a) => s + a.independenceScore, 0) / analyses.length : 0
+  const totalEvents = analyses.reduce((s, a) => s + a.eventsEmitted.size + a.eventsListenedTo.size, 0)
 
-    case 'mermaid':
-      return `\`\`\`mermaid\n${toMermaid(graph, analyses)}\n\`\`\``
-
-    case 'text':
-    default:
-      if (shouldCapture) {
-        const originalLog = console.log
-        const logs: string[] = []
-        console.log = (...args) => logs.push(args.join(' '))
-        printReport(analyses)
-        console.log = originalLog
-        return logs.join('\n')
-      }
-      printReport(analyses)
-      return ''
-  }
-}
-
-/**
- * Check thresholds and exit if needed
- */
-function checkThresholds(
-  analyses: ModuleAnalysis[],
-  cycles: string[][],
-  threshold?: number,
-  failOnCycle?: boolean,
-): void {
-  const avgScore = analyses.length > 0
-    ? analyses.reduce((sum, a) => sum + a.independenceScore, 0) / analyses.length
-    : 0
-
-  if (threshold && avgScore < threshold) {
-    console.error(`${colors.red}✗ Average score ${avgScore.toFixed(1)}% below threshold ${threshold}%${colors.reset}`)
-    process.exit(1)
-  }
-
-  if (failOnCycle && cycles.length > 0) {
-    console.error(`${colors.red}✗ Circular dependencies detected${colors.reset}`)
-    process.exit(1)
-  }
-}
-
-// Main execution
-function main(): void {
-  const program = new Command()
-
-  program
-    .name('analyze-module-independence')
-    .description('Analyze module independence for microfrontend readiness')
-    .version('2.0.0')
-    .option('--format <type>', 'Output format: text, json, or mermaid', 'text')
-    .option('--output <file>', 'Save output to file instead of stdout')
-    .option('--threshold <score>', 'Exit with error if avg score below threshold', Number.parseFloat)
-    .option('--fail-on-cycle', 'Exit with error if circular dependencies found', false)
-    .option('--no-ast', 'Disable AST parsing, use regex fallback', false)
-    .option('--alias <path>', 'Module import alias', '~/modules/')
-    .parse(process.argv)
-
-  const options = program.opts()
-
-  if (!existsSync(MODULES_DIR)) {
-    console.error(`${colors.red}Error: Modules directory not found at ${MODULES_DIR}${colors.reset}`)
-    process.exit(1)
-  }
-
-  const moduleDirs = readdirSync(MODULES_DIR).filter((entry) => {
-    const fullPath = join(MODULES_DIR, entry)
-    return statSync(fullPath).isDirectory()
-  })
-
-  const analyses = moduleDirs.map(moduleName =>
-    analyzeModule(moduleName, join(MODULES_DIR, moduleName), options.ast),
+  const scoreColor = (x: number): ((s: string) => string) => (
+    x >= THRESHOLD_CONSTANTS.EXCELLENT
+      ? colors.green
+      : x >= THRESHOLD_CONSTANTS.GOOD
+        ? colors.cyan
+        : x >= THRESHOLD_CONSTANTS.FAIR
+          ? colors.yellow
+          : colors.red
   )
 
-  const graph = buildDependencyGraph(analyses)
-  const cycles = findCircularDependencies(graph)
+  const lines: string[] = []
+  lines.push(`\n${colors.bright(colors.cyan('┌─────────────────────────────────────────────────────┐'))}`)
+  lines.push(`${colors.cyan('│')}  ${colors.bright(colors.cyan('MarkVim Module Independence Analysis'))}              ${colors.cyan('│')}`)
+  lines.push(`${colors.cyan('│')}  ${colors.bright(colors.cyan('Based on single-spa best practices'))}                ${colors.cyan('│')}`)
+  lines.push(`${colors.cyan('└─────────────────────────────────────────────────────┘')}\n`)
+  lines.push(colors.bright('Module Independence Scores:\n'))
 
-  const output = generateOutput(options.format, analyses, graph, Boolean(options.output))
-
-  // Write to file if specified
-  if (options.output && output) {
-    writeFileSync(options.output, output, 'utf-8')
-    console.log(`${colors.green}✓ Output saved to ${options.output}${colors.reset}`)
+  for (const a of sorted) {
+    const stars = '⭐'.repeat(Math.ceil(a.independenceScore / DISPLAY_CONSTANTS.STARS_DIVISOR))
+    lines.push(`${scoreColor(a.independenceScore)(stars)} ${a.name.padEnd(DISPLAY_CONSTANTS.STARS_DIVISOR)} ${a.independenceScore.toFixed(1)}%`)
+    lines.push(colors.gray(`   Category: ${a.category}`))
+    lines.push(colors.gray(`   Events emitted: ${a.eventsEmitted.size}, listened: ${a.eventsListenedTo.size}`))
+    lines.push(colors.gray(`   External imports: ${a.externalImports.size}, LOC: ${a.linesOfCode}`))
+    if (a.sharedImports.size) {
+      const sharedTotal = Array.from(a.sharedImports.values()).reduce((s, v) => s + v, 0)
+      const sharedList = Array.from(a.sharedImports.entries())
+        .sort((x, y) => y[1] - x[1])
+        .slice(0, DISPLAY_CONSTANTS.SHARED_TOP_LIMIT)
+        .map(([k, v]) => `${k}(${v})`)
+        .join(', ')
+      lines.push(colors.gray(`   Shared imports: ${a.sharedImports.size} areas, ${sharedTotal} total → ${sharedList}`))
+    }
+    if (a.externalImports.size)
+      lines.push(colors.gray(`   Depends on: ${Array.from(a.externalImports).sort().join(', ')}`))
+    lines.push('')
   }
-  else if (options.format !== 'text' && output) {
+
+  lines.push(colors.bright('Overall Statistics:'))
+  lines.push(`  Average Independence Score: ${scoreColor(avg)(`${avg.toFixed(1)}%`)}`)
+  lines.push(`  Total Modules: ${analyses.length}`)
+  lines.push(`  Total Events: ${totalEvents}`)
+  lines.push(`  Utility Modules: ${analyses.filter(a => a.category === 'utility').length}`)
+  lines.push(`  Feature Modules: ${analyses.filter(a => a.category === 'feature').length}`)
+  lines.push(`  UI Component Modules: ${analyses.filter(a => a.category === 'ui-component').length}`)
+
+  // Shared surface area analysis
+  if (sharedStats && sharedStats.totalFiles > 0) {
+    lines.push(`\n${colors.bright(colors.cyan('Shared Surface Area:'))}`)
+    lines.push(`  Total Files: ${sharedStats.totalFiles}`)
+    lines.push(`  Total LOC: ${sharedStats.totalLoc}`)
+    lines.push(`  Directories:`)
+    for (const dir of sharedStats.directories) {
+      lines.push(colors.gray(`    - ${dir.name}: ${dir.files} files, ${dir.loc} LOC`))
+    }
+  }
+
+  lines.push(`\n${colors.bright(colors.yellow('Recommendations:'))}`)
+  const low = analyses.filter(a => a.independenceScore < THRESHOLD_CONSTANTS.GOOD)
+  if (low.length) {
+    lines.push(`\n${colors.yellow(`⚠ Low Independence Modules (< ${THRESHOLD_CONSTANTS.GOOD}%):`)}`)
+    for (const m of low) {
+      const topDeps = Array.from(m.externalImports).sort().slice(0, DISPLAY_CONSTANTS.TOP_DEPS_LIMIT).join(', ')
+      const noisy = [...m.eventsListenedTo.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, DISPLAY_CONSTANTS.NOISIEST_EVENTS_LIMIT)
+        .map(([e, c]) => `${e}(${c})`)
+        .join(', ')
+      lines.push(`  - ${m.name}: Reduce deps [${topDeps}] | Noisiest events [${noisy}]`)
+    }
+  }
+  const high = analyses.filter(a => a.externalImports.size > DISPLAY_CONSTANTS.HIGH_COUPLING_THRESHOLD)
+  if (high.length) {
+    lines.push(`\n${colors.yellow(`⚠ High Coupling Modules (> ${DISPLAY_CONSTANTS.HIGH_COUPLING_THRESHOLD} external imports):`)}`)
+    for (const m of high) lines.push(`  - ${m.name}: Imports from ${Array.from(m.externalImports).sort().join(', ')}`)
+  }
+  const heavyShared = analyses.filter(a => a.sharedImports.size > DISPLAY_CONSTANTS.SHARED_USAGE_THRESHOLD)
+  if (heavyShared.length) {
+    lines.push(`\n${colors.yellow(`⚠ Heavy Shared Usage (> ${DISPLAY_CONSTANTS.SHARED_USAGE_THRESHOLD} areas):`)}`)
+    for (const m of heavyShared) {
+      const topShared = Array.from(m.sharedImports.entries())
+        .sort((x, y) => y[1] - x[1])
+        .slice(0, DISPLAY_CONSTANTS.SHARED_TOP_LIMIT)
+        .map(([k, v]) => `${k}(${v})`)
+        .join(', ')
+      lines.push(`  - ${m.name}: ${m.sharedImports.size} areas → ${topShared}`)
+    }
+  }
+
+  const cycles = findCycles(graph)
+  if (cycles.length) {
+    lines.push(`\n${colors.red('⚠ Circular Dependencies Detected:')}`)
+    for (const cyc of cycles) lines.push(`  - ${cyc.join(' → ')}`)
+  }
+  else {
+    lines.push(`\n${colors.green('✓ No circular dependencies detected')}`)
+  }
+
+  const ready = analyses.filter(a => a.independenceScore >= THRESHOLD_CONSTANTS.MICROFRONTEND_READY)
+  const readiness = analyses.length ? (ready.length / analyses.length) * SCORE_CONSTANTS.BASE_SCORE : 0
+  lines.push(`\n${colors.bright(colors.cyan('Microfrontend Readiness:'))}`)
+  lines.push(`  ${ready.length}/${analyses.length} modules (${readiness.toFixed(0)}%) are ${THRESHOLD_CONSTANTS.MICROFRONTEND_READY}%+ independent`)
+  if (readiness >= THRESHOLD_CONSTANTS.MICROFRONTEND_READY)
+    lines.push(`  ${colors.green('✓ Project is microfrontend-ready!')}`)
+  else if (readiness >= THRESHOLD_CONSTANTS.GETTING_CLOSE)
+    lines.push(`  ${colors.yellow('⚠ Getting close. Focus on reducing coupling.')}`)
+  else lines.push(`  ${colors.red('⚠ Needs work to be microfrontend-ready.')}`)
+  lines.push('')
+  return lines.join('\n')
+}
+
+/** Output switch (pure) */
+function renderOutput(
+  format: 'text' | 'json' | 'csv' | 'mermaid',
+  analyses: ModuleAnalysis[],
+  graph: DependencyGraph,
+  sharedStats: SharedSurfaceStats | null,
+  colors: { bright: (s: string) => string, cyan: (s: string) => string, gray: (s: string) => string, green: (s: string) => string, yellow: (s: string) => string, red: (s: string) => string },
+): string {
+  if (format === 'json')
+    return renderJSON(analyses, sharedStats)
+  if (format === 'csv')
+    return renderCSV(analyses)
+  if (format === 'mermaid')
+    return renderMermaid(graph, analyses)
+  return renderTextReport(analyses, graph, sharedStats, colors)
+}
+
+/** Threshold checks (pure decision; return problems instead of exiting) */
+// eslint-disable-next-line complexity
+function evaluateThresholds(
+  analyses: ModuleAnalysis[],
+  graph: DependencyGraph,
+  thresholds?: { average?: number, minScore?: number, failOnCycle?: boolean, maxImports?: number },
+): { ok: boolean, messages: string[] } {
+  const msgs: string[] = []
+  let ok = true
+
+  const avg = analyses.length ? analyses.reduce((s, a) => s + a.independenceScore, 0) / analyses.length : 0
+  if (thresholds?.average != null && avg < thresholds.average) {
+    msgs.push(`Average score ${avg.toFixed(1)}% below threshold ${thresholds.average}%`)
+    ok = false
+  }
+
+  if (thresholds?.minScore != null) {
+    const offenders = analyses.filter(a => a.independenceScore < thresholds.minScore!)
+    if (offenders.length) {
+      msgs.push(`Modules below ${thresholds.minScore}%: ${offenders.map(o => o.name).join(', ')}`)
+      ok = false
+    }
+  }
+
+  if (thresholds?.maxImports != null) {
+    const offenders = analyses.filter(a => a.externalImports.size > thresholds.maxImports!)
+    if (offenders.length) {
+      msgs.push(`Modules exceed max imports (${thresholds.maxImports}): ${offenders.map(o => `${o.name}(${o.externalImports.size})`).join(', ')}`)
+      ok = false
+    }
+  }
+
+  if (thresholds?.failOnCycle) {
+    const cycles = findCycles(graph)
+    if (cycles.length) {
+      msgs.push(`Circular dependencies detected: ${cycles.map(c => c.join(' → ')).join(', ')}`)
+      ok = false
+    }
+  }
+
+  return { ok, messages: msgs }
+}
+
+/** Baseline comparison (pure) */
+function compareWithBaseline(
+  analyses: ModuleAnalysis[],
+  baseline: BaselineData,
+  tolerance = 5,
+): { ok: boolean, regressions: Array<{ name: string, current: number, baseline: number, delta: number }> } {
+  const regressions: Array<{ name: string, current: number, baseline: number, delta: number }> = []
+
+  for (const a of analyses) {
+    const baseScore = baseline.analyses.find(b => b.name === a.name)?.score
+    if (baseScore != null) {
+      const delta = a.independenceScore - baseScore
+      if (delta < -tolerance) {
+        regressions.push({
+          name: a.name,
+          current: a.independenceScore,
+          baseline: baseScore,
+          delta,
+        })
+      }
+    }
+  }
+
+  return { ok: regressions.length === 0, regressions }
+}
+
+/* ======================================================================================
+ * Imperative Shell (I/O, CLI, FS, printing)
+ * ==================================================================================== */
+
+function makeColors(enabled: boolean): {
+  bright: (s: string) => string
+  cyan: (s: string) => string
+  gray: (s: string) => string
+  green: (s: string) => string
+  yellow: (s: string) => string
+  red: (s: string) => string
+} {
+  return {
+    bright: (s: string) => (enabled ? pc.bold(s) : s),
+    cyan: (s: string) => (enabled ? pc.cyan(s) : s),
+    gray: (s: string) => (enabled ? pc.gray(s) : s),
+    green: (s: string) => (enabled ? pc.green(s) : s),
+    yellow: (s: string) => (enabled ? pc.yellow(s) : s),
+    red: (s: string) => (enabled ? pc.red(s) : s),
+  }
+}
+
+function safeRead(path: string): string {
+  try {
+    return readFileSync(path, 'utf-8')
+  }
+  catch {
+    return ''
+  }
+}
+
+function extractScript(filename: string, code: string): string {
+  if (!filename.endsWith('.vue'))
+    return code
+  try {
+    const sfc = parseSFC(code)
+    return sfc.descriptor.scriptSetup?.content ?? sfc.descriptor.script?.content ?? ''
+  }
+  catch { return code }
+}
+
+/** Analyze shared folder surface area (I/O wrapper) */
+async function analyzeSharedFolder(
+  sharedDirAbs: string,
+  ignoreGlobs: string[],
+): Promise<SharedSurfaceStats> {
+  if (!existsSync(sharedDirAbs)) {
+    return {
+      totalLoc: 0,
+      totalFiles: 0,
+      directories: [],
+    }
+  }
+
+  const filePaths = await fg([`${sharedDirAbs}/**/*.{ts,tsx,js,vue}`], { ignore: ignoreGlobs })
+  const byDir = new Map<string, { loc: number, files: number }>()
+
+  for (const fp of filePaths) {
+    const raw = safeRead(fp)
+    const script = extractScript(fp, raw)
+    const loc = countSloc(script, fp)
+    const rel = relative(sharedDirAbs, fp)
+    const dirName = rel.split(sep)[0] || 'root'
+
+    if (!byDir.has(dirName))
+      byDir.set(dirName, { loc: 0, files: 0 })
+
+    const entry = byDir.get(dirName)!
+    entry.loc += loc
+    entry.files += 1
+  }
+
+  const directories = Array.from(byDir.entries())
+    .map(([name, stats]) => ({ name, loc: stats.loc, files: stats.files }))
+    .sort((a, b) => b.loc - a.loc)
+
+  const totalLoc = directories.reduce((sum, d) => sum + d.loc, 0)
+  const totalFiles = directories.reduce((sum, d) => sum + d.files, 0)
+
+  return { totalLoc, totalFiles, directories }
+}
+
+/** Build edges via dependency-cruiser or regex fallback (I/O wrapper) */
+// eslint-disable-next-line complexity
+async function computeEdges(
+  modulesDirAbs: string,
+  moduleNames: string[],
+  ignoreGlobs: string[],
+): Promise<Array<{ from: string, to: string }>> {
+  const edges: Array<{ from: string, to: string }> = []
+
+  if (cruise) {
+    try {
+      const res = await cruise(
+        [modulesDirAbs],
+        {
+          tsConfig: { fileName: 'tsconfig.json' },
+          doNotFollow: { path: 'node_modules' },
+          exclude: ignoreGlobs.join(','),
+          combinedDependencies: true,
+        },
+      )
+      const mods = res?.output?.modules ?? []
+      const toTop = (abs: string): string | null => {
+        const rel = relative(modulesDirAbs, abs)
+        if (rel.startsWith('..'))
+          return null
+        const top = rel.split(sep)[0]
+        return moduleNames.includes(top) ? top : null
+      }
+      for (const m of mods) {
+        const fromTop = toTop(m.source)
+        if (!fromTop)
+          continue
+        for (const d of (m.dependencies ?? [])) {
+          const toTopName = d.resolved ? toTop(d.resolved) : null
+          if (toTopName && toTopName !== fromTop)
+            edges.push({ from: fromTop, to: toTopName })
+        }
+      }
+      return edges
+    }
+    catch {
+      // fall through to regex
+    }
+  }
+
+  // Regex fallback over source text
+  const aliasRelRe = /from\s+['"][^'"]*\/modules\/([^/'"]+)/g
+  const files = await fg([`${modulesDirAbs}/**/*.{ts,tsx,js,vue}`], { ignore: ignoreGlobs })
+  for (const f of files) {
+    const raw = safeRead(f)
+    const script = extractScript(f, raw)
+    const rel = relative(modulesDirAbs, f)
+    if (rel.startsWith('..'))
+      continue
+    const fromTop = rel.split(sep)[0]
+    if (!moduleNames.includes(fromTop))
+      continue
+
+    let m = aliasRelRe.exec(script)
+    while (m) {
+      const to = m[1]
+      if (to && to !== fromTop && moduleNames.includes(to))
+        edges.push({ from: fromTop, to })
+      m = aliasRelRe.exec(script)
+    }
+  }
+
+  return edges
+}
+
+/** CLI main */
+// eslint-disable-next-line complexity
+async function main(): Promise<void> {
+  const program = new Command()
+  program
+    .name('analyze-module-independence')
+    .description('Analyze module independence for microfrontend readiness (Functional Core, Imperative Shell)')
+    .version('4.1.0')
+    .option('--format <type>', 'Output: text | json | csv | mermaid', 'text')
+    .option('--output <file>', 'Write output to file instead of stdout')
+    .option('--modules-dir <dir>', 'Modules directory', 'src/modules')
+    .option('--config <file>', 'Path to config (JSON). If omitted, uses cosmiconfig (independence)')
+    .option('--strict', 'CI mode: enforce default thresholds (avg>=80, min>=70, fail on cycles, max 5 imports)')
+    .option('--threshold <n>', 'Fail if average score below n', v => Number.parseFloat(v))
+    .option('--min-score <n>', 'Fail if any module score below n', v => Number.parseFloat(v))
+    .option('--max-imports <n>', 'Fail if any module has more than n imports', v => Number.parseInt(v))
+    .option('--fail-on-cycle', 'Fail if cycles detected')
+    .option('--baseline <file>', 'Compare against baseline JSON to detect regressions')
+    .option('--save-baseline <file>', 'Save current scores as baseline JSON')
+    .option('--baseline-tolerance <n>', 'Tolerance (%) for baseline comparison (default: 5)', v => Number.parseFloat(v))
+    .option('--graph-json <file>', 'Write dependency graph JSON to file')
+    .option('--no-color', 'Disable colored output', false)
+    .parse(process.argv)
+
+  const opts = program.opts<{
+    format: 'text' | 'json' | 'csv' | 'mermaid'
+    output?: string
+    modulesDir: string
+    config?: string
+    strict?: boolean
+    threshold?: number
+    minScore?: number
+    maxImports?: number
+    failOnCycle?: boolean
+    baseline?: string
+    saveBaseline?: string
+    baselineTolerance?: number
+    graphJson?: string
+    color?: boolean
+  }>()
+
+  const colors = makeColors(opts.color !== false && process.stdout.isTTY)
+
+  // Load config (imperative)
+  let userConfig: ConfigShape = {}
+  if (opts.config) {
+    if (!existsSync(opts.config)) {
+      console.error(colors.red(`Error: Config not found at ${opts.config}`))
+      process.exit(1)
+    }
+    try {
+      const parsed: unknown = JSON.parse(readFileSync(opts.config, 'utf-8'))
+      // eslint-disable-next-line ts/consistent-type-assertions
+      userConfig = parsed as ConfigShape
+    }
+    catch {
+      console.error(colors.red(`Error: Failed to parse config at ${opts.config}`))
+      process.exit(1)
+    }
+  }
+  else {
+    try {
+      const explorer = cosmiconfig('independence')
+      const result = await explorer.search()
+      if (result?.config) {
+        const config: unknown = result.config
+        // eslint-disable-next-line ts/consistent-type-assertions
+        userConfig = config as ConfigShape
+      }
+    }
+    catch { /* ignore */ }
+  }
+
+  const ignore = userConfig.ignore ?? DEFAULTS.ignore
+  const modulesDirAbs = join(process.cwd(), opts.modulesDir)
+  if (!existsSync(modulesDirAbs)) {
+    console.error(colors.red(`Error: Modules directory not found at ${modulesDirAbs}`))
+    process.exit(1)
+  }
+
+  // Discover modules (imperative)
+  const moduleDirs = await fg([`${modulesDirAbs}/*`], { onlyDirectories: true, deep: 1, ignore })
+  const moduleNames = moduleDirs.map(p => p.split(sep).pop()!).filter(Boolean)
+
+  // Read files and build FileRecords (imperative)
+  const filePaths = await fg([`${modulesDirAbs}/**/*.{ts,tsx,js,vue}`], { ignore })
+  const sharedAliases = userConfig.sharedAliases ?? SHARED_IMPORT_PREFIXES
+  const files: FileRecord[] = filePaths.map((fp) => {
+    const raw = safeRead(fp)
+    const script = extractScript(fp, raw)
+    const rel = relative(modulesDirAbs, fp)
+    const moduleName = rel.split(sep)[0]
+    const sharedImports = collectSharedImports(script, fp, sharedAliases)
+    return {
+      filePath: fp,
+      script,
+      base: fp.split(sep).pop() || '',
+      moduleName,
+      sharedImports,
+    }
+  }).filter(f => moduleNames.includes(f.moduleName))
+
+  // Functional core: build analyses (pure)
+  let analyses = buildModuleAnalyses(files, userConfig.categories)
+
+  // Imperative: compute edges then pure assemble graph
+  const edges = await computeEdges(modulesDirAbs, moduleNames, ignore)
+  const graph = assembleGraph(moduleNames, edges)
+
+  // Backfill externalImports (pure mutation via mapping)
+  const importSets: Record<string, Set<string>> = {}
+  for (const [from, tos] of Object.entries(graph)) {
+    importSets[from] = new Set(tos)
+  }
+  analyses = analyses.map(a => ({ ...a, externalImports: importSets[a.name] ?? new Set() }))
+
+  // Pure scoring
+  analyses = finalizeScores(analyses, graph)
+
+  // Analyze shared folder
+  const sharedDirAbs = join(process.cwd(), 'src/shared')
+  const sharedStats = await analyzeSharedFolder(sharedDirAbs, ignore)
+
+  // Baseline saving (if requested)
+  if (opts.saveBaseline) {
+    const baselineData: BaselineData = {
+      timestamp: new Date().toISOString(),
+      analyses: analyses.map(a => ({
+        name: a.name,
+        score: a.independenceScore,
+      })),
+    }
+    writeFileSync(opts.saveBaseline, JSON.stringify(baselineData, null, 2), 'utf-8')
+    console.log(colors.green(`✓ Baseline saved to ${opts.saveBaseline}`))
+  }
+
+  // Baseline comparison (if requested)
+  if (opts.baseline) {
+    if (!existsSync(opts.baseline)) {
+      console.error(colors.red(`Error: Baseline file not found at ${opts.baseline}`))
+      process.exit(1)
+    }
+    try {
+      const baselineData: unknown = JSON.parse(readFileSync(opts.baseline, 'utf-8'))
+      // eslint-disable-next-line ts/consistent-type-assertions
+      const baseline = baselineData as BaselineData
+      const tolerance = opts.baselineTolerance ?? STRICT_MODE_DEFAULTS.BASELINE_TOLERANCE
+      const comparison = compareWithBaseline(analyses, baseline, tolerance)
+
+      if (!comparison.ok) {
+        console.log(`\n${colors.red('⚠ Baseline Regressions Detected:')}\n`)
+        for (const r of comparison.regressions) {
+          console.error(colors.red(
+            `  ${r.name}: ${r.current.toFixed(1)}% (was ${r.baseline.toFixed(1)}%, delta: ${r.delta.toFixed(1)}%)`,
+          ))
+        }
+        process.exit(1)
+      }
+      console.log(colors.green(`✓ No regressions detected (tolerance: ${tolerance}%)`))
+    }
+    catch (err) {
+      console.error(colors.red(`Error: Failed to parse baseline file: ${err}`))
+      process.exit(1)
+    }
+  }
+
+  // Outputs
+  const output = renderOutput(opts.format, analyses, graph, sharedStats, colors)
+
+  if (opts.graphJson) {
+    writeFileSync(opts.graphJson, JSON.stringify(graph, null, 2), 'utf-8')
+    console.log(colors.green(`✓ Graph JSON saved to ${opts.graphJson}`))
+  }
+
+  if (opts.output) {
+    writeFileSync(opts.output, output, 'utf-8')
+    console.log(colors.green(`✓ Output saved to ${opts.output}`))
+  }
+  else {
     console.log(output)
   }
 
-  checkThresholds(analyses, cycles, options.threshold, options.failOnCycle)
+  // Threshold evaluation (pure decision + imperative exit)
+  // Strict mode enforces defaults if individual thresholds not set
+  const thresholds = opts.strict
+    ? {
+        average: opts.threshold ?? userConfig.thresholds?.average ?? STRICT_MODE_DEFAULTS.AVERAGE_THRESHOLD,
+        minScore: opts.minScore ?? userConfig.thresholds?.minScore ?? STRICT_MODE_DEFAULTS.MIN_SCORE_THRESHOLD,
+        maxImports: opts.maxImports ?? userConfig.thresholds?.maxImports ?? STRICT_MODE_DEFAULTS.MAX_IMPORTS_THRESHOLD,
+        failOnCycle: opts.failOnCycle ?? userConfig.thresholds?.failOnCycle ?? STRICT_MODE_DEFAULTS.FAIL_ON_CYCLE,
+      }
+    : {
+        average: opts.threshold ?? userConfig.thresholds?.average,
+        minScore: opts.minScore ?? userConfig.thresholds?.minScore,
+        maxImports: opts.maxImports ?? userConfig.thresholds?.maxImports,
+        failOnCycle: opts.failOnCycle ?? userConfig.thresholds?.failOnCycle,
+      }
+
+  const verdict = evaluateThresholds(analyses, graph, thresholds)
+  if (!verdict.ok) {
+    for (const m of verdict.messages) console.error(colors.red(`✗ ${m}`))
+    process.exit(1)
+  }
+
+  if (opts.strict) {
+    console.log(colors.green('✓ All strict mode checks passed'))
+  }
 }
 
-main()
+void main()

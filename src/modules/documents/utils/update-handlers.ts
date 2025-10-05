@@ -1,5 +1,5 @@
 import type { DocumentsState } from '../store'
-import type { Document } from '~/modules/domain/api'
+import type { Document } from '~/shared/types/Document'
 
 // Use a consistent default document ID
 const DEFAULT_DOCUMENT_ID = 'default-welcome-document-id'

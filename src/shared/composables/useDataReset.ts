@@ -1,4 +1,4 @@
-import { localStorageService } from '@/services/LocalStorageService'
+import { localStorageService } from '@/shared/services/LocalStorageService'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 
 // Delay to allow event handlers to register before clearing storage

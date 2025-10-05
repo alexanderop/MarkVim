@@ -50,7 +50,34 @@ jobs:
       - name: Run TypeScript check
         run: pnpm run typecheck
 
-  # Job 3: End-to-End tests (the longest job)
+  # Job 3: Architecture Fitness Function
+  architecture:
+    name: Architecture Fitness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for baseline comparison
+      - uses: pnpm/action-setup@v4
+      - name: Setup Node.js with PNPM cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run architecture fitness function (strict mode)
+        run: pnpm run analyze:modules:strict
+      - name: Check baseline (if exists)
+        run: |
+          if [ -f .baseline-modules.json ]; then
+            echo "Baseline found, checking for regressions..."
+            pnpm run analyze:modules:ci
+          else
+            echo "No baseline found, skipping baseline check"
+          fi
+
+  # Job 4: End-to-End tests (the longest job)
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest

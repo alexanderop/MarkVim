@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/domain/api'
+import type { Document } from '~/shared/types/Document'
 import { UButton } from '#components'
 import { computed, ref } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'

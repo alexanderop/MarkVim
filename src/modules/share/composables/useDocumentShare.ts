@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { Document } from '~/modules/domain/api'
+import type { Document } from '~/shared/types/Document'
 import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'

@@ -1,15 +1,17 @@
 import type { FeatureDirective } from '@/types/directives'
+import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
-import { useFeatureFlagsStore } from '../store'
+import { useFeatureFlagsStore } from '../store/feature-flags'
 
 export const vFeature = {
   mounted(el, binding) {
     const store = useFeatureFlagsStore()
+    const { state } = storeToRefs(store)
     const featureName = binding.value
 
     // Initial check
     const updateVisibility = (): void => {
-      const isEnabled = store.state.flags[featureName] ?? true
+      const isEnabled = state.value.flags[featureName] ?? true
       if (isEnabled) {
         el.style.removeProperty('display')
         return
@@ -21,7 +23,7 @@ export const vFeature = {
 
     // Watch for changes in feature flags
     const unwatch = watch(
-      () => store.state.flags[featureName],
+      () => state.value.flags[featureName],
       () => {
         updateVisibility()
       },
@@ -33,8 +35,9 @@ export const vFeature = {
 
   updated(el, binding) {
     const store = useFeatureFlagsStore()
+    const { state } = storeToRefs(store)
     const featureName = binding.value
-    const isEnabled = store.state.flags[featureName] ?? true
+    const isEnabled = state.value.flags[featureName] ?? true
 
     if (isEnabled) {
       el.style.removeProperty('display')

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Icon } from '#components'
 import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
-import { useViewMode } from '~/modules/layout/api'
 import { useMarkdown, useMermaid } from '~/modules/markdown-preview/api'
+import { useViewMode } from '~/shared/api/layout'
 import { useKeyboardScroll } from '~/shared/composables/useKeyboardScroll'
 
 const { content } = defineProps<{

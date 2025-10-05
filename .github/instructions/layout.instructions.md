@@ -1,6 +1,6 @@
 ---
 description: "Instructions for working with the layout module - responsive design, resizable panes, and view modes"
-applyTo: "src/modules/layout/**/*"
+applyTo: "src/shared/layout/**/*"
 ---
 
 # Layout Module Instructions
@@ -111,7 +111,7 @@ const { editorScrollContainer, previewScrollContainer } = useSyncedScroll(previe
 ## Common Tasks
 
 ### Adding Layout Components
-1. Create component in `src/modules/layout/components/`
+1. Create component in `src/shared/layout/components/`
 2. Follow responsive design patterns
 3. Use semantic HTML structure
 4. Implement proper keyboard navigation

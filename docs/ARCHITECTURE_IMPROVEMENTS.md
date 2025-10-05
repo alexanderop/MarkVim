@@ -40,7 +40,7 @@ This document tracks the improvements made to strengthen module boundaries in Ma
 - **Created files**:
   - `modules/documents/events.ts` - 7 document-related events
   - `modules/editor/events.ts` - 3 editor-related events
-  - `modules/layout/events.ts` - 2 layout events
+  - `shared/layout/events.ts` - 2 layout events
   - `modules/shortcuts/events.ts` - 2 command palette events
   - `shared/events.ts` - 5 cross-cutting events (settings, data)
 - **Benefits achieved**:

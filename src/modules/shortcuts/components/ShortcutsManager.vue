@@ -3,8 +3,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
 import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
 import { useEditorSettings } from '~/modules/editor/api'
-import { useViewMode } from '~/modules/layout/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
+import { useViewMode } from '~/shared/api/layout'
 import ShortcutsPaletteCommand from './ShortcutsPaletteCommand.vue'
 
 // Command palette state

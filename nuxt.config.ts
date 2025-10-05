@@ -32,7 +32,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
   pinia: {
-    storesDirs: ['./src/modules/**/store.ts', './src/stores/**'],
+    storesDirs: ['./src/modules/**/store.ts', './src/shared/**/store.ts', './src/stores/**'],
   },
   // Disable auto-imports completely
   components: false,

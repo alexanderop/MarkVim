@@ -1,4 +1,4 @@
-import type { StorageService } from '~/modules/domain/api'
+import type { StorageService } from '~/shared/contracts/StorageService'
 import { tryCatch } from '~/shared/utils/result'
 
 export class LocalStorageService implements StorageService {

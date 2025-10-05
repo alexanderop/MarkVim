@@ -367,7 +367,7 @@ store.dispatch({ ... })  // ❌ Direct coupling
 
 // ✅ Only export public contracts:
 export type { DocumentsEvents } from './events'
-export type { Document } from '~/modules/domain/api'
+export type { Document } from '~/shared/domain/api'
 export { getDocumentTitle } from './utils'
 
 // Force all communication via events

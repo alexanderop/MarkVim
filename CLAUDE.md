@@ -74,6 +74,48 @@ Use **Knip** (see `knip.json`). ESLint's import plugin misreads Vue `<script>` i
 * Clean up unused code: `pnpm knip`
 * Use in CI to block unused exports
 
+### Architecture Fitness Function
+
+**Automated architectural governance** that enforces module independence and prevents coupling regressions.
+
+```bash
+# Analysis (reporting only)
+pnpm analyze:modules              # Text report with recommendations
+pnpm analyze:modules:json         # JSON output
+pnpm analyze:modules:mermaid      # Mermaid diagram
+
+# Fitness function (enforces thresholds)
+pnpm analyze:modules:strict       # Strict mode (fails on violations)
+pnpm analyze:modules:ci           # CI mode (strict + baseline check)
+
+# Baseline management
+pnpm analyze:modules:update-baseline  # Save current scores as baseline
+```
+
+**Thresholds** (configured in `.independencerc.json`):
+- `average: 80` - Minimum average independence score (0-100%)
+- `minScore: 70` - Minimum score for any individual module
+- `maxImports: 5` - Maximum external module dependencies
+- `failOnCycle: true` - Fail if circular dependencies detected
+
+**Baseline tracking**: Prevents regressions by comparing current scores against a saved baseline. The CI job fails if any module's score drops >5% from baseline.
+
+**How it works**:
+1. Analyzes all modules in `src/modules/`
+2. Scores based on: external imports, event coupling, lines of code, API design
+3. Detects circular dependencies via graph analysis
+4. Enforces thresholds in strict/CI mode
+5. Compares against baseline to prevent regressions
+
+**CI Integration**: Runs automatically on PRs via `.github/workflows/ci.yml` (Architecture Fitness job)
+
+**When to update baseline**: After intentional architectural changes that improve or accept new coupling trade-offs:
+```bash
+pnpm analyze:modules:update-baseline
+git add .baseline-modules.json
+git commit -m "chore: update architecture baseline"
+```
+
 ---
 
 ## High-Level Architecture
@@ -225,7 +267,7 @@ Use inline local composables when logic is component-specific or evolving. Extra
 
 * Documents: Pinia (`src/modules/documents/store.ts`)
 * Color theme: Pinia (`src/modules/color-theme/store.ts`)
-* Feature flags: Pinia (`src/modules/feature-flags/store.ts`)
+* Feature flags: Pinia (`src/shared/feature-flags/store.ts`)
 * **Pattern:** Modules expose public facades via `use[Module]()` composables
 * **Mutations:** ALL state changes happen via facade action methods
 * Active document ↔ editor sync via direct facade calls
@@ -319,7 +361,7 @@ export function useDocuments() {
 // Any component or composable (same module or different)
 import { useDocuments } from '~/modules/documents/api'
 import { useColorTheme } from '~/modules/color-theme/api'
-import { useFeatureFlags } from '~/modules/feature-flags/api'
+import { useFeatureFlags } from '~/shared/feature-flags/api'
 
 const { documents, activeDocument, createDocument, selectDocument, deleteDocument } = useDocuments()
 const { theme, updateColor, resetTheme } = useColorTheme()

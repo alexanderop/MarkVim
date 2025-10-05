@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { Document } from '~/modules/domain/api'
+import type { Document } from '~/shared/types/Document'
 import { Icon, UButton, UModal } from '#components'
 import { computed, ref, watch } from 'vue'
 import { useDocumentShare } from '~/modules/share/api'

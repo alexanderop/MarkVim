@@ -207,15 +207,15 @@ async function loadDocuments() {
 ```json
 {
   "imports": {
-    "@markvim/utilities/domain": "/modules/domain/api.js",
-    "@markvim/utilities/feature-flags": "/modules/feature-flags/api.js",
+    "@markvim/utilities/domain": "/shared/domain/api.js",
+    "@markvim/utilities/feature-flags": "/shared/feature-flags/api.js",
     "@markvim/utilities/event-bus": "/shared/utils/eventBus.js",
 
     "@markvim/features/documents": "/modules/documents/api.js",
     "@markvim/features/editor": "/modules/editor/api.js",
     "@markvim/features/color-theme": "/modules/color-theme/api.js",
 
-    "@markvim/ui/layout": "/modules/layout/api.js",
+    "@markvim/ui/layout": "/shared/layout/api.js",
     "@markvim/ui/markdown-preview": "/modules/markdown-preview/api.js"
   }
 }

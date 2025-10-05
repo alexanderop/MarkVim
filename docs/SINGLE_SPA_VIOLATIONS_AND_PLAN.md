@@ -65,7 +65,7 @@ export function getDocumentTitle(content: string): string {
 export { getDocumentTitle } from './utils/document-title'
 
 // Update all usages:
-import { getDocumentTitle } from '~/modules/domain/api'
+import { getDocumentTitle } from '~/shared/domain/api'
 ```
 
 ---
@@ -152,10 +152,10 @@ function openSettings() {
 
 **Instance 1: LayoutHeader.vue**
 ```typescript
-// src/modules/layout/components/LayoutHeader.vue:7-8, 29-30
-import { useFeatureFlagsState } from '~/modules/feature-flags/api'
+// src/shared/layout/components/LayoutHeader.vue:7-8, 29-30
+import { useFeatureFlags } from '~/shared/feature-flags/api'
 
-const { state: featureFlags } = useFeatureFlagsState()
+const { state: featureFlags } = useFeatureFlags()
 const isDocumentsFeatureEnabled = computed(() => featureFlags.value.flags.documents)
 ```
 
@@ -174,9 +174,9 @@ const { documents, activeDocument, activeDocumentTitle, state: documentsState } 
 **Instance 3: SettingsModal.vue**
 ```typescript
 // src/shared/components/SettingsModal.vue:7, 13
-import { useFeatureFlagsState } from '~/modules/feature-flags/api'
+import { useFeatureFlags } from '~/shared/feature-flags/api'
 
-const { state: featureFlagsState } = useFeatureFlagsState()
+const { state: featureFlagsState } = useFeatureFlags()
 ```
 
 **Single-SPA Principle**:
@@ -527,14 +527,14 @@ mv src/modules/share src/modules/features/
 
 **Task 4.3: Move Utility Modules**
 ```bash
-mv src/modules/domain src/modules/utilities/
-mv src/modules/feature-flags src/modules/utilities/
+mv src/modules/domain src/shared/domain/
+mv src/modules/feature-flags src/shared/feature-flags/
 mv src/modules/shortcuts src/modules/utilities/
 ```
 
 **Task 4.4: Move UI Component Modules**
 ```bash
-mv src/modules/layout src/modules/ui-components/
+mv src/shared/layout src/modules/ui-components/
 mv src/modules/markdown-preview src/modules/ui-components/
 ```
 
@@ -542,7 +542,7 @@ mv src/modules/markdown-preview src/modules/ui-components/
 ```bash
 # Use find/replace in IDE:
 # ~/modules/documents → ~/modules/features/documents
-# ~/modules/domain → ~/modules/utilities/domain
+# ~/shared/domain → ~/modules/utilities/domain
 # etc.
 ```
 

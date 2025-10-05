@@ -1,0 +1,13 @@
+{
+  "thresholds": {
+    "average": 80,
+    "minScore": 70,
+    "failOnCycle": true,
+    "maxImports": 5
+  },
+  "categories": {
+    "utility": ["feature-flags"],
+    "ui-component": ["layout", "markdown-preview"],
+    "feature": ["documents", "editor", "shortcuts", "share", "color-theme"]
+  }
+}

@@ -29,3 +29,6 @@ reports/
 .env
 .env.*
 !.env.example
+
+# Module independence baseline (generated)
+.baseline-modules.json

@@ -6,7 +6,7 @@
  */
 
 import type { Ref } from 'vue'
-import type { Document } from '~/modules/domain/api'
+import type { Document } from '~/shared/types/Document'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useDocumentsStore } from './store'
@@ -20,7 +20,7 @@ export type { DocumentsEvents } from './events'
 // Export types
 export type { DocumentMessage, DocumentsState } from './store'
 export { getDocumentTitle } from './utils/document-title'
-export type { Document } from '~/modules/domain/api'
+export type { Document } from '~/shared/types/Document'
 
 /**
  * Public facade for documents module.

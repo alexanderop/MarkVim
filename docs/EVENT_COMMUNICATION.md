@@ -173,7 +173,7 @@ export interface EditorEvents {
 
 ### Layout Module Events
 
-Located in `src/modules/layout/events.ts`:
+Located in `src/shared/layout/events.ts`:
 
 ```typescript
 export interface LayoutEvents {
@@ -324,7 +324,7 @@ onAppEvent('documents:import', (payload) => {
 
 **Example: Layout listens for view mode changes**
 ```typescript
-// src/modules/layout/composables/useViewMode.ts:81-95
+// src/shared/layout/composables/useViewMode.ts:81-95
 onAppEvent('view:set', (payload) => {
   setViewMode(payload.viewMode)
 })

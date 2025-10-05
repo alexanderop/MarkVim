@@ -3,8 +3,8 @@ import type { Ref } from 'vue'
 import { UButton, UCheckbox, UKbd, UModal, URadioGroup } from '#components'
 import { computed, ref } from 'vue'
 import { useEditorSettings } from '~/modules/editor/api'
-import { type FeatureName, useFeatureFlags } from '~/modules/feature-flags/api'
 import { useShortcuts } from '~/modules/shortcuts/api'
+import { type FeatureName, useFeatureFlags } from '~/shared/api/feature-flags'
 import BaseSwitch from './BaseSwitch.vue'
 
 const { settings, updateFontSize, resetToDefaults, clearAllData } = useEditorSettings()

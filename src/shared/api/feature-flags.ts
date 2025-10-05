@@ -7,14 +7,14 @@
 
 import type { Ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { type FeatureFlagsState, type FeatureName, useFeatureFlagsStore } from './store'
+import { type FeatureFlagsState, type FeatureName, useFeatureFlagsStore } from '../store/feature-flags'
 
 // Export directive
-export { vFeature } from './directives/vFeature'
+export { vFeature } from '../directives/vFeature'
 
-export type { FeatureFlagsEvents } from './events'
+export type { FeatureFlagsEvents } from '../events/feature-flags'
 // Export types
-export type { FeatureFlags, FeatureFlagsMessage, FeatureFlagsState, FeatureName } from './store'
+export type { FeatureFlags, FeatureFlagsMessage, FeatureFlagsState, FeatureName } from '../store/feature-flags'
 export type { FeatureDirective, FeatureElement } from '@/types/directives'
 
 /**

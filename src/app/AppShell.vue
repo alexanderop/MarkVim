@@ -4,10 +4,10 @@ import { computed } from 'vue'
 import { ColorThemeModal, useColorTheme } from '~/modules/color-theme/api'
 import { DocumentList, DocumentManagerAction, useDocuments } from '~/modules/documents/api'
 import { EditorMarkdown, useEditorSettings } from '~/modules/editor/api'
-import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/modules/layout/api'
 import { MarkdownPreview } from '~/modules/markdown-preview/api'
 import { ShareManager } from '~/modules/share/api'
 import { ShortcutsManager } from '~/modules/shortcuts/api'
+import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/shared/api/layout'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
 const { documents, activeDocument, activeDocumentTitle, activeDocumentId, updateDocument } = useDocuments()

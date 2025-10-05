@@ -2,7 +2,7 @@
 import type { Document as DocType } from '~/modules/documents/api'
 import { Icon, UButton } from '#components'
 import { useDocuments } from '~/modules/documents/api'
-import { vFeature } from '~/modules/feature-flags/api'
+import { vFeature } from '~/shared/api/feature-flags'
 import DocumentItemClient from './DocumentItem.client.vue'
 
 const { documents, activeDocumentId } = defineProps<{

@@ -6,13 +6,13 @@
  */
 
 // Export components that are used externally
-export { default as LayoutHeader } from './components/LayoutHeader.vue'
-export { default as LayoutStatusBar } from './components/LayoutStatusBar.vue'
-export { useResizablePanes } from './composables/useResizablePanes'
+export { default as LayoutHeader } from '../components/LayoutHeader.vue'
+export { default as LayoutStatusBar } from '../components/LayoutStatusBar.vue'
+export { useResizablePanes } from '../composables/useResizablePanes'
 
-export { useSyncedScroll } from './composables/useSyncedScroll'
+export { useSyncedScroll } from '../composables/useSyncedScroll'
 // Export composables that other modules might need
-export { useViewMode, type ViewMode } from './composables/useViewMode'
+export { useViewMode, type ViewMode } from '../composables/useViewMode'
 
 // Export events
-export type { LayoutEvents } from './events'
+export type { LayoutEvents } from '../events/layout'

@@ -1,5 +1,5 @@
 import type { Directive, WatchStopHandle } from 'vue'
-import type { FeatureName } from '~/modules/feature-flags/api'
+import type { FeatureName } from '~/shared/api/feature-flags'
 
 /**
  * Extended HTMLElement with cleanup function for the v-feature directive
