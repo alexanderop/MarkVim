@@ -1,23 +1,20 @@
-import { Given, Then, When } from '@cucumber/cucumber'
+import type { MarkVimWorld } from '../support/world.js'
+import { Then, When } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
-import { MarkVimPage } from '../page-objects/markvim-page.js'
+import { getMarkVimPage } from '../page-objects/markvim-page.js'
 import { EXTRA_LONG_WAIT_MS } from '../support/constants.js'
 
-let markVimPage: MarkVimPage
-
-Given('I am on the MarkVim home page', async function () {
-  markVimPage = new MarkVimPage(this.page)
-  await markVimPage.navigate()
-})
-
-When('I create a new document with content {string}', async function (content: string) {
+When('I create a new document with content {string}', async function (this: MarkVimWorld, content: string) {
+  const markVimPage = getMarkVimPage(this)
   await markVimPage.createDocumentWithContent(content)
 
   // Wait for client-only components to load and document to be saved to localStorage
   await this.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 })
 
-When('I select the first document {string}', async function (documentTitle: string) {
+When('I select the first document {string}', async function (this: MarkVimWorld, documentTitle: string) {
+  const markVimPage = getMarkVimPage(this)
+
   // Wait for client-only DocumentList to load
   await markVimPage.page.waitForSelector('[data-testid="document-list"]', { timeout: 10000 })
 
@@ -33,28 +30,31 @@ When('I select the first document {string}', async function (documentTitle: stri
   await this.page.waitForTimeout(EXTRA_LONG_WAIT_MS)
 })
 
-When('I check the browser console', function () {
+When('I check the browser console', function (this: MarkVimWorld) {
   // Start monitoring console messages
   const consoleLogs: string[] = []
-  this.page.on('console', (msg: any) => {
+  this.page!.on('console', (msg: any) => {
     consoleLogs.push(msg.text())
   })
   this.consoleLogs = consoleLogs
 })
 
-Then('I should see the document {string} is still active', async (documentTitle: string) => {
+Then('I should see the document {string} is still active', async function (this: MarkVimWorld, documentTitle: string) {
+  const markVimPage = getMarkVimPage(this)
   await markVimPage.verifyDocumentTitle(documentTitle)
 })
 
-Then('the document content should contain {string}', async (expectedContent: string) => {
+Then('the document content should contain {string}', async function (this: MarkVimWorld, expectedContent: string) {
+  const markVimPage = getMarkVimPage(this)
   await markVimPage.verifyActiveDocumentContent(expectedContent)
 })
 
-Then('the active document should be {string}', async (documentTitle: string) => {
+Then('the active document should be {string}', async function (this: MarkVimWorld, documentTitle: string) {
+  const markVimPage = getMarkVimPage(this)
   await markVimPage.verifyDocumentTitle(documentTitle)
 })
 
-Then('I should not see any hydration mismatch warnings', function () {
+Then('I should not see any hydration mismatch warnings', function (this: MarkVimWorld) {
   const consoleLogs: string[] = this.consoleLogs
   const hydrationWarnings = consoleLogs.filter(log =>
     log.includes('hydration')

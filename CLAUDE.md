@@ -74,9 +74,13 @@ Use **Knip** (see `knip.json`). ESLint's import plugin misreads Vue `<script>` i
 * Clean up unused code: `pnpm knip`
 * Use in CI to block unused exports
 
-### Architecture Fitness Function
+### Architecture Fitness Functions
 
-**Automated architectural governance** that enforces module independence and prevents coupling regressions.
+**Automated architectural governance** using two complementary tools:
+
+#### 1. Module Independence Analyzer (Custom)
+
+High-level module scoring and baseline tracking.
 
 ```bash
 # Analysis (reporting only)
@@ -107,7 +111,35 @@ pnpm analyze:modules:update-baseline  # Save current scores as baseline
 4. Enforces thresholds in strict/CI mode
 5. Compares against baseline to prevent regressions
 
-**CI Integration**: Runs automatically on PRs via `.github/workflows/ci.yml` (Architecture Fitness job)
+#### 2. Dependency Cruiser (Import Rules)
+
+Low-level import validation and architectural boundaries.
+
+```bash
+# Validate all dependency rules
+pnpm depcruise                    # Validate and show violations
+pnpm depcruise:ci                 # CI format (used in GitHub Actions)
+
+# Generate visualizations
+pnpm depcruise:graph:modules      # Module dependency graph (DOT format)
+pnpm depcruise:archi              # Architecture diagram
+```
+
+**Enforced rules** (configured in `.dependency-cruiser.cjs`):
+
+1. **Module boundaries**: Modules can only import via `api.ts` facades
+2. **No cross-module imports**: Direct implementation imports forbidden
+3. **Shared code boundaries**: Only `~/shared/*`, `~/types/*` allowed
+4. **No circular dependencies**: Prevents circular imports
+5. **Layer architecture**: Components → composables → utils (one-way)
+
+**When to use each tool**:
+- **Module Independence Analyzer**: Understand overall module health, track improvement over time
+- **Dependency Cruiser**: Catch specific architectural violations before commit/PR
+
+**CI Integration**: Both run automatically on PRs via `.github/workflows/ci.yml`:
+- Architecture Fitness job (module analyzer)
+- Dependency Rules job (dependency-cruiser)
 
 **When to update baseline**: After intentional architectural changes that improve or accept new coupling trade-offs:
 ```bash

@@ -17,6 +17,7 @@ export interface MarkVimWorld extends World {
   browser?: Browser
   page?: Page
   sharedLink?: string
+  consoleLogs?: string[]
   init: () => Promise<void>
   cleanup: () => Promise<void>
 }
