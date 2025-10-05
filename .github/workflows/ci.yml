@@ -93,13 +93,16 @@ jobs:
           - document-persistence
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/pnpm-install
+      - name: Setup pnpm and cache
+        id: pnpm-setup
+        uses: ./.github/actions/pnpm-install
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache-playwright: 'true'
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        if: steps.pnpm-setup.outputs.playwright-cache-hit != 'true'
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Start dev server
         run: pnpm run dev &

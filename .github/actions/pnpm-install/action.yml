@@ -19,6 +19,11 @@ inputs:
     required: false
     default: '22'
 
+outputs:
+  playwright-cache-hit:
+    description: Whether Playwright browser cache was hit
+    value: ${{ steps.cache-playwright-browsers.outputs.cache-hit }}
+
 runs:
   using: composite
 
@@ -63,6 +68,7 @@ runs:
       run: echo "version=$(pnpm list @playwright/test --depth=0 --parseable 2>/dev/null | sed 's/.*@//' | tr -d '\n' || echo 'none')" >> $GITHUB_OUTPUT
 
     - name: Cache Playwright browsers
+      id: cache-playwright-browsers
       if: inputs.cache-playwright == 'true' && steps.playwright-version.outputs.version != 'none'
       uses: actions/cache@v4
       with:
