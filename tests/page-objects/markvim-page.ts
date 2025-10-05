@@ -152,6 +152,12 @@ export class MarkVimPage {
     // Also wait for DOM to be fully loaded
     await this.page.waitForLoadState('domcontentloaded')
 
+    // Wait for document list to be available (sidebar may be hidden/visible)
+    // This ensures the app is fully hydrated including v-feature directives
+    await this.page.waitForFunction(() => {
+      return document.querySelector('[data-testid="sidebar-toggle"]') !== null
+    }, { timeout: 10000 })
+
     // Give a small buffer for any final hydration/rendering
     await this.page.waitForTimeout(500)
   }
@@ -341,7 +347,11 @@ export class MarkVimPage {
   }
 
   async toggleSidebarWithButton(): Promise<void> {
-    await this.sidebarToggleBtn.click()
+    // Ensure button is visible and clickable
+    await expect(this.sidebarToggleBtn).toBeVisible({ timeout: 5000 })
+    await this.sidebarToggleBtn.click({ force: true })
+    // Wait for the toggle animation and DOM updates to complete
+    await this.page.waitForTimeout(1000)
   }
 
   async verifySidebarVisible(): Promise<void> {

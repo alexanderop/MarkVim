@@ -143,23 +143,53 @@ Given('synchronized scrolling is enabled', async function (this: MarkVimWorld) {
   await markVimPage.closeSettingsModal()
 })
 
-Given('the sidebar is visible', async function (this: MarkVimWorld) {
+Given('the sidebar is visible', { timeout: 20000 }, async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   // Check if sidebar is currently visible, if not make it visible
-  const isVisible = await markVimPage.documentList.isVisible()
-  if (!isVisible) {
-    await markVimPage.toggleSidebarWithButton()
+  const { expect } = await import('@playwright/test')
+
+  // Try to check current visibility state with a very short timeout
+  let isCurrentlyVisible = false
+  try {
+    await expect(markVimPage.documentList).toBeVisible({ timeout: 500 })
+    isCurrentlyVisible = true
   }
+  catch {
+    // Sidebar is not currently visible
+    isCurrentlyVisible = false
+  }
+
+  // If not visible, toggle it using keyboard shortcut (more reliable than button)
+  if (!isCurrentlyVisible) {
+    await markVimPage.toggleSidebarWithKeyboard()
+  }
+
+  // Verify sidebar is now visible
   await markVimPage.verifySidebarVisible()
 })
 
-Given('the sidebar is hidden', async function (this: MarkVimWorld) {
+Given('the sidebar is hidden', { timeout: 20000 }, async function (this: MarkVimWorld) {
   const markVimPage = await getMarkVimPage(this)
   // Check if sidebar is currently hidden, if not hide it
-  const isVisible = await markVimPage.documentList.isVisible()
-  if (isVisible) {
-    await markVimPage.toggleSidebarWithButton()
+  const { expect } = await import('@playwright/test')
+
+  // Try to check current visibility state with a very short timeout
+  let isCurrentlyHidden = false
+  try {
+    await expect(markVimPage.documentList).toBeHidden({ timeout: 500 })
+    isCurrentlyHidden = true
   }
+  catch {
+    // Sidebar is currently visible
+    isCurrentlyHidden = false
+  }
+
+  // If not hidden, toggle it using keyboard shortcut (more reliable than button)
+  if (!isCurrentlyHidden) {
+    await markVimPage.toggleSidebarWithKeyboard()
+  }
+
+  // Verify sidebar is now hidden
   await markVimPage.verifySidebarHidden()
 })
 
