@@ -82,7 +82,7 @@ jobs:
     name: E2E Tests (${{ matrix.feature }})
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false  # Run all features even if one fails
+      fail-fast: false # Run all features even if one fails
       matrix:
         feature:
           - smoke.test
