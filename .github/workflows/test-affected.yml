@@ -8,7 +8,6 @@ on:
 
 env:
   NODE_VERSION: '22'
-  PNPM_VERSION: 9.9.0
 
 permissions:
   contents: read
@@ -46,7 +45,6 @@ jobs:
       - uses: ./.github/actions/pnpm-install
         with:
           node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
           cache-playwright: 'true'
 
       - name: Install Playwright browsers

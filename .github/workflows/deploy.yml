@@ -9,7 +9,6 @@ on:
 
 env:
   NODE_VERSION: '22'
-  PNPM_VERSION: 9.9.0
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -32,7 +31,6 @@ jobs:
       - uses: ./.github/actions/pnpm-install
         with:
           node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Build application
         run: NUXT_APP_BASE_URL=/MarkVim/ pnpm run build --preset github_pages

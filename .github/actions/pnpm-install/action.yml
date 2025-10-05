@@ -18,10 +18,6 @@ inputs:
     description: Node.js version
     required: false
     default: '22'
-  pnpm-version:
-    description: pnpm version
-    required: false
-    default: 9.9.0
 
 runs:
   using: composite
@@ -29,8 +25,7 @@ runs:
   steps:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: ${{ inputs.pnpm-version }}
+      # Version is read from package.json packageManager field
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
