@@ -64,7 +64,7 @@ function handleContentUpdate(value: string): void {
         @click="isSidebarVisible = false"
       />
 
-      <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
+      <main class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
         <div
           class="flex flex-1 flex-col relative overflow-hidden md:flex-row"
           :class="[
@@ -132,7 +132,7 @@ function handleContentUpdate(value: string): void {
             class="bg-black/5 pointer-events-none transition-opacity duration-200 inset-0 fixed z-10"
           />
         </div>
-      </div>
+      </main>
     </div>
 
     <LayoutStatusBar

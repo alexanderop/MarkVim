@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test'
 import process from 'node:process'
+import AxeBuilder from '@axe-core/playwright'
 import { expect } from '@playwright/test'
 
 export class MarkVimPage {
@@ -1409,6 +1410,34 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
   async verifyClearDataConfirmModalHidden(): Promise<void> {
     await expect(this.getClearDataModal()).not.toBeVisible()
+  }
+
+  // Accessibility testing methods
+  async checkAccessibility(): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page }).analyze()
+    expect(results.violations).toEqual([])
+  }
+
+  async checkAccessibilityWithTags(tags: string[]): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page })
+      .withTags(tags)
+      .analyze()
+    expect(results.violations).toEqual([])
+  }
+
+  async checkAccessibilityForElement(selector: string): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page })
+      .include(selector)
+      .analyze()
+    expect(results.violations).toEqual([])
+  }
+
+  async checkCriticalAccessibility(): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page }).analyze()
+    const criticalViolations = results.violations.filter(
+      violation => violation.impact === 'critical' || violation.impact === 'serious',
+    )
+    expect(criticalViolations).toEqual([])
   }
 }
 
