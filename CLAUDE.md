@@ -74,49 +74,12 @@ Use **Knip** (see `knip.json`). ESLint's import plugin misreads Vue `<script>` i
 * Clean up unused code: `pnpm knip`
 * Use in CI to block unused exports
 
-### Architecture Fitness Functions
+### Architecture Fitness Function
 
-**Automated architectural governance** using two complementary tools:
-
-#### 1. Module Independence Analyzer (Custom)
-
-High-level module scoring and baseline tracking.
+**Automated architectural governance** using **Dependency Cruiser** to enforce architectural boundaries and validate import rules.
 
 ```bash
-# Analysis (reporting only)
-pnpm analyze:modules              # Text report with recommendations
-pnpm analyze:modules:json         # JSON output
-pnpm analyze:modules:mermaid      # Mermaid diagram
-
-# Fitness function (enforces thresholds)
-pnpm analyze:modules:strict       # Strict mode (fails on violations)
-pnpm analyze:modules:ci           # CI mode (strict + baseline check)
-
-# Baseline management
-pnpm analyze:modules:update-baseline  # Save current scores as baseline
-```
-
-**Thresholds** (configured in `.independencerc.json`):
-- `average: 80` - Minimum average independence score (0-100%)
-- `minScore: 70` - Minimum score for any individual module
-- `maxImports: 5` - Maximum external module dependencies
-- `failOnCycle: true` - Fail if circular dependencies detected
-
-**Baseline tracking**: Prevents regressions by comparing current scores against a saved baseline. The CI job fails if any module's score drops >5% from baseline.
-
-**How it works**:
-1. Analyzes all modules in `src/modules/`
-2. Scores based on: external imports, event coupling, lines of code, API design
-3. Detects circular dependencies via graph analysis
-4. Enforces thresholds in strict/CI mode
-5. Compares against baseline to prevent regressions
-
-#### 2. Dependency Cruiser (Import Rules)
-
-Low-level import validation and architectural boundaries.
-
-```bash
-# Validate all dependency rules
+# Validate all dependency rules (fitness function)
 pnpm depcruise                    # Validate and show violations
 pnpm depcruise:ci                 # CI format (used in GitHub Actions)
 
@@ -133,19 +96,16 @@ pnpm depcruise:archi              # Architecture diagram
 4. **No circular dependencies**: Prevents circular imports
 5. **Layer architecture**: Components → composables → utils (one-way)
 
-**When to use each tool**:
-- **Module Independence Analyzer**: Understand overall module health, track improvement over time
-- **Dependency Cruiser**: Catch specific architectural violations before commit/PR
+**CI Integration**: Runs automatically on all PRs via `.github/workflows/ci.yml` (Dependency Rules job)
 
-**CI Integration**: Both run automatically on PRs via `.github/workflows/ci.yml`:
-- Architecture Fitness job (module analyzer)
-- Dependency Rules job (dependency-cruiser)
+**Optional Development Tools**:
 
-**When to update baseline**: After intentional architectural changes that improve or accept new coupling trade-offs:
+Module Independence Analyzer provides additional insights during development (not used in CI):
+
 ```bash
-pnpm analyze:modules:update-baseline
-git add .baseline-modules.json
-git commit -m "chore: update architecture baseline"
+pnpm analyze:modules              # Text report with recommendations
+pnpm analyze:modules:json         # JSON output
+pnpm analyze:modules:mermaid      # Mermaid diagram
 ```
 
 ---

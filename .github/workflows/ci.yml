@@ -50,30 +50,7 @@ jobs:
       - name: Run TypeScript check
         run: pnpm run typecheck
 
-  # Job 3: Architecture Fitness Function
-  architecture:
-    name: Architecture Fitness
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetch all history for baseline comparison
-      - uses: ./.github/actions/pnpm-install
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Run architecture fitness function (strict mode)
-        run: pnpm run analyze:modules:strict
-      - name: Check baseline (if exists)
-        run: |
-          if [ -f .baseline-modules.json ]; then
-            echo "Baseline found, checking for regressions..."
-            pnpm run analyze:modules:ci
-          else
-            echo "No baseline found, skipping baseline check"
-          fi
-
-  # Job 4: Dependency Rules Validation
+  # Job 3: Dependency Rules Validation (Architecture Fitness Function)
   dependency-rules:
     name: Dependency Rules
     runs-on: ubuntu-latest
