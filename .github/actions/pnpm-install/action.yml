@@ -10,19 +10,33 @@ inputs:
     description: Use frozen lockfile
     required: false
     default: 'true'
+  cache-playwright:
+    description: Cache Playwright browsers
+    required: false
+    default: 'false'
+  node-version:
+    description: Node.js version
+    required: false
+    default: '22'
+  pnpm-version:
+    description: pnpm version
+    required: false
+    default: 9.9.0
 
 runs:
   using: composite
 
   steps:
-    - name: Enable Corepack
-      shell: bash
-      run: corepack enable
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.pnpm-version }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
 
     - name: Expose pnpm config
       id: pnpm-config
@@ -46,16 +60,21 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pnpm-store-${{ steps.cache-rotation.outputs.YEAR_MONTH }}-
 
-    - name: Cache node_modules
+    - name: Get Playwright version
+      if: inputs.cache-playwright == 'true'
+      id: playwright-version
+      shell: bash
+      working-directory: ${{ inputs.cwd }}
+      run: echo "version=$(pnpm list @playwright/test --depth=0 --parseable 2>/dev/null | sed 's/.*@//' | tr -d '\n' || echo 'none')" >> $GITHUB_OUTPUT
+
+    - name: Cache Playwright browsers
+      if: inputs.cache-playwright == 'true' && steps.playwright-version.outputs.version != 'none'
       uses: actions/cache@v4
       with:
-        path: |
-          **/node_modules
-          ~/.cache/Cypress
-          ~/.cache/ms-playwright
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
         restore-keys: |
-          ${{ runner.os }}-modules-
+          ${{ runner.os }}-playwright-
 
     - name: Install dependencies
       shell: bash

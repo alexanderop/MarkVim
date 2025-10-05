@@ -6,10 +6,19 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: 9.9.0
+
 permissions:
   contents: read
   checks: write
   pull-requests: write
+  actions: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,16 +29,13 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - name: Setup Node.js with PNPM cache
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/pnpm-install
         with:
-          node-version: '22'
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
       - name: Run ESLint
         run: pnpm lint
 
@@ -37,16 +43,13 @@ jobs:
   typecheck:
     name: TypeScript Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - name: Setup Node.js with PNPM cache
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/pnpm-install
         with:
-          node-version: '22'
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
       - name: Run TypeScript check
         run: pnpm run typecheck
 
@@ -54,18 +57,15 @@ jobs:
   architecture:
     name: Architecture Fitness
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for baseline comparison
-      - uses: pnpm/action-setup@v4
-      - name: Setup Node.js with PNPM cache
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/pnpm-install
         with:
-          node-version: '22'
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
       - name: Run architecture fitness function (strict mode)
         run: pnpm run analyze:modules:strict
       - name: Check baseline (if exists)
@@ -81,6 +81,7 @@ jobs:
   e2e:
     name: E2E Tests (${{ matrix.feature }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false # Run all features even if one fails
       matrix:
@@ -96,46 +97,34 @@ jobs:
           - document-persistence
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - name: Setup Node.js with PNPM cache
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/pnpm-install
         with:
-          node-version: '22'
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(pnpm list @playwright/test --depth=0 --parseable | sed 's/.*@//' | tr -d '\n')" >> $GITHUB_OUTPUT
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          cache-playwright: 'true'
 
       - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Start dev server and run E2E tests
-        run: |
-          pnpm run dev &
-          SERVER_PID=$!
-          sleep 15
-          NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/${{ matrix.feature }}.feature
-          kill $SERVER_PID
+      - name: Start dev server
+        run: pnpm run dev &
+
+      - name: Wait for dev server
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run E2E tests
+        run: NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/${{ matrix.feature }}.feature
         env:
           CI: true
+
+      - name: Stop dev server
+        if: always()
+        run: pkill -f "pnpm run dev" || true
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.feature }}
+          name: playwright-report-${{ matrix.feature }}-${{ github.run_id }}
           path: playwright-report/
           retention-days: 7
