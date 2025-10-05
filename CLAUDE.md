@@ -32,29 +32,29 @@ pnpm test:e2e:with-server  # E2E with auto server start
 **Running Specific E2E Tests** (recommended when fixing issues - running all 39 scenarios takes 2-3 minutes):
 
 ```bash
-# Run single scenario by name pattern
+# Run entire feature file (same pattern as CI matrix)
+NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/documents.feature
+NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/smoke.test.feature
+NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/sharing.feature
+
+# Run with dev server included
+pnpm test:e2e:with-server tests/features/documents.feature
+
+# Run single scenario by name pattern (optional filter, slower)
 NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/documents.feature --name "Create new document"
-
-# Run specific feature file
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/feature-flags.feature
-
-# Run scenarios by tag (requires adding @tag to scenarios)
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --tags "@smoke"
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --tags "@smoke and @critical"
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --tags "not @wip"
-
-# Dry run to validate without executing
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --dry-run
 ```
 
 **Fail-Fast Configuration**: E2E tests are configured to stop on first failure (`failFast: true` in `cucumber.js`). This speeds up development by letting you fix one issue at a time instead of running the entire suite.
 
-**Key test scenarios for quick validation:**
-- `"Switch to editor-only mode"` - Basic smoke test
-- `"Create new document from sidebar"` - Documents functionality
-- `"Mermaid diagram rendering"` - Editor/preview
-- `"Disabling share feature hides share button"` - Feature flags
-- `"Successfully generate and import a share link"` - Sharing
+**Available feature files** (matches CI matrix for fast isolation):
+- `smoke.test.feature` - Basic smoke tests
+- `documents.feature` - Document management
+- `editing.feature` - Editor/preview functionality
+- `color.feature` - Color theme features
+- `theme.feature` - Theme system
+- `sharing.feature` - Share functionality
+- `scroll-sync.feature` - Scroll synchronization
+- `document-persistence.feature` - Persistence features
 
 ### Git Hooks
 

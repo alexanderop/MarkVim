@@ -160,12 +160,14 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                     variant="ghost"
                     size="sm"
                     icon="heroicons:minus"
+                    aria-label="Decrease font size"
                     square
                     data-testid="font-size-decrease"
                     @click="updateFontSize(settings.fontSize - 1)"
                   />
                   <span
                     class="text-sm text-text-primary font-mono text-center min-w-[3rem]"
+                    aria-label="Current font size"
                     data-testid="font-size-display"
                   >{{ settings.fontSize }}px</span>
                   <UButton
@@ -173,6 +175,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                     variant="ghost"
                     size="sm"
                     icon="heroicons:plus"
+                    aria-label="Increase font size"
                     square
                     data-testid="font-size-increase"
                     @click="updateFontSize(settings.fontSize + 1)"
