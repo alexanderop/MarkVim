@@ -36,6 +36,7 @@ const canShare = computed(() => {
       size="md"
       :icon="isSharing ? 'lucide:loader-2' : 'lucide:share'"
       :title="canShare ? 'Share document' : 'Document too large to share'"
+      :aria-label="canShare ? 'Share document' : 'Document too large to share'"
       :disabled="disabled || !document || isSharing || !canShare"
       data-testid="share-button"
       square

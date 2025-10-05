@@ -37,6 +37,7 @@ function handleCreateDocument(): void {
 
       <UButton
         data-testid="create-document-btn"
+        aria-label="Create new document"
         color="primary"
         variant="solid"
         size="sm"

@@ -51,6 +51,7 @@ export class MarkVimPage {
 
   constructor(page: Page) {
     this.page = page
+    // Structural elements - keep data-testid for complex layout components
     this.headerToolbar = page.locator('[data-testid="header-toolbar"]')
     this.headerTitle = this.headerToolbar.locator('h1')
     this.editorPane = page.locator('[data-testid="editor-pane"]')
@@ -61,29 +62,39 @@ export class MarkVimPage {
     this.commandPalette = page.locator('[data-testid="command-palette"]')
     this.commandPaletteSearch = page.locator('[data-testid="command-palette-search"]')
     this.viewModeToggle = page.locator('[data-testid="view-mode-toggle"]')
-    this.viewModeEditor = page.locator('[data-testid="view-mode-editor"]')
-    this.viewModeSplit = page.locator('[data-testid="view-mode-split"]')
-    this.viewModePreview = page.locator('[data-testid="view-mode-preview"]')
-    this.documentList = page.locator('[data-testid="document-list"]')
+
+    // View mode buttons - use accessible names
+    this.viewModeEditor = page.getByRole('button', { name: /Switch to Editor view/i })
+    this.viewModeSplit = page.getByRole('button', { name: /Switch to Split view/i })
+    this.viewModePreview = page.getByRole('button', { name: /Switch to Preview view/i })
+
+    // Documents sidebar - use semantic role
+    this.documentList = page.getByRole('complementary', { name: 'Documents' })
     this.documentItems = page.locator('[data-testid^="document-item-"]')
     this.documentItemActive = page.locator('[data-testid^="document-item-active-"]')
     this.documentTitles = page.locator('[data-testid^="document-title-"]')
     this.documentTimestamps = page.locator('[data-testid^="document-timestamp-"]')
     this.documentPreviews = page.locator('[data-testid^="document-preview-"]')
-    this.createDocumentBtn = page.locator('[data-testid="create-document-btn"]')
-    this.sidebarToggleBtn = page.locator('[data-testid="sidebar-toggle"]')
+
+    // Interactive buttons - use accessible names
+    this.createDocumentBtn = page.getByRole('button', { name: /Create new document/i })
+    this.sidebarToggleBtn = page.getByRole('button', { name: /(Hide|Show) sidebar/i })
     this.keyboardShortcutsButton = page.locator('[data-testid="keyboard-shortcuts-button"]')
-    this.settingsButton = page.locator('[data-testid="settings-button"]')
-    this.shareButton = page.locator('[data-testid="share-button"]')
+    this.settingsButton = page.getByRole('button', { name: /Open settings/i })
+    this.shareButton = page.getByRole('button', { name: /Share document/i })
     this.syncScrollToggle = page.locator('[data-testid="sync-scroll-toggle"]')
-    this.deleteDocumentBtn = page.locator('[data-testid="delete-document-btn"]')
-    this.colorThemeButton = page.locator('[data-testid="color-theme-button"]')
+    this.deleteDocumentBtn = page.getByRole('button', { name: /Delete document/i })
+    this.colorThemeButton = page.getByRole('button', { name: /Open color theme settings/i })
+
+    // Color theme elements - keep data-testid for complex UI
     this.colorPalettePreview = page.locator('[data-testid="color-palette-preview"]')
     this.coreColorsSection = page.locator('[data-testid="core-colors-section"]')
     this.alertColorsSection = page.locator('[data-testid="alert-colors-section"]')
     this.oklchStringInput = page.locator('[data-testid="oklch-string-input"]')
     this.acceptColorChangeButton = page.locator('[data-testid="accept-color-change-button"]')
     this.renderedMarkdownArticle = page.locator('[data-testid="rendered-markdown-article"]')
+
+    // Feature toggles - keep data-testid as fallback
     this.featureToggleDocuments = page.locator('[data-testid="feature-documents-toggle"]')
     this.featureToggleEditor = page.locator('[data-testid="feature-editor-toggle"]')
     this.featureToggleMarkdownPreview = page.locator('[data-testid="feature-markdown-preview-toggle"]')

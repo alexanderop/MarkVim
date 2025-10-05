@@ -297,6 +297,21 @@ See **State Management & Module Communication Pattern** section below for full d
 * E2E: Playwright + Cucumber, BDD scenarios, Page Objects
 * Cover: editing, document management, theme switching
 
+### Test Selector Priority (Accessibility-First)
+
+**Always prefer accessibility-friendly selectors over `data-testid`:**
+
+1. **Role-based** (highest priority): `getByRole('button', { name: 'Create Document' })`
+2. **Label-based**: `getByLabel('Font Size')`
+3. **Text-based**: `getByText('Welcome to MarkVim')`
+4. **Placeholder**: `getByPlaceholder('Search...')`
+5. **Semantic HTML**: `.cm-content`, `nav`, `article`
+6. **Test IDs** (last resort): `[data-testid="editor-pane"]` - only for complex structural elements
+
+**Why**: Tests mirror real user interactions, improve accessibility, and are more resilient to refactoring.
+
+See `tests/docs/ACCESSIBILITY_SELECTOR_STRATEGY.md` for complete guidelines.
+
 ## State Management & Module Communication Pattern
 
 **CRITICAL: All modules expose public facades via `api.ts`. All state mutations happen through facade actions.**

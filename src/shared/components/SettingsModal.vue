@@ -86,6 +86,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     size="md"
     icon="lucide:settings"
     title="Settings (g s)"
+    aria-label="Open settings"
     data-testid="settings-button"
     square
     @click="() => { toggleSettings(true) }"
