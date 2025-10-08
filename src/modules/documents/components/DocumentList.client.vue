@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Document as DocType } from '~/modules/documents/api'
+import type { Document as DocType } from '@modules/documents'
 import { Icon, UButton } from '#components'
-import { useDocuments } from '~/modules/documents/api'
+import { useDocuments } from '@modules/documents'
 import { vFeature } from '~/shared/api/feature-flags'
 import DocumentItemClient from './DocumentItem.client.vue'
 

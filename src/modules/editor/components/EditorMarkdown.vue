@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { EditorSettings } from '~/modules/editor/api'
+import type { EditorSettings } from '@modules/editor'
 import EditorMarkdownClient from './EditorMarkdown.client.vue'
 import EditorMarkdownSkeleton from './EditorMarkdownSkeleton.vue'
 

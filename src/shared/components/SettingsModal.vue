@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { UButton, UCheckbox, UKbd, UModal, URadioGroup } from '#components'
+import { useEditorSettings } from '@modules/editor'
+import { useShortcuts } from '@modules/shortcuts'
 import { computed, ref } from 'vue'
-import { useEditorSettings } from '~/modules/editor/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
 import { type FeatureName, useFeatureFlags } from '~/shared/api/feature-flags'
 import BaseSwitch from './BaseSwitch.vue'
 

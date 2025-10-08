@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Document } from '~/shared/types/Document'
 import { Icon, UButton, UCard, UModal } from '#components'
+import { useDocumentShare } from '@modules/share'
 import { computed, ref, watch } from 'vue'
-import { useDocumentShare } from '~/modules/share/api'
 import { tryCatchAsync } from '~/shared/utils/result'
 
 const { document } = defineProps<{

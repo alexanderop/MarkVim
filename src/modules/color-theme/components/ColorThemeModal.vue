@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import type { ColorTheme } from '@modules/color-theme'
 import type { ColorDefinition } from '../utils/color-definitions'
-import type { ColorTheme } from '~/modules/color-theme/api'
 import { UButton, UCard, UModal } from '#components'
+import { useColorTheme } from '@modules/color-theme'
+import { useShortcuts } from '@modules/shortcuts'
 import { ref } from 'vue'
-import { useColorTheme } from '~/modules/color-theme/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
 import { alertColors, colorDefinitions, coreColors } from '../utils/color-definitions'
 import { copyToClipboard, downloadAsFile, showTemporaryButtonMessage } from '../utils/export-utils'
 import ColorThemeButton from './ColorThemeButton.vue'

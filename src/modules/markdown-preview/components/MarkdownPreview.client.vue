@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '#components'
+import { useMarkdown, useMermaid } from '@modules/markdown-preview'
 import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
-import { useMarkdown, useMermaid } from '~/modules/markdown-preview/api'
 import { useViewMode } from '~/shared/api/layout'
 import { useKeyboardScroll } from '~/shared/composables/useKeyboardScroll'
 

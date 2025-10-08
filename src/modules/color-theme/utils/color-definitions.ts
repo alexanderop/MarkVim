@@ -1,4 +1,4 @@
-import type { ColorTheme } from '~/modules/color-theme/api'
+import type { ColorTheme } from '@modules/color-theme'
 
 export interface ColorDefinition {
   key: keyof ColorTheme

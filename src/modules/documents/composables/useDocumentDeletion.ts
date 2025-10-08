@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
+import { getDocumentTitle, useDocuments } from '@modules/documents'
 import { ref } from 'vue'
-import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
 
 export function useDocumentDeletion(): {
   deleteModalOpen: Ref<boolean>

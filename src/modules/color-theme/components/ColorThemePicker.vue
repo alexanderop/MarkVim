@@ -26,9 +26,9 @@
  * - Use the warning indicator to know when you're pushing boundaries
  */
 
-import type { OklchColor } from '~/modules/color-theme/api'
+import type { OklchColor } from '@modules/color-theme'
+import { useColorThemeState } from '@modules/color-theme'
 import { computed, ref, watch } from 'vue'
-import { useColorThemeState } from '~/modules/color-theme/api'
 import { tryCatchAsync } from '~/shared/utils/result'
 import ColorThemeSliderChannel from './ColorThemeSliderChannel.vue'
 

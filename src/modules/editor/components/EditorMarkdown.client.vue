@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { EditorSettings } from '~/modules/editor/api'
+import type { EditorSettings } from '@modules/editor'
 import { Icon } from '#components'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
+import { useVimMode } from '@modules/editor'
 import { useMediaQuery } from '@vueuse/core'
-import { useVimMode } from '~/modules/editor/api'
 import EditorCodeMirror from './EditorCodeMirror.vue'
 
 const { content, settings } = defineProps<{

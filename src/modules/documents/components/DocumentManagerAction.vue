@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useDocuments } from '@modules/documents'
 import { ref } from 'vue'
 import { onAppEvent } from '@/shared/utils/eventBus'
-import { useDocuments } from '~/modules/documents/api'
 import DocumentModalDelete from './DocumentModalDelete.vue'
 
 const { deleteDocument } = useDocuments()

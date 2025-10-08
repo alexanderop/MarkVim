@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { ContextMenuItem } from '#ui/types'
-import type { Document as DocType } from '~/modules/documents/api'
+import type { Document as DocType } from '@modules/documents'
 import { Icon, UButton, UContextMenu } from '#components'
+import { getDocumentTitle, useDocuments } from '@modules/documents'
 import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
 
 interface Props {
   document: DocType

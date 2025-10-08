@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Document } from '~/shared/types/Document'
 import { UButton } from '#components'
+import { useDocumentShare } from '@modules/share'
 import { computed, ref } from 'vue'
-import { useDocumentShare } from '~/modules/share/api'
 import ShareDialog from './ShareDialog.vue'
 
 const { document, disabled } = defineProps<{
