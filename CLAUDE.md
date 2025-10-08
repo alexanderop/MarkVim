@@ -115,6 +115,50 @@ pnpm analyze:modules:json         # JSON output
 pnpm analyze:modules:mermaid      # Mermaid diagram
 ```
 
+### Boundary Enforcement (Three Layers)
+
+**MarkVim enforces module boundaries using a three-layer defense:**
+
+**1. TypeScript Path Aliases (Type Fences)**
+- Module facades mapped to ergonomic shortcuts: `@modules/documents`, `@modules/editor`, etc.
+- All aliases resolve directly to `api.ts` (e.g., `@modules/documents` → `src/modules/documents/api`)
+- Internal imports require verbose/obvious escapes (`~/modules/documents/store`)
+- IDE autocomplete guides developers to public APIs first
+
+**2. ESLint Rules (Developer Feedback)**
+- `no-restricted-imports`: Blocks deep imports to module internals (both absolute and `@modules` paths)
+- `import/no-internal-modules`: Catches remaining patterns including relative imports
+- Fast feedback in editor and pre-commit hooks
+
+**3. Dependency Cruiser (CI Enforcement)**
+- Runtime validation of all import rules
+- Blocks PRs that violate architectural boundaries
+- Comprehensive pattern matching for edge cases
+
+**Import Examples:**
+
+```typescript
+// ✅ Correct: Use path aliases to module facades
+import { useDocuments } from '@modules/documents'
+import { useColorTheme } from '@modules/color-theme'
+import { useEditor } from '@modules/editor'
+
+// ✅ Also correct: Full path to api.ts
+import { useDocuments } from '~/modules/documents/api'
+
+// ❌ Wrong: Direct imports to internals (blocked by all three layers)
+import { useDocumentsStore } from '~/modules/documents/store'
+import { useDocumentsStore } from '../documents/store'
+import DocumentList from '@modules/documents/components/DocumentList.vue'
+```
+
+**Why Three Layers:**
+- **Path aliases**: Make the right way the easy way (pit of success)
+- **ESLint**: Fast feedback during development
+- **Dependency Cruiser**: Comprehensive enforcement in CI (catches edge cases)
+
+Each layer catches different violations, creating a robust defense-in-depth.
+
 ---
 
 ## High-Level Architecture
@@ -369,23 +413,30 @@ export function useDocuments() {
 
 ### Usage Pattern (All Modules)
 
-**✅ Correct: Use facade from any module**
+**✅ Correct: Use facade from any module (preferred: path aliases)**
 
 ```typescript
 // Any component or composable (same module or different)
-import { useDocuments } from '~/modules/documents/api'
-import { useColorTheme } from '~/modules/color-theme/api'
-import { useFeatureFlags } from '~/shared/feature-flags/api'
+// Prefer @modules/* path aliases (shorter, enforced by TypeScript)
+import { useDocuments } from '@modules/documents'
+import { useColorTheme } from '@modules/color-theme'
+import { useEditor } from '@modules/editor'
 
 const { documents, activeDocument, createDocument, selectDocument, deleteDocument } = useDocuments()
 const { theme, updateColor, resetTheme } = useColorTheme()
-const { state: featureFlags, toggleFeature, resetFeatures } = useFeatureFlags()
 
 // Direct action calls
 createDocument()
 selectDocument('doc-id-123')
 updateColor('accent', { l: 0.6, c: 0.2, h: 240 })
-toggleFeature('vim-mode')
+```
+
+**✅ Also correct: Full path to api.ts**
+
+```typescript
+// Full paths work too, but are more verbose
+import { useDocuments } from '~/modules/documents/api'
+import { useColorTheme } from '~/modules/color-theme/api'
 ```
 
 **❌ Incorrect: Direct store access**

@@ -27,6 +27,8 @@
     "test:e2e:sharing": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/sharing.feature",
     "test:e2e:smoke": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/smoke.test.feature",
     "test:e2e:theme": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/theme.feature",
+    "test:e2e:all": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/*.feature",
+    "test:e2e:all:with-server": "concurrently --kill-others --success first \"nuxt dev\" \"wait-on http://localhost:3000 --timeout 30000 && pnpm run test:e2e:all\"",
     "test:affected": "bash scripts/run-affected-tests.sh",
     "test:affected:branch": "bash scripts/run-affected-tests.sh main",
     "test:module": "bash scripts/test-module.sh",
