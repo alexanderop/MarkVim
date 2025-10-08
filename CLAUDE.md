@@ -494,6 +494,64 @@ Events are **only** for notifications or UI coordination, not for state mutation
 - Cross-module data changes
 - Triggering store updates
 
+### Event Documentation Convention
+
+**CRITICAL: Every event must include comprehensive JSDoc with producer/consumer examples to prevent silent drift.**
+
+Each module defines its events in `events.ts`. All events must follow this documentation template:
+
+```typescript
+/**
+ * Brief description of what the event does.
+ *
+ * **Purpose:** What this event does and when it's triggered
+ * **Type:** Fire-and-forget UI signal (no state mutation)
+ *
+ * **Producer:**
+ * ```ts
+ * // ComponentName.vue - context where event is emitted
+ * import { emitAppEvent } from '@/shared/utils/eventBus'
+ *
+ * function handleAction(): void {
+ *   emitAppEvent('event:key', {
+ *     field: 'value'
+ *   })
+ * }
+ * ```
+ *
+ * **Consumer:**
+ * ```ts
+ * // HandlerComponent.vue - context where event is handled
+ * import { onAppEvent } from '@/shared/utils/eventBus'
+ *
+ * onAppEvent('event:key', (payload) => {
+ *   // Handle the event
+ *   console.log(payload.field)
+ * })
+ * ```
+ */
+'event:key': {
+  field: string
+}
+```
+
+**Required elements:**
+1. **Purpose** - Clear intent and trigger conditions
+2. **Type** - Always "Fire-and-forget UI signal" or "Logging/analytics" (never state transfer)
+3. **Producer** - Real code example showing where/how the event is emitted
+4. **Consumer** - Real code example showing where/how the event is handled
+
+**Benefits:**
+- **Prevents silent drift** - Clear ownership prevents events from becoming orphaned
+- **Onboarding** - New developers understand event flow immediately
+- **Refactoring safety** - Easy to find all producers/consumers with go-to-references
+- **Type safety + discoverability** - JSDoc appears in IDE tooltips
+
+**Example event definitions:**
+- `src/modules/documents/events.ts` - Document deletion modal trigger
+- `src/modules/shortcuts/events.ts` - Command palette open/close
+- `src/shared/events.ts` - Global data reset notification
+
 ### Benefits of Facade Pattern
 
 1. **Clear API boundaries** - Only intended functionality is exposed
