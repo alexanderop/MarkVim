@@ -3,8 +3,9 @@ import type { Document as DocType } from '@modules/documents'
 import type { Ref } from 'vue'
 import { UCommandPalette, UModal } from '#components'
 import { getDocumentTitle } from '@modules/documents'
-import { useCommandHistory, useShortcuts } from '@modules/shortcuts'
 import { computed, ref } from 'vue'
+import { useCommandHistory } from '../composables/useCommandHistory'
+import { useShortcuts } from '../composables/useShortcuts'
 
 const { documents = [] } = defineProps<{
   documents?: DocType[]

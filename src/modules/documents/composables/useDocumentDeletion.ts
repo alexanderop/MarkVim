@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
-import { getDocumentTitle, useDocuments } from '@modules/documents'
 import { ref } from 'vue'
+import { useDocumentsStore } from '../store'
+import { getDocumentTitle } from '../utils/document-title'
 
 export function useDocumentDeletion(): {
   deleteModalOpen: Ref<boolean>
@@ -9,7 +10,8 @@ export function useDocumentDeletion(): {
   confirmDeleteDocument: () => void
   cancelDeleteDocument: () => void
 } {
-  const { deleteDocument } = useDocuments()
+  const store = useDocumentsStore()
+  const deleteDocument = (id: string): void | string => store.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: id } })
 
   const deleteModalOpen = ref(false)
   const documentToDelete = ref<{ id: string, title: string } | null>(null)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { OklchColor } from '@modules/color-theme'
+import type { OklchColor } from '../store'
 import { USlider } from '#components'
 import { computed } from 'vue'
 

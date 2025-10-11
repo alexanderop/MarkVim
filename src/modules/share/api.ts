@@ -7,12 +7,4 @@
 
 // Export components that are used externally
 export { default as ShareButton } from './components/ShareButton.vue'
-
-export { default as ShareDialog } from './components/ShareDialog.vue'
-export { default as ShareDialogImport } from './components/ShareDialogImport.vue'
 export { default as ShareManager } from './components/ShareManager.vue'
-// Export composables that other modules might need
-export { useDocumentShare } from './composables/useDocumentShare'
-
-// Export types that might be used by other modules
-export type { ShareableDocument } from './composables/useDocumentShare'

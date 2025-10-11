@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Document } from '~/shared/types/Document'
 import { useDocuments } from '@modules/documents'
-import { useDocumentShare } from '@modules/share'
 import { onMounted, ref } from 'vue'
 import { useViewMode } from '~/shared/api/layout'
+import { useDocumentShare } from '../composables/useDocumentShare'
 import ShareDialogImport from './ShareDialogImport.vue'
 
 interface Emits {

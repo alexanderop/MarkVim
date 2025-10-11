@@ -1,4 +1,4 @@
-import type { ColorTheme } from '@modules/color-theme'
+import type { ColorTheme } from '../store'
 
 export interface ColorDefinition {
   key: keyof ColorTheme
