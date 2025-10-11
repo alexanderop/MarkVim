@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UKbd } from '#components'
-import { useVimMode } from '~/modules/editor/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
+import { useVimMode } from '@modules/editor'
+import { useShortcuts } from '@modules/shortcuts'
 
 const { lineCount, characterCount, showVimMode } = defineProps<{
   lineCount: number

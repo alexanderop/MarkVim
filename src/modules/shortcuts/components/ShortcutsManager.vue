@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { getDocumentTitle, useDocuments } from '@modules/documents'
+import { useEditorSettings } from '@modules/editor'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { emitAppEvent, onAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
-import { useEditorSettings } from '~/modules/editor/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
 import { useViewMode } from '~/shared/api/layout'
+import { useShortcuts } from '../composables/useShortcuts'
 import ShortcutsPaletteCommand from './ShortcutsPaletteCommand.vue'
 
 // Command palette state

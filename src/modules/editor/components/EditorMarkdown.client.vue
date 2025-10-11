@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { EditorSettings } from '~/modules/editor/api'
+import type { EditorSettings } from '../composables/useEditorSettings'
 import { Icon } from '#components'
 import { markdown as markdownLang } from '@codemirror/lang-markdown'
 import { useMediaQuery } from '@vueuse/core'
-import { useVimMode } from '~/modules/editor/api'
+import { useVimMode } from '../composables/useVimMode'
 import EditorCodeMirror from './EditorCodeMirror.vue'
 
 const { content, settings } = defineProps<{
@@ -25,7 +25,10 @@ function handleContentUpdate(value: string): void {
 </script>
 
 <template>
-  <div class="bg-surface-primary flex flex-col h-full w-full">
+  <section
+    class="bg-surface-primary flex flex-col h-full w-full"
+    aria-label="Markdown editor"
+  >
     <!-- Header -->
     <div class="px-3 md:px-6 border-b border-border bg-surface-primary flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-2 md:space-x-4">
@@ -38,6 +41,7 @@ function handleContentUpdate(value: string): void {
         <Icon
           name="lucide:edit-3"
           class="text-text-primary h-4 w-4"
+          aria-hidden="true"
         />
       </div>
       <div class="flex items-center space-x-3" />
@@ -64,7 +68,7 @@ function handleContentUpdate(value: string): void {
         @vim-mode-change="handleVimModeChange"
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>

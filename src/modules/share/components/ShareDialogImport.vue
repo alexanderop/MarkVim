@@ -3,8 +3,8 @@ import type { Ref } from 'vue'
 import type { Document } from '~/shared/types/Document'
 import { Icon, UButton, UModal } from '#components'
 import { computed, ref, watch } from 'vue'
-import { useDocumentShare } from '~/modules/share/api'
 import { tryCatchAsync } from '~/shared/utils/result'
+import { useDocumentShare } from '../composables/useDocumentShare'
 
 interface Emits {
   (e: 'import', document: Document): void

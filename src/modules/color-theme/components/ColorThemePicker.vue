@@ -26,10 +26,10 @@
  * - Use the warning indicator to know when you're pushing boundaries
  */
 
-import type { OklchColor } from '~/modules/color-theme/api'
+import type { OklchColor } from '../store'
 import { computed, ref, watch } from 'vue'
-import { useColorThemeState } from '~/modules/color-theme/api'
 import { tryCatchAsync } from '~/shared/utils/result'
+import { useColorThemeStore } from '../store'
 import ColorThemeSliderChannel from './ColorThemeSliderChannel.vue'
 
 const { label, description } = defineProps<{
@@ -38,9 +38,9 @@ const { label, description } = defineProps<{
 }>()
 const currentColor = defineModel<OklchColor>({ required: true })
 
-const { oklchToString } = useColorThemeState()
+const store = useColorThemeStore()
 
-const colorPreview = computed(() => oklchToString(currentColor.value))
+const colorPreview = computed(() => store.oklchToString(currentColor.value))
 
 function updateLightness(value: number): void {
   currentColor.value = { ...currentColor.value, l: value }

@@ -5,13 +5,11 @@
  * Other modules should import from this API file, not directly from internal files.
  */
 
-export { default as ShortcutsManager } from './components/ShortcutsManager.vue'
 // Export components that are used externally
-export { default as ShortcutsPaletteCommand } from './components/ShortcutsPaletteCommand.vue'
+export { default as ShortcutsManager } from './components/ShortcutsManager.vue'
 
-export { useCommandHistory } from './composables/useCommandHistory'
-// Export composables that other modules might need
+// Export composables that other modules need
 export { type Command, type ShortcutAction, useShortcuts } from './composables/useShortcuts'
 
-// Export events
+// Export types
 export type { ShortcutsEvents } from './events'

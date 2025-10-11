@@ -2,8 +2,8 @@
 import type { Document } from '~/shared/types/Document'
 import { Icon, UButton, UCard, UModal } from '#components'
 import { computed, ref, watch } from 'vue'
-import { useDocumentShare } from '~/modules/share/api'
 import { tryCatchAsync } from '~/shared/utils/result'
+import { useDocumentShare } from '../composables/useDocumentShare'
 
 const { document } = defineProps<{
   document: Document | null

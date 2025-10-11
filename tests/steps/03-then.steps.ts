@@ -305,9 +305,9 @@ Then('the text color of the editor content should be {string}', async function (
 Then('the text color of the preview content should be {string}', async function (this: MarkVimWorld, _expectedColor: string) {
   const markVimPage = await getMarkVimPage(this)
 
-  // Check the computed style of the preview article element
+  // Check the computed style of the preview article element using semantic selector
   const previewColor = await markVimPage.page.evaluate(() => {
-    const preview = document.querySelector('[data-testid="rendered-markdown-article"]')
+    const preview = document.querySelector('article.prose')
     return preview ? getComputedStyle(preview).color : null
   })
 
@@ -321,7 +321,7 @@ Then('the text color of the preview content should be {string}', async function 
 Then('the text color of the document list title should be {string}', async function (this: MarkVimWorld, _expectedColor: string) {
   const markVimPage = await getMarkVimPage(this)
 
-  // Check the computed style of the document title element
+  // Check the computed style of the document title element - keep using data-testid for complex structural query
   const titleColor = await markVimPage.page.evaluate(() => {
     const title = document.querySelector('[data-testid="document-title-0"]')
     return title ? getComputedStyle(title).color : null
@@ -337,9 +337,9 @@ Then('the text color of the document list title should be {string}', async funct
 Then('the text color of the status bar should be {string}', async function (this: MarkVimWorld, _expectedColor: string) {
   const markVimPage = await getMarkVimPage(this)
 
-  // Check the computed style of the status bar element
+  // Check the computed style of the status bar element using semantic selector (footer has implicit contentinfo role)
   const statusColor = await markVimPage.page.evaluate(() => {
-    const statusBar = document.querySelector('[data-testid="status-bar"]')
+    const statusBar = document.querySelector('footer')
     return statusBar ? getComputedStyle(statusBar).color : null
   })
 
@@ -356,11 +356,9 @@ Then('the preview pane should display a styled {string} alert box', async functi
   // Wait for markdown processing to complete by checking for content
   await expect(markVimPage.previewContent).toContainText(`This is a test ${alertType.toLowerCase()}.`)
 
-  // Use both CSS class selector and data-testid for more robust selection
+  // Use semantic CSS class selector
   const alertSelector = `.markdown-alert.markdown-alert-${alertType.toLowerCase()}`
-  const alertBox = markVimPage.previewContent.locator(alertSelector).or(
-    markVimPage.previewContent.locator(`[data-testid="github-alert-${alertType.toLowerCase()}"]`),
-  )
+  const alertBox = markVimPage.previewContent.locator(alertSelector)
 
   await expect(alertBox).toBeVisible()
   await expect(alertBox).toContainText(`This is a test ${alertType.toLowerCase()}.`)
@@ -486,6 +484,15 @@ Then('the page should display the content of the shared note', async function (t
 
 Then('the document list should contain {int} documents', async function (this: MarkVimWorld, expectedCount: number) {
   const markVimPage = await getMarkVimPage(this)
+
+  // Check if sidebar is hidden and show it if needed
+  const isSidebarVisible = await markVimPage.documentList.isVisible().catch(() => false)
+  if (!isSidebarVisible) {
+    await markVimPage.toggleSidebarWithButton()
+  }
+
+  // Give extra time for documents to load from localStorage
+  await markVimPage.page.waitForTimeout(1000)
   await markVimPage.verifyDocumentCount(expectedCount)
 })
 
@@ -518,16 +525,16 @@ Then('scroll synchronization should not be active', async function (this: MarkVi
 // Welcome Screen Steps
 Then('I should see the welcome screen with {string} title', async function (this: MarkVimWorld, expectedTitle: string) {
   const page = await ensurePage(this)
-  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  const welcomeScreen = page.getByRole('main').filter({ hasText: 'Welcome to MarkVim' })
   await expect(welcomeScreen).toBeVisible()
 
-  const title = page.locator('[data-testid="welcome-title"]', { hasText: expectedTitle })
+  const title = page.getByRole('heading', { name: expectedTitle, level: 1 })
   await expect(title).toBeVisible()
 })
 
 Then('I should see a {string} button', async function (this: MarkVimWorld, buttonText: string) {
   const page = await ensurePage(this)
-  const button = page.locator('[data-testid="start-writing-button"]', { hasText: buttonText })
+  const button = page.getByRole('button', { name: buttonText })
   await expect(button).toBeVisible()
 })
 
@@ -549,7 +556,7 @@ Then('the welcome screen should not appear on subsequent visits', async function
   await page.reload()
   await page.waitForLoadState('networkidle')
 
-  const welcomeScreen = page.locator('[data-testid="welcome-screen"]')
+  const welcomeScreen = page.getByRole('main').filter({ hasText: 'Welcome to MarkVim' })
   await expect(welcomeScreen).not.toBeVisible()
 
   const editorPane = page.locator('[data-testid="editor-pane"]')

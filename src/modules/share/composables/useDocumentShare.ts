@@ -1,10 +1,10 @@
 import type { Ref } from 'vue'
 import type { Document } from '~/shared/types/Document'
+import { getDocumentTitle } from '@modules/documents'
 import { useClipboard } from '@vueuse/core'
 import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'
 import { z } from 'zod'
-import { getDocumentTitle } from '~/modules/documents/api'
 import { Err, Ok, tryCatch, tryCatchAsync } from '~/shared/utils/result'
 
 export interface ShareableDocument {

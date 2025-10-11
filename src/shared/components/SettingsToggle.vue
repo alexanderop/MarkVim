@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UButton, UCard } from '#components'
-import { useEditorSettings } from '~/modules/editor/api'
+import { useEditorSettings } from '@modules/editor'
 
 const { settings, toggleVimMode } = useEditorSettings()
 </script>

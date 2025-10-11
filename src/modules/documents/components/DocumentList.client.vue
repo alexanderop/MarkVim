@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Document as DocType } from '~/modules/documents/api'
+import type { Document as DocType } from '~/shared/types/Document'
 import { Icon, UButton } from '#components'
-import { useDocuments } from '~/modules/documents/api'
 import { vFeature } from '~/shared/api/feature-flags'
+import { useDocumentsStore } from '../store'
 import DocumentItemClient from './DocumentItem.client.vue'
 
 const { documents, activeDocumentId } = defineProps<{
@@ -10,7 +10,8 @@ const { documents, activeDocumentId } = defineProps<{
   activeDocumentId: string
 }>()
 
-const { createDocument } = useDocuments()
+const store = useDocumentsStore()
+const createDocument = (): void | string => store.dispatch({ type: 'CREATE_DOCUMENT', payload: undefined })
 
 function handleCreateDocument(): void {
   createDocument()
@@ -37,6 +38,7 @@ function handleCreateDocument(): void {
 
       <UButton
         data-testid="create-document-btn"
+        aria-label="Create new document"
         color="primary"
         variant="solid"
         size="sm"

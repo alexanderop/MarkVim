@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon, UButton, UKbd, UModal } from '#components'
+import { useShortcuts } from '@modules/shortcuts'
 import { computed, onMounted, provide, ref } from 'vue'
-import { useShortcuts } from '~/modules/shortcuts/api'
 
 const { shortcutsByCategory, formatKeys, registerShortcut, getDefaultIconForCategory } = useShortcuts()
 

@@ -9,7 +9,6 @@ import noUnusedModuleExports from './eslint-rules/no-unused-module-exports.js'
 // Generate comprehensive module boundary restrictions
 const modules = [
   'color-theme',
-  'domain',
   'documents',
   'editor',
   'layout',
@@ -18,18 +17,22 @@ const modules = [
   'shortcuts',
 ]
 
-// Create simple pattern restrictions for module boundaries
+// Create pattern restrictions for module boundaries
+// Blocks both absolute (~/modules/...) and relative (../) imports to internals
 const restrictedPatterns = []
 modules.forEach((module) => {
-  // Block all deep imports to this module except api.ts
+  // Block all deep imports to this module except api.ts (absolute paths)
   restrictedPatterns.push({
     group: [`~/modules/${module}/**`, `!~/modules/${module}/api`],
-    message: `Direct imports to module internals are not allowed. Use the public API instead: import from '~/modules/${module}/api'`,
+    message: `Direct imports to module internals are not allowed. Use the public API instead: import from '@modules/${module}' or '~/modules/${module}/api'`,
+  })
+
+  // Block @modules shorthand to internals (except api)
+  restrictedPatterns.push({
+    group: [`@modules/${module}/**`, `!@modules/${module}`],
+    message: `Direct imports to module internals are not allowed. Use the public API instead: import from '@modules/${module}'`,
   })
 })
-
-// Note: This blocks absolute path imports (~/modules/...) but not relative imports ('../store')
-// Within a module, prefer using the module's own API for consistency
 
 export default withNuxt(
   antfu({
@@ -99,6 +102,9 @@ export default withNuxt(
         },
       ],
       'import/no-duplicates': 'error',
+      // Note: We rely on no-restricted-imports (above) + dependency-cruiser (CI)
+      // for comprehensive module boundary enforcement. import/no-internal-modules
+      // has limitations with glob pattern matching that make it unsuitable here.
     },
   },
   // Unused exports detection

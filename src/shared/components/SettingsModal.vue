@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { UButton, UCheckbox, UKbd, UModal, URadioGroup } from '#components'
+import { useEditorSettings } from '@modules/editor'
+import { useShortcuts } from '@modules/shortcuts'
 import { computed, ref } from 'vue'
-import { useEditorSettings } from '~/modules/editor/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
 import { type FeatureName, useFeatureFlags } from '~/shared/api/feature-flags'
 import BaseSwitch from './BaseSwitch.vue'
 
@@ -86,6 +86,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
     size="md"
     icon="lucide:settings"
     title="Settings (g s)"
+    aria-label="Open settings"
     data-testid="settings-button"
     square
     @click="() => { toggleSettings(true) }"
@@ -159,12 +160,14 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                     variant="ghost"
                     size="sm"
                     icon="heroicons:minus"
+                    aria-label="Decrease font size"
                     square
                     data-testid="font-size-decrease"
                     @click="updateFontSize(settings.fontSize - 1)"
                   />
                   <span
                     class="text-sm text-text-primary font-mono text-center min-w-[3rem]"
+                    aria-label="Current font size"
                     data-testid="font-size-display"
                   >{{ settings.fontSize }}px</span>
                   <UButton
@@ -172,6 +175,7 @@ const { showClearDataModal, openClearDataModal, closeClearDataModal, confirmClea
                     variant="ghost"
                     size="sm"
                     icon="heroicons:plus"
+                    aria-label="Increase font size"
                     square
                     data-testid="font-size-increase"
                     @click="updateFontSize(settings.fontSize + 1)"

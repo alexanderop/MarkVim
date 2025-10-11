@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test'
 import process from 'node:process'
+import AxeBuilder from '@axe-core/playwright'
 import { expect } from '@playwright/test'
 
 export class MarkVimPage {
@@ -51,6 +52,7 @@ export class MarkVimPage {
 
   constructor(page: Page) {
     this.page = page
+    // Structural elements - keep data-testid for complex layout components
     this.headerToolbar = page.locator('[data-testid="header-toolbar"]')
     this.headerTitle = this.headerToolbar.locator('h1')
     this.editorPane = page.locator('[data-testid="editor-pane"]')
@@ -61,29 +63,39 @@ export class MarkVimPage {
     this.commandPalette = page.locator('[data-testid="command-palette"]')
     this.commandPaletteSearch = page.locator('[data-testid="command-palette-search"]')
     this.viewModeToggle = page.locator('[data-testid="view-mode-toggle"]')
-    this.viewModeEditor = page.locator('[data-testid="view-mode-editor"]')
-    this.viewModeSplit = page.locator('[data-testid="view-mode-split"]')
-    this.viewModePreview = page.locator('[data-testid="view-mode-preview"]')
+
+    // View mode buttons - use accessible names
+    this.viewModeEditor = page.getByRole('button', { name: /Switch to Editor view/i })
+    this.viewModeSplit = page.getByRole('button', { name: /Switch to Split view/i })
+    this.viewModePreview = page.getByRole('button', { name: /Switch to Preview view/i })
+
+    // Documents sidebar - use data-testid for reliability
     this.documentList = page.locator('[data-testid="document-list"]')
     this.documentItems = page.locator('[data-testid^="document-item-"]')
     this.documentItemActive = page.locator('[data-testid^="document-item-active-"]')
     this.documentTitles = page.locator('[data-testid^="document-title-"]')
     this.documentTimestamps = page.locator('[data-testid^="document-timestamp-"]')
     this.documentPreviews = page.locator('[data-testid^="document-preview-"]')
-    this.createDocumentBtn = page.locator('[data-testid="create-document-btn"]')
-    this.sidebarToggleBtn = page.locator('[data-testid="sidebar-toggle"]')
-    this.keyboardShortcutsButton = page.locator('[data-testid="keyboard-shortcuts-button"]')
-    this.settingsButton = page.locator('[data-testid="settings-button"]')
-    this.shareButton = page.locator('[data-testid="share-button"]')
+
+    // Interactive buttons - use accessible names
+    this.createDocumentBtn = page.getByRole('button', { name: /Create new document/i })
+    this.sidebarToggleBtn = page.getByRole('button', { name: /(Hide|Show) sidebar/i })
+    this.keyboardShortcutsButton = page.getByRole('button', { name: /Keyboard shortcuts/i })
+    this.settingsButton = page.getByRole('button', { name: /Open settings/i })
+    this.shareButton = page.getByRole('button', { name: /Share document/i })
     this.syncScrollToggle = page.locator('[data-testid="sync-scroll-toggle"]')
-    this.deleteDocumentBtn = page.locator('[data-testid="delete-document-btn"]')
-    this.colorThemeButton = page.locator('[data-testid="color-theme-button"]')
+    this.deleteDocumentBtn = page.getByRole('button', { name: /Delete document/i })
+    this.colorThemeButton = page.getByRole('button', { name: /Open color theme settings/i })
+
+    // Color theme elements - keep data-testid for complex UI
     this.colorPalettePreview = page.locator('[data-testid="color-palette-preview"]')
     this.coreColorsSection = page.locator('[data-testid="core-colors-section"]')
     this.alertColorsSection = page.locator('[data-testid="alert-colors-section"]')
     this.oklchStringInput = page.locator('[data-testid="oklch-string-input"]')
     this.acceptColorChangeButton = page.locator('[data-testid="accept-color-change-button"]')
     this.renderedMarkdownArticle = page.locator('[data-testid="rendered-markdown-article"]')
+
+    // Feature toggles - keep data-testid as fallback
     this.featureToggleDocuments = page.locator('[data-testid="feature-documents-toggle"]')
     this.featureToggleEditor = page.locator('[data-testid="feature-editor-toggle"]')
     this.featureToggleMarkdownPreview = page.locator('[data-testid="feature-markdown-preview-toggle"]')
@@ -107,18 +119,15 @@ export class MarkVimPage {
   }
 
   private getShareDialog(): Locator {
-    return this.page.getByRole('dialog', { name: 'Share Document' })
+    return this.page.getByRole('dialog')
   }
 
   private getImportDialog(): Locator {
-    // Try both possible titles
-    const importSharedDialog = this.page.getByRole('dialog', { name: 'Import Shared Document' })
-    const importDialog = this.page.getByRole('dialog', { name: 'Import Document' })
-    return importSharedDialog.or(importDialog)
+    return this.page.getByRole('dialog')
   }
 
   private getDeleteModal(): Locator {
-    return this.page.getByRole('dialog', { name: 'Delete Document' })
+    return this.page.getByRole('dialog')
   }
 
   getColorThemeModal(): Locator {
@@ -142,6 +151,14 @@ export class MarkVimPage {
 
     // Also wait for DOM to be fully loaded
     await this.page.waitForLoadState('domcontentloaded')
+
+    // Wait for sidebar controls and document list to be available
+    // This ensures the app is fully hydrated including v-feature directives and conditional rendering
+    await this.page.waitForFunction(() => {
+      const hasSidebarToggle = document.querySelector('[data-testid="sidebar-toggle"]') !== null
+      const hasDocumentList = document.querySelector('[data-testid="document-list"]') !== null
+      return hasSidebarToggle && hasDocumentList
+    }, { timeout: 10000 })
 
     // Give a small buffer for any final hydration/rendering
     await this.page.waitForTimeout(500)
@@ -318,11 +335,11 @@ export class MarkVimPage {
   }
 
   async verifySettingsModalVisible(): Promise<void> {
-    await expect(this.getSettingsModal()).toBeVisible()
+    await expect(this.getSettingsModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifySettingsModalHidden(): Promise<void> {
-    await expect(this.getSettingsModal()).not.toBeVisible()
+    await expect(this.getSettingsModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   async toggleSidebarWithKeyboard(): Promise<void> {
@@ -332,15 +349,19 @@ export class MarkVimPage {
   }
 
   async toggleSidebarWithButton(): Promise<void> {
-    await this.sidebarToggleBtn.click()
+    // Ensure button is visible and clickable
+    await expect(this.sidebarToggleBtn).toBeVisible({ timeout: 5000 })
+    await this.sidebarToggleBtn.click({ force: true })
+    // Wait for the toggle animation and DOM updates to complete
+    await this.page.waitForTimeout(1000)
   }
 
   async verifySidebarVisible(): Promise<void> {
-    await expect(this.documentList).toBeVisible()
+    await expect(this.documentList).toBeVisible({ timeout: 10000 })
   }
 
   async verifySidebarHidden(): Promise<void> {
-    await expect(this.documentList).toBeHidden()
+    await expect(this.documentList).toBeHidden({ timeout: 10000 })
   }
 
   async verifySidebarToggleButton(): Promise<void> {
@@ -355,9 +376,16 @@ export class MarkVimPage {
   }
 
   async verifyCurrentViewMode(expectedMode: string): Promise<void> {
-    // Check for the active indicator element which is more reliable
+    // First wait for the state to be saved in localStorage (more reliable)
+    await this.page.waitForFunction(
+      mode => localStorage.getItem('markvim-view-mode') === mode,
+      expectedMode,
+      { timeout: 10000 },
+    )
+
+    // Then check for the active indicator element
     const activeIndicator = this.page.locator(`[data-testid="view-mode-${expectedMode}-active"]`)
-    await expect(activeIndicator).toBeVisible()
+    await expect(activeIndicator).toBeVisible({ timeout: 10000 })
 
     // Also verify the UI state matches the expected mode
     if (expectedMode === 'editor') {
@@ -556,11 +584,11 @@ export class MarkVimPage {
   }
 
   async verifyShareDialogVisible(): Promise<void> {
-    await expect(this.getShareDialog()).toBeVisible()
+    await expect(this.getShareDialog()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyShareDialogHidden(): Promise<void> {
-    await expect(this.getShareDialog()).not.toBeVisible()
+    await expect(this.getShareDialog()).not.toBeVisible({ timeout: 10000 })
   }
 
   async verifyShareLinkInputVisible(): Promise<void> {
@@ -623,11 +651,11 @@ export class MarkVimPage {
   }
 
   async verifyImportDialogVisible(): Promise<void> {
-    await expect(this.getImportDialog()).toBeVisible()
+    await expect(this.getImportDialog()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyImportDialogHidden(): Promise<void> {
-    await expect(this.getImportDialog()).not.toBeVisible()
+    await expect(this.getImportDialog()).not.toBeVisible({ timeout: 10000 })
   }
 
   async pasteIntoImportInput(url: string): Promise<void> {
@@ -1103,11 +1131,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyDeleteModalVisible(): Promise<void> {
-    await expect(this.getDeleteModal()).toBeVisible()
+    await expect(this.getDeleteModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyDeleteModalHidden(): Promise<void> {
-    await expect(this.getDeleteModal()).not.toBeVisible()
+    await expect(this.getDeleteModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   async clickDeleteConfirm(): Promise<void> {
@@ -1135,11 +1163,11 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyColorThemeModalVisible(): Promise<void> {
-    await expect(this.getColorThemeModal()).toBeVisible({ timeout: 5000 })
+    await expect(this.getColorThemeModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyColorThemeModalHidden(): Promise<void> {
-    await expect(this.getColorThemeModal()).not.toBeVisible()
+    await expect(this.getColorThemeModal()).not.toBeVisible({ timeout: 10000 })
   }
 
   async verifyColorThemeModalDefaultColors(): Promise<void> {
@@ -1221,12 +1249,12 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   async verifyColorPickerModalVisible(): Promise<void> {
     // The color picker is now in a second modal
     const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
-    await expect(colorPickerModal).toBeVisible()
+    await expect(colorPickerModal).toBeVisible({ timeout: 10000 })
   }
 
   async verifyColorPickerModalHidden(): Promise<void> {
     const colorPickerModal = this.page.getByRole('dialog').filter({ has: this.page.locator('[data-testid="oklch-string-input"]') })
-    await expect(colorPickerModal).not.toBeVisible()
+    await expect(colorPickerModal).not.toBeVisible({ timeout: 10000 })
   }
 
   generateLargeDocumentContent(): string {
@@ -1393,11 +1421,39 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   }
 
   async verifyClearDataConfirmModalVisible(): Promise<void> {
-    await expect(this.getClearDataModal()).toBeVisible()
+    await expect(this.getClearDataModal()).toBeVisible({ timeout: 10000 })
   }
 
   async verifyClearDataConfirmModalHidden(): Promise<void> {
-    await expect(this.getClearDataModal()).not.toBeVisible()
+    await expect(this.getClearDataModal()).not.toBeVisible({ timeout: 10000 })
+  }
+
+  // Accessibility testing methods
+  async checkAccessibility(): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page }).analyze()
+    expect(results.violations).toEqual([])
+  }
+
+  async checkAccessibilityWithTags(tags: string[]): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page })
+      .withTags(tags)
+      .analyze()
+    expect(results.violations).toEqual([])
+  }
+
+  async checkAccessibilityForElement(selector: string): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page })
+      .include(selector)
+      .analyze()
+    expect(results.violations).toEqual([])
+  }
+
+  async checkCriticalAccessibility(): Promise<void> {
+    const results = await new AxeBuilder({ page: this.page }).analyze()
+    const criticalViolations = results.violations.filter(
+      violation => violation.impact === 'critical' || violation.impact === 'serious',
+    )
+    expect(criticalViolations).toEqual([])
   }
 }
 

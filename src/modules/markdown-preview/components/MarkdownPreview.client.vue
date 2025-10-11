@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Icon } from '#components'
 import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
-import { useMarkdown, useMermaid } from '~/modules/markdown-preview/api'
 import { useViewMode } from '~/shared/api/layout'
 import { useKeyboardScroll } from '~/shared/composables/useKeyboardScroll'
+import { useMarkdown } from '../composables/useMarkdown'
+import { useMermaid } from '../composables/useMermaid'
 
 const { content } = defineProps<{
   content: string
@@ -60,12 +61,16 @@ watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
 </script>
 
 <template>
-  <div class="bg-[var(--background)] flex flex-col h-full w-full">
+  <section
+    class="bg-[var(--background)] flex flex-col h-full w-full"
+    aria-label="Markdown preview"
+  >
     <div class="px-6 border-b border-[var(--border)] bg-[var(--background)] flex flex-shrink-0 h-10 items-center justify-between">
       <div class="flex items-center space-x-4">
         <Icon
           name="lucide:eye"
           class="text-[var(--foreground)] h-4 w-4"
+          aria-hidden="true"
         />
         <span class="text-xs text-[var(--foreground)] opacity-70">Use ↑↓ or j/k to scroll</span>
       </div>
@@ -87,7 +92,7 @@ watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
         />
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>

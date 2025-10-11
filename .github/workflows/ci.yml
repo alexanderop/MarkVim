@@ -80,6 +80,7 @@ jobs:
           - sharing
           - scroll-sync
           - document-persistence
+          - accessibility
     steps:
       - uses: actions/checkout@v4
       - name: Setup pnpm and cache

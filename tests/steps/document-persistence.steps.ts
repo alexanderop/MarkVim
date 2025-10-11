@@ -15,11 +15,12 @@ When('I create a new document with content {string}', async function (this: Mark
 When('I select the first document {string}', async function (this: MarkVimWorld, documentTitle: string) {
   const markVimPage = getMarkVimPage(this)
 
-  // Wait for client-only DocumentList to load
-  await markVimPage.page.waitForSelector('[data-testid="document-list"]', { timeout: 10000 })
+  // Wait for client-only DocumentList to load using semantic selector
+  const documentList = markVimPage.page.getByRole('complementary', { name: 'Documents' })
+  await documentList.waitFor({ state: 'visible', timeout: 10000 })
 
-  // Find the document with the given title - use partial text match to handle truncation
-  const documentTitleElement = markVimPage.documentList.locator(`[data-testid^="document-title-"]`).filter({ hasText: documentTitle })
+  // Find the document with the given title - use data-testid for complex structural element
+  const documentTitleElement = documentList.locator(`[data-testid^="document-title-"]`).filter({ hasText: documentTitle })
   await documentTitleElement.waitFor({ timeout: 10000 })
 
   // Click the document item (the parent container)

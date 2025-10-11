@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { ContextMenuItem } from '#ui/types'
-import type { Document as DocType } from '~/modules/documents/api'
+import type { Document as DocType } from '~/shared/types/Document'
 import { Icon, UButton, UContextMenu } from '#components'
 import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle, useDocuments } from '~/modules/documents/api'
+import { useDocumentsStore } from '../store'
+import { getDocumentTitle } from '../utils/document-title'
 
 interface Props {
   document: DocType
@@ -14,7 +15,8 @@ interface Props {
 
 const { document, isActive, index } = defineProps<Props>()
 
-const { selectDocument } = useDocuments()
+const store = useDocumentsStore()
+const selectDocument = (id: string): void | string => store.dispatch({ type: 'SELECT_DOCUMENT', payload: { documentId: id } })
 
 // Time conversion constants
 const MILLISECONDS_IN_SECOND = 1000

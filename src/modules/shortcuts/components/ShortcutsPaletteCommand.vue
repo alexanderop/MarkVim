@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { Document as DocType } from '@modules/documents'
 import type { Ref } from 'vue'
-import type { Document as DocType } from '~/modules/documents/api'
 import { UCommandPalette, UModal } from '#components'
+import { getDocumentTitle } from '@modules/documents'
 import { computed, ref } from 'vue'
-import { getDocumentTitle } from '~/modules/documents/api'
-import { useCommandHistory, useShortcuts } from '~/modules/shortcuts/api'
+import { useCommandHistory } from '../composables/useCommandHistory'
+import { useShortcuts } from '../composables/useShortcuts'
 
 const { documents = [] } = defineProps<{
   documents?: DocType[]

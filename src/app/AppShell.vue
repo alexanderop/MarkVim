@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { UButton } from '#components'
+import { ColorThemeModal, useColorTheme } from '@modules/color-theme'
+import { DocumentList, DocumentManagerAction, useDocuments } from '@modules/documents'
+import { EditorMarkdown, useEditorSettings } from '@modules/editor'
+import { MarkdownPreview } from '@modules/markdown-preview'
+import { ShareManager } from '@modules/share'
+import { ShortcutsManager } from '@modules/shortcuts'
 import { computed } from 'vue'
-import { ColorThemeModal, useColorTheme } from '~/modules/color-theme/api'
-import { DocumentList, DocumentManagerAction, useDocuments } from '~/modules/documents/api'
-import { EditorMarkdown, useEditorSettings } from '~/modules/editor/api'
-import { MarkdownPreview } from '~/modules/markdown-preview/api'
-import { ShareManager } from '~/modules/share/api'
-import { ShortcutsManager } from '~/modules/shortcuts/api'
 import { LayoutHeader, LayoutStatusBar, useResizablePanes, useSyncedScroll, useViewMode } from '~/shared/api/layout'
 import ResizableSplitter from '~/shared/components/ResizableSplitter.vue'
 
@@ -64,7 +64,7 @@ function handleContentUpdate(value: string): void {
         @click="isSidebarVisible = false"
       />
 
-      <div class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
+      <main class="bg-surface-primary/30 flex flex-1 flex-col overflow-hidden">
         <div
           class="flex flex-1 flex-col relative overflow-hidden md:flex-row"
           :class="[
@@ -132,7 +132,7 @@ function handleContentUpdate(value: string): void {
             class="bg-black/5 pointer-events-none transition-opacity duration-200 inset-0 fixed z-10"
           />
         </div>
-      </div>
+      </main>
     </div>
 
     <LayoutStatusBar
