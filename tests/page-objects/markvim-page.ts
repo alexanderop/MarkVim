@@ -131,7 +131,7 @@ export class MarkVimPage {
   }
 
   getColorThemeModal(): Locator {
-    return this.page.getByRole('dialog')
+    return this.page.getByRole('dialog', { name: 'Color Theme' })
   }
 
   async navigate(): Promise<void> {

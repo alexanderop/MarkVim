@@ -646,6 +646,4 @@ import { UButton, UCard, UInput, UModal } from '#components'
 
 **Why**: Users can customize theme colors; hardcoding breaks this and causes inconsistency.
 
----
 
-Prefer modifying existing modules over creating new files. Follow established patterns for consistency.
