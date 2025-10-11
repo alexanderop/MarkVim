@@ -152,10 +152,12 @@ export class MarkVimPage {
     // Also wait for DOM to be fully loaded
     await this.page.waitForLoadState('domcontentloaded')
 
-    // Wait for document list to be available (sidebar may be hidden/visible)
-    // This ensures the app is fully hydrated including v-feature directives
+    // Wait for sidebar controls and document list to be available
+    // This ensures the app is fully hydrated including v-feature directives and conditional rendering
     await this.page.waitForFunction(() => {
-      return document.querySelector('[data-testid="sidebar-toggle"]') !== null
+      const hasSidebarToggle = document.querySelector('[data-testid="sidebar-toggle"]') !== null
+      const hasDocumentList = document.querySelector('[data-testid="document-list"]') !== null
+      return hasSidebarToggle && hasDocumentList
     }, { timeout: 10000 })
 
     // Give a small buffer for any final hydration/rendering
