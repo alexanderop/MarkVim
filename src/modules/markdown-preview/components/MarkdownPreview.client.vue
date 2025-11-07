@@ -78,7 +78,7 @@ watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
 
     <div
       ref="scrollContainer"
-      class="bg-[var(--background)] flex-1 min-h-0 overflow-auto focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-opacity-20 focus:ring-inset transition-all"
+      class="bg-[oklch(15%_0.002_0)] flex-1 min-h-0 overflow-auto focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-opacity-20 focus:ring-inset transition-all"
       tabindex="0"
     >
       <div
