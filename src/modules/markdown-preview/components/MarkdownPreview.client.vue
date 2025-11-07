@@ -83,7 +83,7 @@ watch(() => renderedMarkdown.value, () => nextTick(renderDiagrams))
     >
       <div
         ref="root"
-        class="mx-auto px-12 py-12 max-w-none"
+        class="mx-auto px-16 py-16 md:px-12 md:py-12 sm:px-6 sm:py-8 max-w-4xl"
       >
         <article
           class="prose-lg max-w-none prose"
