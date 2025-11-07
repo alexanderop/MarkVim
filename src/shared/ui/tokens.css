@@ -303,6 +303,16 @@ code, pre, kbd, samp {
   overflow-x: auto;
 }
 
+/* Inline code (exclude Shiki code blocks) */
+.prose code:not(.shiki code) {
+  background: oklch(20% 0.002 0);
+  padding: 2px 6px;
+  border: 1px solid oklch(25% 0.003 20);
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--foreground);
+}
+
 .prose .mermaid {
   display: flex;
   justify-content: center;
