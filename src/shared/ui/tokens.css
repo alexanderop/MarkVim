@@ -227,6 +227,73 @@ code, pre, kbd, samp {
   margin-top: 0;
 }
 
+/* ──────────────────────────
+   Prose Element Spacing
+   ──────────────────────────*/
+
+/* Paragraphs - breathing room between blocks */
+.prose p {
+  margin-bottom: 1em;
+}
+
+/* Lists - proper spacing and nesting */
+.prose ul,
+.prose ol {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-bottom: 8px;
+}
+
+/* Nested lists */
+.prose ul ul,
+.prose ol ol,
+.prose ul ol,
+.prose ol ul {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* Horizontal rules - clear visual breaks */
+.prose hr {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  border-color: var(--border);
+  opacity: 0.5;
+}
+
+/* Tables - generous spacing */
+.prose table {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.prose th,
+.prose td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+}
+
+.prose th {
+  background-color: var(--muted);
+  font-weight: 500;
+}
+
+/* Links - maintain accent color */
+.prose a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
 .prose .shiki {
   border-radius: 0.5rem;
   overflow-x: auto;
