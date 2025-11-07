@@ -313,6 +313,25 @@ code, pre, kbd, samp {
   color: var(--foreground);
 }
 
+/* Blockquotes - Linear-inspired clean treatment */
+.prose blockquote {
+  border-left: 4px solid var(--accent);
+  border-left-color: color-mix(in oklch, var(--accent) 40%, transparent);
+  background: oklch(15% 0.002 0);
+  padding: 16px 20px;
+  margin: 24px 0;
+  font-style: normal;
+  color: var(--foreground);
+}
+
+.prose blockquote p {
+  margin-bottom: 0.5em;
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
 .prose .mermaid {
   display: flex;
   justify-content: center;
