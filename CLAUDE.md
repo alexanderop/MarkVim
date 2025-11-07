@@ -205,6 +205,16 @@ Each module contains:
 * share      – Import/export
 * shortcuts  – Shortcuts + command palette
 
+**Linear-Inspired Preview Styling**
+
+The markdown preview uses Linear's generous spacing philosophy:
+* 8px rhythm system: All spacing uses 8, 16, 24, 32, 48, 64px
+* Typography hierarchy: H1 (2.5em) → H6 (1.125em) with font weight variation
+* Surface elevation: Preview (15%), code blocks (18%), inline code (20%)
+* Generous line-height: 1.7 for body text ensures comfortable reading
+* Responsive padding: Desktop (16), Tablet (12), Mobile (6/8) in Tailwind units
+* All styles: `src/shared/ui/tokens.css` (lines 164+)
+
 **Key architectural choices**
 
 1. Client-only rendering where needed (`<ClientOnly>`)
