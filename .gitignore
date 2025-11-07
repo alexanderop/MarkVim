@@ -32,3 +32,6 @@ reports/
 
 # Module independence baseline (generated)
 .baseline-modules.json
+
+# Git worktrees
+.worktrees/
