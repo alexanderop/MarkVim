@@ -63,7 +63,7 @@ export function useViewMode(): {
   })
 
   // Watch for changes and save to localStorage
-  watch(viewMode, saveToLocalStorage, { immediate: false })
+  watch(viewMode, saveToLocalStorage, { immediate: true })
 
   const isPreviewVisible = computed(() => viewMode.value === 'split' || viewMode.value === 'preview')
   const isSplitView = computed(() => viewMode.value === 'split')
