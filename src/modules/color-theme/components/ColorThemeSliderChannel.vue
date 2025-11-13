@@ -67,11 +67,8 @@ const trackGradient = computed(() => {
     return `linear-gradient(to right, oklch(${l} 0 ${h}), oklch(${l} 0.4 ${h}))`
   }
 
-  if (channel === 'a') {
-    return `linear-gradient(to right, oklch(${l} ${c} ${h} / 0), oklch(${l} ${c} ${h} / 1))`
-  }
-
-  return 'linear-gradient(to right, #000, #fff)'
+  // channel === 'a'
+  return `linear-gradient(to right, oklch(${l} ${c} ${h} / 0), oklch(${l} ${c} ${h} / 1))`
 })
 
 function handleInputChange(event: Event): void {

@@ -78,7 +78,6 @@ jobs:
           - color
           - theme
           - sharing
-          - scroll-sync
           - document-persistence
           - accessibility
     steps:

@@ -22,7 +22,7 @@ export function handleCreateDocument(
   const now = Date.now()
   const newDoc: Document = {
     id: crypto.randomUUID(),
-    content: payload?.content || '# New Note\n\nStart writing...',
+    content: payload?.content ?? '# New Note\n\nStart writing...',
     createdAt: now,
     updatedAt: now,
   }
@@ -81,7 +81,7 @@ export function handleDeleteDocument(
         activeDocumentId: newActiveId,
       }
     }
-    newActiveId = remainingDocs[0]?.id || ''
+    newActiveId = remainingDocs[0]?.id ?? ''
   }
 
   return {

@@ -11,7 +11,7 @@ export const vFeature = {
 
     // Initial check
     const updateVisibility = (): void => {
-      const isEnabled = state.value.flags[featureName] ?? true
+      const isEnabled = state.value.flags[featureName]
       if (isEnabled) {
         el.style.removeProperty('display')
         return
@@ -37,7 +37,7 @@ export const vFeature = {
     const store = useFeatureFlagsStore()
     const { state } = storeToRefs(store)
     const featureName = binding.value
-    const isEnabled = state.value.flags[featureName] ?? true
+    const isEnabled = state.value.flags[featureName]
 
     if (isEnabled) {
       el.style.removeProperty('display')

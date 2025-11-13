@@ -40,7 +40,6 @@ pnpm test:e2e:accessibility
 pnpm test:e2e:color
 pnpm test:e2e:theme
 pnpm test:e2e:editing
-pnpm test:e2e:scroll-sync
 pnpm test:e2e:document-persistence
 
 # Run with dev server included
@@ -59,7 +58,6 @@ NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/documents.featu
 - `pnpm test:e2e:color` - Color theme features
 - `pnpm test:e2e:theme` - Theme system
 - `pnpm test:e2e:sharing` - Share functionality
-- `pnpm test:e2e:scroll-sync` - Scroll synchronization
 - `pnpm test:e2e:document-persistence` - Persistence features
 - `pnpm test:e2e:accessibility` - Accessibility compliance
 

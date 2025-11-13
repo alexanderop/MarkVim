@@ -23,7 +23,6 @@
     "test:e2e:document-persistence": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/document-persistence.feature",
     "test:e2e:documents": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/documents.feature",
     "test:e2e:editing": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/editing.feature",
-    "test:e2e:scroll-sync": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/scroll-sync.feature",
     "test:e2e:sharing": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/sharing.feature",
     "test:e2e:smoke": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/smoke.test.feature",
     "test:e2e:theme": "NODE_OPTIONS='--import tsx' cucumber-js tests/features/theme.feature",

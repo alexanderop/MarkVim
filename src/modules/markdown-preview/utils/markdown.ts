@@ -11,41 +11,39 @@ let markdownInstance: MarkdownIt | null = null
 let shikiHighlighter: Highlighter | null = null
 
 async function getShikiHighlighter(): Promise<Highlighter> {
-  if (!shikiHighlighter) {
-    shikiHighlighter = await createHighlighter({
-      themes: ['night-owl'],
-      langs: [
-        'javascript',
-        'typescript',
-        'vue',
-        'html',
-        'css',
-        'scss',
-        'less',
-        'json',
-        'markdown',
-        'bash',
-        'shell',
-        'python',
-        'java',
-        'cpp',
-        'c',
-        'rust',
-        'go',
-        'php',
-        'ruby',
-        'swift',
-        'kotlin',
-        'sql',
-        'yaml',
-        'xml',
-        'dockerfile',
-        'plaintext',
-        'tsx',
-        'jsx',
-      ],
-    })
-  }
+  shikiHighlighter ??= await createHighlighter({
+    themes: ['night-owl'],
+    langs: [
+      'javascript',
+      'typescript',
+      'vue',
+      'html',
+      'css',
+      'scss',
+      'less',
+      'json',
+      'markdown',
+      'bash',
+      'shell',
+      'python',
+      'java',
+      'cpp',
+      'c',
+      'rust',
+      'go',
+      'php',
+      'ruby',
+      'swift',
+      'kotlin',
+      'sql',
+      'yaml',
+      'xml',
+      'dockerfile',
+      'plaintext',
+      'tsx',
+      'jsx',
+    ],
+  })
   return shikiHighlighter
 }
 
@@ -82,7 +80,7 @@ export async function createMarkdownRenderer(): Promise<MarkdownIt> {
       md.use(markdownItFootnote)
       md.use(markdownItGitHubAlerts)
 
-      const originalFence = md.renderer.rules.fence || function () {
+      const originalFence = md.renderer.rules.fence ?? function () {
         return ''
       }
       md.renderer.rules.fence = function (tokens, idx, options, env, slf): string {

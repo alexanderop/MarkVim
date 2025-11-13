@@ -68,7 +68,7 @@ function update(currentState: FeatureFlagsState, message: FeatureFlagsMessage): 
       }
 
     case 'TOGGLE_FEATURE': {
-      const currentValue = currentState.flags[message.payload.feature] ?? true
+      const currentValue = currentState.flags[message.payload.feature]
       return {
         flags: {
           ...currentState.flags,

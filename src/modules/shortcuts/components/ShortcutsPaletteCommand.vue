@@ -40,7 +40,7 @@ function useDocumentItems(
   open: Ref<boolean | undefined>,
 ): { documentItems: Ref<any[]> } {
   const documentItems = computed(() => {
-    return (documents || []).map(doc => ({
+    return documents.map(doc => ({
       id: `doc-${doc.id}`,
       label: getDocumentTitle(doc.content),
       suffix: `Last updated: ${new Date(doc.updatedAt).toLocaleDateString()}`,
@@ -89,13 +89,10 @@ function useCommandGroups(
     }
 
     // Group other items by category
-    const itemsByCategory: Record<string, any[]> = {}
+    const itemsByCategory: Record<string, any[] | undefined> = {}
     otherItems.forEach((item) => {
-      const category = item.category || 'Other'
-      if (!itemsByCategory[category]) {
-        itemsByCategory[category] = []
-      }
-      itemsByCategory[category].push(item)
+      const category = item.category ?? 'Other';
+      (itemsByCategory[category] ??= []).push(item)
     })
 
     // Add groups in specific order

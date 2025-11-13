@@ -78,7 +78,7 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
     if (!mermaid?.default || !rootElement.value)
       return
 
-    const nodes = rootElement.value.querySelectorAll('.mermaid') ?? []
+    const nodes = rootElement.value.querySelectorAll('.mermaid')
     if (nodes.length === 0)
       return
 
@@ -92,14 +92,14 @@ export function useMermaid(rootElement: Ref<HTMLElement | undefined>): {
           const element = node
           if (element.hasAttribute('data-processed')) {
             element.removeAttribute('data-processed')
-            const originalContent = element.dataset.mermaidSource || element.textContent
+            const originalContent = element.dataset.mermaidSource ?? element.textContent
             if (originalContent) {
               element.innerHTML = originalContent
               element.removeAttribute('id')
             }
             return
           }
-          element.dataset.mermaidSource = element.textContent || ''
+          element.dataset.mermaidSource = element.textContent ?? ''
         })
 
         const htmlNodes = Array.from(nodes).filter((node): node is HTMLElement => node instanceof HTMLElement)

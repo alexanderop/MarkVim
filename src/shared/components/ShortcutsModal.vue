@@ -51,18 +51,27 @@ const totalShortcuts = computed(() =>
     v-model:open="isOpen"
     title="Keyboard Shortcuts"
     description="Navigate MarkVim faster with these keyboard shortcuts"
-    :ui="{ content: 'max-w-4xl max-h-[90vh]' }"
+    :ui="{
+      content: 'max-w-4xl max-h-[90vh]',
+      description: 'mt-1 text-sm text-[var(--foreground)]/90',
+      body: 'flex-1 overflow-y-auto p-4 sm:p-6 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/50',
+    }"
     data-testid="keyboard-shortcuts-modal"
   >
     <template #body>
       <!-- Shortcuts Content -->
-      <div class="gap-6 grid grid-cols-1 md:grid-cols-2">
+      <div
+        class="gap-6 grid grid-cols-1 md:grid-cols-2"
+        tabindex="0"
+        role="region"
+        aria-label="Keyboard shortcuts list"
+      >
         <div
           v-for="category in shortcutsByCategory"
           :key="category.name"
           class="space-y-3"
         >
-          <h3 class="text-xs text-text-secondary tracking-wider font-medium uppercase">
+          <h3 class="text-xs text-[var(--foreground)]/90 tracking-wider font-medium uppercase">
             {{ category.name }}
           </h3>
 
@@ -78,12 +87,12 @@ const totalShortcuts = computed(() =>
                 <div class="mr-3 flex-shrink-0">
                   <Icon
                     :name="shortcut.icon || getDefaultIconForCategory(shortcut.category || 'General')"
-                    class="w-4 h-4 text-text-secondary"
+                    class="w-4 h-4 text-[var(--foreground)]/90"
                   />
                 </div>
 
                 <!-- Description -->
-                <span class="text-sm text-text-primary flex-1 min-w-0">
+                <span class="text-sm text-[var(--foreground)] flex-1 min-w-0">
                   {{ shortcut.description }}
                 </span>
               </div>
@@ -110,7 +119,7 @@ const totalShortcuts = computed(() =>
     </template>
 
     <template #footer>
-      <div class="flex justify-between items-center w-full text-xs text-text-tertiary">
+      <div class="flex justify-between items-center w-full text-xs text-[var(--foreground)]/90">
         <div>
           Press <UKbd
             size="md"

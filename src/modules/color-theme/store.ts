@@ -148,7 +148,8 @@ export const useColorThemeStore = defineStore('color-theme', () => {
   watchEffect(() => {
     const currentTheme = _theme.value
 
-    // Guard against undefined theme during initialization
+    // Guard against incomplete theme during initialization (SSR/hydration edge case)
+    // eslint-disable-next-line ts/no-unnecessary-condition
     if (!currentTheme || !currentTheme.background) {
       return
     }
@@ -223,18 +224,6 @@ export const useColorThemeStore = defineStore('color-theme', () => {
     }
 
     const parsedTheme = schemaResult.data
-    const requiredKeys: (keyof ColorTheme)[] = ['background', 'foreground', 'accent', 'muted', 'border', 'alertNote', 'alertTip', 'alertImportant', 'alertWarning', 'alertCaution']
-    const isValid = requiredKeys.every(key =>
-      parsedTheme[key]
-      && typeof parsedTheme[key].l === 'number'
-      && typeof parsedTheme[key].c === 'number'
-      && typeof parsedTheme[key].h === 'number'
-      && (parsedTheme[key].a === undefined || typeof parsedTheme[key].a === 'number'),
-    )
-
-    if (!isValid) {
-      return Err(new Error('Theme is missing required keys or has invalid values'))
-    }
 
     // Dispatch the validated theme
     dispatch({ type: 'IMPORT_THEME', payload: { theme: parsedTheme } })

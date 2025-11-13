@@ -94,7 +94,7 @@ export function useSyncedScroll(previewSyncEnabled: Ref<boolean>): {
     ]
 
     const element = findScrollableBySelectors(container, editorSelectors)
-    return element || findScrollableInChildren(container)
+    return element ?? findScrollableInChildren(container)
   }
 
   const getPreviewScrollableElement = (container: HTMLElement): HTMLElement | null => {

@@ -47,7 +47,7 @@ function getDocumentPreview(content: string): string {
   const firstNonHeaderLine = lines.find(line =>
     line.trim() && !line.trim().startsWith('#'),
   )
-  const preview = firstNonHeaderLine?.trim() || ''
+  const preview = firstNonHeaderLine?.trim() ?? ''
   if (!preview)
     return 'No content'
 

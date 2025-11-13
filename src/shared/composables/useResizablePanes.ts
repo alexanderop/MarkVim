@@ -41,9 +41,7 @@ export function useResizablePanes(initialLeftWidth: number = 50): {
     animationId = requestAnimationFrame(() => {
       if (pendingUpdate !== null && containerRef.value) {
         // Only update if we have a pending change and container exists
-        if (!containerRect) {
-          containerRect = containerRef.value.getBoundingClientRect()
-        }
+        containerRect ??= containerRef.value.getBoundingClientRect()
 
         const relativeX = pendingUpdate - containerRect.left
         const percentage = Math.max(MIN_PANE_WIDTH_PERCENTAGE, Math.min(MAX_PANE_WIDTH_PERCENTAGE, (relativeX / containerRect.width) * FULL_WIDTH_PERCENTAGE))
