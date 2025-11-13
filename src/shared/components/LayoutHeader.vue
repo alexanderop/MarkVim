@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/api'
+import type { Document } from '@modules/documents'
 import { UButton } from '#components'
+import { getDocumentTitle } from '@modules/documents'
+import { ShareButton } from '@modules/share'
+import { useShortcuts } from '@modules/shortcuts'
 import { computed } from 'vue'
 import { emitAppEvent } from '@/shared/utils/eventBus'
-import { getDocumentTitle } from '~/modules/documents/api'
-import { ShareButton } from '~/modules/share/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
 import { useFeatureFlags } from '~/shared/api/feature-flags'
 import { useViewMode, type ViewMode } from '~/shared/api/layout'
 import SettingsModal from '~/shared/components/SettingsModal.vue'
@@ -49,6 +49,7 @@ function handleDeleteDocument(): void {
       <UButton
         :icon="isSidebarVisible ? 'lucide:panel-left-close' : 'lucide:panel-left-open'"
         :title="isSidebarVisible ? 'Hide sidebar' : 'Show sidebar'"
+        :aria-label="isSidebarVisible ? 'Hide sidebar' : 'Show sidebar'"
         color="neutral"
         variant="ghost"
         size="sm"
@@ -83,6 +84,7 @@ function handleDeleteDocument(): void {
         size="sm"
         :icon="mode.icon"
         :data-testid="`view-mode-${mode.key}`"
+        :aria-label="`Switch to ${mode.label} view`"
         class="relative px-2 py-1 md:px-3 md:py-1.5"
         :class="viewMode === mode.key ? 'text-accent' : 'text-foreground opacity-60 hover:opacity-80'"
         :title="`${mode.label} (${mode.shortcut})`"
@@ -113,6 +115,7 @@ function handleDeleteDocument(): void {
         size="md"
         icon="lucide:trash-2"
         title="Delete note"
+        aria-label="Delete document"
         data-testid="delete-document-btn"
         class="hover:text-error hover:bg-error/10 hidden md:flex"
         square
@@ -130,6 +133,7 @@ function handleDeleteDocument(): void {
           icon="lucide:palette"
           square
           title="Color Theme"
+          aria-label="Open color theme settings"
           data-testid="color-theme-button"
           class="hidden md:flex"
           @click="() => { toggleColorTheme(true) }"

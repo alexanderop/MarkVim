@@ -2,7 +2,7 @@
 import type { Document } from '~/shared/types/Document'
 import { UButton } from '#components'
 import { computed, ref } from 'vue'
-import { useDocumentShare } from '~/modules/share/api'
+import { useDocumentShare } from '../composables/useDocumentShare'
 import ShareDialog from './ShareDialog.vue'
 
 const { document, disabled } = defineProps<{
@@ -36,6 +36,7 @@ const canShare = computed(() => {
       size="md"
       :icon="isSharing ? 'lucide:loader-2' : 'lucide:share'"
       :title="canShare ? 'Share document' : 'Document too large to share'"
+      :aria-label="canShare ? 'Share document' : 'Document too large to share'"
       :disabled="disabled || !document || isSharing || !canShare"
       data-testid="share-button"
       square

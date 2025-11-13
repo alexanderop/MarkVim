@@ -32,29 +32,36 @@ pnpm test:e2e:with-server  # E2E with auto server start
 **Running Specific E2E Tests** (recommended when fixing issues - running all 39 scenarios takes 2-3 minutes):
 
 ```bash
-# Run single scenario by name pattern
+# Run individual feature file (shortcuts available)
+pnpm test:e2e:documents
+pnpm test:e2e:smoke
+pnpm test:e2e:sharing
+pnpm test:e2e:accessibility
+pnpm test:e2e:color
+pnpm test:e2e:theme
+pnpm test:e2e:editing
+pnpm test:e2e:scroll-sync
+pnpm test:e2e:document-persistence
+
+# Run with dev server included
+pnpm test:e2e:with-server tests/features/documents.feature
+
+# Run single scenario by name pattern (optional filter, slower)
 NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/documents.feature --name "Create new document"
-
-# Run specific feature file
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js tests/features/feature-flags.feature
-
-# Run scenarios by tag (requires adding @tag to scenarios)
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --tags "@smoke"
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --tags "@smoke and @critical"
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --tags "not @wip"
-
-# Dry run to validate without executing
-NODE_OPTIONS='--import tsx' pnpm exec cucumber-js --dry-run
 ```
 
 **Fail-Fast Configuration**: E2E tests are configured to stop on first failure (`failFast: true` in `cucumber.js`). This speeds up development by letting you fix one issue at a time instead of running the entire suite.
 
-**Key test scenarios for quick validation:**
-- `"Switch to editor-only mode"` - Basic smoke test
-- `"Create new document from sidebar"` - Documents functionality
-- `"Mermaid diagram rendering"` - Editor/preview
-- `"Disabling share feature hides share button"` - Feature flags
-- `"Successfully generate and import a share link"` - Sharing
+**Available feature files** (matches CI matrix for fast isolation):
+- `pnpm test:e2e:smoke` - Basic smoke tests
+- `pnpm test:e2e:documents` - Document management
+- `pnpm test:e2e:editing` - Editor/preview functionality
+- `pnpm test:e2e:color` - Color theme features
+- `pnpm test:e2e:theme` - Theme system
+- `pnpm test:e2e:sharing` - Share functionality
+- `pnpm test:e2e:scroll-sync` - Scroll synchronization
+- `pnpm test:e2e:document-persistence` - Persistence features
+- `pnpm test:e2e:accessibility` - Accessibility compliance
 
 ### Git Hooks
 
@@ -108,6 +115,50 @@ pnpm analyze:modules:json         # JSON output
 pnpm analyze:modules:mermaid      # Mermaid diagram
 ```
 
+### Boundary Enforcement (Three Layers)
+
+**MarkVim enforces module boundaries using a three-layer defense:**
+
+**1. TypeScript Path Aliases (Type Fences)**
+- Module facades mapped to ergonomic shortcuts: `@modules/documents`, `@modules/editor`, etc.
+- All aliases resolve directly to `api.ts` (e.g., `@modules/documents` → `src/modules/documents/api`)
+- Internal imports require verbose/obvious escapes (`~/modules/documents/store`)
+- IDE autocomplete guides developers to public APIs first
+
+**2. ESLint Rules (Developer Feedback)**
+- `no-restricted-imports`: Blocks deep imports to module internals (both absolute and `@modules` paths)
+- `import/no-internal-modules`: Catches remaining patterns including relative imports
+- Fast feedback in editor and pre-commit hooks
+
+**3. Dependency Cruiser (CI Enforcement)**
+- Runtime validation of all import rules
+- Blocks PRs that violate architectural boundaries
+- Comprehensive pattern matching for edge cases
+
+**Import Examples:**
+
+```typescript
+// ✅ Correct: Use path aliases to module facades
+import { useDocuments } from '@modules/documents'
+import { useColorTheme } from '@modules/color-theme'
+import { useEditor } from '@modules/editor'
+
+// ✅ Also correct: Full path to api.ts
+import { useDocuments } from '~/modules/documents/api'
+
+// ❌ Wrong: Direct imports to internals (blocked by all three layers)
+import { useDocumentsStore } from '~/modules/documents/store'
+import { useDocumentsStore } from '../documents/store'
+import DocumentList from '@modules/documents/components/DocumentList.vue'
+```
+
+**Why Three Layers:**
+- **Path aliases**: Make the right way the easy way (pit of success)
+- **ESLint**: Fast feedback during development
+- **Dependency Cruiser**: Comprehensive enforcement in CI (catches edge cases)
+
+Each layer catches different violations, creating a robust defense-in-depth.
+
 ---
 
 ## High-Level Architecture
@@ -153,6 +204,16 @@ Each module contains:
 * markdown-preview – Live preview + Mermaid
 * share      – Import/export
 * shortcuts  – Shortcuts + command palette
+
+**Linear-Inspired Preview Styling**
+
+The markdown preview uses Linear's generous spacing philosophy:
+* 8px rhythm system: All spacing uses 8, 16, 24, 32, 48, 64px
+* Typography hierarchy: H1 (2.5em) → H6 (1.125em) with font weight variation
+* Surface elevation: Preview (15%), code blocks (18%), inline code (20%)
+* Generous line-height: 1.7 for body text ensures comfortable reading
+* Responsive padding: Desktop (16), Tablet (12), Mobile (6/8) in Tailwind units
+* All styles: `src/shared/ui/tokens.css` (lines 164+)
 
 **Key architectural choices**
 
@@ -297,6 +358,21 @@ See **State Management & Module Communication Pattern** section below for full d
 * E2E: Playwright + Cucumber, BDD scenarios, Page Objects
 * Cover: editing, document management, theme switching
 
+### Test Selector Priority (Accessibility-First)
+
+**Always prefer accessibility-friendly selectors over `data-testid`:**
+
+1. **Role-based** (highest priority): `getByRole('button', { name: 'Create Document' })`
+2. **Label-based**: `getByLabel('Font Size')`
+3. **Text-based**: `getByText('Welcome to MarkVim')`
+4. **Placeholder**: `getByPlaceholder('Search...')`
+5. **Semantic HTML**: `.cm-content`, `nav`, `article`
+6. **Test IDs** (last resort): `[data-testid="editor-pane"]` - only for complex structural elements
+
+**Why**: Tests mirror real user interactions, improve accessibility, and are more resilient to refactoring.
+
+See `tests/docs/ACCESSIBILITY_SELECTOR_STRATEGY.md` for complete guidelines.
+
 ## State Management & Module Communication Pattern
 
 **CRITICAL: All modules expose public facades via `api.ts`. All state mutations happen through facade actions.**
@@ -347,23 +423,30 @@ export function useDocuments() {
 
 ### Usage Pattern (All Modules)
 
-**✅ Correct: Use facade from any module**
+**✅ Correct: Use facade from any module (preferred: path aliases)**
 
 ```typescript
 // Any component or composable (same module or different)
-import { useDocuments } from '~/modules/documents/api'
-import { useColorTheme } from '~/modules/color-theme/api'
-import { useFeatureFlags } from '~/shared/feature-flags/api'
+// Prefer @modules/* path aliases (shorter, enforced by TypeScript)
+import { useDocuments } from '@modules/documents'
+import { useColorTheme } from '@modules/color-theme'
+import { useEditor } from '@modules/editor'
 
 const { documents, activeDocument, createDocument, selectDocument, deleteDocument } = useDocuments()
 const { theme, updateColor, resetTheme } = useColorTheme()
-const { state: featureFlags, toggleFeature, resetFeatures } = useFeatureFlags()
 
 // Direct action calls
 createDocument()
 selectDocument('doc-id-123')
 updateColor('accent', { l: 0.6, c: 0.2, h: 240 })
-toggleFeature('vim-mode')
+```
+
+**✅ Also correct: Full path to api.ts**
+
+```typescript
+// Full paths work too, but are more verbose
+import { useDocuments } from '~/modules/documents/api'
+import { useColorTheme } from '~/modules/color-theme/api'
 ```
 
 **❌ Incorrect: Direct store access**
@@ -420,6 +503,64 @@ Events are **only** for notifications or UI coordination, not for state mutation
 - State mutations (use facade actions instead)
 - Cross-module data changes
 - Triggering store updates
+
+### Event Documentation Convention
+
+**CRITICAL: Every event must include comprehensive JSDoc with producer/consumer examples to prevent silent drift.**
+
+Each module defines its events in `events.ts`. All events must follow this documentation template:
+
+```typescript
+/**
+ * Brief description of what the event does.
+ *
+ * **Purpose:** What this event does and when it's triggered
+ * **Type:** Fire-and-forget UI signal (no state mutation)
+ *
+ * **Producer:**
+ * ```ts
+ * // ComponentName.vue - context where event is emitted
+ * import { emitAppEvent } from '@/shared/utils/eventBus'
+ *
+ * function handleAction(): void {
+ *   emitAppEvent('event:key', {
+ *     field: 'value'
+ *   })
+ * }
+ * ```
+ *
+ * **Consumer:**
+ * ```ts
+ * // HandlerComponent.vue - context where event is handled
+ * import { onAppEvent } from '@/shared/utils/eventBus'
+ *
+ * onAppEvent('event:key', (payload) => {
+ *   // Handle the event
+ *   console.log(payload.field)
+ * })
+ * ```
+ */
+'event:key': {
+  field: string
+}
+```
+
+**Required elements:**
+1. **Purpose** - Clear intent and trigger conditions
+2. **Type** - Always "Fire-and-forget UI signal" or "Logging/analytics" (never state transfer)
+3. **Producer** - Real code example showing where/how the event is emitted
+4. **Consumer** - Real code example showing where/how the event is handled
+
+**Benefits:**
+- **Prevents silent drift** - Clear ownership prevents events from becoming orphaned
+- **Onboarding** - New developers understand event flow immediately
+- **Refactoring safety** - Easy to find all producers/consumers with go-to-references
+- **Type safety + discoverability** - JSDoc appears in IDE tooltips
+
+**Example event definitions:**
+- `src/modules/documents/events.ts` - Document deletion modal trigger
+- `src/modules/shortcuts/events.ts` - Command palette open/close
+- `src/shared/events.ts` - Global data reset notification
 
 ### Benefits of Facade Pattern
 
@@ -515,6 +656,4 @@ import { UButton, UCard, UInput, UModal } from '#components'
 
 **Why**: Users can customize theme colors; hardcoding breaks this and causes inconsistency.
 
----
 
-Prefer modifying existing modules over creating new files. Follow established patterns for consistency.

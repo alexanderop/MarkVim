@@ -292,6 +292,18 @@ function useEditorLifecycle(): {
       parent: editor.value,
     })
 
+    // Add accessibility attributes to CodeMirror content area
+    const contentElement = editor.value.querySelector('.cm-content')
+    if (contentElement) {
+      contentElement.setAttribute('aria-label', 'Markdown editor')
+    }
+
+    // Fix scroller keyboard accessibility
+    const scrollerElement = editor.value.querySelector('.cm-scroller')
+    if (scrollerElement) {
+      scrollerElement.setAttribute('tabindex', '0')
+    }
+
     // Expose editor view globally for testing
     if (import.meta.env.NODE_ENV === 'test' || import.meta.env.DEV) {
       // eslint-disable-next-line ts/consistent-type-assertions

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Document } from '~/modules/documents/api'
+import type { Document } from '~/shared/types/Document'
 import DocumentListClient from './DocumentList.client.vue'
 import DocumentListSkeleton from './DocumentListSkeleton.vue'
 

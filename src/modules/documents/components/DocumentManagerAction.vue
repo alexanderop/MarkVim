@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onAppEvent } from '@/shared/utils/eventBus'
-import { useDocuments } from '~/modules/documents/api'
+import { useDocumentsStore } from '../store'
 import DocumentModalDelete from './DocumentModalDelete.vue'
 
-const { deleteDocument } = useDocuments()
+const store = useDocumentsStore()
+const deleteDocument = (id: string): void | string => store.dispatch({ type: 'DELETE_DOCUMENT', payload: { documentId: id } })
 
 const deleteModalOpen = ref(false)
 const documentToDelete = ref<{ id: string, title: string } | null>(null)

@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { ColorTheme } from '../store'
 import type { ColorDefinition } from '../utils/color-definitions'
-import type { ColorTheme } from '~/modules/color-theme/api'
 import { UButton, UCard, UModal } from '#components'
+import { useShortcuts } from '@modules/shortcuts'
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import { useColorTheme } from '~/modules/color-theme/api'
-import { useShortcuts } from '~/modules/shortcuts/api'
+import { useColorThemeStore } from '../store'
 import { alertColors, colorDefinitions, coreColors } from '../utils/color-definitions'
 import { copyToClipboard, downloadAsFile, showTemporaryButtonMessage } from '../utils/export-utils'
 import ColorThemeButton from './ColorThemeButton.vue'
@@ -12,8 +13,13 @@ import ColorThemePicker from './ColorThemePicker.vue'
 
 const COPIED_MESSAGE_DURATION_MS = 2000
 
-// External composables
-const { theme, exportTheme, oklchToString, updateColor, resetTheme } = useColorTheme()
+// Store access
+const store = useColorThemeStore()
+const { theme } = storeToRefs(store)
+const exportTheme = store.exportTheme
+const oklchToString = store.oklchToString
+const updateColor = (colorKey: keyof ColorTheme, color: any): void => store.dispatch({ type: 'UPDATE_COLOR', payload: { colorKey, color } })
+const resetTheme = (): void => store.dispatch({ type: 'RESET_TO_DEFAULTS' })
 const { showColorTheme, toggleColorTheme } = useShortcuts()
 
 // Modal state sync

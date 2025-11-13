@@ -16,6 +16,7 @@ defineEmits<{
   <UButton
     variant="ghost"
     class="flex items-center justify-between p-4 bg-surface-primary border border-border rounded-md hover:bg-surface-secondary transition-colors cursor-pointer group h-auto"
+    :aria-label="`Edit ${colorDef.label} color`"
     :data-testid="`color-button-${colorDef.key}`"
     @click="$emit('click')"
   >

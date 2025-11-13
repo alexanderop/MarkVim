@@ -11,15 +11,15 @@ import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useDocumentsStore } from './store'
 
-export { default as DocumentList } from './components/DocumentList.vue'
-
 // Export components that are used externally
+export { default as DocumentList } from './components/DocumentList.vue'
 export { default as DocumentManagerAction } from './components/DocumentManagerAction.vue'
-// Export events
+
 export type { DocumentsEvents } from './events'
-// Export types
-export type { DocumentMessage, DocumentsState } from './types'
+
+// Export utility functions
 export { getDocumentTitle } from './utils/document-title'
+// Export types
 export type { Document } from '~/shared/types/Document'
 
 /**
@@ -65,11 +65,4 @@ export function useDocuments(): {
     importDocument: (content: string) => store.dispatch({ type: 'ADD_DOCUMENT', payload: { content } }),
     resetDocuments: () => store.dispatch({ type: 'RESET_DOCUMENTS' }),
   }
-}
-
-/**
- * @deprecated Use useDocuments() instead
- */
-export function useDocumentsState(): ReturnType<typeof useDocuments> {
-  return useDocuments()
 }

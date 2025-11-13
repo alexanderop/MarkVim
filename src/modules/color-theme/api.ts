@@ -50,10 +50,3 @@ export function useColorTheme(): {
     resetTheme: () => store.dispatch({ type: 'RESET_TO_DEFAULTS' }),
   }
 }
-
-/**
- * @deprecated Use useColorTheme() instead
- */
-export function useColorThemeState(): ReturnType<typeof useColorTheme> {
-  return useColorTheme()
-}
