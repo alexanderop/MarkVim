@@ -148,6 +148,12 @@ export const useColorThemeStore = defineStore('color-theme', () => {
   watchEffect(() => {
     const currentTheme = _theme.value
 
+    // Guard against incomplete theme during initialization (SSR/hydration edge case)
+    // eslint-disable-next-line ts/no-unnecessary-condition
+    if (!currentTheme || !currentTheme.background) {
+      return
+    }
+
     backgroundVar.value = oklchToString(currentTheme.background)
     foregroundVar.value = oklchToString(currentTheme.foreground)
     accentVar.value = oklchToString(currentTheme.accent)
