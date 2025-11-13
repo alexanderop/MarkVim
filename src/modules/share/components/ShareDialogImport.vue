@@ -60,7 +60,7 @@ function useDocumentPreview(
   const isAutoImport = computed(() => !!autoImportDocument)
 
   const documentTitle = computed(() => {
-    const doc = autoImportDocument || previewDocument.value
+    const doc = autoImportDocument ?? previewDocument.value
     if (!doc)
       return 'Untitled'
 
@@ -72,7 +72,7 @@ function useDocumentPreview(
   })
 
   const documentPreview = computed(() => {
-    const doc = autoImportDocument || previewDocument.value
+    const doc = autoImportDocument ?? previewDocument.value
     if (!doc)
       return ''
 
@@ -80,7 +80,7 @@ function useDocumentPreview(
     const firstNonHeaderLine = lines.find(line =>
       line.trim() && !line.trim().startsWith('#'),
     )
-    return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) || 'No content preview available'
+    return firstNonHeaderLine?.trim().slice(0, PREVIEW_MAX_LENGTH) ?? 'No content preview available'
   })
 
   watch(

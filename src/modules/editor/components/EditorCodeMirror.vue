@@ -239,7 +239,7 @@ function useEditorExtensions(): {
       if (vimMode) {
         const cm = getCM(viewUpdate.view)
         if (cm) {
-          const currentKeyMap = cm.state.keyMap || ''
+          const currentKeyMap = cm.state.keyMap ?? ''
 
           // Map keyMap values to readable mode names
           const modeName = currentKeyMap === 'vim-insert'

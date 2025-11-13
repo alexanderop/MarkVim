@@ -75,11 +75,11 @@ export const useDocumentsStore = defineStore('documents', () => {
         }
 
         const parsed = parseResult.value
-        const validatedDocs = parseDocuments(parsed.documents || [])
+        const validatedDocs = parseDocuments(parsed.documents ?? [])
         const docs = validatedDocs.length > 0 ? validatedDocs : [defaultDoc]
         const activeId = parsed.activeDocumentId && docs.some(d => d.id === parsed.activeDocumentId)
           ? parsed.activeDocumentId
-          : docs[0]?.id || defaultDoc.id
+          : docs[0]?.id ?? defaultDoc.id
 
         return {
           documents: docs,

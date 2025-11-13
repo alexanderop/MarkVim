@@ -50,7 +50,7 @@ export function useDocumentShare(): {
   function generateShareLink(document: Document): string | null {
     shareError.value = null
 
-    if (!document || !document.content) {
+    if (!document.content) {
       shareError.value = 'No document content to share'
       return null
     }
@@ -100,9 +100,6 @@ export function useDocumentShare(): {
   }
 
   async function shareDocument(document: Document): Promise<boolean> {
-    if (!document)
-      return false
-
     isSharing.value = true
     shareError.value = null
 
@@ -141,7 +138,7 @@ export function useDocumentShare(): {
 
     const parseResult = tryCatch(
       () => {
-        const targetUrl = url || window.location.href
+        const targetUrl = url ?? window.location.href
         const urlObj = new URL(targetUrl)
 
         const hash = urlObj.hash

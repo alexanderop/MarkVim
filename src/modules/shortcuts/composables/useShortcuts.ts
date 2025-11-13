@@ -57,7 +57,7 @@ export function useShortcuts() {
     }
 
     // Check for CodeMirror editor (has cm-content class or is inside .cm-editor)
-    if (el.classList?.contains('cm-content') || el.closest('.cm-editor')) {
+    if (el.classList.contains('cm-content') || el.closest('.cm-editor')) {
       return false
     }
 
@@ -80,7 +80,7 @@ export function useShortcuts() {
 
   // Function to register app commands (for command palette without keyboard shortcuts)
   function registerAppCommand(command: ShortcutAction): void {
-    appCommands.value.set(command.id || command.keys, command)
+    appCommands.value.set(command.id ?? command.keys, command)
   }
 
   function registerAppCommands(commands: ShortcutAction[]): void {
@@ -172,7 +172,7 @@ export function useShortcuts() {
 
     // First, add keyboard shortcuts (these take priority)
     registeredShortcuts.value.forEach((shortcut) => {
-      const category = shortcut.category || 'General'
+      const category = shortcut.category ?? 'General'
       if (!categories.has(category)) {
         categories.set(category, [])
       }
@@ -187,7 +187,7 @@ export function useShortcuts() {
         return
       }
 
-      const category = command.category || 'General'
+      const category = command.category ?? 'General'
       if (!categories.has(category)) {
         categories.set(category, [])
       }
@@ -208,26 +208,26 @@ export function useShortcuts() {
     // Add shortcuts as commands
     registeredShortcuts.value.forEach((shortcut) => {
       commands.push({
-        id: shortcut.id || `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
+        id: shortcut.id ?? `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
         label: shortcut.description,
         description: `Keyboard shortcut: ${formatKeys(shortcut.keys)}`,
         shortcut: formatKeys(shortcut.keys),
-        icon: shortcut.icon || getDefaultIconForCategory(shortcut.category || 'General'),
+        icon: shortcut.icon ?? getDefaultIconForCategory(shortcut.category ?? 'General'),
         action: shortcut.action,
-        group: shortcut.category || 'General',
+        group: shortcut.category ?? 'General',
       })
     })
 
     // Add app commands
     appCommands.value.forEach((command) => {
       commands.push({
-        id: command.id || command.keys,
+        id: command.id ?? command.keys,
         label: command.description,
         description: command.description,
         shortcut: command.keys ? formatKeys(command.keys) : undefined,
-        icon: command.icon || getDefaultIconForCategory(command.category || 'General'),
+        icon: command.icon ?? getDefaultIconForCategory(command.category ?? 'General'),
         action: command.action,
-        group: command.category || 'General',
+        group: command.category ?? 'General',
       })
     })
 
@@ -254,32 +254,32 @@ export function useShortcuts() {
     // Add shortcuts as items
     registeredShortcuts.value.forEach((shortcut) => {
       items.push({
-        id: shortcut.id || `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
+        id: shortcut.id ?? `shortcut-${shortcut.keys.replace(/\s+/g, '-')}`,
         label: shortcut.description,
         suffix: `Keyboard shortcut: ${formatKeys(shortcut.keys)}`,
-        icon: shortcut.icon || getDefaultIconForCategory(shortcut.category || 'General'),
+        icon: shortcut.icon ?? getDefaultIconForCategory(shortcut.category ?? 'General'),
         kbds: parseKeysToArray(shortcut.keys),
         onSelect: (e?: Event) => {
           e?.preventDefault()
           shortcut.action()
         },
-        category: shortcut.category || 'General',
+        category: shortcut.category ?? 'General',
       })
     })
 
     // Add app commands
     appCommands.value.forEach((command) => {
       items.push({
-        id: command.id || command.keys,
+        id: command.id ?? command.keys,
         label: command.description,
         suffix: command.description,
-        icon: command.icon || getDefaultIconForCategory(command.category || 'General'),
+        icon: command.icon ?? getDefaultIconForCategory(command.category ?? 'General'),
         kbds: command.keys ? parseKeysToArray(command.keys) : undefined,
         onSelect: (e?: Event) => {
           e?.preventDefault()
           command.action()
         },
-        category: command.category || 'General',
+        category: command.category ?? 'General',
       })
     })
 
@@ -298,14 +298,14 @@ export function useShortcuts() {
       Format: 'lucide:type',
       Settings: 'lucide:settings',
     }
-    return categoryIcons[category] || 'lucide:keyboard'
+    return categoryIcons[category] ?? 'lucide:keyboard'
   }
 
   // Utility to format key combination for display
   function formatKeys(keys: string): string {
     const isMounted = useMounted()
     // Check if we're on client-side and navigator is available
-    const isMac = isMounted.value && typeof navigator !== 'undefined' && navigator?.platform?.includes('Mac')
+    const isMac = isMounted.value && typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
 
     return keys
       .split('+')
@@ -329,7 +329,7 @@ export function useShortcuts() {
         }
 
         const normalized = key.trim().toLowerCase()
-        return keyMap[normalized] || key.trim().toUpperCase()
+        return keyMap[normalized] ?? key.trim().toUpperCase()
       })
       .join(isMac ? '' : '+')
   }
@@ -338,7 +338,7 @@ export function useShortcuts() {
   function isShortcutActive(keyCombo: string): boolean {
     const normalizedKeys = keyCombo.toLowerCase().replace(/\s/g, '')
     const keysRecord: Record<string, any> = keys
-    const keyRef = keysRecord[normalizedKeys] || keysRecord[keyCombo]
+    const keyRef = keysRecord[normalizedKeys] ?? keysRecord[keyCombo]
     return Boolean(keyRef?.value)
   }
 

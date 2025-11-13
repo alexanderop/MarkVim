@@ -12,9 +12,7 @@ export function useMarkdown(markdownContent: Ref<string>): {
   const renderedMarkdown = ref('')
 
   const updateMarkdown = async (): Promise<void> => {
-    if (!md) {
-      md = await createMarkdownRenderer()
-    }
+    md ??= await createMarkdownRenderer()
 
     const renderResult = await tryCatchAsync(
       () => Promise.resolve((() => {

@@ -64,7 +64,7 @@ watch(
     if (isOpen && document) {
       copySuccess.value = false
       const link = generateShareLink(document)
-      shareLink.value = link || ''
+      shareLink.value = link ?? ''
       return
     }
     shareLink.value = ''
@@ -127,7 +127,7 @@ async function copyToClipboard(): Promise<void> {
           <div class="space-y-2">
             <label
               for="share-link"
-              class="text-sm font-medium text-gray-200"
+              class="text-sm font-medium text-[var(--foreground)]"
             >
               Share Link
             </label>
@@ -137,27 +137,31 @@ async function copyToClipboard(): Promise<void> {
                 v-model="shareLink"
                 readonly
                 aria-label="Share link"
-                class="flex-1 px-3 py-2 text-sm bg-gray-900/50 border border-gray-600 rounded-md text-gray-200 font-mono text-xs"
+                class="flex-1 px-3 py-2 text-sm bg-[var(--muted)]/50 border border-[var(--border)] rounded-md text-[var(--foreground)] font-mono text-xs"
                 data-testid="share-link-input"
               >
-              <UButton
-                color="primary"
-                variant="solid"
-                size="sm"
-                :icon="copySuccess ? 'lucide:check' : 'lucide:copy'"
+              <button
+                type="button"
+                class="px-2.5 py-1.5 text-xs rounded-md font-medium inline-flex items-center gap-1.5 transition-colors disabled:opacity-75 disabled:cursor-not-allowed"
                 :class="[
                   copySuccess
-                    ? 'bg-[var(--alert-tip)] hover:bg-[var(--alert-tip)]/80 text-white'
-                    : 'bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-white',
+                    ? 'bg-[var(--alert-tip)] hover:bg-[var(--alert-tip)]/80'
+                    : 'bg-[var(--accent)] hover:bg-[var(--accent)]/80',
                 ]"
                 :disabled="!clipboardSupported"
                 data-testid="copy-share-link-btn"
                 @click="copyToClipboard"
               >
-                {{ copySuccess ? 'Copied!' : 'Copy' }}
-              </UButton>
+                <span style="color: #ffffff !important; display: contents;">
+                  <Icon
+                    :name="copySuccess ? 'lucide:check' : 'lucide:copy'"
+                    class="w-4 h-4"
+                  />
+                  {{ copySuccess ? 'Copied!' : 'Copy' }}
+                </span>
+              </button>
             </div>
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-[var(--foreground)]/90">
               Anyone with this link can import this document into their MarkVim.
             </p>
           </div>
@@ -169,7 +173,7 @@ async function copyToClipboard(): Promise<void> {
             size="sm"
             :icon="showAdvanced ? 'lucide:chevron-down' : 'lucide:chevron-right'"
             data-testid="share-advanced-toggle"
-            class="text-xs text-gray-400 hover:text-gray-300 transition-colors"
+            class="text-xs text-[var(--foreground)]/90 hover:text-[var(--foreground)] transition-colors"
             @click="showAdvanced = !showAdvanced"
           >
             {{ showAdvanced ? 'Hide' : 'Show' }} technical details
@@ -179,10 +183,10 @@ async function copyToClipboard(): Promise<void> {
           <UCard
             v-if="showAdvanced && shareStats"
             variant="subtle"
-            :ui="{ root: 'bg-gray-900/30', body: 'p-3 space-y-2' }"
+            :ui="{ root: 'bg-[var(--muted)]/30', body: 'p-3 space-y-2' }"
             data-testid="share-advanced-stats"
           >
-            <div class="text-xs text-gray-400 space-y-1">
+            <div class="text-xs text-[var(--foreground)]/80 space-y-1">
               <div class="flex justify-between">
                 <span>Original size:</span>
                 <span class="font-mono">{{ formatBytes(shareStats.originalSize) }}</span>
@@ -200,8 +204,8 @@ async function copyToClipboard(): Promise<void> {
                 <span class="font-mono">{{ shareLink.length.toLocaleString() }} chars</span>
               </div>
             </div>
-            <div class="pt-2 border-t border-gray-700">
-              <p class="text-xs text-gray-500">
+            <div class="pt-2 border-t border-[var(--border)]">
+              <p class="text-xs text-[var(--foreground)]/80">
                 The document is compressed using GZIP compression and embedded in the URL fragment for privacy.
                 No server storage is used.
               </p>
@@ -216,9 +220,9 @@ async function copyToClipboard(): Promise<void> {
         >
           <Icon
             name="lucide:file-x"
-            class="h-8 w-8 text-gray-500 mx-auto mb-2"
+            class="h-8 w-8 text-[var(--foreground)]/80 mx-auto mb-2"
           />
-          <p class="text-sm text-gray-400">
+          <p class="text-sm text-[var(--foreground)]/80">
             No document to share
           </p>
         </div>
