@@ -44,7 +44,7 @@ const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   'color-theme': true,
   'share': true,
   'shortcuts': true,
-  'vim-mode': true,
+  'vim-mode': false,
 }
 
 // --- THE UPDATE FUNCTION (Reducer) ---

@@ -46,7 +46,7 @@ const MAX_FONT_SIZE = 32
 
 export const DEFAULT_EDITOR_CONFIG: EditorSettings = {
   // Vim configuration
-  vimMode: true,
+  vimMode: false,
   vimKeymap: 'vim',
 
   // Editor appearance
