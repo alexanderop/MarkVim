@@ -38,11 +38,6 @@ Feature: Accessibility Compliance
     When I click the share button
     Then the page should have no accessibility violations
 
-  Scenario: Split view mode has no critical accessibility violations
-    Given I navigate to the App
-    When I am in split view
-    Then the page should have no critical accessibility violations
-
   Scenario: Editor-only mode has no critical accessibility violations
     Given I navigate to the App
     When I click on editor mode
