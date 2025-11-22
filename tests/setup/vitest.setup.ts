@@ -7,7 +7,14 @@ import { afterEach, beforeEach, vi } from 'vitest'
 globalThis.ResizeObserver = ResizeObserver
 
 // 2. Polyfill crypto.randomUUID (used in documents store)
-if (!globalThis.crypto.randomUUID) {
+if (!globalThis.crypto?.randomUUID) {
+  if (!globalThis.crypto) {
+    Object.defineProperty(globalThis, 'crypto', {
+      value: {},
+      writable: true,
+      configurable: true,
+    })
+  }
   Object.defineProperty(globalThis.crypto, 'randomUUID', {
     value: (): string => `test-uuid-${Math.random().toString(36).substring(2)}`,
   })

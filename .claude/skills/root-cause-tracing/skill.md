@@ -37,7 +37,7 @@ digraph when_to_use {
 ## The Tracing Process
 
 ### 1. Observe the Symptom
-```
+```text
 Error: git init failed in /Users/jesse/project/packages/core
 ```
 

@@ -48,7 +48,7 @@ Evaluate `latest_run` above:
 
 ## Debugging Protocol
 
-**THE IRON LAW: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST**
+### THE IRON LAW: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 
 Skipping phases guarantees wasted time and broken fixes.
 
@@ -66,6 +66,7 @@ gh run view <RUN_ID> --log-failed
 - [ ] Is this a new failure or pre-existing?
 
 **1.3 Reproduce locally:**
+
 | CI Job | Local Command |
 |--------|---------------|
 | typecheck | `pnpm typecheck` |

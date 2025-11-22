@@ -24,7 +24,7 @@ allowed-tools: Bash(gh *), Bash(git *), Bash(pnpm typecheck*), Bash(pnpm lint*),
 </coderabbit_comments>
 
 <review_threads>
-!`gh api repos/{owner}/{repo}/pulls/$(gh pr view --json number -q .number)/comments --jq '.[] | select(.user.login == "coderabbitai") | {path: .path, line: .line, body: .body}' 2>&1 || echo "Could not fetch review threads"`
+!`gh api graphql -f query='query($owner: String!, $repo: String!, $pr: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $pr) { reviewThreads(first: 100) { nodes { id isResolved path line comments(first: 10) { nodes { body author { login } } } } } } } }' -F owner="$(gh repo view --json owner -q .owner.login)" -F repo="$(gh repo view --json name -q .name)" -F pr="$(gh pr view --json number -q .number)" 2>&1 || echo "Could not fetch review threads"`
 </review_threads>
 
 ---
@@ -145,6 +145,7 @@ IF multiple items:
      - Complex changes (refactoring)
   3. Test each fix individually
   4. Verify no regressions
+  5. RESOLVE each comment after addressing (see Resolution Protocol)
 ```
 
 ---
@@ -164,6 +165,99 @@ When you pushed back and were wrong:
 ```
 
 No long apologies. State correction factually and move on.
+
+---
+
+## Resolution Protocol
+
+**Every CodeRabbit comment MUST be resolved after processing.**
+
+> **Note:** Resolving review threads requires the GraphQL API. The REST API does not support thread resolution.
+
+### Step 1: List Unresolved Review Threads
+
+```bash
+# Get all review threads with resolution status (GraphQL required)
+gh api graphql -f query='
+query($owner: String!, $repo: String!, $pr: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) {
+      reviewThreads(first: 100) {
+        nodes {
+          id
+          isResolved
+          path
+          line
+          comments(first: 10) {
+            nodes {
+              body
+              author { login }
+            }
+          }
+        }
+      }
+    }
+  }
+}' -F owner="{owner}" -F repo="{repo}" -F pr="$(gh pr view --json number -q .number)"
+```
+
+### Step 2a: Resolve After Implementation
+
+When you implement a suggestion, resolve the thread directly (reply is optional - the commit speaks for itself):
+
+```bash
+# Resolve a review thread by its GraphQL node ID
+gh api graphql -f query='
+mutation($threadId: ID!) {
+  resolveReviewThread(input: {threadId: $threadId}) {
+    thread { isResolved }
+  }
+}' -f threadId="THREAD_NODE_ID"
+```
+
+### Step 2b: Reply and Resolve Without Implementation
+
+When you decide NOT to implement, reply with reasoning then resolve:
+
+```bash
+# Reply to a review thread (requires thread's GraphQL node ID)
+gh api graphql -f query='
+mutation($threadId: ID!, $body: String!) {
+  addPullRequestReviewThreadReply(input: {
+    pullRequestReviewThreadId: $threadId,
+    body: $body
+  }) {
+    comment { body }
+  }
+}' -f threadId="THREAD_NODE_ID" -f body="Not implementing: [reason]
+
+- Current implementation does X because Y
+- Suggested change would [break/conflict with] Z"
+
+# Then resolve the thread
+gh api graphql -f query='
+mutation($threadId: ID!) {
+  resolveReviewThread(input: {threadId: $threadId}) {
+    thread { isResolved }
+  }
+}' -f threadId="THREAD_NODE_ID"
+```
+
+### Helper: Get Owner and Repo
+
+```bash
+# Extract owner/repo from current git remote
+gh repo view --json owner,name -q '"\(.owner.login)/\(.name)"'
+```
+
+### Resolution Checklist
+
+For EACH CodeRabbit comment:
+- [ ] Evaluated (implemented or rejected with reason)
+- [ ] Response added (if rejecting - explain why)
+- [ ] Thread resolved via GraphQL mutation
+
+**Goal: Zero unresolved CodeRabbit comments when done.**
 
 ---
 
@@ -201,5 +295,6 @@ If you catch yourself:
 3. Push back on incorrect suggestions
 4. Implement confirmed issues one at a time
 5. Test each change
+6. **Resolve every comment** (implemented or rejected with reason)
 
-No performative agreement. Technical rigor always.
+No performative agreement. Technical rigor always. Zero unresolved comments.

@@ -29,7 +29,7 @@ I have gathered information about your changes. Here are the results:
 1. **Analyze the diffs** above to understand what changed.
 2. **Stage files** if needed (skip already staged files, skip files that shouldn't be committed like `.env`).
 3. **Generate a conventional commit message** following this format:
-   ```
+   ```text
    <type>(<scope>): <description>
 
    [optional body]

@@ -104,7 +104,6 @@
     "fishery": "^2.3.1",
     "happy-dom": "^20.0.10",
     "husky": "^9.1.7",
-    "jsdom": "^27.2.0",
     "knip": "^5.64.1",
     "picocolors": "^1.1.1",
     "resize-observer-polyfill": "^1.5.1",

@@ -18,9 +18,15 @@ echo "🔍 Searching for test that creates: $POLLUTION_CHECK"
 echo "Test pattern: $TEST_PATTERN"
 echo ""
 
-# Get list of test files
-TEST_FILES=$(find . -path "$TEST_PATTERN" | sort)
-TOTAL=$(echo "$TEST_FILES" | wc -l | tr -d ' ')
+# Get list of test files (handle both with and without ./ prefix)
+TEST_FILES=$(find . \( -path "$TEST_PATTERN" -o -path "./$TEST_PATTERN" \) -type f | sort)
+
+if [ -z "$TEST_FILES" ]; then
+  echo "No test files found matching pattern: $TEST_PATTERN"
+  exit 1
+fi
+
+TOTAL=$(printf '%s\n' "$TEST_FILES" | wc -l | tr -d ' ')
 
 echo "Found $TOTAL test files"
 echo ""
