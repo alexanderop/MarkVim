@@ -39,10 +39,16 @@ export async function mountFullApp(): Promise<AppPageHelpers> {
     html: () => wrapper.html(),
 
     getDocumentCount: (): number => {
-      const html = wrapper.html()
-      // Look for the count in the badge: <span class="...rounded-full..."><span>N</span></span>
-      const match = html.match(/rounded-full[^>]*>\s*<span[^>]*>(\d+)<\/span>/)
-      return match && match[1] ? Number.parseInt(match[1], 10) : 0
+      // Find the document sidebar by its accessible label and read the visible badge count
+      const sidebar = wrapper.find('[aria-label="Documents"]')
+      if (!sidebar.exists())
+        return 0
+      // The badge is visible text showing document count to users
+      const badge = sidebar.find('.rounded-full span')
+      if (!badge.exists())
+        return 0
+      const count = Number.parseInt(badge.text(), 10)
+      return Number.isNaN(count) ? 0 : count
     },
 
     hasElement: (testId: string): boolean => {
