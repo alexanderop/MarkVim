@@ -1,6 +1,7 @@
 import type { Document as DocType } from '~/shared/types/Document'
 import { renderSuspended } from '@nuxt/test-utils/runtime'
-import { fireEvent, screen } from '@testing-library/vue'
+import userEvent from '@testing-library/user-event'
+import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vitest'
 import { documentFactory } from '../../../../tests/factories'
 import DocumentListClient from '../components/DocumentList.client.vue'
@@ -78,6 +79,7 @@ async function createDocumentListPage(): Promise<{
   clickCreateDocument: () => Promise<void>
 }> {
   const store = useDocumentsStore()
+  const user = userEvent.setup()
 
   await renderSuspended(DocumentListClient, {
     props: {
@@ -95,7 +97,7 @@ async function createDocumentListPage(): Promise<{
     // Actions
     clickCreateDocument: async () => {
       const createBtn = screen.getByRole('button', { name: 'Create new document' })
-      await fireEvent.click(createBtn)
+      await user.click(createBtn)
     },
   }
 }
@@ -106,6 +108,8 @@ async function createDocumentListPageWithDocs(documents: DocType[], activeDocume
   getCreateButton: () => HTMLElement
   clickCreateDocument: () => Promise<void>
 }> {
+  const user = userEvent.setup()
+
   await renderSuspended(DocumentListClient, {
     props: {
       documents,
@@ -122,7 +126,7 @@ async function createDocumentListPageWithDocs(documents: DocType[], activeDocume
     // Actions
     clickCreateDocument: async () => {
       const createBtn = screen.getByRole('button', { name: 'Create new document' })
-      await fireEvent.click(createBtn)
+      await user.click(createBtn)
     },
   }
 }
