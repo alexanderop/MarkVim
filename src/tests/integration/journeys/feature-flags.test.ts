@@ -59,7 +59,7 @@ describe('v-feature Directive', () => {
   })
 })
 
-describe('Feature Flags', () => {
+describe('feature flags', () => {
   describe('when disabling editor feature', () => {
     it('should hide editor pane with display:none', async () => {
       const app = await mountFullApp()

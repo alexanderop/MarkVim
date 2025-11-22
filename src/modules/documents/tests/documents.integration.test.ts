@@ -7,7 +7,7 @@ import { documentFactory } from '../../../../tests/factories'
 import DocumentListClient from '../components/DocumentList.client.vue'
 import { useDocumentsStore } from '../store'
 
-describe('DocumentList', () => {
+describe('documentList', () => {
   describe('when viewing default state', () => {
     it('should display the welcome document', async () => {
       const page = await createDocumentListPage()

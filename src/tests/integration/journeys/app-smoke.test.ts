@@ -3,7 +3,7 @@ import { mountFullApp } from '../app-page'
 
 const TEST_TIMEOUT = 10000
 
-describe('App Smoke Test', () => {
+describe('app smoke test', () => {
   describe('when app loads with default state', () => {
     it('should display the main header', async () => {
       const app = await mountFullApp()

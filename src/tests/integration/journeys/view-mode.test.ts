@@ -22,7 +22,7 @@ async function settle(wrapper: { vm: { $nextTick: () => Promise<void> } }): Prom
   await new Promise(resolve => setTimeout(resolve, 150))
 }
 
-describe('View Mode', () => {
+describe('view mode', () => {
   describe('when app loads with default state', () => {
     it('should display both editor and preview panes in split mode', async () => {
       const app = await mountFullApp()
@@ -64,7 +64,7 @@ describe('View Mode', () => {
   })
 })
 
-describe('Sidebar Toggle', () => {
+describe('sidebar toggle', () => {
   describe('when sidebar is visible', () => {
     it('should hide sidebar when toggle button is clicked', async () => {
       const app = await mountFullApp()
