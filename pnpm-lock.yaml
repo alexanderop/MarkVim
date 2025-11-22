@@ -149,6 +149,9 @@ importers:
       '@vue/compiler-sfc':
         specifier: ^3.5.22
         version: 3.5.22
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.6
       commander:
         specifier: ^14.0.1
         version: 14.0.1

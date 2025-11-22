@@ -3,6 +3,33 @@ import { createPinia, setActivePinia } from 'pinia'
 import ResizeObserver from 'resize-observer-polyfill'
 import { afterEach, beforeEach, vi } from 'vitest'
 
+// 0. Suppress Vue's Suspense experimental warning (it's informational noise in tests)
+// Vue uses console.info or console.log for this warning, not console.warn
+// eslint-disable-next-line no-console
+const originalInfo = console.info
+// eslint-disable-next-line no-console
+const originalLog = console.log
+
+function isSuspenseWarning(message: unknown): boolean {
+  return typeof message === 'string' && message.includes('Suspense') && message.includes('experimental')
+}
+
+// eslint-disable-next-line no-console
+console.info = (...args: unknown[]): void => {
+  if (isSuspenseWarning(args[0])) {
+    return
+  }
+  originalInfo.apply(console, args)
+}
+
+// eslint-disable-next-line no-console
+console.log = (...args: unknown[]): void => {
+  if (isSuspenseWarning(args[0])) {
+    return
+  }
+  originalLog.apply(console, args)
+}
+
 // 1. Polyfill ResizeObserver (needed for Nuxt UI/ResizablePanes)
 globalThis.ResizeObserver = ResizeObserver
 

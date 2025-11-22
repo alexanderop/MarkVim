@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { render } from '@testing-library/vue'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, ref, type Ref } from 'vue'
+import { defineComponent, h, nextTick, ref, type Ref } from 'vue'
 import { useMarkdown } from './useMarkdown'
 
 /**
@@ -20,8 +20,13 @@ function withMarkdownComposable(content: Ref<string>): {
     },
   })
 
-  mount(TestComponent)
+  render(TestComponent)
   return result!
+}
+
+async function flushPromises(): Promise<void> {
+  await nextTick()
+  await new Promise(resolve => setTimeout(resolve, 0))
 }
 
 describe('useMarkdown Reverse Tabnabbing Protection', () => {

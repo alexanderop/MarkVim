@@ -1,889 +1,972 @@
-# Integration Test Coverage Plan: 20% → 80%
+# BDD Integration Test Coverage Plan: 20% → 80%
 
-## Overview
+## Philosophy
 
-**Current State:** ~20.6% statements, 7.04% branch, 10.31% functions
-**Target:** 80% coverage using integration tests only
-**Estimated Effort:** 24-32 hours across 14 test files + 3 factories
+**The Core Principle:** Always render the **full `app.vue`** and test real user journeys. We're not testing isolated components - we're testing how users actually interact with the application.
+
+```
+❌ WRONG: mountSuspended(ColorThemePicker)  // Isolated component
+✅ RIGHT: mountSuspended(App)               // Full app, real user flow
+```
+
+This aligns with Kent C. Dodds' Testing Trophy and our existing Cucumber E2E tests - but runs in jsdom for speed.
 
 ---
 
-## Existing Test Infrastructure
+## Architecture
 
-| Utility | Location | Purpose |
-|---------|----------|---------|
-| `documentFactory` | `tests/factories/documents.ts` | Creates test `Document` objects |
-| `@nuxt/test-utils/runtime` | npm | `renderSuspended()` for Nuxt components |
-| `@testing-library/vue` | npm | `screen`, queries |
-| `@testing-library/user-event` | npm | User interaction simulation |
-| `vitest.setup.ts` | `tests/setup/` | Pinia reset, localStorage clear |
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         app.vue                              │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │                      UApp (Nuxt UI)                      ││
+│  │  ┌─────────────────────────────────────────────────────┐││
+│  │  │                    BaseLayout                        │││
+│  │  │  ┌─────────────────────────────────────────────────┐│││
+│  │  │  │                   AppShell                       ││││
+│  │  │  │                                                  ││││
+│  │  │  │  ┌──────────┐ ┌──────────┐ ┌─────────────────┐  ││││
+│  │  │  │  │ Document │ │  Editor  │ │ MarkdownPreview │  ││││
+│  │  │  │  │   List   │ │CodeMirror│ │                 │  ││││
+│  │  │  │  └──────────┘ └──────────┘ └─────────────────┘  ││││
+│  │  │  │                                                  ││││
+│  │  │  │  ┌──────────────────────────────────────────┐   ││││
+│  │  │  │  │ Modals: Share, ColorTheme, Settings, etc │   ││││
+│  │  │  │  └──────────────────────────────────────────┘   ││││
+│  │  │  └─────────────────────────────────────────────────┘│││
+│  │  └─────────────────────────────────────────────────────┘││
+│  └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+```
+
+By mounting `app.vue`, we get:
+- Real Pinia stores with cross-module state
+- Real event bus communication
+- Real keyboard shortcut handling
+- Real modal flows
+- Real localStorage persistence
 
 ---
 
-## Phase 1: Quick Wins (High Impact, Low Effort)
+## Test File Structure
 
-### 1.1 LocalStorageService Tests
-**File:** `src/shared/services/__tests__/LocalStorageService.test.ts`
-
-```typescript
-import { describe, it, expect, beforeEach } from 'vitest'
-import { LocalStorageService } from '../LocalStorageService'
-
-describe('LocalStorageService', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
-  describe('get', () => {
-    it('returns null for missing key', () => {
-      expect(LocalStorageService.get('missing')).toBeNull()
-    })
-
-    it('parses and returns stored JSON value', () => {
-      localStorage.setItem('test', JSON.stringify({ foo: 'bar' }))
-      expect(LocalStorageService.get('test')).toEqual({ foo: 'bar' })
-    })
-
-    it('returns null for invalid JSON', () => {
-      localStorage.setItem('test', 'not-json')
-      expect(LocalStorageService.get('test')).toBeNull()
-    })
-  })
-
-  describe('set', () => {
-    it('stores value as JSON string', () => {
-      LocalStorageService.set('test', { foo: 'bar' })
-      expect(localStorage.getItem('test')).toBe('{"foo":"bar"}')
-    })
-  })
-
-  describe('remove', () => {
-    it('removes the key from storage', () => {
-      localStorage.setItem('test', 'value')
-      LocalStorageService.remove('test')
-      expect(localStorage.getItem('test')).toBeNull()
-    })
-  })
-
-  describe('has', () => {
-    it('returns true when key exists', () => {
-      localStorage.setItem('test', 'value')
-      expect(LocalStorageService.has('test')).toBe(true)
-    })
-
-    it('returns false when key does not exist', () => {
-      expect(LocalStorageService.has('missing')).toBe(false)
-    })
-  })
-})
 ```
-
-### 1.2 useVimMode Tests
-**File:** `src/modules/editor/tests/use-vim-mode.test.ts`
-
-```typescript
-import { describe, it, expect } from 'vitest'
-import { useVimMode } from '../composables/useVimMode'
-
-describe('useVimMode', () => {
-  it('sets NORMAL mode for normal state', () => {
-    const { vimMode, handleVimModeChange } = useVimMode()
-    handleVimModeChange('normal')
-    expect(vimMode.value).toBe('NORMAL')
-  })
-
-  it('sets INSERT mode for insert state', () => {
-    const { vimMode, handleVimModeChange } = useVimMode()
-    handleVimModeChange('insert')
-    expect(vimMode.value).toBe('INSERT')
-  })
-
-  it('sets VISUAL (LINE) for visual line mode', () => {
-    const { vimMode, handleVimModeChange } = useVimMode()
-    handleVimModeChange('visual', 'line')
-    expect(vimMode.value).toBe('VISUAL (LINE)')
-  })
-
-  it('sets VISUAL (BLOCK) for visual block mode', () => {
-    const { vimMode, handleVimModeChange } = useVimMode()
-    handleVimModeChange('visual', 'block')
-    expect(vimMode.value).toBe('VISUAL (BLOCK)')
-  })
-})
-```
-
-### 1.3 useViewMode Tests
-**File:** `src/shared/composables/__tests__/useViewMode.test.ts`
-
-```typescript
-import { describe, it, expect, beforeEach } from 'vitest'
-import { useViewMode } from '../useViewMode'
-
-describe('useViewMode', () => {
-  describe('view mode state', () => {
-    it('defaults to split view', () => {
-      const { viewMode } = useViewMode()
-      expect(viewMode.value).toBe('split')
-    })
-
-    it('setViewMode changes the mode', () => {
-      const { viewMode, setViewMode } = useViewMode()
-      setViewMode('editor')
-      expect(viewMode.value).toBe('editor')
-    })
-
-    it('toggleViewMode cycles through modes', () => {
-      const { viewMode, toggleViewMode } = useViewMode()
-      // split -> editor -> preview -> split
-      toggleViewMode()
-      expect(viewMode.value).toBe('editor')
-      toggleViewMode()
-      expect(viewMode.value).toBe('preview')
-      toggleViewMode()
-      expect(viewMode.value).toBe('split')
-    })
-  })
-
-  describe('computed visibility', () => {
-    it('isEditorVisible is true for editor and split modes', () => {
-      const { isEditorVisible, setViewMode } = useViewMode()
-      setViewMode('editor')
-      expect(isEditorVisible.value).toBe(true)
-      setViewMode('split')
-      expect(isEditorVisible.value).toBe(true)
-      setViewMode('preview')
-      expect(isEditorVisible.value).toBe(false)
-    })
-
-    it('isPreviewVisible is true for preview and split modes', () => {
-      const { isPreviewVisible, setViewMode } = useViewMode()
-      setViewMode('preview')
-      expect(isPreviewVisible.value).toBe(true)
-      setViewMode('split')
-      expect(isPreviewVisible.value).toBe(true)
-      setViewMode('editor')
-      expect(isPreviewVisible.value).toBe(false)
-    })
-
-    it('isSplitView is only true for split mode', () => {
-      const { isSplitView, setViewMode } = useViewMode()
-      setViewMode('split')
-      expect(isSplitView.value).toBe(true)
-      setViewMode('editor')
-      expect(isSplitView.value).toBe(false)
-    })
-  })
-
-  describe('sidebar', () => {
-    it('toggleSidebar flips visibility', () => {
-      const { isSidebarVisible, toggleSidebar } = useViewMode()
-      const initial = isSidebarVisible.value
-      toggleSidebar()
-      expect(isSidebarVisible.value).toBe(!initial)
-    })
-  })
-})
-```
-
-### 1.4 useDataReset Tests
-**File:** `src/shared/composables/__tests__/useDataReset.test.ts`
-
-```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useDataReset } from '../useDataReset'
-
-describe('useDataReset', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
-  it('clearAllData removes markvim- prefixed keys', () => {
-    localStorage.setItem('markvim-docs', 'data')
-    localStorage.setItem('markvim-settings', 'data')
-    localStorage.setItem('other-key', 'data')
-
-    const { clearAllData } = useDataReset()
-    clearAllData()
-
-    expect(localStorage.getItem('markvim-docs')).toBeNull()
-    expect(localStorage.getItem('markvim-settings')).toBeNull()
-    expect(localStorage.getItem('other-key')).toBe('data')
-  })
-
-  it('onDataReset callback is called when data is reset', () => {
-    const callback = vi.fn()
-    const { onDataReset, clearAllData } = useDataReset()
-
-    onDataReset(callback)
-    clearAllData()
-
-    expect(callback).toHaveBeenCalled()
-  })
-})
+src/tests/integration/
+├── app-page.ts                    # Shared Page Object Factory
+├── journeys/
+│   ├── document-management.test.ts
+│   ├── share-document.test.ts
+│   ├── color-theme.test.ts
+│   ├── editor-settings.test.ts
+│   ├── view-modes.test.ts
+│   └── keyboard-shortcuts.test.ts
+└── setup.ts                       # Test-specific setup if needed
 ```
 
 ---
 
-## Phase 2: Core Stores (High Coverage Impact)
+## The Page Object Factory
 
-### 2.1 Color Theme Store Tests
-**File:** `src/modules/color-theme/tests/color-theme-store.test.ts`
+**File:** `src/tests/integration/app-page.ts`
+
+This is the **single source of truth** for all DOM interactions. Tests never touch selectors directly.
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
-import { useColorThemeStore, DEFAULT_COLOR_THEME } from '../store'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { screen, waitFor, within } from '@testing-library/vue'
+import userEvent from '@testing-library/user-event'
+import App from '~/app.vue'
 
-describe('useColorThemeStore', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia())
-    localStorage.clear()
+export async function createAppPage() {
+  const user = userEvent.setup()
+
+  await mountSuspended(App, { route: '/' })
+
+  // Wait for full hydration
+  await waitFor(() => {
+    expect(screen.getByRole('banner')).toBeVisible() // Header
   })
 
-  describe('initial state', () => {
-    it('starts with default color theme', () => {
-      const store = useColorThemeStore()
-      expect(store.colorTheme).toEqual(DEFAULT_COLOR_THEME)
-    })
-  })
+  return {
+    user,
 
-  describe('dispatch UPDATE_COLOR', () => {
-    it('updates foreground color', () => {
-      const store = useColorThemeStore()
-      store.dispatch({
-        type: 'UPDATE_COLOR',
-        colorKey: 'foreground',
-        value: { l: 0.9, c: 0.1, h: 180 }
+    // ═══════════════════════════════════════════════════════════
+    // DOCUMENT MANAGEMENT
+    // ═══════════════════════════════════════════════════════════
+
+    getDocumentList: () => screen.queryByTestId('document-list'),
+
+    getDocumentCount: async (): Promise<number> => {
+      const list = screen.queryByTestId('document-list')
+      if (!list) return 0
+      const items = list.querySelectorAll('[data-testid^="document-item"]')
+      return items.length
+    },
+
+    getDocumentByTitle: (title: string) => {
+      return screen.queryByRole('button', { name: new RegExp(title, 'i') })
+    },
+
+    getActiveDocument: () => {
+      return screen.queryByTestId('document-item-active')
+    },
+
+    clickCreateDocument: async () => {
+      const createBtn = screen.getByRole('button', { name: /new document|create/i })
+      await user.click(createBtn)
+    },
+
+    selectDocument: async (title: string) => {
+      const doc = screen.getByRole('button', { name: new RegExp(title, 'i') })
+      await user.click(doc)
+    },
+
+    deleteDocument: async (title: string) => {
+      const doc = screen.getByRole('button', { name: new RegExp(title, 'i') })
+      const deleteBtn = within(doc.closest('[data-testid^="document-item"]')!)
+        .getByRole('button', { name: /delete/i })
+      await user.click(deleteBtn)
+    },
+
+    confirmDeletion: async () => {
+      const dialog = await screen.findByRole('dialog')
+      const confirmBtn = within(dialog).getByRole('button', { name: /delete|confirm/i })
+      await user.click(confirmBtn)
+    },
+
+    cancelDeletion: async () => {
+      const dialog = await screen.findByRole('dialog')
+      const cancelBtn = within(dialog).getByRole('button', { name: /cancel/i })
+      await user.click(cancelBtn)
+    },
+
+    renameDocument: async (newTitle: string) => {
+      const titleInput = screen.getByLabelText(/document title/i)
+      await user.clear(titleInput)
+      await user.type(titleInput, newTitle)
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // EDITOR
+    // ═══════════════════════════════════════════════════════════
+
+    getEditor: () => screen.queryByTestId('editor-pane'),
+
+    getEditorContent: () => {
+      const editor = screen.queryByTestId('editor-pane')
+      return editor?.querySelector('.cm-content')?.textContent ?? ''
+    },
+
+    typeInEditor: async (text: string) => {
+      const editor = screen.getByTestId('editor-pane')
+      const cmContent = editor.querySelector('.cm-content')!
+      await user.click(cmContent)
+      await user.type(cmContent, text)
+    },
+
+    clearEditor: async () => {
+      const editor = screen.getByTestId('editor-pane')
+      const cmContent = editor.querySelector('.cm-content')!
+      await user.click(cmContent)
+      await user.keyboard('{Control>}a{/Control}{Backspace}')
+    },
+
+    focusEditor: async () => {
+      const editor = screen.getByTestId('editor-pane')
+      const cmContent = editor.querySelector('.cm-content')!
+      await user.click(cmContent)
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // PREVIEW
+    // ═══════════════════════════════════════════════════════════
+
+    getPreview: () => screen.queryByTestId('preview-pane'),
+
+    getPreviewContent: () => {
+      const preview = screen.queryByTestId('preview-pane')
+      return preview?.textContent ?? ''
+    },
+
+    verifyPreviewContains: async (text: string) => {
+      await waitFor(() => {
+        const preview = screen.getByTestId('preview-pane')
+        expect(preview).toHaveTextContent(text)
       })
-      expect(store.colorTheme.foreground).toEqual({ l: 0.9, c: 0.1, h: 180 })
-    })
+    },
 
-    it('updates background color', () => {
-      const store = useColorThemeStore()
-      store.dispatch({
-        type: 'UPDATE_COLOR',
-        colorKey: 'background',
-        value: { l: 0.2, c: 0.05, h: 240 }
+    verifyPreviewHasHeading: async (level: 'h1' | 'h2' | 'h3', text: string) => {
+      await waitFor(() => {
+        const preview = screen.getByTestId('preview-pane')
+        const heading = preview.querySelector(level)
+        expect(heading).toHaveTextContent(text)
       })
-      expect(store.colorTheme.background).toEqual({ l: 0.2, c: 0.05, h: 240 })
-    })
-  })
+    },
 
-  describe('dispatch RESET_TO_DEFAULTS', () => {
-    it('restores default theme after modifications', () => {
-      const store = useColorThemeStore()
-      store.dispatch({
-        type: 'UPDATE_COLOR',
-        colorKey: 'foreground',
-        value: { l: 0.5, c: 0.5, h: 0 }
+    verifyMermaidDiagramRendered: async () => {
+      await waitFor(() => {
+        const preview = screen.getByTestId('preview-pane')
+        expect(preview.querySelector('svg.mermaid')).toBeInTheDocument()
       })
-      store.dispatch({ type: 'RESET_TO_DEFAULTS' })
-      expect(store.colorTheme).toEqual(DEFAULT_COLOR_THEME)
-    })
-  })
+    },
 
-  describe('validateAndImportTheme', () => {
-    it('returns error for invalid JSON', () => {
-      const store = useColorThemeStore()
-      const result = store.validateAndImportTheme('not-json')
-      expect(result.isErr()).toBe(true)
-    })
+    // ═══════════════════════════════════════════════════════════
+    // VIEW MODES
+    // ═══════════════════════════════════════════════════════════
 
-    it('returns error for missing required fields', () => {
-      const store = useColorThemeStore()
-      const result = store.validateAndImportTheme(JSON.stringify({ foreground: {} }))
-      expect(result.isErr()).toBe(true)
-    })
+    toggleSidebar: async () => {
+      const btn = screen.getByRole('button', { name: /toggle sidebar|hide sidebar|show sidebar/i })
+      await user.click(btn)
+    },
 
-    it('imports valid theme', () => {
-      const store = useColorThemeStore()
-      const validTheme = {
-        foreground: { l: 0.9, c: 0.1, h: 180 },
-        background: { l: 0.1, c: 0.05, h: 240 },
-        accent: { l: 0.6, c: 0.2, h: 300 }
+    verifySidebarVisible: async () => {
+      await waitFor(() => {
+        expect(screen.getByTestId('document-list')).toBeVisible()
+      })
+    },
+
+    verifySidebarHidden: async () => {
+      await waitFor(() => {
+        expect(screen.queryByTestId('document-list')).not.toBeVisible()
+      })
+    },
+
+    switchToEditorOnly: async () => {
+      const btn = screen.getByRole('button', { name: /editor only|editor mode/i })
+      await user.click(btn)
+    },
+
+    switchToPreviewOnly: async () => {
+      const btn = screen.getByRole('button', { name: /preview only|preview mode/i })
+      await user.click(btn)
+    },
+
+    switchToSplitView: async () => {
+      const btn = screen.getByRole('button', { name: /split view|split mode/i })
+      await user.click(btn)
+    },
+
+    verifyEditorVisible: async () => {
+      await waitFor(() => {
+        expect(screen.getByTestId('editor-pane')).toBeVisible()
+      })
+    },
+
+    verifyEditorHidden: async () => {
+      await waitFor(() => {
+        expect(screen.queryByTestId('editor-pane')).not.toBeVisible()
+      })
+    },
+
+    verifyPreviewVisible: async () => {
+      await waitFor(() => {
+        expect(screen.getByTestId('preview-pane')).toBeVisible()
+      })
+    },
+
+    verifyPreviewHidden: async () => {
+      await waitFor(() => {
+        expect(screen.queryByTestId('preview-pane')).not.toBeVisible()
+      })
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // SHARE
+    // ═══════════════════════════════════════════════════════════
+
+    clickShareButton: async () => {
+      const btn = screen.getByRole('button', { name: /share/i })
+      await user.click(btn)
+    },
+
+    verifyShareDialogVisible: async () => {
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeVisible()
+        expect(screen.getByTestId('share-dialog')).toBeVisible()
+      })
+    },
+
+    getShareLink: async (): Promise<string> => {
+      const input = await screen.findByTestId('share-link-input')
+      return (input as HTMLInputElement).value
+    },
+
+    clickCopyShareLink: async () => {
+      const dialog = screen.getByRole('dialog')
+      const copyBtn = within(dialog).getByRole('button', { name: /copy/i })
+      await user.click(copyBtn)
+    },
+
+    closeShareDialog: async () => {
+      const dialog = screen.getByRole('dialog')
+      const closeBtn = within(dialog).getByRole('button', { name: /close/i })
+      await user.click(closeBtn)
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // COLOR THEME
+    // ═══════════════════════════════════════════════════════════
+
+    clickColorThemeButton: async () => {
+      const btn = screen.getByRole('button', { name: /color|theme/i })
+      await user.click(btn)
+    },
+
+    verifyColorThemeModalVisible: async () => {
+      await waitFor(() => {
+        expect(screen.getByTestId('color-theme-modal')).toBeVisible()
+      })
+    },
+
+    selectColorChannel: async (channel: 'foreground' | 'background' | 'accent') => {
+      const btn = screen.getByRole('button', { name: new RegExp(channel, 'i') })
+      await user.click(btn)
+    },
+
+    setLightnessValue: async (value: number) => {
+      const slider = screen.getByLabelText(/lightness/i)
+      await user.clear(slider)
+      await user.type(slider, String(value))
+    },
+
+    resetColorTheme: async () => {
+      const btn = screen.getByRole('button', { name: /reset|defaults/i })
+      await user.click(btn)
+    },
+
+    closeColorThemeModal: async () => {
+      await user.keyboard('{Escape}')
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // SETTINGS
+    // ═══════════════════════════════════════════════════════════
+
+    openSettings: async () => {
+      const btn = screen.getByRole('button', { name: /settings/i })
+      await user.click(btn)
+    },
+
+    verifySettingsModalVisible: async () => {
+      await waitFor(() => {
+        expect(screen.getByTestId('settings-modal')).toBeVisible()
+      })
+    },
+
+    toggleVimMode: async () => {
+      const modal = screen.getByTestId('settings-modal')
+      const toggle = within(modal).getByRole('switch', { name: /vim mode/i })
+      await user.click(toggle)
+    },
+
+    toggleLineNumbers: async () => {
+      const modal = screen.getByTestId('settings-modal')
+      const toggle = within(modal).getByRole('switch', { name: /line numbers/i })
+      await user.click(toggle)
+    },
+
+    closeSettings: async () => {
+      await user.keyboard('{Escape}')
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // KEYBOARD SHORTCUTS
+    // ═══════════════════════════════════════════════════════════
+
+    pressKey: async (key: string) => {
+      await user.keyboard(`{${key}}`)
+    },
+
+    pressKeyCombo: async (combo: string) => {
+      // e.g., '{Control>}s{/Control}' for Ctrl+S
+      await user.keyboard(combo)
+    },
+
+    pressKeySequence: async (keys: string[]) => {
+      for (const key of keys) {
+        await user.keyboard(key)
       }
-      const result = store.validateAndImportTheme(JSON.stringify(validTheme))
-      expect(result.isOk()).toBe(true)
-      expect(store.colorTheme.foreground).toEqual(validTheme.foreground)
-    })
-  })
+    },
 
-  describe('exportTheme', () => {
-    it('returns valid JSON string', () => {
-      const store = useColorThemeStore()
-      const exported = store.exportTheme()
-      const parsed = JSON.parse(exported)
-      expect(parsed).toHaveProperty('foreground')
-      expect(parsed).toHaveProperty('background')
-    })
-  })
+    // ═══════════════════════════════════════════════════════════
+    // STATUS BAR
+    // ═══════════════════════════════════════════════════════════
 
-  describe('oklchToString', () => {
-    it('formats OKLCH color correctly', () => {
-      const store = useColorThemeStore()
-      const result = store.oklchToString({ l: 0.5, c: 0.2, h: 180 })
-      expect(result).toBe('oklch(0.5 0.2 180)')
-    })
+    getVimModeIndicator: () => {
+      return screen.queryByTestId('vim-mode-indicator')?.textContent ?? ''
+    },
 
-    it('includes alpha when provided', () => {
-      const store = useColorThemeStore()
-      const result = store.oklchToString({ l: 0.5, c: 0.2, h: 180, alpha: 0.5 })
-      expect(result).toBe('oklch(0.5 0.2 180 / 0.5)')
-    })
-  })
-})
-```
+    verifyVimModeIndicator: async (mode: 'NORMAL' | 'INSERT' | 'VISUAL') => {
+      await waitFor(() => {
+        const indicator = screen.getByTestId('vim-mode-indicator')
+        expect(indicator).toHaveTextContent(mode)
+      })
+    },
 
-### 2.2 useEditorSettings Tests
-**File:** `src/modules/editor/tests/use-editor-settings.test.ts`
+    // ═══════════════════════════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════════════════════════
 
-```typescript
-import { describe, it, expect, beforeEach } from 'vitest'
-import { useEditorSettings } from '../composables/useEditorSettings'
+    closeModal: async () => {
+      await user.keyboard('{Escape}')
+    },
 
-describe('useEditorSettings', () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
+    waitForHydration: async () => {
+      await waitFor(() => {
+        expect(screen.getByRole('banner')).toBeVisible()
+      })
+    },
+  }
+}
 
-  describe('default values', () => {
-    it('has correct defaults', () => {
-      const settings = useEditorSettings()
-      expect(settings.vimMode.value).toBe(false)
-      expect(settings.lineNumbers.value).toBe(true)
-      expect(settings.fontSize.value).toBeGreaterThan(0)
-    })
-  })
-
-  describe('toggleVimMode', () => {
-    it('flips vim mode on and off', () => {
-      const settings = useEditorSettings()
-      const initial = settings.vimMode.value
-      settings.toggleVimMode()
-      expect(settings.vimMode.value).toBe(!initial)
-      settings.toggleVimMode()
-      expect(settings.vimMode.value).toBe(initial)
-    })
-  })
-
-  describe('toggleLineNumbers', () => {
-    it('flips line numbers on and off', () => {
-      const settings = useEditorSettings()
-      const initial = settings.lineNumbers.value
-      settings.toggleLineNumbers()
-      expect(settings.lineNumbers.value).toBe(!initial)
-    })
-  })
-
-  describe('updateFontSize', () => {
-    it('clamps to minimum value', () => {
-      const settings = useEditorSettings()
-      settings.updateFontSize(4) // below min
-      expect(settings.fontSize.value).toBeGreaterThanOrEqual(8)
-    })
-
-    it('clamps to maximum value', () => {
-      const settings = useEditorSettings()
-      settings.updateFontSize(100) // above max
-      expect(settings.fontSize.value).toBeLessThanOrEqual(32)
-    })
-
-    it('accepts valid font size', () => {
-      const settings = useEditorSettings()
-      settings.updateFontSize(18)
-      expect(settings.fontSize.value).toBe(18)
-    })
-  })
-
-  describe('resetToDefaults', () => {
-    it('restores all settings to defaults', () => {
-      const settings = useEditorSettings()
-      settings.toggleVimMode()
-      settings.toggleLineNumbers()
-      settings.updateFontSize(24)
-
-      settings.resetToDefaults()
-
-      expect(settings.vimMode.value).toBe(false)
-      expect(settings.lineNumbers.value).toBe(true)
-    })
-  })
-
-  describe('export/import', () => {
-    it('exportSettings returns valid JSON', () => {
-      const settings = useEditorSettings()
-      const exported = settings.exportSettings()
-      expect(() => JSON.parse(exported)).not.toThrow()
-    })
-
-    it('importSettings applies valid settings', () => {
-      const settings = useEditorSettings()
-      const importData = JSON.stringify({ vimMode: true, fontSize: 20 })
-
-      const result = settings.importSettings(importData)
-
-      expect(result.isOk()).toBe(true)
-      expect(settings.vimMode.value).toBe(true)
-      expect(settings.fontSize.value).toBe(20)
-    })
-
-    it('importSettings rejects invalid JSON', () => {
-      const settings = useEditorSettings()
-      const result = settings.importSettings('not-json')
-      expect(result.isErr()).toBe(true)
-    })
-  })
-})
+export type AppPage = Awaited<ReturnType<typeof createAppPage>>
 ```
 
 ---
 
-## Phase 3: Expand Existing Tests
+## User Journey Tests
 
-### 3.1 Expand useDocumentShare Tests
-**File:** `src/modules/share/composables/useDocumentShare.test.ts` (add to existing)
+### Journey 1: Document Management
 
-```typescript
-// Add these tests to the existing file
-
-describe('generateShareLink', () => {
-  it('returns null for empty content', async () => {
-    const { generateShareLink } = await import('./useDocumentShare')
-    const result = await generateShareLink({ id: '1', title: '', content: '' })
-    expect(result).toBeNull()
-  })
-
-  it('returns URL for valid document', async () => {
-    const { generateShareLink } = await import('./useDocumentShare')
-    const result = await generateShareLink({
-      id: '1',
-      title: 'Test',
-      content: '# Hello'
-    })
-    expect(result).toContain('#share=')
-  })
-
-  it('rejects oversized documents', async () => {
-    const { generateShareLink } = await import('./useDocumentShare')
-    const largeContent = 'x'.repeat(100000) // Very large
-    const result = await generateShareLink({
-      id: '1',
-      title: 'Test',
-      content: largeContent
-    })
-    // Should return error result or null
-    expect(result).toBeNull()
-  })
-})
-
-describe('getShareStats', () => {
-  it('returns compression ratio', async () => {
-    const { getShareStats } = await import('./useDocumentShare')
-    const stats = getShareStats('# Test content')
-    expect(stats).toHaveProperty('compressionRatio')
-    expect(stats.compressionRatio).toBeGreaterThan(0)
-  })
-})
-
-describe('clearShareFromUrl', () => {
-  it('removes hash from URL', async () => {
-    Object.defineProperty(window, 'location', {
-      value: { hash: '#share=abc', href: 'http://test/#share=abc' },
-      writable: true
-    })
-    const { clearShareFromUrl } = await import('./useDocumentShare')
-    clearShareFromUrl()
-    // Verify history.replaceState was called
-  })
-})
-```
-
----
-
-## Phase 4: Complex Composables
-
-### 4.1 useShortcuts Tests
-**File:** `src/modules/shortcuts/tests/use-shortcuts.test.ts`
+**File:** `src/tests/integration/journeys/document-management.test.ts`
 
 ```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { useShortcuts } from '../composables/useShortcuts'
+import { createAppPage } from '../app-page'
 
-describe('useShortcuts', () => {
-  describe('registerShortcut', () => {
-    it('adds shortcut to registeredShortcuts', () => {
-      const { registerShortcut, registeredShortcuts } = useShortcuts()
-      registerShortcut({
-        id: 'test-shortcut',
-        keys: ['ctrl', 's'],
-        description: 'Save document',
-        action: vi.fn(),
-        category: 'editor'
-      })
-      expect(registeredShortcuts.value).toHaveLength(1)
-      expect(registeredShortcuts.value[0].id).toBe('test-shortcut')
+describe('Feature: Document Management', () => {
+
+  describe('Scenario: Create new document from sidebar', () => {
+    it('Given the app is loaded, When I create a new document, Then it appears in the list', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      const initialCount = await page.getDocumentCount()
+
+      // WHEN
+      await page.clickCreateDocument()
+
+      // THEN
+      expect(await page.getDocumentCount()).toBe(initialCount + 1)
     })
   })
 
-  describe('registerShortcuts', () => {
-    it('bulk registers multiple shortcuts', () => {
-      const { registerShortcuts, registeredShortcuts } = useShortcuts()
-      registerShortcuts([
-        { id: 'save', keys: ['ctrl', 's'], description: 'Save', action: vi.fn(), category: 'editor' },
-        { id: 'open', keys: ['ctrl', 'o'], description: 'Open', action: vi.fn(), category: 'editor' }
-      ])
-      expect(registeredShortcuts.value).toHaveLength(2)
+  describe('Scenario: Switch between documents', () => {
+    it('Given I have multiple documents, When I select one, Then its content loads in editor', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clickCreateDocument()
+      await page.typeInEditor('# Document Two')
+      await page.clickCreateDocument()
+      await page.typeInEditor('# Document Three')
+
+      // WHEN - select the second document
+      await page.selectDocument('Document Two')
+
+      // THEN
+      expect(page.getEditorContent()).toContain('Document Two')
     })
   })
 
-  describe('formatKeys', () => {
-    it('formats meta key as ⌘ on Mac', () => {
-      const { formatKeys } = useShortcuts()
-      // Mock navigator.platform or test both cases
-      const result = formatKeys(['meta', 'k'])
-      expect(result).toMatch(/[⌘Ctrl].*K/i)
-    })
+  describe('Scenario: Delete document with confirmation', () => {
+    it('Given I have 2 documents, When I delete one and confirm, Then only 1 remains', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clickCreateDocument() // Now we have 2
+      expect(await page.getDocumentCount()).toBe(2)
 
-    it('formats shift key correctly', () => {
-      const { formatKeys } = useShortcuts()
-      const result = formatKeys(['shift', 'enter'])
-      expect(result).toContain('⇧')
-    })
-  })
+      // WHEN
+      await page.deleteDocument('Untitled')
+      await page.confirmDeletion()
 
-  describe('parseKeysToArray', () => {
-    it('splits key combination string', () => {
-      const { parseKeysToArray } = useShortcuts()
-      const result = parseKeysToArray('ctrl+shift+s')
-      expect(result).toEqual(['ctrl', 'shift', 's'])
+      // THEN
+      expect(await page.getDocumentCount()).toBe(1)
     })
   })
 
-  describe('shortcutsByCategory', () => {
-    it('groups shortcuts by category', () => {
-      const { registerShortcuts, shortcutsByCategory } = useShortcuts()
-      registerShortcuts([
-        { id: 'save', keys: ['ctrl', 's'], description: 'Save', action: vi.fn(), category: 'editor' },
-        { id: 'toggle', keys: ['ctrl', 'b'], description: 'Toggle', action: vi.fn(), category: 'view' }
-      ])
-      expect(shortcutsByCategory.value['editor']).toHaveLength(1)
-      expect(shortcutsByCategory.value['view']).toHaveLength(1)
+  describe('Scenario: Cancel document deletion', () => {
+    it('Given I click delete, When I cancel, Then document is preserved', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      const initialCount = await page.getDocumentCount()
+
+      // WHEN
+      await page.deleteDocument('Welcome')
+      await page.cancelDeletion()
+
+      // THEN
+      expect(await page.getDocumentCount()).toBe(initialCount)
     })
   })
 
-  describe('notUsingInput', () => {
-    it('returns false when focused on input element', () => {
-      const input = document.createElement('input')
-      document.body.appendChild(input)
-      input.focus()
+  describe('Scenario: Toggle sidebar visibility', () => {
+    it('Given sidebar is visible, When I toggle it, Then it hides and shows', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.verifySidebarVisible()
 
-      const { notUsingInput } = useShortcuts()
-      expect(notUsingInput.value).toBe(false)
+      // WHEN
+      await page.toggleSidebar()
 
-      document.body.removeChild(input)
-    })
+      // THEN
+      await page.verifySidebarHidden()
 
-    it('returns true when not focused on input', () => {
-      const div = document.createElement('div')
-      document.body.appendChild(div)
-      div.focus()
+      // AND WHEN I toggle again
+      await page.toggleSidebar()
 
-      const { notUsingInput } = useShortcuts()
-      expect(notUsingInput.value).toBe(true)
-
-      document.body.removeChild(div)
+      // THEN
+      await page.verifySidebarVisible()
     })
   })
 })
 ```
 
-### 4.2 useCommandHistory Tests
-**File:** `src/modules/shortcuts/tests/use-command-history.test.ts`
+### Journey 2: Editor and Preview
+
+**File:** `src/tests/integration/journeys/editor-preview.test.ts`
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { useCommandHistory } from '../composables/useCommandHistory'
+import { createAppPage } from '../app-page'
 
-describe('useCommandHistory', () => {
-  it('starts with empty history', () => {
-    const { history } = useCommandHistory()
-    expect(history.value).toEqual([])
+describe('Feature: Markdown Editing and Preview', () => {
+
+  describe('Scenario: Live preview updates as I type', () => {
+    it('Given I am in split view, When I type markdown, Then preview updates', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clearEditor()
+
+      // WHEN
+      await page.typeInEditor('# Hello World')
+
+      // THEN
+      await page.verifyPreviewContains('Hello World')
+      await page.verifyPreviewHasHeading('h1', 'Hello World')
+    })
   })
 
-  it('addToHistory adds command', () => {
-    const { addToHistory, history } = useCommandHistory()
-    addToHistory({ id: 'save', label: 'Save Document' })
-    expect(history.value).toHaveLength(1)
-    expect(history.value[0].id).toBe('save')
+  describe('Scenario: Render Mermaid diagrams', () => {
+    it('Given I type a mermaid code block, When preview renders, Then I see SVG diagram', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clearEditor()
+
+      // WHEN
+      await page.typeInEditor('```mermaid\ngraph TD\n  A --> B\n```')
+
+      // THEN
+      await page.verifyMermaidDiagramRendered()
+    })
   })
 
-  it('limits history to max entries', () => {
-    const { addToHistory, history } = useCommandHistory()
-    for (let i = 0; i < 20; i++) {
-      addToHistory({ id: `cmd-${i}`, label: `Command ${i}` })
-    }
-    expect(history.value.length).toBeLessThanOrEqual(10) // Assuming max is 10
-  })
+  describe('Scenario: Code syntax highlighting', () => {
+    it('Given I type a code block, When preview renders, Then code is highlighted', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clearEditor()
 
-  it('clearHistory empties the history', () => {
-    const { addToHistory, clearHistory, history } = useCommandHistory()
-    addToHistory({ id: 'save', label: 'Save' })
-    clearHistory()
-    expect(history.value).toEqual([])
+      // WHEN
+      await page.typeInEditor('```javascript\nconst x = 42\n```')
+
+      // THEN
+      await page.verifyPreviewContains('const')
+      // Shiki adds specific classes for highlighting
+    })
   })
 })
 ```
 
-### 4.3 useResizablePanes Tests
-**File:** `src/shared/composables/__tests__/useResizablePanes.test.ts`
+### Journey 3: View Mode Switching
+
+**File:** `src/tests/integration/journeys/view-modes.test.ts`
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { createAppPage } from '../app-page'
+
+describe('Feature: View Mode Switching', () => {
+
+  describe('Scenario: Switch to editor-only mode', () => {
+    it('Given I am in split view, When I switch to editor-only, Then preview hides', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.verifyEditorVisible()
+      await page.verifyPreviewVisible()
+
+      // WHEN
+      await page.switchToEditorOnly()
+
+      // THEN
+      await page.verifyEditorVisible()
+      await page.verifyPreviewHidden()
+    })
+  })
+
+  describe('Scenario: Switch to preview-only mode', () => {
+    it('Given I am in split view, When I switch to preview-only, Then editor hides', async () => {
+      // GIVEN
+      const page = await createAppPage()
+
+      // WHEN
+      await page.switchToPreviewOnly()
+
+      // THEN
+      await page.verifyEditorHidden()
+      await page.verifyPreviewVisible()
+    })
+  })
+
+  describe('Scenario: Return to split view', () => {
+    it('Given I am in preview-only, When I switch to split, Then both are visible', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.switchToPreviewOnly()
+
+      // WHEN
+      await page.switchToSplitView()
+
+      // THEN
+      await page.verifyEditorVisible()
+      await page.verifyPreviewVisible()
+    })
+  })
+})
+```
+
+### Journey 4: Share Document
+
+**File:** `src/tests/integration/journeys/share-document.test.ts`
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useResizablePanes } from '../useResizablePanes'
+import { createAppPage } from '../app-page'
 
-describe('useResizablePanes', () => {
-  describe('initial state', () => {
-    it('uses provided initial width', () => {
-      const { leftPaneWidth } = useResizablePanes({ initialWidth: 40 })
-      expect(leftPaneWidth.value).toBe(40)
-    })
+describe('Feature: Document Sharing', () => {
 
-    it('defaults to 50 if not provided', () => {
-      const { leftPaneWidth } = useResizablePanes({})
-      expect(leftPaneWidth.value).toBe(50)
-    })
-  })
-
-  describe('rightPaneWidth computed', () => {
-    it('calculates as 100 minus left width', () => {
-      const { leftPaneWidth, rightPaneWidth } = useResizablePanes({ initialWidth: 30 })
-      expect(rightPaneWidth.value).toBe(70)
-    })
-  })
-
-  describe('startDrag', () => {
-    it('sets isDragging to true on non-mobile', () => {
-      // Mock non-mobile
-      vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: false }))
-
-      const { startDrag, isDragging } = useResizablePanes({})
-      startDrag()
-      expect(isDragging.value).toBe(true)
-    })
-
-    it('does nothing on mobile devices', () => {
-      vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
-
-      const { startDrag, isDragging } = useResizablePanes({})
-      startDrag()
-      expect(isDragging.value).toBe(false)
-    })
-  })
-
-  describe('stopDrag', () => {
-    it('sets isDragging to false', () => {
-      const { startDrag, stopDrag, isDragging } = useResizablePanes({})
-      startDrag()
-      stopDrag()
-      expect(isDragging.value).toBe(false)
-    })
-  })
-})
-```
-
----
-
-## Phase 5: Component Integration Tests
-
-### 5.1 ColorThemePicker Integration Test
-**File:** `src/modules/color-theme/tests/color-theme-picker.test.ts`
-
-```typescript
-import { describe, it, expect, beforeEach } from 'vitest'
-import { screen } from '@testing-library/vue'
-import userEvent from '@testing-library/user-event'
-import { renderSuspended } from '@nuxt/test-utils/runtime'
-import { setActivePinia, createPinia } from 'pinia'
-import ColorThemePicker from '../components/ColorThemePicker.vue'
-
-describe('ColorThemePicker Integration', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
-  })
-
-  async function createColorPickerPage() {
-    const user = userEvent.setup()
-    await renderSuspended(ColorThemePicker)
-
-    return {
-      getLightnessSlider: () => screen.getByLabelText(/lightness/i),
-      getChromaSlider: () => screen.getByLabelText(/chroma/i),
-      getHueSlider: () => screen.getByLabelText(/hue/i),
-      getPreviewSwatch: () => screen.getByTestId('color-preview'),
-
-      async setLightness(value: number) {
-        const slider = screen.getByLabelText(/lightness/i)
-        await user.clear(slider)
-        await user.type(slider, String(value))
+    // Mock clipboard API
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined)
       }
-    }
-  }
-
-  it('displays all color channel sliders', async () => {
-    const page = await createColorPickerPage()
-    expect(page.getLightnessSlider()).toBeInTheDocument()
-    expect(page.getChromaSlider()).toBeInTheDocument()
-    expect(page.getHueSlider()).toBeInTheDocument()
-  })
-
-  it('updates preview when lightness changes', async () => {
-    const page = await createColorPickerPage()
-    await page.setLightness(0.8)
-    // Verify the preview updated (check style or data attribute)
-    expect(page.getPreviewSwatch()).toBeInTheDocument()
-  })
-})
-```
-
-### 5.2 ShareDialog Integration Test
-**File:** `src/modules/share/tests/share-dialog.test.ts`
-
-```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { screen } from '@testing-library/vue'
-import userEvent from '@testing-library/user-event'
-import { renderSuspended } from '@nuxt/test-utils/runtime'
-import { setActivePinia, createPinia } from 'pinia'
-import ShareDialog from '../components/ShareDialog.vue'
-
-describe('ShareDialog Integration', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia())
-  })
-
-  async function createShareDialogPage(props = {}) {
-    const user = userEvent.setup()
-    await renderSuspended(ShareDialog, {
-      props: { isOpen: true, ...props }
     })
-
-    return {
-      getShareUrlInput: () => screen.queryByRole('textbox', { name: /share url/i }),
-      getCopyButton: () => screen.getByRole('button', { name: /copy/i }),
-      getCloseButton: () => screen.getByRole('button', { name: /close/i }),
-
-      async clickCopy() {
-        await user.click(screen.getByRole('button', { name: /copy/i }))
-      }
-    }
-  }
-
-  it('displays share URL when open', async () => {
-    const page = await createShareDialogPage()
-    expect(page.getShareUrlInput()).toBeInTheDocument()
   })
 
-  it('copies URL to clipboard on copy click', async () => {
-    const mockClipboard = { writeText: vi.fn().mockResolvedValue(undefined) }
-    Object.assign(navigator, { clipboard: mockClipboard })
+  describe('Scenario: Generate share link', () => {
+    it('Given a document with content, When I open share dialog, Then I see a share URL', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clearEditor()
+      await page.typeInEditor('# Shared Document\n\nThis is shared content.')
 
-    const page = await createShareDialogPage()
-    await page.clickCopy()
+      // WHEN
+      await page.clickShareButton()
 
-    expect(mockClipboard.writeText).toHaveBeenCalled()
+      // THEN
+      await page.verifyShareDialogVisible()
+      const shareLink = await page.getShareLink()
+      expect(shareLink).toContain('#share=')
+    })
+  })
+
+  describe('Scenario: Copy share link to clipboard', () => {
+    it('Given share dialog is open, When I click copy, Then link is in clipboard', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clickShareButton()
+      await page.verifyShareDialogVisible()
+
+      // WHEN
+      await page.clickCopyShareLink()
+
+      // THEN
+      expect(navigator.clipboard.writeText).toHaveBeenCalled()
+    })
+  })
+
+  describe('Scenario: Close share dialog', () => {
+    it('Given share dialog is open, When I close it, Then dialog disappears', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clickShareButton()
+      await page.verifyShareDialogVisible()
+
+      // WHEN
+      await page.closeShareDialog()
+
+      // THEN
+      // Dialog should be closed (not visible)
+    })
+  })
+})
+```
+
+### Journey 5: Color Theme Customization
+
+**File:** `src/tests/integration/journeys/color-theme.test.ts`
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { createAppPage } from '../app-page'
+
+describe('Feature: Color Theme Customization', () => {
+
+  describe('Scenario: Open color theme modal', () => {
+    it('Given the app is loaded, When I click color theme button, Then modal opens', async () => {
+      // GIVEN
+      const page = await createAppPage()
+
+      // WHEN
+      await page.clickColorThemeButton()
+
+      // THEN
+      await page.verifyColorThemeModalVisible()
+    })
+  })
+
+  describe('Scenario: Change foreground color', () => {
+    it('Given color modal is open, When I adjust lightness, Then preview updates', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clickColorThemeButton()
+      await page.verifyColorThemeModalVisible()
+
+      // WHEN
+      await page.selectColorChannel('foreground')
+      await page.setLightnessValue(0.9)
+
+      // THEN
+      // CSS variable should update (can check computed style)
+    })
+  })
+
+  describe('Scenario: Reset to default theme', () => {
+    it('Given I changed colors, When I reset, Then defaults are restored', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.clickColorThemeButton()
+      await page.selectColorChannel('foreground')
+      await page.setLightnessValue(0.5)
+
+      // WHEN
+      await page.resetColorTheme()
+
+      // THEN
+      // Colors should be back to defaults
+    })
+  })
+
+  describe('Scenario: Open color theme with keyboard shortcut', () => {
+    it('Given app is focused, When I press g then c, Then color modal opens', async () => {
+      // GIVEN
+      const page = await createAppPage()
+
+      // WHEN
+      await page.pressKeySequence(['g', 'c'])
+
+      // THEN
+      await page.verifyColorThemeModalVisible()
+    })
+  })
+})
+```
+
+### Journey 6: Editor Settings
+
+**File:** `src/tests/integration/journeys/editor-settings.test.ts`
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { createAppPage } from '../app-page'
+
+describe('Feature: Editor Settings', () => {
+
+  describe('Scenario: Enable Vim mode', () => {
+    it('Given settings modal is open, When I enable Vim mode, Then status bar shows NORMAL', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.openSettings()
+      await page.verifySettingsModalVisible()
+
+      // WHEN
+      await page.toggleVimMode()
+      await page.closeSettings()
+
+      // THEN
+      await page.focusEditor()
+      await page.verifyVimModeIndicator('NORMAL')
+    })
+  })
+
+  describe('Scenario: Vim mode INSERT state', () => {
+    it('Given Vim mode enabled, When I press i, Then mode changes to INSERT', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.openSettings()
+      await page.toggleVimMode()
+      await page.closeSettings()
+      await page.focusEditor()
+
+      // WHEN
+      await page.pressKey('i')
+
+      // THEN
+      await page.verifyVimModeIndicator('INSERT')
+    })
+  })
+
+  describe('Scenario: Toggle line numbers', () => {
+    it('Given settings modal, When I toggle line numbers, Then editor updates', async () => {
+      // GIVEN
+      const page = await createAppPage()
+      await page.openSettings()
+
+      // WHEN
+      await page.toggleLineNumbers()
+      await page.closeSettings()
+
+      // THEN
+      // Line numbers should be hidden/shown in editor
+    })
+  })
+
+  describe('Scenario: Open settings with keyboard shortcut', () => {
+    it('Given app is focused, When I press g then s, Then settings opens', async () => {
+      // GIVEN
+      const page = await createAppPage()
+
+      // WHEN
+      await page.pressKeySequence(['g', 's'])
+
+      // THEN
+      await page.verifySettingsModalVisible()
+    })
+  })
+})
+```
+
+### Journey 7: Complete New User Flow
+
+**File:** `src/tests/integration/journeys/new-user-flow.test.ts`
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { createAppPage } from '../app-page'
+
+describe('User Journey: New User Creates and Shares a Document', () => {
+
+  beforeEach(() => {
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockResolvedValue(undefined) }
+    })
+  })
+
+  it('complete flow from app load to sharing', async () => {
+    const page = await createAppPage()
+
+    // Step 1: User sees welcome document
+    expect(await page.getDocumentCount()).toBeGreaterThan(0)
+
+    // Step 2: User creates new document
+    await page.clickCreateDocument()
+    const countAfterCreate = await page.getDocumentCount()
+    expect(countAfterCreate).toBeGreaterThan(1)
+
+    // Step 3: User types content
+    await page.clearEditor()
+    await page.typeInEditor('# My First Note\n\nHello world!')
+
+    // Step 4: User verifies preview shows rendered markdown
+    await page.verifyPreviewContains('My First Note')
+    await page.verifyPreviewHasHeading('h1', 'My First Note')
+
+    // Step 5: User toggles to preview-only mode
+    await page.switchToPreviewOnly()
+    await page.verifyEditorHidden()
+    await page.verifyPreviewVisible()
+
+    // Step 6: User goes back to split and shares
+    await page.switchToSplitView()
+    await page.clickShareButton()
+    await page.verifyShareDialogVisible()
+
+    const shareUrl = await page.getShareLink()
+    expect(shareUrl).toContain('#share=')
+
+    // Step 7: User copies link
+    await page.clickCopyShareLink()
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(shareUrl)
   })
 })
 ```
 
 ---
 
-## New Factories to Create
+## What to Mock vs Keep Real
 
-### tests/factories/color-theme.ts
-```typescript
-import { Factory } from 'fishery'
-import { faker } from '@faker-js/faker'
-import type { ColorTheme, OklchColor } from '~/modules/color-theme/types'
+### KEEP REAL ✅
+| Component | Why |
+|-----------|-----|
+| Pinia stores | Test real state management |
+| Vue Router | Test real navigation |
+| Event Bus | Test cross-module events |
+| All composables | Test reactive behavior |
+| localStorage | Test persistence (cleared in beforeEach) |
+| Nuxt UI components | Test actual rendering |
 
-export const oklchColorFactory = Factory.define<OklchColor>(() => ({
-  l: faker.number.float({ min: 0, max: 1, fractionDigits: 2 }),
-  c: faker.number.float({ min: 0, max: 0.4, fractionDigits: 2 }),
-  h: faker.number.int({ min: 0, max: 360 })
-}))
+### MOCK ⚠️
+| Component | Why | How |
+|-----------|-----|-----|
+| `navigator.clipboard` | Not in jsdom | `vi.fn()` |
+| `window.location` | For share URL tests | `Object.defineProperty` |
+| External APIs | Would be slow/flaky | Not applicable yet |
 
-export const colorThemeFactory = Factory.define<ColorTheme>(() => ({
-  foreground: oklchColorFactory.build(),
-  background: oklchColorFactory.build({ l: 0.1 }),
-  accent: oklchColorFactory.build({ c: 0.2 })
-}))
-```
-
-### tests/factories/editor-settings.ts
-```typescript
-import { Factory } from 'fishery'
-import type { EditorSettings } from '~/modules/editor/types'
-
-export const editorSettingsFactory = Factory.define<EditorSettings>(() => ({
-  vimMode: false,
-  lineNumbers: true,
-  fontSize: 14,
-  previewSync: true,
-  wordWrap: true
-}))
-```
-
-### tests/factories/shortcuts.ts
-```typescript
-import { Factory } from 'fishery'
-import { faker } from '@faker-js/faker'
-import type { ShortcutAction } from '~/modules/shortcuts/types'
-
-export const shortcutFactory = Factory.define<ShortcutAction>(({ sequence }) => ({
-  id: `shortcut-${sequence}`,
-  keys: ['ctrl', faker.helpers.arrayElement(['s', 'o', 'n', 'b', 'k'])],
-  description: faker.lorem.sentence(3),
-  action: () => {},
-  category: faker.helpers.arrayElement(['editor', 'view', 'navigation', 'general'])
-}))
-```
+The existing `tests/setup/vitest.setup.ts` already mocks:
+- `ResizeObserver`
+- `crypto.randomUUID`
+- `matchMedia`
 
 ---
 
-## Implementation Priority Order
+## Implementation Priority
 
-| Priority | Test File | Est. Time | Coverage Impact |
-|----------|-----------|-----------|-----------------|
-| 1 | LocalStorageService.test.ts | 1h | +2-3% |
-| 2 | useViewMode.test.ts | 1.5h | +3-4% |
-| 3 | useVimMode.test.ts | 30min | +1% |
-| 4 | useDataReset.test.ts | 45min | +1-2% |
-| 5 | color-theme-store.test.ts | 2.5h | +8-10% |
-| 6 | use-editor-settings.test.ts | 2.5h | +6-8% |
-| 7 | Expand useDocumentShare.test.ts | 1.5h | +4-5% |
-| 8 | use-shortcuts.test.ts | 4h | +10-12% |
-| 9 | use-command-history.test.ts | 1h | +2-3% |
-| 10 | useResizablePanes.test.ts | 1.5h | +3-4% |
-| 11 | color-theme-picker.test.ts | 3h | +5-6% |
-| 12 | share-dialog.test.ts | 2h | +4-5% |
-| 13 | shortcuts-manager.test.ts | 2h | +3-4% |
-| 14 | Factories | 1.5h | (supports above) |
-
-**Total: ~25-30 hours → Expected coverage: 75-85%**
+| Priority | Journey | Coverage Impact | Modules Covered |
+|----------|---------|-----------------|-----------------|
+| 1 | Document Management | HIGH | documents/, shared/composables |
+| 2 | Editor + Preview | HIGH | editor/, markdown-preview/ |
+| 3 | View Modes | MEDIUM | shared/composables/useViewMode |
+| 4 | Share Document | MEDIUM | share/ |
+| 5 | Color Theme | MEDIUM | color-theme/ |
+| 6 | Editor Settings | MEDIUM | editor/composables |
+| 7 | Keyboard Shortcuts | MEDIUM | shortcuts/ |
+| 8 | Full User Journey | HIGH | All modules |
 
 ---
 
 ## Running Tests
 
 ```bash
-# Run all vitest tests
+# Run all integration tests
 pnpm test:vitest
 
-# Run specific test file
-pnpm test:vitest src/modules/color-theme/tests/color-theme-store.test.ts
+# Run specific journey
+pnpm test:vitest src/tests/integration/journeys/document-management.test.ts
 
 # Run with coverage
 pnpm test:vitest --coverage
 
-# Watch mode during development
+# Watch mode
 pnpm test:vitest --watch
 ```
+
+---
+
+## Key Differences from Previous Plan
+
+| Aspect | ❌ Previous (Wrong) | ✅ Current (Correct) |
+|--------|---------------------|----------------------|
+| Mount target | Isolated components | Full `app.vue` |
+| Test style | Unit-like assertions | BDD user journeys |
+| Selectors | Direct DOM queries | Page Object encapsulation |
+| State | Mocked stores | Real Pinia stores |
+| Coverage source | Testing internals | Testing user behavior |
