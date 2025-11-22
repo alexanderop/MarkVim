@@ -18,11 +18,14 @@ describe("useSum", () => {
     expect(sum.value).toBe(5);
   });
 });
-Lifecycle Dependent Example
-Target: useLocalStorage (Uses onMounted) Requirement: withSetup helper
+```
 
-``TypeScript
+## Lifecycle Dependent Example
 
+**Target**: `useLocalStorage` (Uses onMounted)
+**Requirement**: `withSetup` helper
+
+```ts
 import { describe, it, expect } from "vitest";
 import { withSetup } from "./test-utils";
 import useLocalStorage from "./useLocalStorage";
@@ -31,17 +34,20 @@ describe("useLocalStorage", () => {
   it("should load the value from localStorage if it was set before", async () => {
     // Setup Mock
     localStorage.setItem("testKey", JSON.stringify("valueFromLocalStorage"));
-    
+
     // Invoke via helper
     const [result] = withSetup(() => useLocalStorage("testKey", "testValue"));
-    
+
     // Assert
     expect(result.value.value).toBe("valueFromLocalStorage");
   });
 });
-Injection Dependent Example
-Target: useMessage (Uses inject) Requirement: useInjectedSetup helper
 ```
+
+## Injection Dependent Example
+
+**Target**: `useMessage` (Uses inject)
+**Requirement**: `useInjectedSetup` helper
 
 ```ts
 import { describe, expect, it } from "vitest";

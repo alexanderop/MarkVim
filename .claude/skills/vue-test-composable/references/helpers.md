@@ -23,8 +23,9 @@ export function withSetup<T>(composable: () => T): [T, App] {
 }
 ```
 
-useInjectedSetup (For Dependency Injection)
-Use this when the composable uses inject().
+## `useInjectedSetup` (For Dependency Injection)
+
+Use this when the composable uses `inject()`.
 
 ```ts
 import type { InjectionKey } from "vue";
