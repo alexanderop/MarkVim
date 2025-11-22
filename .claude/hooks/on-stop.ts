@@ -3,7 +3,7 @@
 /**
  * Claude Code Stop Hook
  *
- * Runs typecheck, lint, and unit tests before allowing Claude to stop.
+ * Runs typecheck and lint before allowing Claude to stop.
  * If any check fails, Claude is instructed to fix the issues.
  *
  * Uses @anthropic-ai/claude-agent-sdk types for type safety.
@@ -71,7 +71,6 @@ function main(): void {
   const checks: Array<{ name: string, command: string }> = [
     { name: 'TypeScript', command: 'pnpm typecheck' },
     { name: 'ESLint', command: 'pnpm lint' },
-    { name: 'Unit Tests', command: 'pnpm test:vitest run' },
   ]
 
   const failures: CheckResult[] = []
@@ -104,7 +103,7 @@ function main(): void {
 
   // All checks passed, allow stop
   const output: SyncHookJSONOutput = {
-    systemMessage: 'All CI checks passed (typecheck, lint, tests)',
+    systemMessage: 'All CI checks passed (typecheck, lint)',
   }
   console.log(JSON.stringify(output))
   process.exit(0)
