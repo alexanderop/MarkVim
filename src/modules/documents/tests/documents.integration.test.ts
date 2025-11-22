@@ -7,67 +7,83 @@ import { documentFactory } from '../../../../tests/factories'
 import DocumentListClient from '../components/DocumentList.client.vue'
 import { useDocumentsStore } from '../store'
 
-describe('feature: Document Management', () => {
-  it('should render the default document from the store', async () => {
-    const page = await createDocumentListPage()
+describe('DocumentList', () => {
+  describe('when viewing default state', () => {
+    it('should display the welcome document', async () => {
+      const page = await createDocumentListPage()
 
-    expect(page.getDocumentByTitle('Welcome to MarkVim')).toBeDefined()
-    expect(page.getDocumentCount()).toBe('1')
-  })
-
-  it('should create a new document when add button is clicked', async () => {
-    const store = useDocumentsStore()
-    const initialCount = store.documents.length
-
-    const page = await createDocumentListPage()
-
-    await page.clickCreateDocument()
-
-    // Get fresh store reference after action
-    const updatedStore = useDocumentsStore()
-
-    // Store should now have 1 more document than initially
-    expect(updatedStore.documents.length).toBe(initialCount + 1)
-    expect(updatedStore.documents[0]?.content).toContain('# New Note')
-  })
-
-  it('should render multiple documents when store has them', async () => {
-    const store = useDocumentsStore()
-
-    // Create additional documents via the real store
-    store.dispatch({ type: 'CREATE_DOCUMENT', payload: undefined })
-    store.dispatch({ type: 'CREATE_DOCUMENT', payload: undefined })
-
-    const page = await createDocumentListPage()
-
-    expect(page.getDocumentCount()).toBe('3')
-  })
-
-  it('should render documents created from factory', async () => {
-    const store = useDocumentsStore()
-
-    // Use factory to create test documents with realistic data
-    const factoryDocs = documentFactory.buildList(2, {
-      content: '# Factory Document\n\nCreated with Fishery',
+      expect(page.getDocumentByTitle('Welcome to MarkVim')).toBeDefined()
     })
 
-    // Combine default docs with factory-generated ones
-    const allDocs = [...store.documents, ...factoryDocs]
+    it('should show document count as 1', async () => {
+      const page = await createDocumentListPage()
 
-    const page = await createDocumentListPageWithDocs(allDocs, store.state.activeDocumentId)
-
-    expect(page.getDocumentCount()).toBe('3')
+      expect(page.getDocumentCount()).toBe('1')
+    })
   })
 
-  it('should display document with specific title from factory', async () => {
-    // Create a document with a specific title we can assert on
-    const testDoc = documentFactory.build({
-      content: '# Test Factory Title\n\nSome content here',
+  describe('when creating a new document', () => {
+    it('should add document to store when add button is clicked', async () => {
+      const store = useDocumentsStore()
+      const initialCount = store.documents.length
+
+      const page = await createDocumentListPage()
+
+      await page.clickCreateDocument()
+
+      const updatedStore = useDocumentsStore()
+
+      expect(updatedStore.documents.length).toBe(initialCount + 1)
     })
 
-    const page = await createDocumentListPageWithDocs([testDoc], testDoc.id)
+    it('should create document with default content', async () => {
+      const page = await createDocumentListPage()
 
-    expect(page.getDocumentByTitle('Test Factory Title')).toBeDefined()
+      await page.clickCreateDocument()
+
+      const updatedStore = useDocumentsStore()
+
+      expect(updatedStore.documents[0]?.content).toContain('# New Note')
+    })
+  })
+
+  describe('when store has multiple documents', () => {
+    it('should display correct document count', async () => {
+      const store = useDocumentsStore()
+
+      store.dispatch({ type: 'CREATE_DOCUMENT', payload: undefined })
+      store.dispatch({ type: 'CREATE_DOCUMENT', payload: undefined })
+
+      const page = await createDocumentListPage()
+
+      expect(page.getDocumentCount()).toBe('3')
+    })
+
+    it('should render all documents from factory', async () => {
+      const store = useDocumentsStore()
+
+      const factoryDocs = documentFactory.buildList(2, {
+        content: '# Factory Document\n\nCreated with Fishery',
+      })
+
+      const allDocs = [...store.documents, ...factoryDocs]
+
+      const page = await createDocumentListPageWithDocs(allDocs, store.state.activeDocumentId)
+
+      expect(page.getDocumentCount()).toBe('3')
+    })
+  })
+
+  describe('when displaying factory-created document', () => {
+    it('should show document title extracted from content', async () => {
+      const testDoc = documentFactory.build({
+        content: '# Test Factory Title\n\nSome content here',
+      })
+
+      const page = await createDocumentListPageWithDocs([testDoc], testDoc.id)
+
+      expect(page.getDocumentByTitle('Test Factory Title')).toBeDefined()
+    })
   })
 })
 

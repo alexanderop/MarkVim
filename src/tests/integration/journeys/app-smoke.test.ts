@@ -3,42 +3,43 @@ import { mountFullApp } from '../app-page'
 
 const TEST_TIMEOUT = 10000
 
-describe('feature: Full App Integration (Smoke Test)', () => {
-  describe('scenario: App loads with default state', () => {
-    it('given I open the app, Then I see the editor, preview, and sidebar', async () => {
-      // GIVEN & WHEN
+describe('App Smoke Test', () => {
+  describe('when app loads with default state', () => {
+    it('should display the main header', async () => {
       const app = await mountFullApp()
 
-      // THEN - All main UI elements are rendered
       expect(app.containsText('MarkVim')).toBe(true)
+    }, TEST_TIMEOUT)
+
+    it('should display the document sidebar', async () => {
+      const app = await mountFullApp()
+
       expect(app.containsText('Notes')).toBe(true)
       expect(app.hasElement('document-list')).toBe(true)
+    }, TEST_TIMEOUT)
+
+    it('should display both editor and preview panes', async () => {
+      const app = await mountFullApp()
+
       expect(app.hasElement('editor-pane')).toBe(true)
       expect(app.hasElement('preview-pane')).toBe(true)
     }, TEST_TIMEOUT)
-  })
 
-  describe('scenario: Default document is loaded', () => {
-    it('given I open the app, Then I see the welcome document in the sidebar', async () => {
-      // GIVEN & WHEN
+    it('should show the welcome document in sidebar', async () => {
       const app = await mountFullApp()
 
-      // THEN - Welcome document is visible
       expect(app.containsText('Welcome to MarkVim')).toBe(true)
       expect(app.getDocumentCount()).toBe(1)
     }, TEST_TIMEOUT)
   })
 
-  describe('scenario: Create new document', () => {
-    it('given the app is loaded, When I create a document, Then document count increases', async () => {
-      // GIVEN
+  describe('when creating a new document', () => {
+    it('should increase document count when add button is clicked', async () => {
       const app = await mountFullApp()
       const initialCount = app.getDocumentCount()
 
-      // WHEN
       await app.clickCreateDocument()
 
-      // THEN
       expect(app.getDocumentCount()).toBe(initialCount + 1)
     }, TEST_TIMEOUT)
   })
