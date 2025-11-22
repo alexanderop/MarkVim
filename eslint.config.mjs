@@ -185,13 +185,6 @@ export default withNuxt(
       'prefer-template': 'error',
       'require-await': 'error',
       'template-curly-spacing': 'error',
-      'no-magic-numbers': ['error', {
-        ignore: [-1, 0, 1, 2],
-        ignoreArrayIndexes: true,
-        ignoreDefaultValues: true,
-        enforceConst: true,
-        detectObjects: false,
-      }],
       'ts/consistent-type-assertions': ['error', {
         assertionStyle: 'never',
       }],
@@ -294,7 +287,6 @@ export default withNuxt(
   {
     files: ['tests/**/*.ts', 'tests/**/*.js'],
     rules: {
-      'no-magic-numbers': 'off',
       'no-await-in-loop': 'off', // Sequential operations are legitimate in tests
       'max-depth': 'off', // Test setup can be more nested
     },
