@@ -1,0 +1,1 @@
+Every time you encounter an error that you haven't seen before, spin up a subagent and do research to see how other developers are doing it
