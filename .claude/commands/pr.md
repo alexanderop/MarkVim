@@ -83,7 +83,7 @@ gh pr create --base main --draft --title "<title>" --body "..."
 ### Title Format
 
 Use conventional commit style:
-```
+```text
 <type>(<scope>): <description>
 ```
 
