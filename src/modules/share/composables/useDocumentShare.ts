@@ -138,7 +138,8 @@ export function useDocumentShare(): {
 
     const parseResult = tryCatch(
       () => {
-        const targetUrl = url ?? window.location.href
+        // eslint-disable-next-line ts/prefer-nullish-coalescing
+        const targetUrl = url || window.location.href
         const urlObj = new URL(targetUrl)
 
         const hash = urlObj.hash
