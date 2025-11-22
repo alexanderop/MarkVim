@@ -36,7 +36,6 @@ const totalShortcuts = computed(() =>
 
 <template>
   <UButton
-    v-feature="'shortcuts'"
     color="neutral"
     variant="ghost"
     size="md"
