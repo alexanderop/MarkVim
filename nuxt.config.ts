@@ -44,6 +44,7 @@ export default defineNuxtConfig({
     'reka-ui/nuxt',
     '@vueuse/nuxt',
     '@pinia/nuxt',
+    '@nuxt/test-utils/module',
   ],
   pinia: {
     storesDirs: ['./src/modules/**/store.ts', './src/shared/**/store.ts', './src/stores/**'],

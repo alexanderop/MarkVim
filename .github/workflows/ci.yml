@@ -63,8 +63,22 @@ jobs:
       - name: Validate dependency rules
         run: pnpm run depcruise:ci
 
+  # Job 4: Unit tests with Vitest
+  vitest:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Run Vitest
+        run: pnpm run test:vitest
+
   # Job 5: End-to-End tests (parallelized by feature)
   e2e:
+    needs: vitest
     name: E2E Tests (${{ matrix.feature }})
     runs-on: ubuntu-latest
     timeout-minutes: 20

@@ -1,0 +1,1 @@
+export { documentFactory } from './documents'
