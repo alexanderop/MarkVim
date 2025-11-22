@@ -1,6 +1,7 @@
 ---
 description: Create a conventional commit message and commit staged changes
 allowed-tools: Bash(git status), Bash(git diff), Bash(git log), Bash(git add), Bash(git commit)
+model: haiku
 ---
 
 # Conventional Commit
