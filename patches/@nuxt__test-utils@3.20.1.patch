@@ -1,0 +1,13 @@
+diff --git a/dist/vitest-environment.mjs b/dist/vitest-environment.mjs
+index eed6ccb1d8f6fe5d2def3655537d9dd891e2b052..67508572c1e44e7f7959c1af6e430eee209e4b53 100644
+--- a/dist/vitest-environment.mjs
++++ b/dist/vitest-environment.mjs
+@@ -198,7 +198,7 @@ const environmentMap = {
+ };
+ const index = {
+   name: "nuxt",
+-  transformMode: "web",
++  viteEnvironment: "client",
+   async setup(global, environmentOptions) {
+     const url = joinURL(
+       environmentOptions?.nuxt.url ?? "http://localhost:3000",

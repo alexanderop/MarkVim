@@ -35,3 +35,6 @@ reports/
 
 # Git worktrees
 .worktrees/
+
+# Coverage reports
+coverage/
