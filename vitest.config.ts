@@ -15,5 +15,17 @@ export default defineVitestConfig({
     alias: {
       '~/tests': fileURLToPath(new URL('./tests', import.meta.url)),
     },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,vue}'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/**/*.spec.ts',
+        'src/**/*.d.ts',
+        'src/**/api.ts',
+      ],
+    },
   },
 })

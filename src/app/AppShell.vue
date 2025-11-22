@@ -141,12 +141,22 @@ function handleContentUpdate(value: string): void {
       :show-vim-mode="settings.vimMode"
     />
 
-    <ShortcutsManager v-feature="'shortcuts'" />
+    <!-- Feature-flagged components wrapped in native elements to avoid Vue warnings -->
+    <!-- v-feature directive requires a native element root, not a component root -->
+    <div v-feature="'shortcuts'">
+      <ShortcutsManager />
+    </div>
 
-    <DocumentManagerAction v-feature="'documents'" />
+    <div v-feature="'documents'">
+      <DocumentManagerAction />
+    </div>
 
-    <ShareManager v-feature="'share'" />
+    <div v-feature="'share'">
+      <ShareManager />
+    </div>
 
-    <ColorThemeModal v-feature="'color-theme'" />
+    <div v-feature="'color-theme'">
+      <ColorThemeModal />
+    </div>
   </div>
 </template>

@@ -45,7 +45,8 @@
     "knip": "knip",
     "knip:exports": "knip --exports",
     "test:vitest": "vitest",
-    "test:vitest:watch": "vitest --watch"
+    "test:vitest:watch": "vitest --watch",
+    "test:vitest:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
@@ -93,6 +94,7 @@
     "@types/node": "^22.15.30",
     "@typescript-eslint/utils": "^8.45.0",
     "@vitejs/plugin-vue": "^6.0.2",
+    "@vitest/coverage-v8": "^4.0.13",
     "@vue/compiler-sfc": "^3.5.22",
     "commander": "^14.0.1",
     "concurrently": "^9.1.0",
@@ -118,5 +120,10 @@
     "vitest": "^4.0.13",
     "vue-tsc": "^3.1.0",
     "wait-on": "^8.0.3"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@nuxt/test-utils@3.20.1": "patches/@nuxt__test-utils@3.20.1.patch"
+    }
   }
 }

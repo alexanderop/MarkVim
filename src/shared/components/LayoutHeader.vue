@@ -103,10 +103,9 @@ function handleDeleteDocument(): void {
 
     <!-- Right section -->
     <div class="flex gap-1 md:gap-2 items-center">
-      <ShareButton
-        v-feature="'share'"
-        :document="activeDocument"
-      />
+      <span v-feature="'share'">
+        <ShareButton :document="activeDocument" />
+      </span>
 
       <UButton
         v-if="isDocumentsFeatureEnabled"
@@ -125,20 +124,23 @@ function handleDeleteDocument(): void {
       <div class="bg-gray-700/50 h-4 w-px hidden md:block" />
 
       <div class="flex gap-0.5 md:gap-1 items-center">
-        <UButton
-          v-feature="'color-theme'"
-          color="neutral"
-          variant="ghost"
-          size="sm"
-          icon="lucide:palette"
-          square
-          title="Color Theme"
-          aria-label="Open color theme settings"
-          data-testid="color-theme-button"
-          class="hidden md:flex"
-          @click="() => { toggleColorTheme(true) }"
-        />
-        <ShortcutsModal v-feature="'shortcuts'" />
+        <span v-feature="'color-theme'">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            icon="lucide:palette"
+            square
+            title="Color Theme"
+            aria-label="Open color theme settings"
+            data-testid="color-theme-button"
+            class="hidden md:flex"
+            @click="() => { toggleColorTheme(true) }"
+          />
+        </span>
+        <span v-feature="'shortcuts'">
+          <ShortcutsModal />
+        </span>
         <SettingsModal />
       </div>
     </div>
