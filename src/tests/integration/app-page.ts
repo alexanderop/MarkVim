@@ -12,14 +12,12 @@
  * ```
  */
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import userEvent from '@testing-library/user-event'
 import App from '~/app.vue'
 
 type MountSuspendedResult = Awaited<ReturnType<typeof mountSuspended>>
 
 export interface AppPageHelpers {
   wrapper: MountSuspendedResult
-  user: ReturnType<typeof userEvent.setup>
   html: () => string
   getDocumentCount: () => number
   hasElement: (testId: string) => boolean
@@ -35,12 +33,10 @@ export interface AppPageHelpers {
 }
 
 export async function mountFullApp(): Promise<AppPageHelpers> {
-  const user = userEvent.setup()
   const wrapper = await mountSuspended(App, { route: '/' })
 
   const helpers: AppPageHelpers = {
     wrapper,
-    user,
 
     html: () => wrapper.html(),
 

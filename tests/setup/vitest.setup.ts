@@ -1,4 +1,3 @@
-import { cleanup } from '@testing-library/vue'
 import { createPinia, setActivePinia } from 'pinia'
 import ResizeObserver from 'resize-observer-polyfill'
 import { afterEach, beforeEach, vi } from 'vitest'
@@ -70,6 +69,5 @@ beforeEach(() => {
 
 // 5. Cleanup after each test
 afterEach(() => {
-  cleanup()
   vi.clearAllMocks()
 })

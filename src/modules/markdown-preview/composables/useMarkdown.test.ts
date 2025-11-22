@@ -1,4 +1,4 @@
-import { render } from '@testing-library/vue'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref, type Ref } from 'vue'
 import { useMarkdown } from './useMarkdown'
@@ -7,10 +7,10 @@ import { useMarkdown } from './useMarkdown'
  * Helper to test useMarkdown composable within a component context.
  * This avoids Vue warnings about onMounted being called outside setup().
  */
-function withMarkdownComposable(content: Ref<string>): {
+async function withMarkdownComposable(content: Ref<string>): Promise<{
   renderedMarkdown: Ref<string>
   updateMarkdown: () => Promise<void>
-} {
+}> {
   let result: ReturnType<typeof useMarkdown>
 
   const TestComponent = defineComponent({
@@ -20,7 +20,7 @@ function withMarkdownComposable(content: Ref<string>): {
     },
   })
 
-  render(TestComponent)
+  await mountSuspended(TestComponent)
   return result!
 }
 
@@ -33,7 +33,7 @@ describe('useMarkdown', () => {
   describe('when rendering external links', () => {
     it('should add rel="noopener noreferrer" to external links', async () => {
       const content = ref('[External Link](https://example.com)')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -44,7 +44,7 @@ describe('useMarkdown', () => {
 
     it('should add rel="noopener noreferrer" to links with target="_blank"', async () => {
       const content = ref('<a href="https://evil.com" target="_blank">Click me</a>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -55,7 +55,7 @@ describe('useMarkdown', () => {
 
     it('should preserve existing safe rel attributes', async () => {
       const content = ref('<a href="https://example.com" rel="nofollow" target="_blank">Link</a>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -71,7 +71,7 @@ describe('useMarkdown', () => {
 graph TD
 A[<img src=x onerror=alert('XSS')>] --> B
 \`\`\``)
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -86,7 +86,7 @@ A[<img src=x onerror=alert('XSS')>] --> B
 graph TD
 A[<script>alert('XSS')</script>] --> B
 \`\`\``)
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -100,7 +100,7 @@ A[<script>alert('XSS')</script>] --> B
   describe('when sanitizing HTML content', () => {
     it('should allow safe HTML tags', async () => {
       const content = ref('Hello <b>World</b>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -110,7 +110,7 @@ A[<script>alert('XSS')</script>] --> B
 
     it('should strip script tags', async () => {
       const content = ref('Hello <script>alert("XSS")</script>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -121,7 +121,7 @@ A[<script>alert('XSS')</script>] --> B
 
     it('should strip onerror attributes from images', async () => {
       const content = ref('<img src=x onerror=alert(1)>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -132,7 +132,7 @@ A[<script>alert('XSS')</script>] --> B
 
     it('should strip javascript: protocol in raw HTML links', async () => {
       const content = ref('<a href="javascript:alert(1)">Click me</a>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -143,7 +143,7 @@ A[<script>alert('XSS')</script>] --> B
 
     it('should not render javascript: protocol as clickable Markdown links', async () => {
       const content = ref('[Click me for a prize](javascript:alert(document.domain))')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()
@@ -155,7 +155,7 @@ A[<script>alert('XSS')</script>] --> B
 
     it('should strip dangerous event handlers (onload, onclick)', async () => {
       const content = ref('<div onload="alert(1)" onclick="alert(2)">Content</div>')
-      const { renderedMarkdown, updateMarkdown } = withMarkdownComposable(content)
+      const { renderedMarkdown, updateMarkdown } = await withMarkdownComposable(content)
 
       await updateMarkdown()
       await flushPromises()

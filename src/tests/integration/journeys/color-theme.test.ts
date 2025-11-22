@@ -9,8 +9,7 @@
  *
  * Note: Nuxt UI UModal uses Teleport, so modal content is queried via document.body
  */
-import { waitFor } from '@testing-library/vue'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountFullApp } from '../app-page'
 import { DEFAULT_COLOR_THEME, testStorage } from '../test-storage'
 
@@ -33,7 +32,7 @@ describe('color theme journeys', () => {
 
       // Open color theme modal
       await app.clickButton('color-theme-button')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsTestId('core-colors-section')).toBe(true)
       })
 
@@ -42,7 +41,7 @@ describe('color theme journeys', () => {
 
       // Click background color to edit
       app.clickInBody('color-button-background')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsText('Choose Background Color')).toBe(true)
       })
 
@@ -50,7 +49,7 @@ describe('color theme journeys', () => {
       app.clickInBody('accept-color-change-button')
 
       // Should return to theme modal and color should be saved
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsText('Choose Background Color')).toBe(false)
         expect(app.bodyContainsTestId('core-colors-section')).toBe(true)
         const theme = testStorage.colorTheme.get()
@@ -71,7 +70,7 @@ describe('color theme journeys', () => {
 
       // Open color theme modal
       await app.clickButton('color-theme-button')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsTestId('core-colors-section')).toBe(true)
       })
 
@@ -80,7 +79,7 @@ describe('color theme journeys', () => {
 
       // Click background color to edit
       app.clickInBody('color-button-background')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsText('Choose Background Color')).toBe(true)
       })
 
@@ -90,7 +89,7 @@ describe('color theme journeys', () => {
       cancelButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
 
       // Should return to theme modal
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsText('Choose Background Color')).toBe(false)
         expect(app.bodyContainsTestId('core-colors-section')).toBe(true)
       })
@@ -118,7 +117,7 @@ describe('color theme journeys', () => {
 
       // Open color theme modal
       await app.clickButton('color-theme-button')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsTestId('core-colors-section')).toBe(true)
       })
 
@@ -128,7 +127,7 @@ describe('color theme journeys', () => {
       resetButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
 
       // All colors should be reset to defaults
-      await waitFor(() => {
+      await vi.waitFor(() => {
         const theme = testStorage.colorTheme.get()
         expect(theme?.background.l).toBe(DEFAULT_COLOR_THEME.background.l)
         expect(theme?.foreground.l).toBe(DEFAULT_COLOR_THEME.foreground.l)
@@ -148,7 +147,7 @@ describe('color theme journeys', () => {
       const app = await mountFullApp()
 
       // Theme should be loaded from storage
-      await waitFor(() => {
+      await vi.waitFor(() => {
         const theme = testStorage.colorTheme.get()
         expect(theme?.background.l).toBe(0.25)
         expect(theme?.background.h).toBe(200)
@@ -156,7 +155,7 @@ describe('color theme journeys', () => {
 
       // Open modal to verify UI shows custom theme
       await app.clickButton('color-theme-button')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsTestId('core-colors-section')).toBe(true)
       })
 
@@ -171,7 +170,7 @@ describe('color theme journeys', () => {
 
       // Open color theme modal
       await app.clickButton('color-theme-button')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsTestId('alert-colors-section')).toBe(true)
       })
 
@@ -180,7 +179,7 @@ describe('color theme journeys', () => {
 
       // Click an alert color (alertNote = blue note color)
       app.clickInBody('color-button-alertNote')
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsText('Choose Alert Note Color')).toBe(true)
       })
 
@@ -188,7 +187,7 @@ describe('color theme journeys', () => {
       app.clickInBody('accept-color-change-button')
 
       // Should return to main modal
-      await waitFor(() => {
+      await vi.waitFor(() => {
         expect(app.bodyContainsText('Choose Alert Note Color')).toBe(false)
         expect(app.bodyContainsTestId('alert-colors-section')).toBe(true)
       })

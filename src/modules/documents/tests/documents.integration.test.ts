@@ -1,11 +1,11 @@
 import type { Document as DocType } from '~/shared/types/Document'
-import { renderSuspended } from '@nuxt/test-utils/runtime'
-import userEvent from '@testing-library/user-event'
-import { screen } from '@testing-library/vue'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { documentFactory } from '../../../../tests/factories'
 import DocumentListClient from '../components/DocumentList.client.vue'
 import { useDocumentsStore } from '../store'
+
+type MountedWrapper = Awaited<ReturnType<typeof mountSuspended>>
 
 describe('documentList', () => {
   describe('when viewing default state', () => {
@@ -87,62 +87,57 @@ describe('documentList', () => {
   })
 })
 
-// Page Object Factory
-async function createDocumentListPage(): Promise<{
-  getDocumentByTitle: (title: string) => HTMLElement
+interface DocumentListPage {
+  getDocumentByTitle: (title: string) => Element | undefined
   getDocumentCount: () => string
-  getCreateButton: () => HTMLElement
+  getCreateButton: () => Element | undefined
   clickCreateDocument: () => Promise<void>
-}> {
-  const store = useDocumentsStore()
-  const user = userEvent.setup()
+}
 
-  await renderSuspended(DocumentListClient, {
+// Page Object Factory
+async function createDocumentListPage(): Promise<DocumentListPage> {
+  const store = useDocumentsStore()
+
+  const wrapper = await mountSuspended(DocumentListClient, {
     props: {
       documents: store.documents,
       activeDocumentId: store.state.activeDocumentId,
     },
   })
 
-  return {
-    // Getters
-    getDocumentByTitle: (title: string) => screen.getByText(title),
-    getDocumentCount: () => screen.getByRole('complementary', { name: 'Documents' }).querySelector('.rounded-full span')?.textContent ?? '',
-    getCreateButton: () => screen.getByRole('button', { name: 'Create new document' }),
-
-    // Actions
-    clickCreateDocument: async () => {
-      const createBtn = screen.getByRole('button', { name: 'Create new document' })
-      await user.click(createBtn)
-    },
-  }
+  return createPageHelpers(wrapper)
 }
 
-async function createDocumentListPageWithDocs(documents: DocType[], activeDocumentId: string): Promise<{
-  getDocumentByTitle: (title: string) => HTMLElement
-  getDocumentCount: () => string
-  getCreateButton: () => HTMLElement
-  clickCreateDocument: () => Promise<void>
-}> {
-  const user = userEvent.setup()
-
-  await renderSuspended(DocumentListClient, {
+async function createDocumentListPageWithDocs(documents: DocType[], activeDocumentId: string): Promise<DocumentListPage> {
+  const wrapper = await mountSuspended(DocumentListClient, {
     props: {
       documents,
       activeDocumentId,
     },
   })
 
+  return createPageHelpers(wrapper)
+}
+
+function createPageHelpers(wrapper: MountedWrapper): DocumentListPage {
   return {
     // Getters
-    getDocumentByTitle: (title: string) => screen.getByText(title),
-    getDocumentCount: () => screen.getByRole('complementary', { name: 'Documents' }).querySelector('.rounded-full span')?.textContent ?? '',
-    getCreateButton: () => screen.getByRole('button', { name: 'Create new document' }),
+    getDocumentByTitle: (title: string): Element | undefined => {
+      const elements: Element[] = Array.from(wrapper.element.querySelectorAll('*'))
+      return elements.find((el: Element) => el.textContent?.includes(title))
+    },
+    getDocumentCount: (): string => {
+      const sidebar = wrapper.find('[aria-label="Documents"]')
+      return sidebar.element.querySelector('.rounded-full span')?.textContent ?? ''
+    },
+    getCreateButton: (): Element | undefined => {
+      return wrapper.find('[aria-label="Create new document"]').element
+    },
 
     // Actions
-    clickCreateDocument: async () => {
-      const createBtn = screen.getByRole('button', { name: 'Create new document' })
-      await user.click(createBtn)
+    clickCreateDocument: async (): Promise<void> => {
+      const createBtn = wrapper.find('[aria-label="Create new document"]')
+      await createBtn.trigger('click')
     },
   }
 }
