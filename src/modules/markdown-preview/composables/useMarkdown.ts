@@ -4,6 +4,28 @@ import { onMounted, ref, type Ref, watch } from 'vue'
 import { tryCatchAsync } from '~/shared/utils/result'
 import { addDataTestIdToAlerts, createMarkdownRenderer } from '../utils/markdown'
 
+// Configure DOMPurify to add rel="noopener noreferrer" to all links
+// This prevents reverse tabnabbing attacks
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  if (node.tagName === 'A') {
+    const href = node.getAttribute('href')
+    // Add noopener noreferrer to external links (those with http/https)
+    if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+      const existingRel = node.getAttribute('rel') ?? ''
+      const relParts = existingRel.split(' ').filter(Boolean)
+
+      if (!relParts.includes('noopener')) {
+        relParts.push('noopener')
+      }
+      if (!relParts.includes('noreferrer')) {
+        relParts.push('noreferrer')
+      }
+
+      node.setAttribute('rel', relParts.join(' '))
+    }
+  }
+})
+
 export function useMarkdown(markdownContent: Ref<string>): {
   renderedMarkdown: Ref<string>
   updateMarkdown: () => Promise<void>
