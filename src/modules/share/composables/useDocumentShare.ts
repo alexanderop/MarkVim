@@ -1,11 +1,70 @@
 import type { Ref } from 'vue'
 import type { Document } from '~/shared/types/Document'
+import type { Result } from '~/shared/utils/result'
 import { getDocumentTitle } from '@modules/documents'
 import { useClipboard } from '@vueuse/core'
-import { gunzipSync, gzipSync, strFromU8, strToU8 } from 'fflate'
+import { Gunzip, gzipSync, strFromU8, strToU8 } from 'fflate'
 import { readonly, ref } from 'vue'
 import { z } from 'zod'
 import { Err, Ok, tryCatch, tryCatchAsync } from '~/shared/utils/result'
+
+// Security constants for zip bomb protection
+const BYTES_PER_KB = 1024
+const MAX_DECOMPRESSED_SIZE = 2 * BYTES_PER_KB * BYTES_PER_KB // 2MB
+
+/**
+ * Safely decompress gzipped data with size limits to prevent zip bomb attacks.
+ * Uses streaming decompression to abort early if size limit is exceeded,
+ * preventing memory exhaustion before the limit is reached.
+ */
+function safeGunzip(compressedData: Uint8Array): Result<Uint8Array, Error> {
+  let totalSize = 0
+  const chunks: Uint8Array[] = []
+  let aborted = false
+
+  const gunzip = new Gunzip()
+
+  gunzip.ondata = (chunk) => {
+    if (aborted) {
+      return
+    }
+
+    totalSize += chunk.length
+    if (totalSize > MAX_DECOMPRESSED_SIZE) {
+      aborted = true
+      return
+    }
+
+    chunks.push(chunk)
+  }
+
+  const pushResult = tryCatch(
+    () => {
+      gunzip.push(compressedData, true)
+      return null
+    },
+    error => (error instanceof Error ? error : new Error(String(error))),
+  )
+
+  if (!pushResult.ok) {
+    return Err(pushResult.error)
+  }
+
+  // eslint-disable-next-line ts/no-unnecessary-condition -- aborted is set in callback
+  if (aborted) {
+    return Err(new Error('Document is too large to process safely.'))
+  }
+
+  // Combine chunks into single Uint8Array
+  const result = new Uint8Array(totalSize)
+  let offset = 0
+  for (const chunk of chunks) {
+    result.set(chunk, offset)
+    offset += chunk.length
+  }
+
+  return Ok(result)
+}
 
 export interface ShareableDocument {
   id: string
@@ -154,8 +213,15 @@ export function useDocumentShare(): {
         }
 
         const compressedData = Uint8Array.from(atob(encodedData), c => c.charCodeAt(0))
-        const decompressed = gunzipSync(compressedData)
-        const jsonString = strFromU8(decompressed)
+
+        // Security: Use streaming decompression with size limit to prevent zip bomb attacks
+        const decompressResult = safeGunzip(compressedData)
+        if (!decompressResult.ok) {
+          importError.value = decompressResult.error.message
+          return null
+        }
+
+        const jsonString = strFromU8(decompressResult.value)
 
         if (!jsonString) {
           importError.value = 'Failed to decode share data. The link may be corrupted.'
