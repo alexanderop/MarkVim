@@ -22,19 +22,7 @@ function safeGunzip(compressedData: Uint8Array): Result<Uint8Array, Error> {
   const chunks: Uint8Array[] = []
   let aborted = false
 
-  const gunzip = new Gunzip((chunk) => {
-    if (aborted) {
-      return
-    }
-
-    totalSize += chunk.length
-    if (totalSize > MAX_DECOMPRESSED_SIZE) {
-      aborted = true
-      return
-    }
-
-    chunks.push(chunk)
-  })
+  const gunzip = new Gunzip()
 
   gunzip.ondata = (chunk) => {
     if (aborted) {
